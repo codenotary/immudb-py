@@ -2,6 +2,8 @@ SHELL := /bin/bash
 
 PROTOC ?= $(shell which protoc)
 GRPC_PYTHON_PLUGIN ?= $(shell which grpc_python_plugin)
+PYTEST ?= python -m pytest
+PIP ?= pip
 
 PROTO_DIR := proto
 PROTO_FILE := ${PROTO_DIR}/schema.proto
@@ -20,3 +22,12 @@ ${PROTO_DIR}:
 		--python_out=${SCHEMA_OUT_DIR} \
 		--grpc_out=${GRPC_OUT_DIR} \
 		--plugin=protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}
+
+init:
+	$(PIP) install -r requirements.txt --user
+
+dev:
+	$(PIP) install -r requirements-dev.txt
+
+test:
+	$(PYTEST) -vv --color=yes tests/

@@ -1,0 +1,4 @@
+-r requirements.txt
+
+pytest==5.3.5
+grpcio-tools==1.26.0
