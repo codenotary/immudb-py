@@ -27,7 +27,7 @@ init:
 	$(PIP) install -r requirements.txt --user
 
 dev:
-	$(PIP) install -r requirements-dev.txt
+	$(PIP) install -r requirements-dev.txt --user
 
 test:
 	$(PYTEST) -vv --color=yes tests/

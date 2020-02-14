@@ -1,4 +1,4 @@
 -r requirements.txt
 
-pytest==5.3.5
+pytest>=4.6.9
 grpcio-tools==1.26.0
