@@ -1,3 +1,27 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+### VisualStudioCode ###
+.vscode/
+.vscode-test/
+.vscode/*
+.vscode-test/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+**/.history
