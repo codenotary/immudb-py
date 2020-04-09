@@ -4,8 +4,7 @@ import struct
 from immu.schema import schema_pb2
 from immu import constants
 
-
-def digest(index: int, key:bytes, value:bytes) -> bytes:
+def digest(index: int, key: bytes, value: bytes) -> bytes:
     c = bytearray()
     c.append(constants.LEAF_PREFIX)
     c.extend(struct.pack('>Q', index))

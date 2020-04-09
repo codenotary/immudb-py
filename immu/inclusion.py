@@ -32,7 +32,7 @@ def verify(inclusionProof: schema_pb2.InclusionProof, index: int, leaf: bytes) -
     return path_verify(
         path=inclusionProof.path, 
         at=inclusionProof.at, 
-        index=inclusionProof.index, 
+        i=inclusionProof.index, 
         root=bytes(inclusionProof.root), 
         leaf=leaf
         )

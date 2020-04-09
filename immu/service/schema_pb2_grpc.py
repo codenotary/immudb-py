@@ -2,7 +2,7 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-import schema_pb2 as schema__pb2
+from immu.schema import schema_pb2 as schema__pb2
 
 
 class ImmuServiceStub(object):
@@ -20,35 +20,70 @@ class ImmuServiceStub(object):
         request_serializer=schema__pb2.KeyValue.SerializeToString,
         response_deserializer=schema__pb2.Index.FromString,
         )
+    self.SetSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/SetSV',
+        request_serializer=schema__pb2.StructuredKeyValue.SerializeToString,
+        response_deserializer=schema__pb2.Index.FromString,
+        )
     self.SafeSet = channel.unary_unary(
         '/immudb.schema.ImmuService/SafeSet',
         request_serializer=schema__pb2.SafeSetOptions.SerializeToString,
         response_deserializer=schema__pb2.Proof.FromString,
         )
-    self.SetBatch = channel.unary_unary(
-        '/immudb.schema.ImmuService/SetBatch',
-        request_serializer=schema__pb2.KVList.SerializeToString,
-        response_deserializer=schema__pb2.Index.FromString,
+    self.SafeSetSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/SafeSetSV',
+        request_serializer=schema__pb2.SafeSetSVOptions.SerializeToString,
+        response_deserializer=schema__pb2.Proof.FromString,
         )
     self.Get = channel.unary_unary(
         '/immudb.schema.ImmuService/Get',
         request_serializer=schema__pb2.Key.SerializeToString,
         response_deserializer=schema__pb2.Item.FromString,
         )
+    self.GetSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/GetSV',
+        request_serializer=schema__pb2.Key.SerializeToString,
+        response_deserializer=schema__pb2.StructuredItem.FromString,
+        )
     self.SafeGet = channel.unary_unary(
         '/immudb.schema.ImmuService/SafeGet',
         request_serializer=schema__pb2.SafeGetOptions.SerializeToString,
         response_deserializer=schema__pb2.SafeItem.FromString,
+        )
+    self.SafeGetSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/SafeGetSV',
+        request_serializer=schema__pb2.SafeGetOptions.SerializeToString,
+        response_deserializer=schema__pb2.SafeStructuredItem.FromString,
+        )
+    self.SetBatch = channel.unary_unary(
+        '/immudb.schema.ImmuService/SetBatch',
+        request_serializer=schema__pb2.KVList.SerializeToString,
+        response_deserializer=schema__pb2.Index.FromString,
+        )
+    self.SetBatchSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/SetBatchSV',
+        request_serializer=schema__pb2.SKVList.SerializeToString,
+        response_deserializer=schema__pb2.Index.FromString,
         )
     self.GetBatch = channel.unary_unary(
         '/immudb.schema.ImmuService/GetBatch',
         request_serializer=schema__pb2.KeyList.SerializeToString,
         response_deserializer=schema__pb2.ItemList.FromString,
         )
+    self.GetBatchSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/GetBatchSV',
+        request_serializer=schema__pb2.KeyList.SerializeToString,
+        response_deserializer=schema__pb2.StructuredItemList.FromString,
+        )
     self.Scan = channel.unary_unary(
         '/immudb.schema.ImmuService/Scan',
         request_serializer=schema__pb2.ScanOptions.SerializeToString,
         response_deserializer=schema__pb2.ItemList.FromString,
+        )
+    self.ScanSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/ScanSV',
+        request_serializer=schema__pb2.ScanOptions.SerializeToString,
+        response_deserializer=schema__pb2.StructuredItemList.FromString,
         )
     self.Count = channel.unary_unary(
         '/immudb.schema.ImmuService/Count',
@@ -75,10 +110,20 @@ class ImmuServiceStub(object):
         request_serializer=schema__pb2.Index.SerializeToString,
         response_deserializer=schema__pb2.Item.FromString,
         )
+    self.ByIndexSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/ByIndexSV',
+        request_serializer=schema__pb2.Index.SerializeToString,
+        response_deserializer=schema__pb2.StructuredItem.FromString,
+        )
     self.History = channel.unary_unary(
         '/immudb.schema.ImmuService/History',
         request_serializer=schema__pb2.Key.SerializeToString,
         response_deserializer=schema__pb2.ItemList.FromString,
+        )
+    self.HistorySV = channel.unary_unary(
+        '/immudb.schema.ImmuService/HistorySV',
+        request_serializer=schema__pb2.Key.SerializeToString,
+        response_deserializer=schema__pb2.StructuredItemList.FromString,
         )
     self.Health = channel.unary_unary(
         '/immudb.schema.ImmuService/Health',
@@ -98,6 +143,13 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def SetSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def SafeSet(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -105,7 +157,7 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def SetBatch(self, request, context):
+  def SafeSetSV(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -119,7 +171,35 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def SafeGet(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SafeGetSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetBatch(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetBatchSV(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -133,7 +213,21 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetBatchSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def Scan(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ScanSV(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -175,7 +269,21 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def ByIndexSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def History(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def HistorySV(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -197,35 +305,70 @@ def add_ImmuServiceServicer_to_server(servicer, server):
           request_deserializer=schema__pb2.KeyValue.FromString,
           response_serializer=schema__pb2.Index.SerializeToString,
       ),
+      'SetSV': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSV,
+          request_deserializer=schema__pb2.StructuredKeyValue.FromString,
+          response_serializer=schema__pb2.Index.SerializeToString,
+      ),
       'SafeSet': grpc.unary_unary_rpc_method_handler(
           servicer.SafeSet,
           request_deserializer=schema__pb2.SafeSetOptions.FromString,
           response_serializer=schema__pb2.Proof.SerializeToString,
       ),
-      'SetBatch': grpc.unary_unary_rpc_method_handler(
-          servicer.SetBatch,
-          request_deserializer=schema__pb2.KVList.FromString,
-          response_serializer=schema__pb2.Index.SerializeToString,
+      'SafeSetSV': grpc.unary_unary_rpc_method_handler(
+          servicer.SafeSetSV,
+          request_deserializer=schema__pb2.SafeSetSVOptions.FromString,
+          response_serializer=schema__pb2.Proof.SerializeToString,
       ),
       'Get': grpc.unary_unary_rpc_method_handler(
           servicer.Get,
           request_deserializer=schema__pb2.Key.FromString,
           response_serializer=schema__pb2.Item.SerializeToString,
       ),
+      'GetSV': grpc.unary_unary_rpc_method_handler(
+          servicer.GetSV,
+          request_deserializer=schema__pb2.Key.FromString,
+          response_serializer=schema__pb2.StructuredItem.SerializeToString,
+      ),
       'SafeGet': grpc.unary_unary_rpc_method_handler(
           servicer.SafeGet,
           request_deserializer=schema__pb2.SafeGetOptions.FromString,
           response_serializer=schema__pb2.SafeItem.SerializeToString,
+      ),
+      'SafeGetSV': grpc.unary_unary_rpc_method_handler(
+          servicer.SafeGetSV,
+          request_deserializer=schema__pb2.SafeGetOptions.FromString,
+          response_serializer=schema__pb2.SafeStructuredItem.SerializeToString,
+      ),
+      'SetBatch': grpc.unary_unary_rpc_method_handler(
+          servicer.SetBatch,
+          request_deserializer=schema__pb2.KVList.FromString,
+          response_serializer=schema__pb2.Index.SerializeToString,
+      ),
+      'SetBatchSV': grpc.unary_unary_rpc_method_handler(
+          servicer.SetBatchSV,
+          request_deserializer=schema__pb2.SKVList.FromString,
+          response_serializer=schema__pb2.Index.SerializeToString,
       ),
       'GetBatch': grpc.unary_unary_rpc_method_handler(
           servicer.GetBatch,
           request_deserializer=schema__pb2.KeyList.FromString,
           response_serializer=schema__pb2.ItemList.SerializeToString,
       ),
+      'GetBatchSV': grpc.unary_unary_rpc_method_handler(
+          servicer.GetBatchSV,
+          request_deserializer=schema__pb2.KeyList.FromString,
+          response_serializer=schema__pb2.StructuredItemList.SerializeToString,
+      ),
       'Scan': grpc.unary_unary_rpc_method_handler(
           servicer.Scan,
           request_deserializer=schema__pb2.ScanOptions.FromString,
           response_serializer=schema__pb2.ItemList.SerializeToString,
+      ),
+      'ScanSV': grpc.unary_unary_rpc_method_handler(
+          servicer.ScanSV,
+          request_deserializer=schema__pb2.ScanOptions.FromString,
+          response_serializer=schema__pb2.StructuredItemList.SerializeToString,
       ),
       'Count': grpc.unary_unary_rpc_method_handler(
           servicer.Count,
@@ -252,10 +395,20 @@ def add_ImmuServiceServicer_to_server(servicer, server):
           request_deserializer=schema__pb2.Index.FromString,
           response_serializer=schema__pb2.Item.SerializeToString,
       ),
+      'ByIndexSV': grpc.unary_unary_rpc_method_handler(
+          servicer.ByIndexSV,
+          request_deserializer=schema__pb2.Index.FromString,
+          response_serializer=schema__pb2.StructuredItem.SerializeToString,
+      ),
       'History': grpc.unary_unary_rpc_method_handler(
           servicer.History,
           request_deserializer=schema__pb2.Key.FromString,
           response_serializer=schema__pb2.ItemList.SerializeToString,
+      ),
+      'HistorySV': grpc.unary_unary_rpc_method_handler(
+          servicer.HistorySV,
+          request_deserializer=schema__pb2.Key.FromString,
+          response_serializer=schema__pb2.StructuredItemList.SerializeToString,
       ),
       'Health': grpc.unary_unary_rpc_method_handler(
           servicer.Health,

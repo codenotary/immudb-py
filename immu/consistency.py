@@ -3,7 +3,7 @@ import hashlib
 from immu.schema import schema_pb2
 from immu import constants
 
-def isPowerOfTwo(x:int) -> bool:
+def isPowerOfTwo(x: int) -> bool:
     return (x!=0) and ((x & (x-1)) == 0)
 
 def verify_path(path: list, second:int, first: int, secondHash: bytes, firstHash: bytes) -> bool:
