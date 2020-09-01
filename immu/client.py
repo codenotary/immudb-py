@@ -6,13 +6,18 @@ from immu.handler import safeGet, safeSet
 
 class ImmuClient:
     def __init__(self, immudUrl):
-        self.__channel = grpc.insecure_channel(immudUrl)
-        self.__stub = schema_pb2_grpc.ImmuServiceStub(self.__channel)
+        self.serverUrl = "localhost"
+        self.serverPort = "3322"
+        self.withAuthToken = True
+        self.channel = grpc.insecure_channel(immudUrl)
+        self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
+        #rs = RootService(self.__stub)
+        #rs.init()
+        #self.__rs = rs
 
-        rs = RootService(self.__stub)
-        rs.init()
-
-        self.__rs = rs
+    def login(self, username, password):
+        req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(username, encoding='utf-8'), password=bytes(password, encoding='utf-8'))
+        self.__stub.Login(req)
 
     @property
     def stub(self):
