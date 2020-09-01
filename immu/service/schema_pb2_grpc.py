@@ -6,8 +6,9 @@ from immu.schema import schema_pb2 as schema__pb2
 
 
 class ImmuServiceStub(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """immudb gRPC
+  IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
+  """
 
   def __init__(self, channel):
     """Constructor.
@@ -15,6 +16,46 @@ class ImmuServiceStub(object):
     Args:
       channel: A grpc.Channel.
     """
+    self.ListUsers = channel.unary_unary(
+        '/immudb.schema.ImmuService/ListUsers',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=schema__pb2.UserList.FromString,
+        )
+    self.CreateUser = channel.unary_unary(
+        '/immudb.schema.ImmuService/CreateUser',
+        request_serializer=schema__pb2.CreateUserRequest.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.ChangePassword = channel.unary_unary(
+        '/immudb.schema.ImmuService/ChangePassword',
+        request_serializer=schema__pb2.ChangePasswordRequest.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.UpdateAuthConfig = channel.unary_unary(
+        '/immudb.schema.ImmuService/UpdateAuthConfig',
+        request_serializer=schema__pb2.AuthConfig.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.UpdateMTLSConfig = channel.unary_unary(
+        '/immudb.schema.ImmuService/UpdateMTLSConfig',
+        request_serializer=schema__pb2.MTLSConfig.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.PrintTree = channel.unary_unary(
+        '/immudb.schema.ImmuService/PrintTree',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=schema__pb2.Tree.FromString,
+        )
+    self.Login = channel.unary_unary(
+        '/immudb.schema.ImmuService/Login',
+        request_serializer=schema__pb2.LoginRequest.SerializeToString,
+        response_deserializer=schema__pb2.LoginResponse.FromString,
+        )
+    self.Logout = channel.unary_unary(
+        '/immudb.schema.ImmuService/Logout',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.Set = channel.unary_unary(
         '/immudb.schema.ImmuService/Set',
         request_serializer=schema__pb2.KeyValue.SerializeToString,
@@ -110,6 +151,11 @@ class ImmuServiceStub(object):
         request_serializer=schema__pb2.Index.SerializeToString,
         response_deserializer=schema__pb2.Item.FromString,
         )
+    self.BySafeIndex = channel.unary_unary(
+        '/immudb.schema.ImmuService/BySafeIndex',
+        request_serializer=schema__pb2.SafeIndexOptions.SerializeToString,
+        response_deserializer=schema__pb2.SafeItem.FromString,
+        )
     self.ByIndexSV = channel.unary_unary(
         '/immudb.schema.ImmuService/ByIndexSV',
         request_serializer=schema__pb2.Index.SerializeToString,
@@ -130,11 +176,138 @@ class ImmuServiceStub(object):
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=schema__pb2.HealthResponse.FromString,
         )
+    self.Reference = channel.unary_unary(
+        '/immudb.schema.ImmuService/Reference',
+        request_serializer=schema__pb2.ReferenceOptions.SerializeToString,
+        response_deserializer=schema__pb2.Index.FromString,
+        )
+    self.SafeReference = channel.unary_unary(
+        '/immudb.schema.ImmuService/SafeReference',
+        request_serializer=schema__pb2.SafeReferenceOptions.SerializeToString,
+        response_deserializer=schema__pb2.Proof.FromString,
+        )
+    self.ZAdd = channel.unary_unary(
+        '/immudb.schema.ImmuService/ZAdd',
+        request_serializer=schema__pb2.ZAddOptions.SerializeToString,
+        response_deserializer=schema__pb2.Index.FromString,
+        )
+    self.ZScan = channel.unary_unary(
+        '/immudb.schema.ImmuService/ZScan',
+        request_serializer=schema__pb2.ZScanOptions.SerializeToString,
+        response_deserializer=schema__pb2.ItemList.FromString,
+        )
+    self.ZScanSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/ZScanSV',
+        request_serializer=schema__pb2.ZScanOptions.SerializeToString,
+        response_deserializer=schema__pb2.StructuredItemList.FromString,
+        )
+    self.SafeZAdd = channel.unary_unary(
+        '/immudb.schema.ImmuService/SafeZAdd',
+        request_serializer=schema__pb2.SafeZAddOptions.SerializeToString,
+        response_deserializer=schema__pb2.Proof.FromString,
+        )
+    self.IScan = channel.unary_unary(
+        '/immudb.schema.ImmuService/IScan',
+        request_serializer=schema__pb2.IScanOptions.SerializeToString,
+        response_deserializer=schema__pb2.Page.FromString,
+        )
+    self.IScanSV = channel.unary_unary(
+        '/immudb.schema.ImmuService/IScanSV',
+        request_serializer=schema__pb2.IScanOptions.SerializeToString,
+        response_deserializer=schema__pb2.SPage.FromString,
+        )
+    self.Dump = channel.unary_stream(
+        '/immudb.schema.ImmuService/Dump',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=schema__pb2.KVList.FromString,
+        )
+    self.CreateDatabase = channel.unary_unary(
+        '/immudb.schema.ImmuService/CreateDatabase',
+        request_serializer=schema__pb2.Database.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.UseDatabase = channel.unary_unary(
+        '/immudb.schema.ImmuService/UseDatabase',
+        request_serializer=schema__pb2.Database.SerializeToString,
+        response_deserializer=schema__pb2.UseDatabaseReply.FromString,
+        )
+    self.ChangePermission = channel.unary_unary(
+        '/immudb.schema.ImmuService/ChangePermission',
+        request_serializer=schema__pb2.ChangePermissionRequest.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetActiveUser = channel.unary_unary(
+        '/immudb.schema.ImmuService/SetActiveUser',
+        request_serializer=schema__pb2.SetActiveUserRequest.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.DatabaseList = channel.unary_unary(
+        '/immudb.schema.ImmuService/DatabaseList',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=schema__pb2.DatabaseListResponse.FromString,
+        )
 
 
 class ImmuServiceServicer(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """immudb gRPC
+  IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
+  """
+
+  def ListUsers(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def CreateUser(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ChangePassword(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def UpdateAuthConfig(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def UpdateMTLSConfig(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def PrintTree(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def Login(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def Logout(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
   def Set(self, request, context):
     # missing associated documentation comment in .proto file
@@ -269,6 +442,13 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def BySafeIndex(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def ByIndexSV(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -297,9 +477,149 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def Reference(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SafeReference(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ZAdd(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ZScan(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ZScanSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SafeZAdd(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def IScan(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def IScanSV(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def Dump(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def CreateDatabase(self, request, context):
+    """todo(joe-dz): Enable restore when the feature is required again
+    	rpc Restore(stream KVList) returns (ItemsCount) {}
+
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def UseDatabase(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ChangePermission(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetActiveUser(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def DatabaseList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_ImmuServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
+      'ListUsers': grpc.unary_unary_rpc_method_handler(
+          servicer.ListUsers,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=schema__pb2.UserList.SerializeToString,
+      ),
+      'CreateUser': grpc.unary_unary_rpc_method_handler(
+          servicer.CreateUser,
+          request_deserializer=schema__pb2.CreateUserRequest.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'ChangePassword': grpc.unary_unary_rpc_method_handler(
+          servicer.ChangePassword,
+          request_deserializer=schema__pb2.ChangePasswordRequest.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'UpdateAuthConfig': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdateAuthConfig,
+          request_deserializer=schema__pb2.AuthConfig.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'UpdateMTLSConfig': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdateMTLSConfig,
+          request_deserializer=schema__pb2.MTLSConfig.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'PrintTree': grpc.unary_unary_rpc_method_handler(
+          servicer.PrintTree,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=schema__pb2.Tree.SerializeToString,
+      ),
+      'Login': grpc.unary_unary_rpc_method_handler(
+          servicer.Login,
+          request_deserializer=schema__pb2.LoginRequest.FromString,
+          response_serializer=schema__pb2.LoginResponse.SerializeToString,
+      ),
+      'Logout': grpc.unary_unary_rpc_method_handler(
+          servicer.Logout,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
       'Set': grpc.unary_unary_rpc_method_handler(
           servicer.Set,
           request_deserializer=schema__pb2.KeyValue.FromString,
@@ -395,6 +715,11 @@ def add_ImmuServiceServicer_to_server(servicer, server):
           request_deserializer=schema__pb2.Index.FromString,
           response_serializer=schema__pb2.Item.SerializeToString,
       ),
+      'BySafeIndex': grpc.unary_unary_rpc_method_handler(
+          servicer.BySafeIndex,
+          request_deserializer=schema__pb2.SafeIndexOptions.FromString,
+          response_serializer=schema__pb2.SafeItem.SerializeToString,
+      ),
       'ByIndexSV': grpc.unary_unary_rpc_method_handler(
           servicer.ByIndexSV,
           request_deserializer=schema__pb2.Index.FromString,
@@ -414,6 +739,76 @@ def add_ImmuServiceServicer_to_server(servicer, server):
           servicer.Health,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=schema__pb2.HealthResponse.SerializeToString,
+      ),
+      'Reference': grpc.unary_unary_rpc_method_handler(
+          servicer.Reference,
+          request_deserializer=schema__pb2.ReferenceOptions.FromString,
+          response_serializer=schema__pb2.Index.SerializeToString,
+      ),
+      'SafeReference': grpc.unary_unary_rpc_method_handler(
+          servicer.SafeReference,
+          request_deserializer=schema__pb2.SafeReferenceOptions.FromString,
+          response_serializer=schema__pb2.Proof.SerializeToString,
+      ),
+      'ZAdd': grpc.unary_unary_rpc_method_handler(
+          servicer.ZAdd,
+          request_deserializer=schema__pb2.ZAddOptions.FromString,
+          response_serializer=schema__pb2.Index.SerializeToString,
+      ),
+      'ZScan': grpc.unary_unary_rpc_method_handler(
+          servicer.ZScan,
+          request_deserializer=schema__pb2.ZScanOptions.FromString,
+          response_serializer=schema__pb2.ItemList.SerializeToString,
+      ),
+      'ZScanSV': grpc.unary_unary_rpc_method_handler(
+          servicer.ZScanSV,
+          request_deserializer=schema__pb2.ZScanOptions.FromString,
+          response_serializer=schema__pb2.StructuredItemList.SerializeToString,
+      ),
+      'SafeZAdd': grpc.unary_unary_rpc_method_handler(
+          servicer.SafeZAdd,
+          request_deserializer=schema__pb2.SafeZAddOptions.FromString,
+          response_serializer=schema__pb2.Proof.SerializeToString,
+      ),
+      'IScan': grpc.unary_unary_rpc_method_handler(
+          servicer.IScan,
+          request_deserializer=schema__pb2.IScanOptions.FromString,
+          response_serializer=schema__pb2.Page.SerializeToString,
+      ),
+      'IScanSV': grpc.unary_unary_rpc_method_handler(
+          servicer.IScanSV,
+          request_deserializer=schema__pb2.IScanOptions.FromString,
+          response_serializer=schema__pb2.SPage.SerializeToString,
+      ),
+      'Dump': grpc.unary_stream_rpc_method_handler(
+          servicer.Dump,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=schema__pb2.KVList.SerializeToString,
+      ),
+      'CreateDatabase': grpc.unary_unary_rpc_method_handler(
+          servicer.CreateDatabase,
+          request_deserializer=schema__pb2.Database.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'UseDatabase': grpc.unary_unary_rpc_method_handler(
+          servicer.UseDatabase,
+          request_deserializer=schema__pb2.Database.FromString,
+          response_serializer=schema__pb2.UseDatabaseReply.SerializeToString,
+      ),
+      'ChangePermission': grpc.unary_unary_rpc_method_handler(
+          servicer.ChangePermission,
+          request_deserializer=schema__pb2.ChangePermissionRequest.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetActiveUser': grpc.unary_unary_rpc_method_handler(
+          servicer.SetActiveUser,
+          request_deserializer=schema__pb2.SetActiveUserRequest.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'DatabaseList': grpc.unary_unary_rpc_method_handler(
+          servicer.DatabaseList,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=schema__pb2.DatabaseListResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -15,9 +15,6 @@ GRPC_OUT_DIR := immu/service
 
 .PHONY: ${PROTO_DIR}
 ${PROTO_DIR}:
-	rm -rf ${PROTO_DIR}
-	mkdir -p ${PROTO_DIR} ${SCHEMA_OUT_DIR} ${GRPC_OUT_DIR}
-	curl --silent -Lo ${PROTO_FILE} ${PROTO_URL}
 	${PROTOC} -I ${PROTO_DIR} ${PROTO_FILE} \
 		--python_out=${SCHEMA_OUT_DIR} \
 		--grpc_out=${GRPC_OUT_DIR} \
