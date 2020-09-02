@@ -9,7 +9,6 @@ class ImmuClient:
     def __init__(self, immudUrl):
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
-        self.withAuthToken = True
 
     def login(self, username, password):
         #TODO: Maybe separate this
