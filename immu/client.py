@@ -3,21 +3,26 @@ from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
 from immu.handler import safeGet, safeSet
+from immu import header_manipulator_client_interceptor
 
 class ImmuClient:
     def __init__(self, immudUrl):
-        self.serverUrl = "localhost"
-        self.serverPort = "3322"
-        self.withAuthToken = True
+        if immudUrl is None:
+            immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
-        #rs = RootService(self.__stub)
-        #rs.init()
-        #self.__rs = rs
+        self.withAuthToken = True
 
     def login(self, username, password):
+        #TODO: Maybe separate this
         req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(username, encoding='utf-8'), password=bytes(password, encoding='utf-8'))
-        self.__stub.Login(req)
+        self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = self.__stub.Login(req)
+        header_interceptor = header_manipulator_client_interceptor.header_adder_interceptor('authorization', self.__login_response.token)
+        self.intercept_channel = grpc.intercept_channel(self.channel, header_interceptor)
+        self.__stub = schema_pb2_grpc.ImmuServiceStub(self.intercept_channel)
+        rs = RootService(self.__stub)
+        rs.init()
+        self.__rs = rs
 
     @property
     def stub(self):
