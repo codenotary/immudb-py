@@ -1,15 +1,30 @@
 #!/usr/bin/env python
 from immu.client import ImmuClient
-from immu.schema import schema_pb2
-from immu.service import schema_pb2_grpc
+#from immu.schema import schema_pb2
+#from immu.service import schema_pb2_grpc
+
 a = ImmuClient("localhost:3322")
 a.login("immudb","immudb")
-request2 = schema_pb2_grpc.schema__pb2.SafeSetOptions(kv={"key": b"wololo", "value": b"test"})
-request = schema_pb2_grpc.schema__pb2.SafeGetOptions(key=b"wololo")
-key = schema_pb2_grpc.schema__pb2.Key(key=b"wololo")
-request3 = schema_pb2_grpc.schema__pb2.KeyList(keys=[key])
-for _ in range(0, 10):
-    a.safeSet(request2)
-print(a.safeGet(request))
-batch_res = a.getAll(request3)
+
+a.safeSet(b"thisismykey",b"thisismyvalue")
+print(a.safeGet(b"thisismykey").value)
+
+#arr=[]
+#for i in range(0,100):
+    #k="key_{}".format(i).encode('utf8')
+    #v="value_{}".format(i).encode('utf8')
+    #a.safeSet(k,v)
+    #arr.append(k)
+#resp=a.getAll(arr)
+#print(resp)
+
+
+xset=[
+    {'key':b'gorilla', 'value':b'banana'},
+    {'key':b'zebra',   'value':b'grass'},
+    {'key':b'crab',    'value':b'coconut'}
+    ]
+print(a.setAll(xset))
+     
+
 

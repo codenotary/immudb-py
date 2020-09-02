@@ -26,7 +26,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
     
     rawRequest = schema_pb2.KVList(
         KVs = [_packValueTime(kv,currtime) for kv in request.KVs],
-        #rootIndex = index
     )
 
     idx = service.SetBatch(rawRequest)
