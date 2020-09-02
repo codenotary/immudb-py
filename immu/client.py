@@ -7,8 +7,6 @@ from immu import header_manipulator_client_interceptor
 
 class ImmuClient:
     def __init__(self, immudUrl):
-        if immudUrl is None:
-            immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
         self.withAuthToken = True
