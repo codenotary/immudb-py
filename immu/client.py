@@ -2,13 +2,16 @@ import grpc
 from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
-from immu.handler import safeGet, safeSet
+from immu.handler import safeGet, safeSet, batchGet
 from immu import header_manipulator_client_interceptor
 
 class ImmuClient:
     def __init__(self, immudUrl):
+        if immudUrl is None:
+            immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
+        self.withAuthToken = True
 
     def login(self, username, password):
         #TODO: Maybe separate this
@@ -33,3 +36,6 @@ class ImmuClient:
 
     def safeSet(self, request:  schema_pb2.SafeSetOptions):
         return safeSet.call(self.__stub, self.__rs, request)
+    
+    def getAll(self, request: schema_pb2.KeyList):
+        return batchGet.call(self.__stub, self.__rs, request)
