@@ -2,7 +2,7 @@ import grpc
 from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
-from immu.handler import safeGet, safeSet, batchGet, batchSet
+from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse
 from immu import header_manipulator_client_interceptor
 import base64
 
@@ -53,3 +53,10 @@ class ImmuClient:
             _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(key=k, value=v))
         request=schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
         return batchSet.call(self.__stub, self.__rs, request)
+    
+    def databaseList(self):
+        return databaseList.call(self.__stub, self.__rs, None)
+
+    def databaseUse(self, dbName: bytes):
+        request=schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
+        return databaseUse.call(self.__stub, self.__rs, request)

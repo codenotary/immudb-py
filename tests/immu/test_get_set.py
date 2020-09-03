@@ -35,7 +35,7 @@ class TestGetSet:
         res=a.getAll(xget)
         for i in res.itemlist.items:
             for j in filter(lambda z:z['key']==i.key, xset):
-                assert j['value']==i.value
+                assert j['value']==i.value.payload
 
 
 

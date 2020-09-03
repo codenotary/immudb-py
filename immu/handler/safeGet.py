@@ -1,4 +1,3 @@
-import struct
 from dataclasses import dataclass
 
 from immu.schema import schema_pb2

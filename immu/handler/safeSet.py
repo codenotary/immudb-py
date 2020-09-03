@@ -1,4 +1,3 @@
-import struct
 from time import time
 from dataclasses import dataclass
 
