@@ -19,12 +19,10 @@ class SafeSetResponse:
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.SafeSetOptions):
     root = rs.get()
-
     index = schema_pb2.Index(index = root.index)
-
     valueBytes = bytearray()
-    valueBytes.extend(struct.pack('>Q', int(time())*1000))
     valueBytes.extend(request.kv.value)
+    valueBytes.extend(struct.pack('>Q', int(time())*1000))
 
     rawRequest = schema_pb2.SafeSetOptions(
         kv = schema_pb2.KeyValue(
@@ -49,8 +47,8 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
 
         try:
             rs.set(toCache)
-        except:
-            raise
+        except Exception as e:
+            raise e
 
     return SafeSetResponse(
         index = msg.index,

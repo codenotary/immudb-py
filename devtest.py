@@ -6,8 +6,9 @@ from immu.client import ImmuClient
 a = ImmuClient("localhost:3322")
 a.login("immudb","immudb")
 
-a.safeSet(b"thisismykey",b"thisismyvalue")
-print(a.safeGet(b"thisismykey").value)
+b = a.safeSet(b"someotherkey",b"thisismyvalue")
+print(b)
+#print(a.safeGet(bytes("ah", encoding="utf-8")))
 
 #arr=[]
 #for i in range(0,100):
@@ -19,12 +20,13 @@ print(a.safeGet(b"thisismykey").value)
 #print(resp)
 
 
-xset=[
-    {'key':b'gorilla', 'value':b'banana'},
-    {'key':b'zebra',   'value':b'grass'},
-    {'key':b'crab',    'value':b'coconut'}
-    ]
-print(a.setAll(xset))
+#xset=[
+#    {'key':b'gorilla', 'value':b'banana'},
+#    {'key':b'zebra',   'value':b'grass'},
+#    {'key':b'crab',    'value':b'coconut'}
+#    ]
+#print(a.setAll(xset))
+#print(a.getAll(""))
      
 
 

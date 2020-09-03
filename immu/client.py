@@ -4,6 +4,7 @@ from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
 from immu.handler import safeGet, safeSet, batchGet, batchSet
 from immu import header_manipulator_client_interceptor
+import base64
 
 class ImmuClient:
     def __init__(self, immudUrl):
