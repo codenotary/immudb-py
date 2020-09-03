@@ -12,23 +12,21 @@ class batchSetResponse:
     index: schema_pb2.Index
 
 def _packValueTime(kv,tstamp):
-    valueBytes = bytearray()
-    valueBytes.extend(struct.pack('>Q', tstamp))
-    valueBytes.extend(kv.value)
-    kv.value=bytes(valueBytes)
-    return kv
+    content=schema_pb2.Content(timestamp=tstamp, payload=kv.value)
+    skv=schema_pb2.StructuredKeyValue(key=kv.key, value=content)
+    return skv
     
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KVList):
     root = rs.get()
     index = schema_pb2.Index(index = root.index)
 
-    currtime=int(time()*1000)
+    currtime=int(time())
     
-    rawRequest = schema_pb2.KVList(
-        KVs = [_packValueTime(kv,currtime) for kv in request.KVs],
+    rawRequest = schema_pb2.SKVList(
+        SKVs = [_packValueTime(kv,currtime) for kv in request.KVs],
     )
 
-    idx = service.SetBatch(rawRequest)
+    idx = service.SetBatchSV(rawRequest)
     return batchSetResponse(
         index = idx
     )

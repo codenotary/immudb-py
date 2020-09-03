@@ -18,9 +18,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         keys = request.keys
     )
 
-    msg = service.GetBatch(rawRequest)
-    for k in msg.items:
-        k.value=k.value[8:]
+    msg = service.GetBatchSV(rawRequest)
     return batchGetResponse(
         itemlist = msg
         #keylist = msg.KeyList,
