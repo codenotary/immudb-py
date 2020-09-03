@@ -7,13 +7,13 @@ from immu import constants, proofs, item
 from google.protobuf.empty_pb2 import Empty
 
 @dataclass
-class dbUseResponse:
-    reply: schema_pb2.UseDatabaseReply
-
+class dbCreateResponse:
+    reply: Empty
+    
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.Database): 
     root = rs.get()
     
-    msg = service.UseDatabase(request)
-    return dbUseResponse(
+    msg = service.CreateDatabase(request)
+    return dbCreateResponse(
        reply = msg
     )

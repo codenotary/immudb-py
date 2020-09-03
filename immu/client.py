@@ -2,7 +2,7 @@ import grpc
 from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
-from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse, databaseCreate
+from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse, databaseCreate, get, setValue
 from immu import header_manipulator_client_interceptor
 import base64
 
@@ -22,7 +22,7 @@ class ImmuClient:
         header_interceptor = header_manipulator_client_interceptor.header_adder_interceptor('authorization', self.__login_response.token)
         self.intercept_channel = grpc.intercept_channel(self.channel, header_interceptor)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.intercept_channel)
-        print(databaseUse.call(self.__stub, schema_pb2_grpc.schema__pb2.Database(databasename=database)))
+        
         rs = RootService(self.__stub)
         rs.init()
         self.__rs = rs
@@ -33,6 +33,14 @@ class ImmuClient:
 
     def shutdown(self):
         self.__channel.close()
+    
+    def get(self, key: bytes):
+        request=schema_pb2_grpc.schema__pb2.Key(key=key)
+        return get.call(self.__stub, self.__rs, request)
+
+    def setValue(self, key: bytes, value: bytes): 
+        request=schema_pb2_grpc.schema__pb2.KeyValue(key=key, value=value)
+        return setValue.call(self.__stub, self.__rs, request)
 
     def safeGet(self, key: bytes): 
         request=schema_pb2_grpc.schema__pb2.SafeGetOptions(key=key)
@@ -61,8 +69,7 @@ class ImmuClient:
 
     def databaseUse(self, dbName: bytes):
         request=schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
-        #return databaseUse.call(self.__stub, self.__rs, request)
-        return databaseUse.call(self.__stub, request)
+        return databaseUse.call(self.__stub, self.__rs, request)
 
     def databaseCreate(self, dbName: bytes):
         request=schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
