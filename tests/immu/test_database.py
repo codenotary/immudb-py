@@ -13,6 +13,6 @@ class TestDatabase:
             pytest.skip("Cannot reach immudb server")
         resp=a.databaseList()
         assert resp.dblist.databases[0].databasename=="defaultdb"
-        resp=a.databaseUse("defaultdb")
+        resp=a.databaseUse(b"defaultdb")
         assert type(resp.reply.token)==str
 
