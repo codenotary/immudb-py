@@ -20,21 +20,18 @@ class SafeSetResponse:
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.SafeSetOptions):
     root = rs.get()
     index = schema_pb2.Index(index = root.index)
-    valueBytes = bytearray()
-    valueBytes.extend(request.kv.value)
-    valueBytes.extend(struct.pack('>Q', int(time())*1000))
 
-    rawRequest = schema_pb2.SafeSetOptions(
-        kv = schema_pb2.KeyValue(
-            key = request.kv.key, 
-            value = bytes(valueBytes)
-        ),
-        rootIndex = index
-    )
-
-    msg = service.SafeSet(rawRequest)
-
-    if bytes(msg.leaf) != item.digest(msg.index, rawRequest.kv.key, rawRequest.kv.value):
+    content=schema_pb2.Content(
+        timestamp=int(time()),
+        payload=request.kv.value
+        )
+    
+    skv=schema_pb2.StructuredKeyValue(key=request.kv.key, value=content)
+    rawRequest=schema_pb2.SafeSetSVOptions( skv=skv, rootIndex=index)
+    
+    msg = service.SafeSetSV(rawRequest)
+    digest=item.digest(msg.index, rawRequest.skv.key, rawRequest.skv.value.SerializeToString())
+    if bytes(msg.leaf) != digest:
         raise Exception("Proof does not match the given item.")
 
     verified = proofs.verify(msg, bytes(msg.leaf), root)
