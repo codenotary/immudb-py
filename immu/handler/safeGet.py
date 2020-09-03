@@ -24,8 +24,12 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         rootIndex = index
     )
 
-    msg = service.SafeGet(rawRequest)
-    verified = proofs.verify(msg.proof, item.digest(msg.item.index, msg.item.key, msg.item.value), root)
+    msg = service.SafeGetSV(rawRequest)
+    verified = proofs.verify(
+        msg.proof, 
+        item.digest(msg.item.index, msg.item.key, msg.item.value.SerializeToString()),
+        root
+        )
 
     if verified:
         toCache = schema_pb2.Root(
@@ -39,11 +43,10 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
             raise
 
     i = msg.item
-
     return SafeGetResponse(
         index = i.index,
         key = i.key,
-        value = i.value[8:].decode("utf-8"),
-        timestamp = struct.unpack(">Q", i.value[:8])[0],
+        timestamp = i.value.timestamp,
+        value = i.value.payload.decode("utf-8"),
         verified = verified
     )
