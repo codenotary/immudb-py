@@ -5,17 +5,17 @@ from immu.client import ImmuClient
 
 a = ImmuClient("localhost:3322")
 a.login("immudb","immudb")
-print(a.databaseUse(b"defaultdb"))
-
-print("List:")
+#print(a.databaseUse(b"defaultdb"))
+print(a.databaseCreate(b"testdb"))
 print(a.databaseList())
-print("Use:")
-print(a.databaseUse(b"defaultdb"))
-# print(a.databaseCreate(b"testdb"))
+#print("Use:")
+#print(a.databaseUse(b"defaultdb"))
 
-b = a.safeSet(b"pythonkey",b"thisismyvalue")
-print(b)
-print(a.safeGet(bytes("pythonkey", encoding="utf-8")))
+#print(a.databaseUse(b"testdb"))
+
+#b = a.safeSet(b"pythonkey",b"thisismyvalue")
+#print(b)
+#print(a.safeGet(bytes("pythonkey", encoding="utf-8")))
 
 #arr=[]
 #for i in range(0,100):

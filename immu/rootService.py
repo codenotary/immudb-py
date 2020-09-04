@@ -20,10 +20,10 @@ class RootService:
         self.__cache = RootCache()
         self.__service = service
 
-    def init(self):
+    def init(self):    
         root = self.__service.CurrentRoot(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__cache.write(root)
-
+     
     def get(self) -> schema_pb2.Root:
         try:
             return self.__cache.read()

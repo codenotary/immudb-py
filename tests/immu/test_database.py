@@ -4,7 +4,7 @@ from random import randint
 import grpc._channel
 
 class TestDatabase:
-        
+
     def test_list_use(self):
         try:
             a = ImmuClient("localhost:3322")
