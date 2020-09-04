@@ -5,8 +5,6 @@ from immu.rootService import RootService
 from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse, databaseCreate, get, setValue, currentRoot
 from immu import header_manipulator_client_interceptor
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-import base64
-
 
 class ImmuClient:
     def __init__(self, immudUrl):
@@ -107,3 +105,7 @@ class ImmuClient:
 
     def currentRoot(self):
         return currentRoot.call(self.__stub, self.__rs, None)
+
+    def logout(self):
+        self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
+        self.__login_response = None
