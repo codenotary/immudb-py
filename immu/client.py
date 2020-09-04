@@ -2,7 +2,7 @@ import grpc
 from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
-from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse, databaseCreate, get, setValue
+from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse, databaseCreate, get, setValue, currentRoot
 from immu import header_manipulator_client_interceptor
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 import base64
@@ -22,6 +22,12 @@ class ImmuClient:
         self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = self.__stub.Login(
             req)
         self.__stub = self.set_token_header_interceptor(self.__login_response)
+        
+        # Select database, modifying stub function accordingly
+        request=schema_pb2_grpc.schema__pb2.Database(databasename=database)
+        resp=self.__stub.UseDatabase(request)
+        self.__stub = self.set_token_header_interceptor(resp)
+        
         self.init()
         return self.__login_response
 
@@ -36,7 +42,7 @@ class ImmuClient:
         except AttributeError:
             token = response.reply.token
         self.header_interceptor = header_manipulator_client_interceptor.header_adder_interceptor(
-            'authorization', token)
+            'authorization', "Bearer "+token)
         self.intercept_channel = grpc.intercept_channel(
             self.channel, self.header_interceptor)
         return schema_pb2_grpc.ImmuServiceStub(self.intercept_channel)
@@ -84,9 +90,16 @@ class ImmuClient:
 
     def databaseUse(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
-        self.set_token_header_interceptor(
-            databaseUse.call(self.__stub, self.__rs, request))
+        resp=databaseUse.call(self.__stub, self.__rs, request)
+        # modify header token accordingly
+        self.__stub = self.set_token_header_interceptor(resp)
+        self.__rs = RootService(self.__stub)
+        self.__rs.init()
+        return resp
 
     def databaseCreate(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
         return databaseCreate.call(self.__stub, self.__rs, request)
+
+    def currentRoot(self):
+        return currentRoot.call(self.__stub, self.__rs, None)
