@@ -8,8 +8,8 @@ a.login("immudb","immudb")
 #print(a.databaseUse(b"defaultdb"))
 print(a.databaseCreate(b"testdb"))
 print(a.databaseList())
-#print("Use:")
-#print(a.databaseUse(b"defaultdb"))
+print("Use:")
+print(a.databaseUse(b"defaultdb"))
 
 #print(a.databaseUse(b"testdb"))
 
