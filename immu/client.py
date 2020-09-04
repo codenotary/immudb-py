@@ -76,7 +76,7 @@ class ImmuClient:
 
     def databaseUse(self, dbName: bytes):
         request=schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
-        self.init(databaseUse.call(self.__stub, self.__rs, request))
+        self.set_token_header_interceptor(databaseUse.call(self.__stub, self.__rs, request))
 
     def databaseCreate(self, dbName: bytes):
         request=schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
