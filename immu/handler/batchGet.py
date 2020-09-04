@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
 from immu.rootService import RootService
-from immu import constants, proofs, item
 
 @dataclass
 class batchGetResponse:
@@ -11,8 +10,6 @@ class batchGetResponse:
     itemlist: schema_pb2.ItemList
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KeyList):
-    root = rs.get()
-
     rawRequest = schema_pb2.KeyList(
         keys = request.keys
     )

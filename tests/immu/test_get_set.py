@@ -25,17 +25,25 @@ class TestGetSet:
             a.login("immudb","immudb")
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
-        xset=[
-            {'key':b'gorilla', 'value':b'banana'},
-            {'key':b'zebra',   'value':b'grass'},
-            {'key':b'lion',    'value':b'zebra'}
-            ]
+        xset={
+            b'gorilla': b'banana',
+            b'zebra':   b'grass',
+            b'lion':    b'zebra'
+            }
         assert type(a.setAll(xset))!=int
-        xget=[x['key'] for x in xset]
-        res=a.getAll(xget)
-        for i in res.itemlist.items:
-            for j in filter(lambda z:z['key']==i.key, xset):
-                assert j['value']==i.value.payload
+        # test getAll
+        resp=a.getAll(xset.keys())
+        for i in resp.keys():
+            assert i in xset
+            assert xset[i]==resp[i]
+        for i in xset.keys():
+            assert i in resp
+            assert xset[i]==resp[i]
+        # test getAllItems
+        resp=a.getAllItems(xset.keys())
+        for i in resp.itemlist.items:
+            assert i.key in xset
+            assert xset[i.key]==i.value.payload
 
 
 

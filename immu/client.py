@@ -71,17 +71,21 @@ class ImmuClient:
             kv={"key": key, "value": value})
         return safeSet.call(self.__stub, self.__rs, request)
 
-    def getAll(self, keys: list):
+    def getAllItems(self, keys: list):
         klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
         request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
         return batchGet.call(self.__stub, self.__rs, request)
 
-    def setAll(self, kv_list: list):
+    def getAll(self, keys: list):
+        klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
+        request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
+        resp=batchGet.call(self.__stub, self.__rs, request)
+        return {i.key:i.value.payload for i in resp.itemlist.items}
+
+    def setAll(self, kv: dict):
         _KVs = []
-        for i in kv_list:
-            k = i['key']
-            v = i['value']
-            _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(key=k, value=v))
+        for i in kv.keys():
+            _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(key=i, value=kv[i]))
         request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
         return batchSet.call(self.__stub, self.__rs, request)
 
