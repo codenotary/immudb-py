@@ -1,8 +1,8 @@
 import hashlib
 import struct
 
-from immu.schema import schema_pb2
 from immu import constants
+
 
 def digest(index: int, key: bytes, value: bytes) -> bytes:
     c = bytearray()
