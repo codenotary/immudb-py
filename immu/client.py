@@ -10,7 +10,7 @@ from immu.service import schema_pb2_grpc
 
 
 class ImmuClient:
-    def __init__(self, immudUrl):
+    def __init__(self, immudUrl=None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
@@ -22,12 +22,15 @@ class ImmuClient:
             username, encoding='utf-8'), password=bytes(
                 password, encoding='utf-8'
                 ))
-        self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
-            self.__stub.Login(
-                req
-            )
+        try:
+            self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
+                self.__stub.Login(
+                    req
+                )
+        except ValueError as e:
+            raise Exception("Attempted to login on termninated client, channel has been shutdown") from e
+            
         self.__stub = self.set_token_header_interceptor(self.__login_response)
-
         # Select database, modifying stub function accordingly
         request = schema_pb2_grpc.schema__pb2.Database(databasename=database)
         resp = self.__stub.UseDatabase(request)
@@ -41,6 +44,12 @@ class ImmuClient:
         rs.init()
         self.__rs = rs
 
+    def shutdown(self):
+        self.channel.close()
+        self.channel = None
+        self.intercept_channel.close
+        self.intercept_channel = None
+
     def set_token_header_interceptor(self, response):
         try:
             token = response.token
@@ -50,22 +59,22 @@ class ImmuClient:
             header_manipulator_client_interceptor.header_adder_interceptor(
                 'authorization', "Bearer "+token
             )
-        self.intercept_channel = grpc.intercept_channel(
-            self.channel, self.header_interceptor)
+        try:
+            self.intercept_channel = grpc.intercept_channel(
+                self.channel, self.header_interceptor)
+        except ValueError as e:
+            raise Exception("Attempted to login on termninated client, channel has been shutdown") from e
         return schema_pb2_grpc.ImmuServiceStub(self.intercept_channel)
 
     @property
     def stub(self):
         return self.__stub
 
-    def shutdown(self):
-        self.__channel.close()
-
     def get(self, key: bytes):
         request = schema_pb2_grpc.schema__pb2.Key(key=key)
         return get.call(self.__stub, self.__rs, request)
 
-    def setValue(self, key: bytes, value: bytes):
+    def set(self, key: bytes, value: bytes):
         request = schema_pb2_grpc.schema__pb2.KeyValue(key=key, value=value)
         return setValue.call(self.__stub, self.__rs, request)
 
