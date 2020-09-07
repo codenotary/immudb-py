@@ -10,7 +10,7 @@ setup(name='immu-py',
       packages=['immu', 'immu.handler', 'immu.service', 'immu.schema'],
       install_requires=[
         'grpcio>=1.26.0',
-        'dataclasses>=0.7',
+        'dataclasses>=0.6',
         'grpc>=1.0.0',
         'protobuf>=3.13.0'
         ])
