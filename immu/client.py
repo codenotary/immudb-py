@@ -1,10 +1,13 @@
 import grpc
-from immu.schema import schema_pb2
-from immu.service import schema_pb2_grpc
-from immu.rootService import RootService
-from immu.handler import safeGet, safeSet, batchGet, batchSet, databaseList, databaseUse, databaseCreate, get, setValue, currentRoot
-from immu import header_manipulator_client_interceptor
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+
+from immu import header_manipulator_client_interceptor
+from immu.handler import (batchGet, batchSet, currentRoot, databaseCreate,
+                          databaseList, databaseUse, get, safeGet, safeSet,
+                          setValue)
+from immu.rootService import RootService
+from immu.service import schema_pb2_grpc
+
 
 class ImmuClient:
     def __init__(self, immudUrl):
@@ -16,16 +19,20 @@ class ImmuClient:
 
     def login(self, username, password, database=b"defaultdb"):
         req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(
-            username, encoding='utf-8'), password=bytes(password, encoding='utf-8'))
-        self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = self.__stub.Login(
-            req)
+            username, encoding='utf-8'), password=bytes(
+                password, encoding='utf-8'
+                ))
+        self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
+            self.__stub.Login(
+                req
+            )
         self.__stub = self.set_token_header_interceptor(self.__login_response)
-        
+
         # Select database, modifying stub function accordingly
-        request=schema_pb2_grpc.schema__pb2.Database(databasename=database)
-        resp=self.__stub.UseDatabase(request)
+        request = schema_pb2_grpc.schema__pb2.Database(databasename=database)
+        resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
-        
+
         self.init()
         return self.__login_response
 
@@ -39,8 +46,10 @@ class ImmuClient:
             token = response.token
         except AttributeError:
             token = response.reply.token
-        self.header_interceptor = header_manipulator_client_interceptor.header_adder_interceptor(
-            'authorization', "Bearer "+token)
+        self.header_interceptor = \
+            header_manipulator_client_interceptor.header_adder_interceptor(
+                'authorization', "Bearer "+token
+            )
         self.intercept_channel = grpc.intercept_channel(
             self.channel, self.header_interceptor)
         return schema_pb2_grpc.ImmuServiceStub(self.intercept_channel)
@@ -77,13 +86,14 @@ class ImmuClient:
     def getAll(self, keys: list):
         klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
         request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
-        resp=batchGet.call(self.__stub, self.__rs, request)
-        return {i.key:i.value.payload for i in resp.itemlist.items}
+        resp = batchGet.call(self.__stub, self.__rs, request)
+        return {i.key: i.value.payload for i in resp.itemlist.items}
 
     def setAll(self, kv: dict):
         _KVs = []
         for i in kv.keys():
-            _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(key=i, value=kv[i]))
+            _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(
+                key=i, value=kv[i]))
         request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
         return batchSet.call(self.__stub, self.__rs, request)
 
@@ -92,7 +102,7 @@ class ImmuClient:
 
     def databaseUse(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
-        resp=databaseUse.call(self.__stub, self.__rs, request)
+        resp = databaseUse.call(self.__stub, self.__rs, request)
         # modify header token accordingly
         self.__stub = self.set_token_header_interceptor(resp)
         self.__rs = RootService(self.__stub)

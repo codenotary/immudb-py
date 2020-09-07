@@ -1,6 +1,6 @@
 from immu import consistency, inclusion
-from immu.schema import schema_pb2
 from copy import deepcopy
+
 
 def verify(proof, leaf, prevRoot) -> bool:
     if bytes(proof.leaf) != leaf:

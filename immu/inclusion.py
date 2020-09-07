@@ -3,6 +3,7 @@ import hashlib
 from immu.schema import schema_pb2
 from immu import constants
 
+
 def path_verify(path:list, at:int, i:int, root:bytes, leaf:bytes) -> bool:
     if i > at or (at > 0 and len(path) == 0):
         return False
@@ -21,18 +22,15 @@ def path_verify(path:list, at:int, i:int, root:bytes, leaf:bytes) -> bool:
         i = i // 2
         at = at // 2
     return at == i and h == root
-        
-        
-
 
 
 def verify(inclusionProof: schema_pb2.InclusionProof, index: int, leaf: bytes) -> bool:
     if inclusionProof.index != index or bytes(inclusionProof.leaf) != leaf:
         return False
     return path_verify(
-        path=inclusionProof.path, 
-        at=inclusionProof.at, 
-        i=inclusionProof.index, 
-        root=bytes(inclusionProof.root), 
+        path=inclusionProof.path,
+        at=inclusionProof.at,
+        i=inclusionProof.index,
+        root=bytes(inclusionProof.root),
         leaf=leaf
         )

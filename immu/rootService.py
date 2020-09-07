@@ -1,4 +1,3 @@
-import json
 from immu import constants
 from immu.schema import schema_pb2
 from immu.service import schema_pb2_grpc
@@ -29,7 +28,8 @@ class RootService:
     def get(self) -> schema_pb2.Root:
         try:
             return self.__cache.read()
-        except:
+        except Exception as e:
+            print(e)
             root = self.__service.CurrentRoot(
                 google_dot_protobuf_dot_empty__pb2.Empty())
             self.__cache.write(root)
