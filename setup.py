@@ -11,6 +11,5 @@ setup(name='immu-py',
       install_requires=[
         'grpcio>=1.26.0',
         'dataclasses>=0.6',
-        'grpc>=1.0.0',
         'protobuf>=3.13.0'
         ])
