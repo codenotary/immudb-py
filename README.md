@@ -45,7 +45,7 @@ Install the package using pip:
  Then import the client as follows:
 
 ```python
-    from immu.client import ImmuClient
+    from immudb.client import ImmuClient
 ```
 
 Note: immu-py is currently hosted in [Github Packages].
