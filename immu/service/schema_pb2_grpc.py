@@ -6,6 +6,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 #import schema_pb2 as schema__pb2
 from immu.schema import schema_pb2 as schema__pb2
 
+
 class ImmuServiceStub(object):
     """immudb gRPC
     IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
