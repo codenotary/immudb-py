@@ -13,6 +13,7 @@ addons:
             - unzip
 
 stage:
+    - getgo
     - immudbbuild
     - pythontest
     
@@ -21,13 +22,19 @@ install:
 
 jobs:
     include:
+        - stage: getgo
+          name: "GetGo"
+          script:
+            - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
+            - tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
+            
         - stage: immudbbuild
           name: "ImmuDBBuild"
           script:
-            - wget  https://github.com/codenotary/immudb/archive/master.zip
+            - wget https://github.com/codenotary/immudb/archive/master.zip
             - unzip master.zip
-            - make -C immudb-master
-            - immudb-master/immudb &
+            - PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
+            - immudb-master/immudb -d
           
         - stage: pythontest
           name: "PythonTest"
