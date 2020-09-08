@@ -5,8 +5,6 @@ python:
 
 addons:
     apt:
-        sources:
-            - golang: "ppa:longsleep/golang-backports"
         packages:
             - golang-go
             - wget
@@ -26,14 +24,14 @@ jobs:
           name: "GetGo"
           script:
             - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
-            - tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
-            
+            - tar -xzf go1.15.1.linux-amd64.tar.gz
+            - echo "Current directory: `pwd`"
         - stage: immudbbuild
           name: "ImmuDBBuild"
           script:
             - wget https://github.com/codenotary/immudb/archive/master.zip
             - unzip master.zip
-            - PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
+            - PATH=`pwd`/go/bin/:$PATH make -C immudb-master
             - immudb-master/immudb -d
           
         - stage: pythontest
