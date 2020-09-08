@@ -2,8 +2,35 @@ dist: bionic
 language: python
 python: 
     - 3.8
+
+addons:
+    apt:
+        sources:
+            - golang: "ppa:longsleep/golang-backports"
+        packages:
+            - golang-go
+            - wget
+            - unzip
+
+stage:
+    - immudbbuild
+    - pythontest
+    
 install:
     - pip install -r requirements.txt
-scripts:
-    - pytest
+
+jobs:
+    include:
+        - stage: immudbbuild
+          name: "ImmuDBBuild"
+          script:
+            - wget  https://github.com/codenotary/immudb/archive/master.zip
+            - unzip master.zip
+            - make -C immudb-master
+            - immudb-master/immudb &
+          
+        - stage: pythontest
+          name: "PythonTest"
+          script: pytest
+
     
