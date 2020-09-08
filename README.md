@@ -45,7 +45,7 @@ Install the package using pip:
  Then import the client as follows:
 
 ```python
-    from immudb.client import ImmuClient
+    from immudb.client import ImmudbClient
 ```
 
 Note: immu-py is currently hosted in [Github Packages].
@@ -71,15 +71,15 @@ The following code snippets shows how to create a client.
 Using default configuration:
 
 ```python
-    client = ImmuClient()
+    client = ImmudbClient()
 ```
 
 Setting `immudb` url and port:
 
 ```python
 
-    client = ImmuClient("mycustomurl:someport")
-    client = ImmuClient("10.105.20.32:8899")
+    client = ImmudbClient("mycustomurl:someport")
+    client = ImmudbClient("10.105.20.32:8899")
 ```
 
 ### User sessions
