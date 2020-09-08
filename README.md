@@ -39,7 +39,7 @@ following link for downloading and running it: https://immudb.io/docs/quickstart
 Install the package using pip:
 
 ```shell
-    pip install git+https://github.com/codenotary/immu-py.git#egg=immu
+    pip install git+https://github.com/codenotary/immu-py.git
 ```
 
  Then import the client as follows:
