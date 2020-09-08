@@ -9,14 +9,8 @@ addons:
             - wget
             - unzip
 
-stage:
-    - getgo
-    - immudbbuild
-    - pythontest
-    
 install:
     - pip install -r requirements.txt
-
     
 before_script:
     - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
