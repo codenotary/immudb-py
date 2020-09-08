@@ -9,7 +9,7 @@ from immudb.rootService import RootService
 from immudb.service import schema_pb2_grpc
 
 
-class ImmuClient:
+class ImmudbClient:
     def __init__(self, immudUrl=None):
         if immudUrl is None:
             immudUrl = "localhost:3322"

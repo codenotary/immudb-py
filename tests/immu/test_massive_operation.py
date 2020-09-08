@@ -1,5 +1,5 @@
 import pytest
-from immudb.client import ImmuClient
+from immudb.client import ImmudbClient
 import string,random
 import grpc._channel
 
@@ -11,7 +11,7 @@ def get_random_string(length):
 class TestGetSet:
     def test_get_set_massive(self):
         try:
-            a = ImmuClient("localhost:3322")
+            a = ImmudbClient("localhost:3322")
             a.login("immudb","immudb")
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")

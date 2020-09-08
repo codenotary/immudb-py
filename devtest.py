@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from immudb.client import ImmuClient
+from immudb.client import ImmudbClient
 
-a = ImmuClient()
+a = ImmudbClient()
 a.login("immudb","immudb")
 print(a.databaseUse(b"defaultdb"))
 #print(a.databaseCreate(b"testdb"))

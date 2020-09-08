@@ -1,5 +1,5 @@
 import pytest
-from immudb.client import ImmuClient
+from immudb.client import ImmudbClient
 from random import randint
 import grpc._channel
 import google.protobuf.empty_pb2
@@ -8,7 +8,7 @@ class TestDatabase:
 
     def test_list_use(self):
         try:
-            a = ImmuClient("localhost:3322")
+            a = ImmudbClient("localhost:3322")
             a.login("immudb","immudb")
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
