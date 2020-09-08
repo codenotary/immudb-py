@@ -17,24 +17,15 @@ stage:
 install:
     - pip install -r requirements.txt
 
-jobs:
-    include:
-        - stage: getgo
-          name: "GetGo"
-          script:
-            - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
-            - sudo tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
-            
-        - stage: immudbbuild
-          name: "ImmuDBBuild"
-          script:
-            - wget https://github.com/codenotary/immudb/archive/master.zip
-            - unzip master.zip
-            - PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
-            - immudb-master/immudb -d
-          
-        - stage: pythontest
-          name: "PythonTest"
-          script: pytest
+    
+before_script:
+    - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
+    - sudo tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
+    - wget https://github.com/codenotary/immudb/archive/master.zip
+    - unzip master.zip
+    - PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
+    - immudb-master/immudb -d
+
+scripts: pytest
 
     
