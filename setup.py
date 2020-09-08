@@ -12,6 +12,6 @@ setup(name='immu-py',
         'grpcio>=1.26.0',
         'dataclasses>=0.6',
         'protobuf>=3.13.0',
-        'google-api>=0.1.120',
+        'google-api>=0.1.12',
         'google-api-core>=1.22.0'
         ])
