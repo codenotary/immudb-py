@@ -135,7 +135,7 @@ read or write operation:
 ```python
     try:
         client.safeSet(b"k123", new byte[]{1, 2, 3});
-        byte[] v = client.safeGet(b"k123");
+        results = client.safeGet(b"k123");
     Except VerificationException as e:
         # Do something
 ```
