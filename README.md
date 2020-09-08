@@ -92,13 +92,17 @@ Use `login` and `logout` methods to initiate and terminate user sessions:
 
     client.logout();
 ```
+### Encoding
+
+Please note that, in order to provide maximum flexibility, all functions accept byte arrays as parameters. Therefore, unicode strings must be properly encoded.
+It is possible to store structured objects, but they must be serialized (e.g., with pickle or json).
 
 ### Creating a database
 
 Creating a new database is quite simple:
 
 ```python
-    client.createDatabase("db1");
+    client.createDatabase(b"db1");
 ```
 
 ### Setting the active database
@@ -106,8 +110,9 @@ Creating a new database is quite simple:
 Specify the active database with:
 
 ```python
-    client.useDatabase("db1");
+    client.useDatabase(b"db1");
 ```
+If not specified, the default databased used is "defaultdb".
 
 ### Traditional read and write
 
@@ -128,8 +133,8 @@ read or write operation:
 
 ```python
     try:
-        client.safeSet("k123", new byte[]{1, 2, 3});
-        byte[] v = client.safeGet("k123");
+        client.safeSet(b"k123", new byte[]{1, 2, 3});
+        byte[] v = client.safeGet(b"k123");
     Except VerificationException as e:
         # Do something
 ```
@@ -150,7 +155,7 @@ Atomic multi-key read (all entries are retrieved or none):
     normal_dictionary = {b"key1": b"value1", b"key2": b"value2"}
     results_dictionary = client.getAll(normal_dictionary.keys())
     # Or manually
-    client.get(["key1", "key2"])
+    client.get([b"key1", b"key2"])
 ```
 
 ### Closing the client
