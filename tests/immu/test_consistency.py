@@ -1,7 +1,7 @@
 import pytest
 
-from immu import consistency
-from immu.schema import schema_pb2
+from immudb import consistency
+from immudb.schema import schema_pb2
 
 class TestConsistency:
     def test_verify_path(self):

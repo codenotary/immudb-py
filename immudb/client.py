@@ -1,12 +1,12 @@
 import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
-from immu import header_manipulator_client_interceptor
-from immu.handler import (batchGet, batchSet, currentRoot, databaseCreate,
+from immudb import header_manipulator_client_interceptor
+from immudb.handler import (batchGet, batchSet, currentRoot, databaseCreate,
                           databaseList, databaseUse, get, safeGet, safeSet,
                           setValue)
-from immu.rootService import RootService
-from immu.service import schema_pb2_grpc
+from immudb.rootService import RootService
+from immudb.service import schema_pb2_grpc
 
 
 class ImmuClient:

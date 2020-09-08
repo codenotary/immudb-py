@@ -1,4 +1,4 @@
-from immu import consistency, inclusion
+from immudb import consistency, inclusion
 from copy import deepcopy
 
 

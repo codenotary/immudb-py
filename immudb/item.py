@@ -1,7 +1,7 @@
 import hashlib
 import struct
 
-from immu import constants
+from immudb import constants
 
 
 def digest(index: int, key: bytes, value: bytes) -> bytes:

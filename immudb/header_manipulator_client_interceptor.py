@@ -16,7 +16,7 @@
 import collections
 
 import grpc
-import immu.generic_client_interceptor as generic_client_interceptor
+import immudb.generic_client_interceptor as generic_client_interceptor
 
 
 class _ClientCallDetails(

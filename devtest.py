@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-from immu.client import ImmuClient
-from immu.schema import schema_pb2
-from immu.service import schema_pb2_grpc
+from immudb.client import ImmuClient
 
 a = ImmuClient()
 a.login("immudb","immudb")

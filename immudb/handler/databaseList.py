@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from immu.schema import schema_pb2
-from immu.service import schema_pb2_grpc
-from immu.rootService import RootService
+from immudb.schema import schema_pb2
+from immudb.service import schema_pb2_grpc
+from immudb.rootService import RootService
 from google.protobuf.empty_pb2 import Empty
 
 @dataclass

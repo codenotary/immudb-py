@@ -1,5 +1,5 @@
 import pytest
-from immu.client import ImmuClient
+from immudb.client import ImmuClient
 from random import randint
 import grpc._channel
 

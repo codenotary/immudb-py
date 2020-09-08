@@ -1,7 +1,7 @@
 import hashlib
 
-from immu.schema import schema_pb2
-from immu import constants
+from immudb.schema import schema_pb2
+from immudb import constants
 
 
 def path_verify(path:list, at:int, i:int, root:bytes, leaf:bytes) -> bool:
