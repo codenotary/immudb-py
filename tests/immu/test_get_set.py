@@ -14,10 +14,11 @@ class TestGetSet:
         key="test_key_{:04d}".format(randint(0,10000))
         value="test_value_{:04d}".format(randint(0,10000))
 
-        a.safeSet(key.encode('utf8'),value.encode('utf8'))
-        readback=a.safeGet(key.encode('utf8')).value
-
-        assert value==readback
+        resp=a.safeSet(key.encode('utf8'),value.encode('utf8'))
+        assert resp.verified==True
+        readback=a.safeGet(key.encode('utf8'))
+        assert readback.verified==True
+        assert value==readback.value
 
     def test_get_set_batch(self):
         try:
