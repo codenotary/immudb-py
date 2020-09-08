@@ -23,14 +23,14 @@ jobs:
           name: "GetGo"
           script:
             - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
-            - tar -xzf go1.15.1.linux-amd64.tar.gz
-            - echo "Current directory: $(pwd)"
+            - sudo tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
+            
         - stage: immudbbuild
           name: "ImmuDBBuild"
           script:
             - wget https://github.com/codenotary/immudb/archive/master.zip
             - unzip master.zip
-            - PATH="$(pwd)/go/bin/:$PATH" make -C immudb-master
+            - PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
             - immudb-master/immudb -d
           
         - stage: pythontest
