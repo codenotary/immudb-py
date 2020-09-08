@@ -21,9 +21,10 @@ install:
 before_script:
     - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
     - sudo tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
+    - PATH="/usr/local/go/bin/:$PATH" go version
     - wget https://github.com/codenotary/immudb/archive/master.zip
     - unzip master.zip
-    - PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
+    - GOROOT="" PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
     - immudb-master/immudb -d
 
 scripts: pytest
