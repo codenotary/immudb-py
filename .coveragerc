@@ -1,0 +1,6 @@
+[run]
+source = immudb
+omit = immudb/service/*,immudb/schema/*
+
+[report]
+omit = immudb/service/*,immudb/schema/*
