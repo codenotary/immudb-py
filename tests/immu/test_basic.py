@@ -64,5 +64,7 @@ class TestBasicGetSet:
             key="test_key_{:04d}".format(randint(0,10000))
             value="test_value_{:04d}".format(randint(0,10000))
             a.safeSet(key.encode('utf8'),value.encode('utf8'))
+        except grpc._channel._InactiveRpcError as e:
+            pytest.skip("Cannot reach immudb server")
         finally:
             immudb.constants.ROOT_CACHE_PATH=oldroot

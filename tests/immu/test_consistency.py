@@ -4,6 +4,8 @@ from immudb import consistency
 from immudb.schema import schema_pb2
 from immudb.client import ImmudbClient
 from immudb.consistency import verify
+import grpc._channel
+
 class TestConsistency:
     def test_verify_path(self):
         path = []
@@ -24,7 +26,7 @@ class TestConsistency:
         secondHash = b'yP\xf2\xbbh\x02.9\x87\x8e\x1b5\x16k\xe2Zk\xdc3\x82\x96\x0b\xde\x80WJ=\xda\xc9\x8b\x9d\xdc'
         firstHash = b"A\xab\x8e,\xe0/\xbb\x13y\x84\x08\xe7\xff\xf5\xbfg\x98\x8d3\xea\xa9\x0fB\xc6\xaa%'\xa3*\xd2\x8e\x0e"
         assert False == consistency.verify_path(path, second, first, secondHash, firstHash)
-        
+
     def test_consistency_verify(self):
         a=ImmudbClient()
         try:
