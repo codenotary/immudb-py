@@ -26,5 +26,6 @@ before_script:
 scripts: pytest
 
 after_success:
+    - coverage run -m pytest tests
     - coveralls
     
