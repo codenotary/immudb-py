@@ -11,6 +11,7 @@ addons:
 
 install:
     - pip install -r requirements.txt
+    - pip install python-coveralls
     
 before_script:
     - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
@@ -23,4 +24,6 @@ before_script:
 
 scripts: pytest
 
+after_success:
+    - coveralls
     
