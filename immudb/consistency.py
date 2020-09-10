@@ -56,7 +56,7 @@ def verify_path(path: list, second: int, first: int, secondHash: bytes, firstHas
         sn >>= 1
     return fr == firstHash and sr == secondHash and sn == 0
 
-
+#  FIXME currently not used anywhere except testing
 def verify(proof: schema_pb2.ConsistencyProof, prevRoot: schema_pb2.Root) -> bool:
     if proof.first != prevRoot.index:
         return False
@@ -66,7 +66,7 @@ def verify(proof: schema_pb2.ConsistencyProof, prevRoot: schema_pb2.Root) -> boo
         second=proof.second,
         first=proof.first,
         secondHash=proof.secondRoot,
-        firstHash=prevRoot
+        firstHash=prevRoot.root
     )
     if verified:
         proof.firstRoot = prevRoot.root
