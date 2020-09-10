@@ -1,6 +1,7 @@
 # immu-py [![License](https://img.shields.io/github/license/codenotary/immudb4j)](LICENSE)
 
 [![Build Status](https://travis-ci.com/codenotary/immu-py.svg?branch=master)](https://travis-ci.com/codenotary/immu-py)
+[![Coverage Status](https://coveralls.io/repos/github/codenotary/immu-py/badge.svg?branch=coverall)](https://coveralls.io/github/codenotary/immu-py?branch=coverall)
 [![Slack](https://img.shields.io/badge/join%20slack-%23immutability-brightgreen.svg)](https://slack.vchain.us/)
 [![Discuss at immudb@googlegroups.com](https://img.shields.io/badge/discuss-immudb%40googlegroups.com-blue.svg)](https://groups.google.com/group/immudb)
 
