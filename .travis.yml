@@ -11,6 +11,7 @@ addons:
 
 install:
     - pip install -r requirements.txt
+    - pip install coverage==4.5.4
     - pip install python-coveralls
     
 before_script:
