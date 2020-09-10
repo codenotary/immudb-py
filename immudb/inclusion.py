@@ -23,7 +23,7 @@ def path_verify(path:list, at:int, i:int, root:bytes, leaf:bytes) -> bool:
         at = at // 2
     return at == i and h == root
 
-
+# FIXME: apparently not used
 def verify(inclusionProof: schema_pb2.InclusionProof, index: int, leaf: bytes) -> bool:
     if inclusionProof.index != index or bytes(inclusionProof.leaf) != leaf:
         return False

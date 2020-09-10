@@ -4,6 +4,12 @@ from random import randint
 import grpc._channel
 
 class TestBasicGetSet:
+    def test_no_server(self):
+        try:
+            a = ImmudbClient("localhost:9999")
+            a.login("immudb","immudb")
+        except grpc._channel._InactiveRpcError as e:
+            pass
         
     def test_basic(self):
         try:
@@ -44,4 +50,19 @@ class TestBasicGetSet:
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
         assert isinstance(a.stub,object)
-
+        
+    def test_new_rootfile(self):
+        import immudb.constants, tempfile, os.path, os
+        tdir=tempfile.TemporaryDirectory()
+        tfile=os.path.join(tdir.name,"rootfile")
+        oldroot=immudb.constants.ROOT_CACHE_PATH
+        immudb.constants.ROOT_CACHE_PATH=tfile
+        try:
+            a = ImmudbClient()
+            a.login("immudb","immudb")
+            os.unlink(tfile)
+            key="test_key_{:04d}".format(randint(0,10000))
+            value="test_value_{:04d}".format(randint(0,10000))
+            a.safeSet(key.encode('utf8'),value.encode('utf8'))
+        finally:
+            immudb.constants.ROOT_CACHE_PATH=oldroot
