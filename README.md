@@ -1,4 +1,4 @@
-# immu-py [![License](https://img.shields.io/github/license/codenotary/immudb4j)](LICENSE)
+# immudb-py [![License](https://img.shields.io/github/license/codenotary/immudb4j)](LICENSE)
 
 [![Build Status](https://travis-ci.com/codenotary/immu-py.svg?branch=master)](https://travis-ci.com/codenotary/immu-py)
 [![Coverage Status](https://coveralls.io/repos/github/codenotary/immu-py/badge.svg?branch=coverall)](https://coveralls.io/github/codenotary/immu-py?branch=coverall)
