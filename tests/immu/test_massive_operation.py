@@ -1,36 +1,23 @@
 import pytest
 from immudb.client import ImmudbClient
-from random import randint
+import string,random
 import grpc._channel
 
+
+
+def get_random_string(length):
+    return ''.join(random.choice(string.printable) for i in range(length))
+
 class TestGetSet:
-        
-    def test_get_set(self):
+    def test_get_set_massive(self):
         try:
             a = ImmudbClient("localhost:3322")
             a.login("immudb","immudb")
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
-        key="test_key_{:04d}".format(randint(0,10000))
-        value="test_value_{:04d}".format(randint(0,10000))
-
-        resp=a.safeSet(key.encode('utf8'),value.encode('utf8'))
-        assert resp.verified==True
-        readback=a.safeGet(key.encode('utf8'))
-        assert readback.verified==True
-        assert value==readback.value
-
-    def test_get_set_batch(self):
-        try:
-            a = ImmudbClient("localhost:3322")
-            a.login("immudb","immudb")
-        except grpc._channel._InactiveRpcError as e:
-            pytest.skip("Cannot reach immudb server")
-        xset={
-            b'gorilla': b'banana',
-            b'zebra':   b'grass',
-            b'lion':    b'zebra'
-            }
+        xset={}
+        for i in range(0,10000):
+            xset["massif:{:04X}".format(i).encode('utf8')]=get_random_string(32).encode('utf8')
         assert type(a.setAll(xset))!=int
         # test getAll
         resp=a.getAll(xset.keys())
