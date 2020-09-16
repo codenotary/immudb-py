@@ -2,9 +2,9 @@ import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
-from immudb.handler import (batchGet, batchSet, currentRoot, databaseCreate,
-                          databaseList, databaseUse, get, safeGet, safeSet,
-                          setValue)
+from immudb.handler import (batchGet, batchSet, changePassword, createUser,
+                          currentRoot, databaseCreate, databaseList, databaseUse, 
+                          get, listUsers, safeGet, safeSet, setValue)
 from immudb.rootService import RootService
 from immudb.service import schema_pb2_grpc
 
@@ -106,6 +106,26 @@ class ImmudbClient:
         request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
         return batchSet.call(self.__stub, self.__rs, request)
 
+    def changePassword(self, user, newPassword, oldPassword):
+        request = schema_pb2_grpc.schema__pb2.ChangePasswordRequest(
+                    user=bytes(user, encoding='utf-8'),                     
+                    newPassword=bytes(newPassword, encoding='utf-8'),
+                    oldPassword=bytes(oldPassword, encoding='utf-8')
+                    )
+        return changePassword.call(self.__stub, self.__rs, request)
+    
+    def createUser(self, user, password, permission, database):
+        request = schema_pb2_grpc.schema__pb2.CreateUserRequest(
+                    user=bytes(user, encoding='utf-8'),
+                    password=bytes(password, encoding='utf-8'),
+                    permission=permission,
+                    database=database
+                    )
+        return createUser.call(self.__stub, self.__rs, request)
+    
+    def listUsers(self):
+        return listUsers.call(self.__stub, None)
+    
     def databaseList(self):
         return databaseList.call(self.__stub, self.__rs, None)
 
@@ -128,3 +148,4 @@ class ImmudbClient:
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__login_response = None
+        
