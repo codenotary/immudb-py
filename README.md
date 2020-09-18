@@ -158,6 +158,45 @@ Atomic multi-key read (all entries are retrieved or none):
     # Or manually
     client.get([b"key1", b"key2"])
 ```
+## User management
+Users can be added and granted access to databases.
+
+### Adding a user
+The ```createUser``` functions create a new users and grants the specified permission to a database.
+```python
+user='newuser'
+password='Pw1:pasdfoiu'
+permission=immudb.constants.PERMISSION_RW
+database='defaultdb'
+
+client.createUser(user, password, permission, database)
+```
+
+The database must exists at the time the user is created. The password must be between 8 and 32 characters in length, and must have at least one upper case letter, a symbol and a digit.
+
+Permission are defined in immudb.constants and are:
+
+- `PERMISSION_SYS_ADMIN`
+- `PERMISSION_ADMIN`
+- `PERMISSION_NONE`
+- `PERMISSION_R`
+- `PERMISSION_RW`
+
+### Changin password
+The user must must provide both old and new password:
+```python
+newPassword="pW1:a0s98d7gfy"
+resp=client.changePassword(user, newPassword, oldPassword)
+```
+It is applied the same password policy of user creation.
+
+### User list
+
+To get the list of user created on immudb, simply call ```listUsers```:
+```python
+resp=client.listUsers()
+print(users.userlist.users)
+```
 
 ### Closing the client
 
