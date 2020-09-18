@@ -7,7 +7,6 @@ addons:
     apt:
         packages:
             - wget
-            - unzip
 
 install:
     - pip install -r requirements.txt
@@ -15,13 +14,9 @@ install:
     - pip install python-coveralls
     
 before_script:
-    - wget https://golang.org/dl/go1.15.1.linux-amd64.tar.gz
-    - sudo tar -C /usr/local -xzf go1.15.1.linux-amd64.tar.gz
-    - PATH="/usr/local/go/bin/:$PATH" go version
-    - wget https://github.com/codenotary/immudb/archive/master.zip
-    - unzip master.zip
-    - GOROOT="" PATH="/usr/local/go/bin/:$PATH" make -C immudb-master
-    - immudb-master/immudb -d
+    - wget https://github.com/vchain-us/immudb/releases/download/v0.8.0/immudb-v0.8.0-linux-amd64-static -O immudb
+    - chmod +x immudb
+    - ./immudb -d
 
 scripts: pytest
 
