@@ -4,6 +4,7 @@ PROTOC ?= $(shell which protoc)
 GRPC_PYTHON_PLUGIN ?= $(shell which grpc_python_plugin)
 PYTEST ?= python -m pytest
 PIP ?= pip
+COVERAGE ?= $(shell which coverage)
 
 PROTO_DIR := proto
 PROTO_FILE := ${PROTO_DIR}/schema.proto
@@ -28,3 +29,6 @@ dev:
 
 test:
 	$(PYTEST) -vv --color=yes tests/
+
+coverage:
+	$(COVERAGE) run -m pytest tests
