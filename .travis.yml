@@ -14,9 +14,9 @@ install:
     - pip install python-coveralls
     
 before_script:
-    - wget https://github.com/vchain-us/immudb/releases/download/v0.8.0/immudb-v0.8.0-linux-amd64-static -O immudb
-    - chmod +x immudb
-    - ./immudb -d
+    - wget https://github.com/vchain-us/immudb/releases/download/v0.8.0/immudb-v0.8.0-linux-amd64-static 
+    - chmod +x immudb-v0.8.0-linux-amd64-static
+    - ./immudb-v0.8.0-linux-amd64-static -d
 
 scripts: pytest
 
