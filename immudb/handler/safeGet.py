@@ -23,7 +23,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         rootIndex=index
     )
     msg = service.SafeGetSV(rawRequest)
-    from pprint import pformat
     verified = proofs.verify(
         msg.proof,
         item.digest(msg.item.index, msg.item.key, msg.item.value.SerializeToString()),
