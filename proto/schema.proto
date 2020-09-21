@@ -18,6 +18,8 @@ syntax = "proto3";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+// import "protoc-gen-swagger/options/annotations.proto";
+// import "pb/pb.proto";
 
 package immudb.schema;
 
@@ -143,8 +145,18 @@ message StructuredItemList {
 }
 
 message Root {
+	RootIndex payload = 1;
+	Signature signature = 2;
+}
+
+message RootIndex {
 	uint64 index = 1;
 	bytes root = 2;
+}
+
+message Signature {
+	bytes signature = 1;
+	bytes publicKey = 2;
 }
 
 message ScanOptions {
@@ -300,101 +312,274 @@ message DatabaseListResponse{
 	repeated Database databases = 1;
 }
 
-// immudb gRPC
+// option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+// 	info: {
+// 		title: "immudb REST API";
+// 		description: "<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs."
+// 	};
+// 	security_definitions: {
+// 		security: {
+// 			key: "bearer"
+// 			value: {
+// 				type: TYPE_API_KEY
+// 				in: IN_HEADER
+// 				name: "Authorization"
+// 				description: "Authentication token, prefixed by Bearer: Bearer <token>"
+// 			}
+// 		}
+// 	}
+// 	security: {
+// 		security_requirement: {
+// 			key: "bearer"
+// 		}
+// 	}
+// };
+
+// immudb gRPC & REST service
 // IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
 service ImmuService {
-	rpc ListUsers (google.protobuf.Empty) returns (UserList){}
+	rpc ListUsers (google.protobuf.Empty) returns (UserList){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/user/list"
+		};
+	};
 
-	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty){}
+	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/user"
+			body: "*"
+		};
+	};
 
-	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty){}
+	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/user/password/change"
+			body: "*"
+		};
+	};
 
 	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty){}
 	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty){}
 
 	rpc PrintTree (google.protobuf.Empty) returns (Tree){}
 
-	rpc Login (LoginRequest) returns (LoginResponse){}
+	rpc Login (LoginRequest) returns (LoginResponse){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/login"
+			body: "*"
+		};
+// 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+// 			security: {} // no security
+// 		};
+	};
 
-	rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){}
+	rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/logout"
+			body: "*"
+		};
+	};
 
-	rpc Set (KeyValue) returns (Index){}
+	rpc Set (KeyValue) returns (Index){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/item"
+			body: "*"
+		};
+	};
 
-	rpc SetSV (StructuredKeyValue) returns (Index){}
+	rpc SetSV (StructuredKeyValue) returns (Index){};
 
-	rpc SafeSet(SafeSetOptions) returns (Proof){}
+	rpc SafeSet(SafeSetOptions) returns (Proof){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/item/safe"
+			body: "*"
+		};
+	}
 
 	rpc SafeSetSV(SafeSetSVOptions) returns (Proof){}
 
-	rpc Get (Key) returns (Item){}
+	rpc Get (Key) returns (Item){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/item/{key}"
+		};
+	};
 
-	rpc GetSV (Key) returns (StructuredItem){}
+	rpc GetSV (Key) returns (StructuredItem){};
 
-	rpc SafeGet(SafeGetOptions) returns (SafeItem){}
+	rpc SafeGet(SafeGetOptions) returns (SafeItem){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/item/safe/get"
+			body: "*"
+		};
+	};
 
-	rpc SafeGetSV(SafeGetOptions) returns (SafeStructuredItem){}
+	rpc SafeGetSV(SafeGetOptions) returns (SafeStructuredItem){};
 
-	rpc SetBatch (KVList) returns (Index){}
+	rpc SetBatch (KVList) returns (Index){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/batch/set"
+			body: "*"
+		};
+	};
 
-	rpc SetBatchSV (SKVList) returns (Index){}
+	rpc SetBatchSV (SKVList) returns (Index){};
 
-	rpc GetBatch (KeyList) returns (ItemList){}
+	rpc GetBatch (KeyList) returns (ItemList){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/batch/get"
+			body: "*"
+		};
+	};
 
-	rpc GetBatchSV (KeyList) returns (StructuredItemList){}
+	rpc GetBatchSV (KeyList) returns (StructuredItemList){};
 
-	rpc Scan(ScanOptions) returns (ItemList){}
+	rpc Scan(ScanOptions) returns (ItemList){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/item/scan"
+			body: "*"
+		};
+	};
 
-	rpc ScanSV(ScanOptions) returns (StructuredItemList){}
+	rpc ScanSV(ScanOptions) returns (StructuredItemList){};
 
-	rpc Count(KeyPrefix) returns (ItemsCount){}
+	rpc Count(KeyPrefix) returns (ItemsCount){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/item/count/{prefix}"
+		};
+	};
 
-	rpc CurrentRoot(google.protobuf.Empty) returns (Root) {}
+	rpc CurrentRoot(google.protobuf.Empty) returns (Root) {
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/root"
+		};
+// 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+// 			security: {} // no security
+// 		};
+	};
 
-	rpc Inclusion(Index) returns (InclusionProof){}
+	rpc Inclusion(Index) returns (InclusionProof){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/inclusionproof/{index}"
+		};
+	};
+	rpc Consistency(Index) returns (ConsistencyProof){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/consistencyproof/{index}"
+		};
+	};
+	rpc ByIndex(Index) returns (Item){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/item/index/{index}"
+		};
+	};
 
-	rpc Consistency(Index) returns (ConsistencyProof){}
+	rpc BySafeIndex(SafeIndexOptions) returns (SafeItem){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/item/safe/index/{index}"
+		};
+	};
 
-	rpc ByIndex(Index) returns (Item){}
+	rpc ByIndexSV(Index) returns (StructuredItem){};
 
-	rpc BySafeIndex(SafeIndexOptions) returns (SafeItem){}
+	rpc History(Key) returns (ItemList){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/history/{key}"
+		};
+	};
 
-	rpc ByIndexSV(Index) returns (StructuredItem){}
+	rpc HistorySV(Key) returns (StructuredItemList){};
 
-	rpc History(Key) returns (ItemList){}
+	rpc Health (google.protobuf.Empty) returns (HealthResponse){
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/healthresponse"
+		};
+// 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+// 			security: {} // no security
+// 		};
+	};
+	rpc Reference (ReferenceOptions) returns (Index){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/reference"
+			body: "*"
+		};
+	};
+	rpc SafeReference (SafeReferenceOptions) returns (Proof){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/safe/reference"
+			body: "*"
+		};
+	};
+	rpc ZAdd (ZAddOptions) returns (Index){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/zadd"
+			body: "*"
+		};
+	};
+	rpc ZScan (ZScanOptions) returns (ItemList){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/zscan"
+			body: "*"
+		};
+	};
 
-	rpc HistorySV(Key) returns (StructuredItemList){}
+	rpc ZScanSV (ZScanOptions) returns (StructuredItemList){};
 
-	rpc Health (google.protobuf.Empty) returns (HealthResponse){}
+	rpc SafeZAdd (SafeZAddOptions) returns (Proof){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/safe/zadd"
+			body: "*"
+		};
+	};
 
-	rpc Reference (ReferenceOptions) returns (Index){}
+	rpc IScan (IScanOptions) returns (Page){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/iscan"
+			body: "*"
+		};
+	};
 
-	rpc SafeReference (SafeReferenceOptions) returns (Proof){}
+	rpc IScanSV (IScanOptions) returns (SPage){};
 
-	rpc ZAdd (ZAddOptions) returns (Index){}
-
-	rpc ZScan (ZScanOptions) returns (ItemList){}
-
-	rpc ZScanSV (ZScanOptions) returns (StructuredItemList){}
-
-	rpc SafeZAdd (SafeZAddOptions) returns (Proof){}
-
-	rpc IScan (IScanOptions) returns (Page){}
-
-	rpc IScanSV (IScanOptions) returns (SPage){}
-
-	rpc Dump(google.protobuf.Empty) returns (stream KVList) {}
-
+	rpc Dump(google.protobuf.Empty) returns (stream KVList) {
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/dump"
+			body: "*"
+		};
+	}
 	// todo(joe-dz): Enable restore when the feature is required again
-	//	rpc Restore(stream KVList) returns (ItemsCount) {}
-
-	rpc CreateDatabase(Database) returns (google.protobuf.Empty) {}
-
-	rpc UseDatabase(Database) returns (UseDatabaseReply) {}
-
-	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty) {}
-
-	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty){}
-
-	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse){}
-
+	//	rpc Restore(stream pb.KVList) returns (ItemsCount) {
+	//		option (google.api.http) = {
+	//			post: "/v1/immurestproxy/restore"
+	//			body: "*"
+	//		};
+	//	}
+	rpc CreateDatabase(Database) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/createdatabase"
+			body: "*"
+		};
+	}
+	rpc UseDatabase(Database) returns (UseDatabaseReply) {
+		option (google.api.http) = {
+			get: "/v1/immurestproxy/usedatabase/{databasename}"
+		};
+	}
+	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/changepermission"
+			body: "*"
+		};
+	}
+	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/user/setactiveUser"
+			body: "*"
+		};
+	};
+	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse){
+		option (google.api.http) = {
+			post: "/v1/immurestproxy/user/databaselist"
+			body: "*"
+		};
+	};
 }

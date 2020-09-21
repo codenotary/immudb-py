@@ -3,12 +3,33 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-#import schema_pb2 as schema__pb2
 from immudb.schema import schema_pb2 as schema__pb2
 
-
 class ImmuServiceStub(object):
-    """immudb gRPC
+    """option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+    	info: {
+    		title: "immudb REST API";
+    		description: "<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs."
+    	};
+    	security_definitions: {
+    		security: {
+    			key: "bearer"
+    			value: {
+    				type: TYPE_API_KEY
+    				in: IN_HEADER
+    				name: "Authorization"
+    				description: "Authentication token, prefixed by Bearer: Bearer <token>"
+    			}
+    		}
+    	}
+    	security: {
+    		security_requirement: {
+    			key: "bearer"
+    		}
+    	}
+    };
+
+    immudb gRPC & REST service
     IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
     """
 
@@ -251,7 +272,30 @@ class ImmuServiceStub(object):
 
 
 class ImmuServiceServicer(object):
-    """immudb gRPC
+    """option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+    	info: {
+    		title: "immudb REST API";
+    		description: "<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs."
+    	};
+    	security_definitions: {
+    		security: {
+    			key: "bearer"
+    			value: {
+    				type: TYPE_API_KEY
+    				in: IN_HEADER
+    				name: "Authorization"
+    				description: "Authentication token, prefixed by Bearer: Bearer <token>"
+    			}
+    		}
+    	}
+    	security: {
+    		security_requirement: {
+    			key: "bearer"
+    		}
+    	}
+    };
+
+    immudb gRPC & REST service
     IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
     """
 
@@ -503,8 +547,12 @@ class ImmuServiceServicer(object):
 
     def CreateDatabase(self, request, context):
         """todo(joe-dz): Enable restore when the feature is required again
-        	rpc Restore(stream KVList) returns (ItemsCount) {}
-
+        	rpc Restore(stream pb.KVList) returns (ItemsCount) {
+        		option (google.api.http) = {
+        			post: "/v1/immurestproxy/restore"
+        			body: "*"
+        		};
+        	}
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -775,7 +823,30 @@ def add_ImmuServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class ImmuService(object):
-    """immudb gRPC
+    """option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+    	info: {
+    		title: "immudb REST API";
+    		description: "<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs."
+    	};
+    	security_definitions: {
+    		security: {
+    			key: "bearer"
+    			value: {
+    				type: TYPE_API_KEY
+    				in: IN_HEADER
+    				name: "Authorization"
+    				description: "Authentication token, prefixed by Bearer: Bearer <token>"
+    			}
+    		}
+    	}
+    	security: {
+    		security_requirement: {
+    			key: "bearer"
+    		}
+    	}
+    };
+
+    immudb gRPC & REST service
     IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
     """
 
