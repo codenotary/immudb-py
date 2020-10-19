@@ -10,10 +10,15 @@ from immudb.service import schema_pb2_grpc
 
 
 class ImmudbClient:
-    def __init__(self, immudUrl=None):
+    def __init__(self, immudUrl=None, MaxMsgSize=4*1024*1024):
         if immudUrl is None:
             immudUrl = "localhost:3322"
-        self.channel = grpc.insecure_channel(immudUrl)
+        self.channel = grpc.insecure_channel(immudUrl, 
+            options=[
+                ('grpc.max_send_message_length', MaxMsgSize),
+                ('grpc.max_receive_message_length', MaxMsgSize),
+                ]
+	    )
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
         self.__rs = None
 
