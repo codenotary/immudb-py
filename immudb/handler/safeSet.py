@@ -33,7 +33,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
     verified = proofs.verify(msg, bytes(msg.leaf), root)
     if verified:
         toCache = schema_pb2.Root(
-            index=msg.index,
+            index=msg.at,
             root=msg.root
         )
         try:
