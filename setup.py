@@ -1,17 +1,38 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
-setup(name='immu-py',
-      version='1.0',
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+    
+setup(name='immudb-py',
+      version='0.8.0rc1',
+      license="Apache License Version 2.0",
       description='Python SDK for Immudb',
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       author='vChain',
       url='https://github.com/codenotary/immu-py',
+      #download_url='',
       packages=['immudb', 'immudb.handler', 'immudb.service', 'immudb.schema'],
+      keywords=['immudb', 'immutabile'],
       install_requires=[
         'grpcio>=1.26.0',
         'dataclasses>=0.6',
         'protobuf>=3.13.0',
         'google-api>=0.1.12',
         'google-api-core>=1.22.0'
-        ])
+        ],
+      classifiers=[
+              'Intended Audience :: Developers',
+              'Topic :: Software Development :: Build Tools',
+              "License :: OSI Approved :: Apache Software License",
+              "Operating System :: OS Independent",
+              'Programming Language :: Python :: 3',
+              'Programming Language :: Python :: 3.5',
+              'Programming Language :: Python :: 3.6',
+              'Programming Language :: Python :: 3.7',
+              'Programming Language :: Python :: 3.8',
+              ],
+      python_requires='>=3.6',
+      )

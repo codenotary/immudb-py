@@ -10,10 +10,10 @@ PROTO_DIR := proto
 PROTO_FILE := ${PROTO_DIR}/schema.proto
 PROTO_URL := https://raw.githubusercontent.com/codenotary/immudb/master/pkg/api/schema/schema.proto
 
-SCHEMA_OUT_DIR := immu/schema
-GRPC_OUT_DIR := immu/service
+SCHEMA_OUT_DIR := immudb/schema
+GRPC_OUT_DIR := immudb/service
 
-
+	
 .PHONY: ${PROTO_DIR}
 ${PROTO_DIR}:
 	${PROTOC} -I ${PROTO_DIR} ${PROTO_FILE} \
@@ -32,3 +32,12 @@ test:
 
 coverage:
 	$(COVERAGE) run -m pytest tests
+
+install:
+	python setup.py install
+
+.PHONY: dist
+dist:
+	mkdir -p ./dist
+	rm ./dist/*
+	python setup.py sdist bdist_wheel

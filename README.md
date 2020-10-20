@@ -32,7 +32,7 @@ please read [immudb research paper] for details of how immutability is ensured b
 ## Prerequisites
 
 immu-py assumes there is an existing instance of the immudb server up and running. Running `immudb` is quite simple, please refer to the
-following link for downloading and running it: https://docs.immudb.io/quickstart.html
+following link for downloading and running it: https://immudb.io/docs/quickstart.html
 
 ## Installation
 
