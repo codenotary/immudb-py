@@ -39,16 +39,20 @@ following link for downloading and running it: https://immudb.io/docs/quickstart
 Install the package using pip:
 
 ```shell
-    pip install git+https://github.com/codenotary/immu-py.git
+    pip3 install immudb-py
 ```
 
  Then import the client as follows:
 
 ```python
-    from immudb.client import ImmudbClient
+    from immudb import ImmudbClient
 ```
 
-Note: immu-py is currently hosted in [Github Packages].
+*Note*: immudb-py need `grpcio` module from google. On Alpine linux, you need
+ these packages in order to correctly build (and install) grpcio:
+ - `linux-headers`
+ - `python3-dev`
+ - `g++`
 
 ## Supported Versions
 

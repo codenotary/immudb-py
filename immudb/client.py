@@ -4,7 +4,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           currentRoot, databaseCreate, databaseList, databaseUse, 
-                          get, listUsers, safeGet, safeSet, setValue)
+                          get, listUsers, safeGet, safeSet, setValue, history)
 from immudb.rootService import RootService
 from immudb.service import schema_pb2_grpc
 
@@ -144,6 +144,10 @@ class ImmudbClient:
 
     def currentRoot(self):
         return currentRoot.call(self.__stub, self.__rs, None)
+
+    def history(self, key: bytes):
+        request = schema_pb2_grpc.schema__pb2.Key(key=key)
+        return history.call(self.__stub, self.__rs, request)
 
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
