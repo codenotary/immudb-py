@@ -22,10 +22,10 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         key=request.key,
         rootIndex=index
     )
-    msg = service.SafeGetSV(rawRequest)
+    msg = service.SafeGet(rawRequest)
     verified = proofs.verify(
         msg.proof,
-        item.digest(msg.item.index, msg.item.key, msg.item.value.SerializeToString()),
+        item.digest(msg.item.index, msg.item.key, msg.item.value),
         root
         )
     if verified:
@@ -37,11 +37,12 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
             rs.set(toCache)
         except:
             raise VerificationException("Failed to verify")
-    i = msg.item
+    content=schema_pb2.Content()
+    content.ParseFromString(msg.item.value)
     return SafeGetResponse(
-        index=i.index,
-        key=i.key,
-        timestamp=i.value.timestamp,
-        value=i.value.payload.decode("utf-8"),
+        index=msg.item.index,
+        key=msg.item.key,
+        timestamp=content.timestamp,
+        value=content.payload.decode("utf-8"),
         verified=verified
     )

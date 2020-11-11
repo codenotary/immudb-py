@@ -14,9 +14,10 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         keys = request.keys
     )
 
-    msg = service.GetBatchSV(rawRequest)
-    return batchGetResponse(
-        itemlist = msg
-        #keylist = msg.KeyList,
-        #itemlist = msg.ItemList
-    )
+    msg = service.GetBatch(rawRequest)
+    ret={}
+    for i in msg.items:
+	    content=schema_pb2.Content()
+	    content.ParseFromString(i.value)
+	    ret[i.key]=content.payload
+    return ret

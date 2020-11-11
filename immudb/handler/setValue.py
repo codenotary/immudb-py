@@ -16,7 +16,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         payload=request.value
         )
     
-    skv=schema_pb2.StructuredKeyValue(key=request.key, value=content)
+    skv=schema_pb2.KeyValue(key=request.key, value=content.SerializeToString())
     msg = service.SetSV(skv)
 
     return SetResponse(index = msg.index)

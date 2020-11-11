@@ -19,7 +19,7 @@ class TestHistory:
             values.append(v)
             
         hh=a.history(key.encode('ascii'))
-        assert(len(hh.itemlist.items)==10)
+        assert(len(hh)==10)
         for i in range(0,10):
-            assert(hh.itemlist.items[i].value.payload==values[9-i].encode('ascii'))
+            assert(hh[i].value==values[9-i].encode('ascii'))
         

@@ -96,7 +96,7 @@ class ImmudbClient:
         klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
         request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
         resp = batchGet.call(self.__stub, self.__rs, request)
-        return {i.key: i.value.payload for i in resp.itemlist.items}
+        return resp
 
     def setAll(self, kv: dict):
         _KVs = []

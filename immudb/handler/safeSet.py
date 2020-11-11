@@ -24,10 +24,10 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         timestamp=int(time()),
         payload=request.kv.value
         )
-    skv = schema_pb2.StructuredKeyValue(key=request.kv.key, value=content)
-    rawRequest = schema_pb2.SafeSetSVOptions(skv=skv, rootIndex=index)
-    msg = service.SafeSetSV(rawRequest)
-    digest = item.digest(msg.index, rawRequest.skv.key, rawRequest.skv.value.SerializeToString())
+    kv = schema_pb2.KeyValue(key=request.kv.key, value=content.SerializeToString())
+    rawRequest = schema_pb2.SafeSetOptions(kv=kv, rootIndex=index)
+    msg = service.SafeSet(rawRequest)
+    digest = item.digest(msg.index, rawRequest.kv.key, rawRequest.kv.value)
     if bytes(msg.leaf) != digest:
         raise VerificationException("Proof does not match the given item.")
     verified = proofs.verify(msg, bytes(msg.leaf), root)

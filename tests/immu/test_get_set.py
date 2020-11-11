@@ -42,9 +42,9 @@ class TestGetSet:
             assert xset[i]==resp[i]
         # test getAllItems
         resp=a.getAllItems(xset.keys())
-        for i in resp.itemlist.items:
-            assert i.key in xset
-            assert xset[i.key]==i.value.payload
+        for i in resp.keys():
+            assert i in xset
+            assert xset[i]==resp[i]
 
 
 

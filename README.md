@@ -146,7 +146,7 @@ read or write operation:
 
 ### Multi-key read and write
 
-Transactional multi-key read and write operations are supported by immudb and immupy.
+Transactional multi-key read and write operations are supported by immudb and immudb-py.
 Atomic multi-key write (all entries are persisted or none):
 
 ```python
