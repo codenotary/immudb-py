@@ -1,7 +1,7 @@
 import pytest
 from immudb.client import ImmudbClient
 import immudb.constants
-from immudb.schema import schema_pb2
+from immudb.grpc import schema_pb2
 import string,random
 import grpc._channel
 import google.protobuf.empty_pb2

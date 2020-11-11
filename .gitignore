@@ -4,3 +4,8 @@ __pycache__/
 *.vscode
 rootfile
 .coverage
+bin/
+build/
+dist/
+immudb_py.egg-info/
+lib/

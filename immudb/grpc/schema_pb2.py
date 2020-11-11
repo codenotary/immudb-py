@@ -12,7 +12,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.api import annotations_pb2 as google_dot_api_dot_annotations__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
@@ -22,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z+github.com/codenotary/immudb/pkg/api/schema',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"T\n\x04Node\x12\t\n\x01i\x18\x01 \x01(\x0c\x12\t\n\x01h\x18\x02 \x01(\x0c\x12\x0c\n\x04refk\x18\x03 \x01(\x0c\x12\x0b\n\x03ref\x18\x04 \x01(\x08\x12\r\n\x05\x63\x61\x63he\x18\x05 \x01(\x08\x12\x0c\n\x04root\x18\x06 \x01(\x08\"\'\n\x05Layer\x12\x1e\n\x01l\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Node\"\'\n\x04Tree\x12\x1f\n\x01t\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Layer\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\"H\n\x12StructuredKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12%\n\x05value\x18\x02 \x01(\x0b\x32\x16.immudb.schema.Content\"-\n\x07\x43ontent\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"\x16\n\x05Index\x12\r\n\x05index\x18\x01 \x01(\x04\"1\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\r\n\x05index\x18\x03 \x01(\x04\"S\n\x0eStructuredItem\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12%\n\x05value\x18\x02 \x01(\x0b\x32\x16.immudb.schema.Content\x12\r\n\x05index\x18\x03 \x01(\x04\".\n\x06KVList\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\":\n\x07SKVList\x12/\n\x04SKVs\x18\x01 \x03(\x0b\x32!.immudb.schema.StructuredKeyValue\"+\n\x07KeyList\x12 \n\x04keys\x18\x01 \x03(\x0b\x32\x12.immudb.schema.Key\".\n\x08ItemList\x12\"\n\x05items\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Item\"B\n\x12StructuredItemList\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.immudb.schema.StructuredItem\"#\n\x04Root\x12\r\n\x05index\x18\x01 \x01(\x04\x12\x0c\n\x04root\x18\x02 \x01(\x0c\"[\n\x0bScanOptions\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x0c\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\x12\x0c\n\x04\x64\x65\x65p\x18\x05 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nItemsCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"U\n\x0eInclusionProof\x12\n\n\x02\x61t\x18\x01 \x01(\x04\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0c\n\x04root\x18\x03 \x01(\x0c\x12\x0c\n\x04leaf\x18\x04 \x01(\x0c\x12\x0c\n\x04path\x18\x05 \x03(\x0c\"f\n\x10\x43onsistencyProof\x12\r\n\x05\x66irst\x18\x01 \x01(\x04\x12\x0e\n\x06second\x18\x02 \x01(\x04\x12\x11\n\tfirstRoot\x18\x03 \x01(\x0c\x12\x12\n\nsecondRoot\x18\x04 \x01(\x0c\x12\x0c\n\x04path\x18\x05 \x03(\x0c\"n\n\x05Proof\x12\x0c\n\x04leaf\x18\x01 \x01(\x0c\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0c\n\x04root\x18\x03 \x01(\x0c\x12\n\n\x02\x61t\x18\x04 \x01(\x04\x12\x15\n\rinclusionPath\x18\x05 \x03(\x0c\x12\x17\n\x0f\x63onsistencyPath\x18\x06 \x03(\x0c\"R\n\x08SafeItem\x12!\n\x04item\x18\x01 \x01(\x0b\x32\x13.immudb.schema.Item\x12#\n\x05proof\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Proof\"f\n\x12SafeStructuredItem\x12+\n\x04item\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.StructuredItem\x12#\n\x05proof\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Proof\"^\n\x0eSafeSetOptions\x12#\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValue\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"k\n\x10SafeSetSVOptions\x12.\n\x03skv\x18\x01 \x01(\x0b\x32!.immudb.schema.StructuredKeyValue\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"F\n\x0eSafeGetOptions\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"l\n\x14SafeReferenceOptions\x12+\n\x02ro\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceOptions\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"2\n\x10ReferenceOptions\x12\x11\n\treference\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\"6\n\x0bZAddOptions\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x0b\n\x03key\x18\x03 \x01(\x0c\"K\n\x0cZScanOptions\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x0c\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\"4\n\x0cIScanOptions\x12\x10\n\x08pageSize\x18\x01 \x01(\x04\x12\x12\n\npageNumber\x18\x02 \x01(\x04\"8\n\x04Page\x12\"\n\x05items\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Item\x12\x0c\n\x04more\x18\x03 \x01(\x08\"T\n\x05SPage\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.immudb.schema.StructuredItem\x12\x0f\n\x07pageNum\x18\x02 \x01(\x04\x12\x0c\n\x04more\x18\x03 \x01(\x08\"e\n\x0fSafeZAddOptions\x12)\n\x05zopts\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddOptions\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"J\n\x10SafeIndexOptions\x12\r\n\x05index\x18\x01 \x01(\x04\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabasename\x18\x01 \x01(\t\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01\x32\xc3\x18\n\x0bImmuService\x12>\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x00\x12H\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x00\x12:\n\tPrintTree\x12\x16.google.protobuf.Empty\x1a\x13.immudb.schema.Tree\"\x00\x12\x44\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x00\x12:\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x36\n\x03Set\x12\x17.immudb.schema.KeyValue\x1a\x14.immudb.schema.Index\"\x00\x12\x42\n\x05SetSV\x12!.immudb.schema.StructuredKeyValue\x1a\x14.immudb.schema.Index\"\x00\x12@\n\x07SafeSet\x12\x1d.immudb.schema.SafeSetOptions\x1a\x14.immudb.schema.Proof\"\x00\x12\x44\n\tSafeSetSV\x12\x1f.immudb.schema.SafeSetSVOptions\x1a\x14.immudb.schema.Proof\"\x00\x12\x30\n\x03Get\x12\x12.immudb.schema.Key\x1a\x13.immudb.schema.Item\"\x00\x12<\n\x05GetSV\x12\x12.immudb.schema.Key\x1a\x1d.immudb.schema.StructuredItem\"\x00\x12\x43\n\x07SafeGet\x12\x1d.immudb.schema.SafeGetOptions\x1a\x17.immudb.schema.SafeItem\"\x00\x12O\n\tSafeGetSV\x12\x1d.immudb.schema.SafeGetOptions\x1a!.immudb.schema.SafeStructuredItem\"\x00\x12\x39\n\x08SetBatch\x12\x15.immudb.schema.KVList\x1a\x14.immudb.schema.Index\"\x00\x12<\n\nSetBatchSV\x12\x16.immudb.schema.SKVList\x1a\x14.immudb.schema.Index\"\x00\x12=\n\x08GetBatch\x12\x16.immudb.schema.KeyList\x1a\x17.immudb.schema.ItemList\"\x00\x12I\n\nGetBatchSV\x12\x16.immudb.schema.KeyList\x1a!.immudb.schema.StructuredItemList\"\x00\x12=\n\x04Scan\x12\x1a.immudb.schema.ScanOptions\x1a\x17.immudb.schema.ItemList\"\x00\x12I\n\x06ScanSV\x12\x1a.immudb.schema.ScanOptions\x1a!.immudb.schema.StructuredItemList\"\x00\x12>\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.ItemsCount\"\x00\x12<\n\x0b\x43urrentRoot\x12\x16.google.protobuf.Empty\x1a\x13.immudb.schema.Root\"\x00\x12\x42\n\tInclusion\x12\x14.immudb.schema.Index\x1a\x1d.immudb.schema.InclusionProof\"\x00\x12\x46\n\x0b\x43onsistency\x12\x14.immudb.schema.Index\x1a\x1f.immudb.schema.ConsistencyProof\"\x00\x12\x36\n\x07\x42yIndex\x12\x14.immudb.schema.Index\x1a\x13.immudb.schema.Item\"\x00\x12I\n\x0b\x42ySafeIndex\x12\x1f.immudb.schema.SafeIndexOptions\x1a\x17.immudb.schema.SafeItem\"\x00\x12\x42\n\tByIndexSV\x12\x14.immudb.schema.Index\x1a\x1d.immudb.schema.StructuredItem\"\x00\x12\x38\n\x07History\x12\x12.immudb.schema.Key\x1a\x17.immudb.schema.ItemList\"\x00\x12\x44\n\tHistorySV\x12\x12.immudb.schema.Key\x1a!.immudb.schema.StructuredItemList\"\x00\x12\x41\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x00\x12\x44\n\tReference\x12\x1f.immudb.schema.ReferenceOptions\x1a\x14.immudb.schema.Index\"\x00\x12L\n\rSafeReference\x12#.immudb.schema.SafeReferenceOptions\x1a\x14.immudb.schema.Proof\"\x00\x12:\n\x04ZAdd\x12\x1a.immudb.schema.ZAddOptions\x1a\x14.immudb.schema.Index\"\x00\x12?\n\x05ZScan\x12\x1b.immudb.schema.ZScanOptions\x1a\x17.immudb.schema.ItemList\"\x00\x12K\n\x07ZScanSV\x12\x1b.immudb.schema.ZScanOptions\x1a!.immudb.schema.StructuredItemList\"\x00\x12\x42\n\x08SafeZAdd\x12\x1e.immudb.schema.SafeZAddOptions\x1a\x14.immudb.schema.Proof\"\x00\x12;\n\x05IScan\x12\x1b.immudb.schema.IScanOptions\x1a\x13.immudb.schema.Page\"\x00\x12>\n\x07IScanSV\x12\x1b.immudb.schema.IScanOptions\x1a\x14.immudb.schema.SPage\"\x00\x12\x39\n\x04\x44ump\x12\x16.google.protobuf.Empty\x1a\x15.immudb.schema.KVList\"\x00\x30\x01\x12\x43\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x00\x12I\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x00\x12T\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x00\x42-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3'
+  serialized_pb=b'\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1bgoogle/protobuf/empty.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"T\n\x04Node\x12\t\n\x01i\x18\x01 \x01(\x0c\x12\t\n\x01h\x18\x02 \x01(\x0c\x12\x0c\n\x04refk\x18\x03 \x01(\x0c\x12\x0b\n\x03ref\x18\x04 \x01(\x08\x12\r\n\x05\x63\x61\x63he\x18\x05 \x01(\x08\x12\x0c\n\x04root\x18\x06 \x01(\x08\"\'\n\x05Layer\x12\x1e\n\x01l\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Node\"\'\n\x04Tree\x12\x1f\n\x01t\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Layer\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\"H\n\x12StructuredKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12%\n\x05value\x18\x02 \x01(\x0b\x32\x16.immudb.schema.Content\"-\n\x07\x43ontent\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"\x16\n\x05Index\x12\r\n\x05index\x18\x01 \x01(\x04\"1\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\r\n\x05index\x18\x03 \x01(\x04\"S\n\x0eStructuredItem\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12%\n\x05value\x18\x02 \x01(\x0b\x32\x16.immudb.schema.Content\x12\r\n\x05index\x18\x03 \x01(\x04\".\n\x06KVList\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\":\n\x07SKVList\x12/\n\x04SKVs\x18\x01 \x03(\x0b\x32!.immudb.schema.StructuredKeyValue\"+\n\x07KeyList\x12 \n\x04keys\x18\x01 \x03(\x0b\x32\x12.immudb.schema.Key\".\n\x08ItemList\x12\"\n\x05items\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Item\"_\n\x05ZItem\x12!\n\x04item\x18\x01 \x01(\x0b\x32\x13.immudb.schema.Item\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x15\n\rcurrentOffset\x18\x03 \x01(\x0c\x12\r\n\x05index\x18\x04 \x01(\x04\"0\n\tZItemList\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.immudb.schema.ZItem\"B\n\x12StructuredItemList\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.immudb.schema.StructuredItem\"D\n\x13ZStructuredItemList\x12-\n\x05items\x18\x01 \x03(\x0b\x32\x1e.immudb.schema.ZStructuredItem\"s\n\x0fZStructuredItem\x12+\n\x04item\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.StructuredItem\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x15\n\rcurrentOffset\x18\x03 \x01(\x0c\x12\r\n\x05index\x18\x04 \x01(\x04\"^\n\x04Root\x12)\n\x07payload\x18\x01 \x01(\x0b\x32\x18.immudb.schema.RootIndex\x12+\n\tsignature\x18\x02 \x01(\x0b\x32\x18.immudb.schema.Signature\"(\n\tRootIndex\x12\r\n\x05index\x18\x01 \x01(\x04\x12\x0c\n\x04root\x18\x02 \x01(\x0c\"1\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x11\n\tpublicKey\x18\x02 \x01(\x0c\"[\n\x0bScanOptions\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x0c\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\x12\x0c\n\x04\x64\x65\x65p\x18\x05 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nItemsCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"U\n\x0eInclusionProof\x12\n\n\x02\x61t\x18\x01 \x01(\x04\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0c\n\x04root\x18\x03 \x01(\x0c\x12\x0c\n\x04leaf\x18\x04 \x01(\x0c\x12\x0c\n\x04path\x18\x05 \x03(\x0c\"f\n\x10\x43onsistencyProof\x12\r\n\x05\x66irst\x18\x01 \x01(\x04\x12\x0e\n\x06second\x18\x02 \x01(\x04\x12\x11\n\tfirstRoot\x18\x03 \x01(\x0c\x12\x12\n\nsecondRoot\x18\x04 \x01(\x0c\x12\x0c\n\x04path\x18\x05 \x03(\x0c\"n\n\x05Proof\x12\x0c\n\x04leaf\x18\x01 \x01(\x0c\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0c\n\x04root\x18\x03 \x01(\x0c\x12\n\n\x02\x61t\x18\x04 \x01(\x04\x12\x15\n\rinclusionPath\x18\x05 \x03(\x0c\x12\x17\n\x0f\x63onsistencyPath\x18\x06 \x03(\x0c\"R\n\x08SafeItem\x12!\n\x04item\x18\x01 \x01(\x0b\x32\x13.immudb.schema.Item\x12#\n\x05proof\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Proof\"f\n\x12SafeStructuredItem\x12+\n\x04item\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.StructuredItem\x12#\n\x05proof\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Proof\"^\n\x0eSafeSetOptions\x12#\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValue\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"k\n\x10SafeSetSVOptions\x12.\n\x03skv\x18\x01 \x01(\x0b\x32!.immudb.schema.StructuredKeyValue\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"F\n\x0eSafeGetOptions\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"l\n\x14SafeReferenceOptions\x12+\n\x02ro\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceOptions\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"2\n\x10ReferenceOptions\x12\x11\n\treference\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\"q\n\x0bZAddOptions\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12#\n\x05score\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12#\n\x05index\x18\x04 \x01(\x0b\x32\x14.immudb.schema.Index\"\x91\x01\n\x0cZScanOptions\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x0c\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\x12!\n\x03min\x18\x05 \x01(\x0b\x32\x14.immudb.schema.Score\x12!\n\x03max\x18\x06 \x01(\x0b\x32\x14.immudb.schema.Score\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"4\n\x0cIScanOptions\x12\x10\n\x08pageSize\x18\x01 \x01(\x04\x12\x12\n\npageNumber\x18\x02 \x01(\x04\"8\n\x04Page\x12\"\n\x05items\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Item\x12\x0c\n\x04more\x18\x03 \x01(\x08\"T\n\x05SPage\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.immudb.schema.StructuredItem\x12\x0f\n\x07pageNum\x18\x02 \x01(\x04\x12\x0c\n\x04more\x18\x03 \x01(\x08\"M\n\x0eHistoryOptions\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\"e\n\x0fSafeZAddOptions\x12)\n\x05zopts\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddOptions\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"J\n\x10SafeIndexOptions\x12\r\n\x05index\x18\x01 \x01(\x04\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabasename\x18\x01 \x01(\t\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01\x32\xd1\x12\n\x0bImmuService\x12>\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x00\x12H\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x00\x12:\n\tPrintTree\x12\x16.google.protobuf.Empty\x1a\x13.immudb.schema.Tree\"\x00\x12\x44\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x00\x12:\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x36\n\x03Set\x12\x17.immudb.schema.KeyValue\x1a\x14.immudb.schema.Index\"\x00\x12@\n\x07SafeSet\x12\x1d.immudb.schema.SafeSetOptions\x1a\x14.immudb.schema.Proof\"\x00\x12\x30\n\x03Get\x12\x12.immudb.schema.Key\x1a\x13.immudb.schema.Item\"\x00\x12\x43\n\x07SafeGet\x12\x1d.immudb.schema.SafeGetOptions\x1a\x17.immudb.schema.SafeItem\"\x00\x12\x39\n\x08SetBatch\x12\x15.immudb.schema.KVList\x1a\x14.immudb.schema.Index\"\x00\x12=\n\x08GetBatch\x12\x16.immudb.schema.KeyList\x1a\x17.immudb.schema.ItemList\"\x00\x12=\n\x04Scan\x12\x1a.immudb.schema.ScanOptions\x1a\x17.immudb.schema.ItemList\"\x00\x12>\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.ItemsCount\"\x00\x12?\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.ItemsCount\"\x00\x12<\n\x0b\x43urrentRoot\x12\x16.google.protobuf.Empty\x1a\x13.immudb.schema.Root\"\x00\x12\x42\n\tInclusion\x12\x14.immudb.schema.Index\x1a\x1d.immudb.schema.InclusionProof\"\x00\x12\x46\n\x0b\x43onsistency\x12\x14.immudb.schema.Index\x1a\x1f.immudb.schema.ConsistencyProof\"\x00\x12\x36\n\x07\x42yIndex\x12\x14.immudb.schema.Index\x1a\x13.immudb.schema.Item\"\x00\x12I\n\x0b\x42ySafeIndex\x12\x1f.immudb.schema.SafeIndexOptions\x1a\x17.immudb.schema.SafeItem\"\x00\x12\x43\n\x07History\x12\x1d.immudb.schema.HistoryOptions\x1a\x17.immudb.schema.ItemList\"\x00\x12\x41\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x00\x12\x44\n\tReference\x12\x1f.immudb.schema.ReferenceOptions\x1a\x14.immudb.schema.Index\"\x00\x12L\n\rSafeReference\x12#.immudb.schema.SafeReferenceOptions\x1a\x14.immudb.schema.Proof\"\x00\x12:\n\x04ZAdd\x12\x1a.immudb.schema.ZAddOptions\x1a\x14.immudb.schema.Index\"\x00\x12@\n\x05ZScan\x12\x1b.immudb.schema.ZScanOptions\x1a\x18.immudb.schema.ZItemList\"\x00\x12\x42\n\x08SafeZAdd\x12\x1e.immudb.schema.SafeZAddOptions\x1a\x14.immudb.schema.Proof\"\x00\x12;\n\x05IScan\x12\x1b.immudb.schema.IScanOptions\x1a\x13.immudb.schema.Page\"\x00\x12\x43\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x00\x12I\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x00\x12T\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x00\x42-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3'
   ,
-  dependencies=[google_dot_api_dot_annotations__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 _PERMISSIONACTION = _descriptor.EnumDescriptor(
   name='PermissionAction',
@@ -46,8 +45,8 @@ _PERMISSIONACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=3456,
-  serialized_end=3497,
+  serialized_start=4145,
+  serialized_end=4186,
 )
 _sym_db.RegisterEnumDescriptor(_PERMISSIONACTION)
 
@@ -84,8 +83,8 @@ _KEY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=90,
-  serialized_end=108,
+  serialized_start=60,
+  serialized_end=78,
 )
 
 
@@ -123,8 +122,8 @@ _PERMISSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=110,
-  serialized_end=160,
+  serialized_start=80,
+  serialized_end=130,
 )
 
 
@@ -183,8 +182,8 @@ _USER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=162,
-  serialized_end=284,
+  serialized_start=132,
+  serialized_end=254,
 )
 
 
@@ -215,8 +214,8 @@ _USERLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=286,
-  serialized_end=332,
+  serialized_start=256,
+  serialized_end=302,
 )
 
 
@@ -268,8 +267,8 @@ _CREATEUSERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=334,
-  serialized_end=423,
+  serialized_start=304,
+  serialized_end=393,
 )
 
 
@@ -300,8 +299,8 @@ _USERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=425,
-  serialized_end=452,
+  serialized_start=395,
+  serialized_end=422,
 )
 
 
@@ -346,8 +345,8 @@ _CHANGEPASSWORDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=454,
-  serialized_end=533,
+  serialized_start=424,
+  serialized_end=503,
 )
 
 
@@ -385,8 +384,8 @@ _LOGINREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=535,
-  serialized_end=581,
+  serialized_start=505,
+  serialized_end=551,
 )
 
 
@@ -424,8 +423,8 @@ _LOGINRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=583,
-  serialized_end=630,
+  serialized_start=553,
+  serialized_end=600,
 )
 
 
@@ -456,8 +455,8 @@ _AUTHCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=632,
-  serialized_end=658,
+  serialized_start=602,
+  serialized_end=628,
 )
 
 
@@ -488,8 +487,8 @@ _MTLSCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=660,
-  serialized_end=689,
+  serialized_start=630,
+  serialized_end=659,
 )
 
 
@@ -555,8 +554,8 @@ _NODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=691,
-  serialized_end=775,
+  serialized_start=661,
+  serialized_end=745,
 )
 
 
@@ -587,8 +586,8 @@ _LAYER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=777,
-  serialized_end=816,
+  serialized_start=747,
+  serialized_end=786,
 )
 
 
@@ -619,8 +618,8 @@ _TREE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=818,
-  serialized_end=857,
+  serialized_start=788,
+  serialized_end=827,
 )
 
 
@@ -658,8 +657,8 @@ _KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=859,
-  serialized_end=897,
+  serialized_start=829,
+  serialized_end=867,
 )
 
 
@@ -697,8 +696,8 @@ _STRUCTUREDKEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=899,
-  serialized_end=971,
+  serialized_start=869,
+  serialized_end=941,
 )
 
 
@@ -736,8 +735,8 @@ _CONTENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=973,
-  serialized_end=1018,
+  serialized_start=943,
+  serialized_end=988,
 )
 
 
@@ -768,8 +767,8 @@ _INDEX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1020,
-  serialized_end=1042,
+  serialized_start=990,
+  serialized_end=1012,
 )
 
 
@@ -814,8 +813,8 @@ _ITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1044,
-  serialized_end=1093,
+  serialized_start=1014,
+  serialized_end=1063,
 )
 
 
@@ -860,8 +859,8 @@ _STRUCTUREDITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1095,
-  serialized_end=1178,
+  serialized_start=1065,
+  serialized_end=1148,
 )
 
 
@@ -892,8 +891,8 @@ _KVLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1180,
-  serialized_end=1226,
+  serialized_start=1150,
+  serialized_end=1196,
 )
 
 
@@ -924,8 +923,8 @@ _SKVLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1228,
-  serialized_end=1286,
+  serialized_start=1198,
+  serialized_end=1256,
 )
 
 
@@ -956,8 +955,8 @@ _KEYLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1288,
-  serialized_end=1331,
+  serialized_start=1258,
+  serialized_end=1301,
 )
 
 
@@ -988,8 +987,93 @@ _ITEMLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1333,
-  serialized_end=1379,
+  serialized_start=1303,
+  serialized_end=1349,
+)
+
+
+_ZITEM = _descriptor.Descriptor(
+  name='ZItem',
+  full_name='immudb.schema.ZItem',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='item', full_name='immudb.schema.ZItem.item', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='score', full_name='immudb.schema.ZItem.score', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='currentOffset', full_name='immudb.schema.ZItem.currentOffset', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='index', full_name='immudb.schema.ZItem.index', index=3,
+      number=4, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1351,
+  serialized_end=1446,
+)
+
+
+_ZITEMLIST = _descriptor.Descriptor(
+  name='ZItemList',
+  full_name='immudb.schema.ZItemList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='items', full_name='immudb.schema.ZItemList.items', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1448,
+  serialized_end=1496,
 )
 
 
@@ -1020,8 +1104,93 @@ _STRUCTUREDITEMLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1381,
-  serialized_end=1447,
+  serialized_start=1498,
+  serialized_end=1564,
+)
+
+
+_ZSTRUCTUREDITEMLIST = _descriptor.Descriptor(
+  name='ZStructuredItemList',
+  full_name='immudb.schema.ZStructuredItemList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='items', full_name='immudb.schema.ZStructuredItemList.items', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1566,
+  serialized_end=1634,
+)
+
+
+_ZSTRUCTUREDITEM = _descriptor.Descriptor(
+  name='ZStructuredItem',
+  full_name='immudb.schema.ZStructuredItem',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='item', full_name='immudb.schema.ZStructuredItem.item', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='score', full_name='immudb.schema.ZStructuredItem.score', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='currentOffset', full_name='immudb.schema.ZStructuredItem.currentOffset', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='index', full_name='immudb.schema.ZStructuredItem.index', index=3,
+      number=4, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1636,
+  serialized_end=1751,
 )
 
 
@@ -1034,14 +1203,53 @@ _ROOT = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.Root.index', index=0,
+      name='payload', full_name='immudb.schema.Root.payload', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='signature', full_name='immudb.schema.Root.signature', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1753,
+  serialized_end=1847,
+)
+
+
+_ROOTINDEX = _descriptor.Descriptor(
+  name='RootIndex',
+  full_name='immudb.schema.RootIndex',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='index', full_name='immudb.schema.RootIndex.index', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='root', full_name='immudb.schema.Root.root', index=1,
+      name='root', full_name='immudb.schema.RootIndex.root', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
@@ -1059,8 +1267,47 @@ _ROOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1449,
-  serialized_end=1484,
+  serialized_start=1849,
+  serialized_end=1889,
+)
+
+
+_SIGNATURE = _descriptor.Descriptor(
+  name='Signature',
+  full_name='immudb.schema.Signature',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='signature', full_name='immudb.schema.Signature.signature', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='publicKey', full_name='immudb.schema.Signature.publicKey', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1891,
+  serialized_end=1940,
 )
 
 
@@ -1119,8 +1366,8 @@ _SCANOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1486,
-  serialized_end=1577,
+  serialized_start=1942,
+  serialized_end=2033,
 )
 
 
@@ -1151,8 +1398,8 @@ _KEYPREFIX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1579,
-  serialized_end=1606,
+  serialized_start=2035,
+  serialized_end=2062,
 )
 
 
@@ -1183,8 +1430,8 @@ _ITEMSCOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1608,
-  serialized_end=1635,
+  serialized_start=2064,
+  serialized_end=2091,
 )
 
 
@@ -1243,8 +1490,8 @@ _INCLUSIONPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1637,
-  serialized_end=1722,
+  serialized_start=2093,
+  serialized_end=2178,
 )
 
 
@@ -1303,8 +1550,8 @@ _CONSISTENCYPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1724,
-  serialized_end=1826,
+  serialized_start=2180,
+  serialized_end=2282,
 )
 
 
@@ -1370,8 +1617,8 @@ _PROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1828,
-  serialized_end=1938,
+  serialized_start=2284,
+  serialized_end=2394,
 )
 
 
@@ -1409,8 +1656,8 @@ _SAFEITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1940,
-  serialized_end=2022,
+  serialized_start=2396,
+  serialized_end=2478,
 )
 
 
@@ -1448,8 +1695,8 @@ _SAFESTRUCTUREDITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2024,
-  serialized_end=2126,
+  serialized_start=2480,
+  serialized_end=2582,
 )
 
 
@@ -1487,8 +1734,8 @@ _SAFESETOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2128,
-  serialized_end=2222,
+  serialized_start=2584,
+  serialized_end=2678,
 )
 
 
@@ -1526,8 +1773,8 @@ _SAFESETSVOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2224,
-  serialized_end=2331,
+  serialized_start=2680,
+  serialized_end=2787,
 )
 
 
@@ -1565,8 +1812,8 @@ _SAFEGETOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2333,
-  serialized_end=2403,
+  serialized_start=2789,
+  serialized_end=2859,
 )
 
 
@@ -1604,8 +1851,8 @@ _SAFEREFERENCEOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2405,
-  serialized_end=2513,
+  serialized_start=2861,
+  serialized_end=2969,
 )
 
 
@@ -1643,8 +1890,8 @@ _HEALTHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2515,
-  serialized_end=2564,
+  serialized_start=2971,
+  serialized_end=3020,
 )
 
 
@@ -1682,8 +1929,8 @@ _REFERENCEOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2566,
-  serialized_end=2616,
+  serialized_start=3022,
+  serialized_end=3072,
 )
 
 
@@ -1704,8 +1951,8 @@ _ZADDOPTIONS = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='score', full_name='immudb.schema.ZAddOptions.score', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -1713,6 +1960,13 @@ _ZADDOPTIONS = _descriptor.Descriptor(
       name='key', full_name='immudb.schema.ZAddOptions.key', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='index', full_name='immudb.schema.ZAddOptions.index', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -1728,8 +1982,8 @@ _ZADDOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2618,
-  serialized_end=2672,
+  serialized_start=3074,
+  serialized_end=3187,
 )
 
 
@@ -1769,6 +2023,20 @@ _ZSCANOPTIONS = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='min', full_name='immudb.schema.ZScanOptions.min', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='max', full_name='immudb.schema.ZScanOptions.max', index=5,
+      number=6, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1781,8 +2049,40 @@ _ZSCANOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2674,
-  serialized_end=2749,
+  serialized_start=3190,
+  serialized_end=3335,
+)
+
+
+_SCORE = _descriptor.Descriptor(
+  name='Score',
+  full_name='immudb.schema.Score',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='score', full_name='immudb.schema.Score.score', index=0,
+      number=1, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3337,
+  serialized_end=3359,
 )
 
 
@@ -1820,8 +2120,8 @@ _ISCANOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2751,
-  serialized_end=2803,
+  serialized_start=3361,
+  serialized_end=3413,
 )
 
 
@@ -1859,8 +2159,8 @@ _PAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2805,
-  serialized_end=2861,
+  serialized_start=3415,
+  serialized_end=3471,
 )
 
 
@@ -1905,8 +2205,61 @@ _SPAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2863,
-  serialized_end=2947,
+  serialized_start=3473,
+  serialized_end=3557,
+)
+
+
+_HISTORYOPTIONS = _descriptor.Descriptor(
+  name='HistoryOptions',
+  full_name='immudb.schema.HistoryOptions',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='immudb.schema.HistoryOptions.key', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='offset', full_name='immudb.schema.HistoryOptions.offset', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='limit', full_name='immudb.schema.HistoryOptions.limit', index=2,
+      number=3, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='reverse', full_name='immudb.schema.HistoryOptions.reverse', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3559,
+  serialized_end=3636,
 )
 
 
@@ -1944,8 +2297,8 @@ _SAFEZADDOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2949,
-  serialized_end=3050,
+  serialized_start=3638,
+  serialized_end=3739,
 )
 
 
@@ -1983,8 +2336,8 @@ _SAFEINDEXOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3052,
-  serialized_end=3126,
+  serialized_start=3741,
+  serialized_end=3815,
 )
 
 
@@ -2015,8 +2368,8 @@ _DATABASE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3128,
-  serialized_end=3160,
+  serialized_start=3817,
+  serialized_end=3849,
 )
 
 
@@ -2047,8 +2400,8 @@ _USEDATABASEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3162,
-  serialized_end=3195,
+  serialized_start=3851,
+  serialized_end=3884,
 )
 
 
@@ -2100,8 +2453,8 @@ _CHANGEPERMISSIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3198,
-  serialized_end=3328,
+  serialized_start=3887,
+  serialized_end=4017,
 )
 
 
@@ -2139,8 +2492,8 @@ _SETACTIVEUSERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3330,
-  serialized_end=3386,
+  serialized_start=4019,
+  serialized_end=4075,
 )
 
 
@@ -2171,8 +2524,8 @@ _DATABASELISTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3388,
-  serialized_end=3454,
+  serialized_start=4077,
+  serialized_end=4143,
 )
 
 _USER.fields_by_name['permissions'].message_type = _PERMISSION
@@ -2185,7 +2538,13 @@ _KVLIST.fields_by_name['KVs'].message_type = _KEYVALUE
 _SKVLIST.fields_by_name['SKVs'].message_type = _STRUCTUREDKEYVALUE
 _KEYLIST.fields_by_name['keys'].message_type = _KEY
 _ITEMLIST.fields_by_name['items'].message_type = _ITEM
+_ZITEM.fields_by_name['item'].message_type = _ITEM
+_ZITEMLIST.fields_by_name['items'].message_type = _ZITEM
 _STRUCTUREDITEMLIST.fields_by_name['items'].message_type = _STRUCTUREDITEM
+_ZSTRUCTUREDITEMLIST.fields_by_name['items'].message_type = _ZSTRUCTUREDITEM
+_ZSTRUCTUREDITEM.fields_by_name['item'].message_type = _STRUCTUREDITEM
+_ROOT.fields_by_name['payload'].message_type = _ROOTINDEX
+_ROOT.fields_by_name['signature'].message_type = _SIGNATURE
 _SAFEITEM.fields_by_name['item'].message_type = _ITEM
 _SAFEITEM.fields_by_name['proof'].message_type = _PROOF
 _SAFESTRUCTUREDITEM.fields_by_name['item'].message_type = _STRUCTUREDITEM
@@ -2197,6 +2556,10 @@ _SAFESETSVOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
 _SAFEGETOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
 _SAFEREFERENCEOPTIONS.fields_by_name['ro'].message_type = _REFERENCEOPTIONS
 _SAFEREFERENCEOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
+_ZADDOPTIONS.fields_by_name['score'].message_type = _SCORE
+_ZADDOPTIONS.fields_by_name['index'].message_type = _INDEX
+_ZSCANOPTIONS.fields_by_name['min'].message_type = _SCORE
+_ZSCANOPTIONS.fields_by_name['max'].message_type = _SCORE
 _PAGE.fields_by_name['items'].message_type = _ITEM
 _SPAGE.fields_by_name['items'].message_type = _STRUCTUREDITEM
 _SAFEZADDOPTIONS.fields_by_name['zopts'].message_type = _ZADDOPTIONS
@@ -2228,8 +2591,14 @@ DESCRIPTOR.message_types_by_name['KVList'] = _KVLIST
 DESCRIPTOR.message_types_by_name['SKVList'] = _SKVLIST
 DESCRIPTOR.message_types_by_name['KeyList'] = _KEYLIST
 DESCRIPTOR.message_types_by_name['ItemList'] = _ITEMLIST
+DESCRIPTOR.message_types_by_name['ZItem'] = _ZITEM
+DESCRIPTOR.message_types_by_name['ZItemList'] = _ZITEMLIST
 DESCRIPTOR.message_types_by_name['StructuredItemList'] = _STRUCTUREDITEMLIST
+DESCRIPTOR.message_types_by_name['ZStructuredItemList'] = _ZSTRUCTUREDITEMLIST
+DESCRIPTOR.message_types_by_name['ZStructuredItem'] = _ZSTRUCTUREDITEM
 DESCRIPTOR.message_types_by_name['Root'] = _ROOT
+DESCRIPTOR.message_types_by_name['RootIndex'] = _ROOTINDEX
+DESCRIPTOR.message_types_by_name['Signature'] = _SIGNATURE
 DESCRIPTOR.message_types_by_name['ScanOptions'] = _SCANOPTIONS
 DESCRIPTOR.message_types_by_name['KeyPrefix'] = _KEYPREFIX
 DESCRIPTOR.message_types_by_name['ItemsCount'] = _ITEMSCOUNT
@@ -2246,9 +2615,11 @@ DESCRIPTOR.message_types_by_name['HealthResponse'] = _HEALTHRESPONSE
 DESCRIPTOR.message_types_by_name['ReferenceOptions'] = _REFERENCEOPTIONS
 DESCRIPTOR.message_types_by_name['ZAddOptions'] = _ZADDOPTIONS
 DESCRIPTOR.message_types_by_name['ZScanOptions'] = _ZSCANOPTIONS
+DESCRIPTOR.message_types_by_name['Score'] = _SCORE
 DESCRIPTOR.message_types_by_name['IScanOptions'] = _ISCANOPTIONS
 DESCRIPTOR.message_types_by_name['Page'] = _PAGE
 DESCRIPTOR.message_types_by_name['SPage'] = _SPAGE
+DESCRIPTOR.message_types_by_name['HistoryOptions'] = _HISTORYOPTIONS
 DESCRIPTOR.message_types_by_name['SafeZAddOptions'] = _SAFEZADDOPTIONS
 DESCRIPTOR.message_types_by_name['SafeIndexOptions'] = _SAFEINDEXOPTIONS
 DESCRIPTOR.message_types_by_name['Database'] = _DATABASE
@@ -2427,6 +2798,20 @@ ItemList = _reflection.GeneratedProtocolMessageType('ItemList', (_message.Messag
   })
 _sym_db.RegisterMessage(ItemList)
 
+ZItem = _reflection.GeneratedProtocolMessageType('ZItem', (_message.Message,), {
+  'DESCRIPTOR' : _ZITEM,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZItem)
+  })
+_sym_db.RegisterMessage(ZItem)
+
+ZItemList = _reflection.GeneratedProtocolMessageType('ZItemList', (_message.Message,), {
+  'DESCRIPTOR' : _ZITEMLIST,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZItemList)
+  })
+_sym_db.RegisterMessage(ZItemList)
+
 StructuredItemList = _reflection.GeneratedProtocolMessageType('StructuredItemList', (_message.Message,), {
   'DESCRIPTOR' : _STRUCTUREDITEMLIST,
   '__module__' : 'schema_pb2'
@@ -2434,12 +2819,40 @@ StructuredItemList = _reflection.GeneratedProtocolMessageType('StructuredItemLis
   })
 _sym_db.RegisterMessage(StructuredItemList)
 
+ZStructuredItemList = _reflection.GeneratedProtocolMessageType('ZStructuredItemList', (_message.Message,), {
+  'DESCRIPTOR' : _ZSTRUCTUREDITEMLIST,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZStructuredItemList)
+  })
+_sym_db.RegisterMessage(ZStructuredItemList)
+
+ZStructuredItem = _reflection.GeneratedProtocolMessageType('ZStructuredItem', (_message.Message,), {
+  'DESCRIPTOR' : _ZSTRUCTUREDITEM,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZStructuredItem)
+  })
+_sym_db.RegisterMessage(ZStructuredItem)
+
 Root = _reflection.GeneratedProtocolMessageType('Root', (_message.Message,), {
   'DESCRIPTOR' : _ROOT,
   '__module__' : 'schema_pb2'
   # @@protoc_insertion_point(class_scope:immudb.schema.Root)
   })
 _sym_db.RegisterMessage(Root)
+
+RootIndex = _reflection.GeneratedProtocolMessageType('RootIndex', (_message.Message,), {
+  'DESCRIPTOR' : _ROOTINDEX,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.RootIndex)
+  })
+_sym_db.RegisterMessage(RootIndex)
+
+Signature = _reflection.GeneratedProtocolMessageType('Signature', (_message.Message,), {
+  'DESCRIPTOR' : _SIGNATURE,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.Signature)
+  })
+_sym_db.RegisterMessage(Signature)
 
 ScanOptions = _reflection.GeneratedProtocolMessageType('ScanOptions', (_message.Message,), {
   'DESCRIPTOR' : _SCANOPTIONS,
@@ -2553,6 +2966,13 @@ ZScanOptions = _reflection.GeneratedProtocolMessageType('ZScanOptions', (_messag
   })
 _sym_db.RegisterMessage(ZScanOptions)
 
+Score = _reflection.GeneratedProtocolMessageType('Score', (_message.Message,), {
+  'DESCRIPTOR' : _SCORE,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.Score)
+  })
+_sym_db.RegisterMessage(Score)
+
 IScanOptions = _reflection.GeneratedProtocolMessageType('IScanOptions', (_message.Message,), {
   'DESCRIPTOR' : _ISCANOPTIONS,
   '__module__' : 'schema_pb2'
@@ -2573,6 +2993,13 @@ SPage = _reflection.GeneratedProtocolMessageType('SPage', (_message.Message,), {
   # @@protoc_insertion_point(class_scope:immudb.schema.SPage)
   })
 _sym_db.RegisterMessage(SPage)
+
+HistoryOptions = _reflection.GeneratedProtocolMessageType('HistoryOptions', (_message.Message,), {
+  'DESCRIPTOR' : _HISTORYOPTIONS,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.HistoryOptions)
+  })
+_sym_db.RegisterMessage(HistoryOptions)
 
 SafeZAddOptions = _reflection.GeneratedProtocolMessageType('SafeZAddOptions', (_message.Message,), {
   'DESCRIPTOR' : _SAFEZADDOPTIONS,
@@ -2633,8 +3060,8 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=3500,
-  serialized_end=6639,
+  serialized_start=4189,
+  serialized_end=6574,
   methods=[
   _descriptor.MethodDescriptor(
     name='ListUsers',
@@ -2727,19 +3154,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SetSV',
-    full_name='immudb.schema.ImmuService.SetSV',
-    index=9,
-    containing_service=None,
-    input_type=_STRUCTUREDKEYVALUE,
-    output_type=_INDEX,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='SafeSet',
     full_name='immudb.schema.ImmuService.SafeSet',
-    index=10,
+    index=9,
     containing_service=None,
     input_type=_SAFESETOPTIONS,
     output_type=_PROOF,
@@ -2747,19 +3164,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SafeSetSV',
-    full_name='immudb.schema.ImmuService.SafeSetSV',
-    index=11,
-    containing_service=None,
-    input_type=_SAFESETSVOPTIONS,
-    output_type=_PROOF,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='Get',
     full_name='immudb.schema.ImmuService.Get',
-    index=12,
+    index=10,
     containing_service=None,
     input_type=_KEY,
     output_type=_ITEM,
@@ -2767,19 +3174,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='GetSV',
-    full_name='immudb.schema.ImmuService.GetSV',
-    index=13,
-    containing_service=None,
-    input_type=_KEY,
-    output_type=_STRUCTUREDITEM,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='SafeGet',
     full_name='immudb.schema.ImmuService.SafeGet',
-    index=14,
+    index=11,
     containing_service=None,
     input_type=_SAFEGETOPTIONS,
     output_type=_SAFEITEM,
@@ -2787,19 +3184,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SafeGetSV',
-    full_name='immudb.schema.ImmuService.SafeGetSV',
-    index=15,
-    containing_service=None,
-    input_type=_SAFEGETOPTIONS,
-    output_type=_SAFESTRUCTUREDITEM,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='SetBatch',
     full_name='immudb.schema.ImmuService.SetBatch',
-    index=16,
+    index=12,
     containing_service=None,
     input_type=_KVLIST,
     output_type=_INDEX,
@@ -2807,39 +3194,19 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SetBatchSV',
-    full_name='immudb.schema.ImmuService.SetBatchSV',
-    index=17,
-    containing_service=None,
-    input_type=_SKVLIST,
-    output_type=_INDEX,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='GetBatch',
     full_name='immudb.schema.ImmuService.GetBatch',
-    index=18,
+    index=13,
     containing_service=None,
     input_type=_KEYLIST,
     output_type=_ITEMLIST,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='GetBatchSV',
-    full_name='immudb.schema.ImmuService.GetBatchSV',
-    index=19,
-    containing_service=None,
-    input_type=_KEYLIST,
-    output_type=_STRUCTUREDITEMLIST,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='Scan',
     full_name='immudb.schema.ImmuService.Scan',
-    index=20,
+    index=14,
     containing_service=None,
     input_type=_SCANOPTIONS,
     output_type=_ITEMLIST,
@@ -2847,19 +3214,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='ScanSV',
-    full_name='immudb.schema.ImmuService.ScanSV',
-    index=21,
-    containing_service=None,
-    input_type=_SCANOPTIONS,
-    output_type=_STRUCTUREDITEMLIST,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='Count',
     full_name='immudb.schema.ImmuService.Count',
-    index=22,
+    index=15,
     containing_service=None,
     input_type=_KEYPREFIX,
     output_type=_ITEMSCOUNT,
@@ -2867,9 +3224,19 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='CountAll',
+    full_name='immudb.schema.ImmuService.CountAll',
+    index=16,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_ITEMSCOUNT,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='CurrentRoot',
     full_name='immudb.schema.ImmuService.CurrentRoot',
-    index=23,
+    index=17,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_ROOT,
@@ -2879,7 +3246,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='Inclusion',
     full_name='immudb.schema.ImmuService.Inclusion',
-    index=24,
+    index=18,
     containing_service=None,
     input_type=_INDEX,
     output_type=_INCLUSIONPROOF,
@@ -2889,7 +3256,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='Consistency',
     full_name='immudb.schema.ImmuService.Consistency',
-    index=25,
+    index=19,
     containing_service=None,
     input_type=_INDEX,
     output_type=_CONSISTENCYPROOF,
@@ -2899,7 +3266,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ByIndex',
     full_name='immudb.schema.ImmuService.ByIndex',
-    index=26,
+    index=20,
     containing_service=None,
     input_type=_INDEX,
     output_type=_ITEM,
@@ -2909,7 +3276,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='BySafeIndex',
     full_name='immudb.schema.ImmuService.BySafeIndex',
-    index=27,
+    index=21,
     containing_service=None,
     input_type=_SAFEINDEXOPTIONS,
     output_type=_SAFEITEM,
@@ -2917,39 +3284,19 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='ByIndexSV',
-    full_name='immudb.schema.ImmuService.ByIndexSV',
-    index=28,
-    containing_service=None,
-    input_type=_INDEX,
-    output_type=_STRUCTUREDITEM,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='History',
     full_name='immudb.schema.ImmuService.History',
-    index=29,
+    index=22,
     containing_service=None,
-    input_type=_KEY,
+    input_type=_HISTORYOPTIONS,
     output_type=_ITEMLIST,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='HistorySV',
-    full_name='immudb.schema.ImmuService.HistorySV',
-    index=30,
-    containing_service=None,
-    input_type=_KEY,
-    output_type=_STRUCTUREDITEMLIST,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='Health',
     full_name='immudb.schema.ImmuService.Health',
-    index=31,
+    index=23,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_HEALTHRESPONSE,
@@ -2959,7 +3306,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='Reference',
     full_name='immudb.schema.ImmuService.Reference',
-    index=32,
+    index=24,
     containing_service=None,
     input_type=_REFERENCEOPTIONS,
     output_type=_INDEX,
@@ -2969,7 +3316,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SafeReference',
     full_name='immudb.schema.ImmuService.SafeReference',
-    index=33,
+    index=25,
     containing_service=None,
     input_type=_SAFEREFERENCEOPTIONS,
     output_type=_PROOF,
@@ -2979,7 +3326,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ZAdd',
     full_name='immudb.schema.ImmuService.ZAdd',
-    index=34,
+    index=26,
     containing_service=None,
     input_type=_ZADDOPTIONS,
     output_type=_INDEX,
@@ -2989,27 +3336,17 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ZScan',
     full_name='immudb.schema.ImmuService.ZScan',
-    index=35,
+    index=27,
     containing_service=None,
     input_type=_ZSCANOPTIONS,
-    output_type=_ITEMLIST,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='ZScanSV',
-    full_name='immudb.schema.ImmuService.ZScanSV',
-    index=36,
-    containing_service=None,
-    input_type=_ZSCANOPTIONS,
-    output_type=_STRUCTUREDITEMLIST,
+    output_type=_ZITEMLIST,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='SafeZAdd',
     full_name='immudb.schema.ImmuService.SafeZAdd',
-    index=37,
+    index=28,
     containing_service=None,
     input_type=_SAFEZADDOPTIONS,
     output_type=_PROOF,
@@ -3019,7 +3356,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='IScan',
     full_name='immudb.schema.ImmuService.IScan',
-    index=38,
+    index=29,
     containing_service=None,
     input_type=_ISCANOPTIONS,
     output_type=_PAGE,
@@ -3027,29 +3364,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='IScanSV',
-    full_name='immudb.schema.ImmuService.IScanSV',
-    index=39,
-    containing_service=None,
-    input_type=_ISCANOPTIONS,
-    output_type=_SPAGE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='Dump',
-    full_name='immudb.schema.ImmuService.Dump',
-    index=40,
-    containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    output_type=_KVLIST,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='CreateDatabase',
     full_name='immudb.schema.ImmuService.CreateDatabase',
-    index=41,
+    index=30,
     containing_service=None,
     input_type=_DATABASE,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -3059,7 +3376,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='UseDatabase',
     full_name='immudb.schema.ImmuService.UseDatabase',
-    index=42,
+    index=31,
     containing_service=None,
     input_type=_DATABASE,
     output_type=_USEDATABASEREPLY,
@@ -3069,7 +3386,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ChangePermission',
     full_name='immudb.schema.ImmuService.ChangePermission',
-    index=43,
+    index=32,
     containing_service=None,
     input_type=_CHANGEPERMISSIONREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -3079,7 +3396,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SetActiveUser',
     full_name='immudb.schema.ImmuService.SetActiveUser',
-    index=44,
+    index=33,
     containing_service=None,
     input_type=_SETACTIVEUSERREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -3089,7 +3406,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='DatabaseList',
     full_name='immudb.schema.ImmuService.DatabaseList',
-    index=45,
+    index=34,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_DATABASELISTRESPONSE,

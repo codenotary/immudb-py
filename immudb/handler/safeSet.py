@@ -1,8 +1,8 @@
 from time import time
 from dataclasses import dataclass
 
-from immudb.schema import schema_pb2
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2
+from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 from immudb import constants, proofs, item, VerificationException
 
@@ -28,11 +28,9 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
     rawRequest = schema_pb2.SafeSetOptions(kv=kv, rootIndex=index)
     msg = service.SafeSet(rawRequest)
     digest = item.digest(msg.index, rawRequest.kv.key, rawRequest.kv.value)
-    if bytes(msg.leaf) != digest:
-        raise VerificationException("Proof does not match the given item.")
     verified = proofs.verify(msg, bytes(msg.leaf), root)
     if verified:
-        toCache = schema_pb2.Root(
+        toCache = schema_pb2.RootIndex(
             index=msg.at,
             root=msg.root
         )

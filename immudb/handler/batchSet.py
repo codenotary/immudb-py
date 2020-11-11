@@ -1,8 +1,7 @@
 from time import time
 from dataclasses import dataclass
 
-from immudb.schema import schema_pb2
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2, schema_pb2_grpc
 from immudb.rootService import RootService
 
 @dataclass

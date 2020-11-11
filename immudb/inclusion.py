@@ -1,6 +1,6 @@
 import hashlib
 
-from immudb.schema import schema_pb2
+from immudb.grpc import schema_pb2
 from immudb import constants
 
 

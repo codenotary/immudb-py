@@ -1,7 +1,7 @@
 import pytest
 
 from immudb import inclusion
-from immudb.schema import schema_pb2
+from immudb.grpc import schema_pb2
 
 class TestInclusion:
     def test_verify_path(self):

@@ -6,7 +6,7 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           currentRoot, databaseCreate, databaseList, databaseUse, 
                           get, listUsers, safeGet, safeSet, setValue, history)
 from immudb.rootService import RootService
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2_grpc
 
 
 class ImmudbClient:

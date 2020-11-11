@@ -1,7 +1,7 @@
 import pytest
 
 from immudb import consistency
-from immudb.schema import schema_pb2
+from immudb.grpc import schema_pb2
 from immudb.client import ImmudbClient
 from immudb.consistency import verify
 import grpc._channel
