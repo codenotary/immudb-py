@@ -8,6 +8,8 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
 from immudb.rootService import RootService
 from immudb.grpc import schema_pb2_grpc
 
+OLDEST_FIRST=True
+NEWEST_FIRST=False
 
 class ImmudbClient:
     def __init__(self, immudUrl=None):
@@ -145,8 +147,13 @@ class ImmudbClient:
     def currentRoot(self):
         return currentRoot.call(self.__stub, self.__rs, None)
 
-    def history(self, key: bytes):
-        request = schema_pb2_grpc.schema__pb2.Key(key=key)
+    def history(self, key: bytes, offset: int, limit: int, sortorder: bool):
+        request = schema_pb2_grpc.schema__pb2.HistoryOptions(
+                key=key,
+                offset=offset,
+                limit=limit,
+                reverse=sortorder
+                )
         return history.call(self.__stub, self.__rs, request)
 
     def logout(self):
