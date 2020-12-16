@@ -218,4 +218,4 @@ We welcome contributions. Feel free to join the team!
 
 To report bugs or get help, use [GitHub's issues].
 
-[GitHub's issues]: https://github.com/codenotary/immudpy/issues
+[GitHub's issues]: https://github.com/codenotary/immudb-py/issues

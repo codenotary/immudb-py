@@ -160,6 +160,31 @@ class ImmudbClient:
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__login_response = None
+
+    def scan(self, prefix: bytes, offset: bytes, limit:int=10, reverse:bool=False, deep:bool=False):
+        request = schema_pb2_grpc.schema__pb2.ScanOptions(
+            prefix=prefix,
+            offset=offset,
+            limit=limit,
+            reverse=reverse,
+            deep=deep)
+        return scan.call(self.__stub, self.__rs, request)
+    
+    def reference(self, refkey: bytes, key:  bytes):
+        request = schema_pb2_grpc.schema__pb2.ReferenceOptions(
+            reference = refkey,
+            key=key
+            )
+        return reference.call(self.__stub, self.__rs, request)
+
+    
+    def zadd(self):
+        pass
+    
+    def zscan(self):
+        pass
+        
+
         
     def scan(self, prefix: bytes, offset: bytes, limit:int=10, reverse:bool=False, deep:bool=False):
         request = schema_pb2_grpc.schema__pb2.ScanOptions(
