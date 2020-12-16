@@ -1,5 +1,5 @@
 import pytest
-from immudb.client import ImmudbClient
+import immudb.client
 from random import randint
 import grpc._channel
 
@@ -7,7 +7,7 @@ class TestHistory:
         
     def test_history(self):
         try:
-            a = ImmudbClient("localhost:3322")
+            a = immudb.client.ImmudbClient("localhost:3322")
             a.login("immudb","immudb")
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
@@ -18,8 +18,14 @@ class TestHistory:
             a.safeSet(key.encode('ascii'),v.encode('ascii'))
             values.append(v)
             
-        hh=a.history(key.encode('ascii'))
-        assert(len(hh.itemlist.items)==10)
+        hh=a.history(key.encode('ascii'),0,99,immudb.client.NEWEST_FIRST)
+        assert(len(hh)==10)
         for i in range(0,10):
-            assert(hh.itemlist.items[i].value.payload==values[9-i].encode('ascii'))
+            assert(hh[i].value==values[9-i].encode('ascii'))
         
+        idx=0
+        for i in range(0,10):
+           hh=a.history(key.encode('ascii'),idx,1,immudb.client.OLDEST_FIRST)
+           assert(len(hh)>0)
+           assert(hh[0].value==values[i].encode('ascii'))
+           idx=hh[0].index

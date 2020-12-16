@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
     
 setup(name='immudb-py',
-      version='0.8.0rc2',
+      version='0.8.99-dev',
       license="Apache License Version 2.0",
       description='Python SDK for Immudb',
       long_description=long_description,
@@ -14,8 +14,8 @@ setup(name='immudb-py',
       author='vChain',
       url='https://github.com/codenotary/immu-py',
       #download_url='',
-      packages=['immudb', 'immudb.handler', 'immudb.service', 'immudb.schema'],
-      keywords=['immudb', 'immutabile'],
+      packages=['immudb', 'immudb.handler', 'immudb.grpc' ],
+      keywords=['immudb', 'immutable'],
       install_requires=[
         'grpcio>=1.26.0',
         'dataclasses>=0.6',
@@ -34,5 +34,5 @@ setup(name='immudb-py',
               'Programming Language :: Python :: 3.7',
               'Programming Language :: Python :: 3.8',
               ],
-      python_requires='>=3.6',
+      python_requires='>=3.5',
       )

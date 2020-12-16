@@ -1,8 +1,7 @@
 from time import time
 from dataclasses import dataclass
 
-from immudb.schema import schema_pb2
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2, schema_pb2_grpc
 from immudb.rootService import RootService
 
 @dataclass
@@ -11,17 +10,17 @@ class batchSetResponse:
 
 def _packValueTime(kv,tstamp):
     content=schema_pb2.Content(timestamp=tstamp, payload=kv.value)
-    skv=schema_pb2.StructuredKeyValue(key=kv.key, value=content)
-    return skv
+    kv=schema_pb2.KeyValue(key=kv.key, value=content.SerializeToString())
+    return kv
     
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KVList):
     currtime=int(time())
     
-    rawRequest = schema_pb2.SKVList(
-        SKVs = [_packValueTime(kv,currtime) for kv in request.KVs],
+    rawRequest = schema_pb2.KVList(
+        KVs = [_packValueTime(kv,currtime) for kv in request.KVs],
     )
 
-    idx = service.SetBatchSV(rawRequest)
+    idx = service.SetBatch(rawRequest)
     return batchSetResponse(
         index = idx
     )

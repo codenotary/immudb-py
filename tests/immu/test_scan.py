@@ -15,9 +15,16 @@ class TestScan:
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
         xset={}
-        for i in range(0,10):
+        for i in range(0,100):
             xset["scan:{:04X}".format(i).encode('utf8')]=get_random_string(32).encode('utf8')            
         assert type(a.setAll(xset))!=int
-        kv=a.scan(b"scan:",None)
-        for k in kv:
-            assert kv[k]==xset[k]
+        off=None
+        while True:
+            kv=a.scan(b"scan:",off)
+            if len(kv)==0:
+                break
+            for k in kv:
+                assert kv[k]==xset[k]
+                del xset[k]
+                off=k
+        assert len(xset)==0

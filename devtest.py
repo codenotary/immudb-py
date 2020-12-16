@@ -5,9 +5,9 @@ a = ImmudbClient()
 a.login("immudb","immudb")
 print(a.databaseUse(b"defaultdb"))
 #print(a.databaseCreate(b"testdb"))
-print(a.databaseList())
-print("Use:")
-print(a.databaseUse(b"defaultdb"))
+#print(a.databaseList())
+#print("Use:")
+#print(a.databaseUse(b"defaultdb"))
 
 # print(a.databaseUse(b"testdb"))
 
@@ -25,6 +25,10 @@ print(a.databaseUse(b"defaultdb"))
 # print(resp)
 
 
-xset = {b"key1": b"value1", b"key2": b"value2"}
-print(a.setAll(xset))
-print(a.getAll(xset.keys()))
+#xset = {b"key3": b"value3", b"key4": b"value4"}
+#print(a.setAll(xset))
+#print(a.getAll(xset.keys()))
+
+#print(a.safeSet(b'keykey2', b'valval2'))
+#print(a.get(b'keykey2'))
+print(a.history(b'key1'))

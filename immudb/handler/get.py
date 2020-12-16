@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from immudb.schema import schema_pb2
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2
+from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 
 @dataclass
@@ -10,5 +10,7 @@ class GetResponse:
     timestamp: int
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.Key):
-    msg = service.GetSV(request)
-    return GetResponse( value = msg.value.payload, timestamp=msg.value.timestamp )
+    msg = service.Get(request)
+    content=schema_pb2.Content()
+    content.ParseFromString(msg.value)
+    return GetResponse( value = content.payload, timestamp=content.timestamp )

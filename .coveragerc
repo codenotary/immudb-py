@@ -1,6 +1,6 @@
 [run]
 source = immudb
-omit = immudb/service/*,immudb/schema/*
+omit = immudb/grpc/*
 
 [report]
-omit = immudb/service/*,immudb/schema/*
+omit = immudb/grpc/*

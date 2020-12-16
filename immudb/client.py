@@ -7,8 +7,10 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           get, listUsers, safeGet, safeSet, setValue, history, 
                           scan, reference)
 from immudb.rootService import RootService
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2_grpc
 
+OLDEST_FIRST=True
+NEWEST_FIRST=False
 
 class ImmudbClient:
     def __init__(self, immudUrl=None):
@@ -97,7 +99,7 @@ class ImmudbClient:
         klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
         request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
         resp = batchGet.call(self.__stub, self.__rs, request)
-        return {i.key: i.value.payload for i in resp.itemlist.items}
+        return resp
 
     def setAll(self, kv: dict):
         _KVs = []
@@ -146,8 +148,13 @@ class ImmudbClient:
     def currentRoot(self):
         return currentRoot.call(self.__stub, self.__rs, None)
 
-    def history(self, key: bytes):
-        request = schema_pb2_grpc.schema__pb2.Key(key=key)
+    def history(self, key: bytes, offset: int, limit: int, sortorder: bool):
+        request = schema_pb2_grpc.schema__pb2.HistoryOptions(
+                key=key,
+                offset=offset,
+                limit=limit,
+                reverse=sortorder
+                )
         return history.call(self.__stub, self.__rs, request)
 
     def logout(self):
@@ -179,3 +186,24 @@ class ImmudbClient:
         
 
         
+    def scan(self, prefix: bytes, offset: bytes, limit:int=10, reverse:bool=False, deep:bool=False):
+        request = schema_pb2_grpc.schema__pb2.ScanOptions(
+            prefix=prefix,
+            offset=offset,
+            limit=limit,
+            reverse=reverse,
+            deep=deep)
+        return scan.call(self.__stub, self.__rs, request)
+    
+    def reference(self, refkey: bytes, key:  bytes):
+        request = schema_pb2_grpc.schema__pb2.ReferenceOptions(
+            reference = refkey,
+            key=key
+            )
+        return reference.call(self.__stub, self.__rs, request)
+    
+    def zadd(self):
+        pass
+    
+    def zscan(self):
+        pass

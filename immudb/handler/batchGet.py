@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from immudb.schema import schema_pb2
-from immudb.service import schema_pb2_grpc
+from immudb.grpc import schema_pb2
+from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 
 @dataclass
@@ -14,9 +14,10 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: sch
         keys = request.keys
     )
 
-    msg = service.GetBatchSV(rawRequest)
-    return batchGetResponse(
-        itemlist = msg
-        #keylist = msg.KeyList,
-        #itemlist = msg.ItemList
-    )
+    msg = service.GetBatch(rawRequest)
+    ret={}
+    for i in msg.items:
+	    content=schema_pb2.Content()
+	    content.ParseFromString(i.value)
+	    ret[i.key]=content.payload
+    return ret
