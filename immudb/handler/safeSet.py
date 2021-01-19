@@ -4,10 +4,9 @@ from dataclasses import dataclass
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import constants, proofs, item, VerificationException
+from immudb import constants
 
 import immudb.store
-
 @dataclass
 class SafeSetResponse:
     index: int

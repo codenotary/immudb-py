@@ -23,19 +23,41 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         )
     ventry=service.VerifiableGet(req)
     inclusionProof = htree.InclusionProofFrom(ventry.inclusionProof)
+    dualProof = htree.DualProofFrom(ventry.verifiableTx.dualProof)
+    
     if ventry.entry.referencedBy==None or ventry.entry.referencedBy.key==b'':
         vTx=ventry.entry.tx
         kv=store.EncodeKV(requestkey, ventry.entry.value)
     else:
         vTx = ventry.entry.referencedBy.tx
         kv=store.EncodeReference(ventry.entry.referencedBy.key, ventry.entry.key, ventry.entry.referencedBy.atTx) # TODO
+        
     if state.txId <= vTx:
         eh=store.DigestFrom(ventry.verifiableTx.dualProof.targetTxMetadata.eH)
+        sourceid=state.txId
+        sourcealh=store.DigestFrom(state.txHash)
+        targedid=vTx
+        targetalh=dualProof.targetTxMetadata.alh()
     else:
         eh=store.DigestFrom(ventry.verifiableTx.dualProof.sourceTxMetadata.eH)
+        sourceid=vTx
+        sourcealh=dualProof.targetTxMetadata.alh()
+        targetid=state.txId
+        targetalh=store.DigestFrom(state.txHash)
+        
     verifies = store.VerifyInclusion(inclusionProof,kv.Digest(),eh)
     if not verifies:
         raise VerificationException
+    
+    verifies=store.VerifyDualProof(
+        dualProof,
+        sourceid,
+        targetid,
+        sourcealh,
+        targetalh)
+    if not verifies:
+        raise VerificationException
+    
     return SafeGetResponse(
         index=vTx,
         key=ventry.entry.key,

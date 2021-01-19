@@ -19,6 +19,8 @@ class TXe:
     def Digest(self):
         b=self.key+self.hValue
         return hashlib.sha256(b).digest()
+
+
         
 class Tx:
     def __init__(self):
@@ -37,8 +39,6 @@ class Tx:
         for e in self.entries:
             digests.append(e.Digest())
         self.htree.BuildWith(digests)
- 
-    
     def CalcAlh(self):
         self.calcInnerhash()
         bi=struct.pack(">Q",self.ID)+self.PrevAlh+self.InnerHash
@@ -53,8 +53,7 @@ class Tx:
         # find index of element holding given key 
         kindex=next(k for k,v in enumerate(self.entries) if v.key==key)    
         return self.htree.InclusionProof(kindex)
-    
-    
+
 def NewTxWithEntries(entries:list[TXe]) -> Tx:
     tx=Tx()
     tx.ID=0
@@ -81,12 +80,39 @@ def TxFrom(stx) -> Tx:
     tx.BuildHashTree()
     tx.CalcAlh()
     return tx
+
+
+
+class TxMetadata:
+    def __init__(self):
+        self.iD       = None
+        self.prevAlh  = None
+        self.ts       = None
+        self.nEntries = None
+        self.eh       = None
+        self.blTxID   = None
+        self.blRoot   = None
+    def alh(self):
+        bi=struct.pack(">Q",self.iD)+self.prevAlh
+        bj=struct.pack(">QL",int(self.ts),int(self.nEntries))
+        bj=bj+self.eh+struct.pack(">Q",self.blTxID)+self.blRoot
+        innerHash=hashlib.sha256(bj).digest()
+        bi=bi+innerHash
+        return hashlib.sha256(bi).digest
     
-def DigestFrom(slicedDigest: bytes)->bytes:
-    d=copy.copy(slicedDigest[:SHA256LEN])
-    return d
+def TxMetadataFrom(txmFrom):
+    txm=TxMetadata()
+    txm.iD       = txmFrom.id
+    txm.prevAlh  = DigestFrom(txmFrom.prevAlh)
+    txm.ts       = txmFrom.ts
+    txm.nEntries = int(txmFrom.nentries)
+    txm.eh       = DigestFrom(txmFrom.eH)
+    txm.blTxID   = txmFrom.blTxId
+    txm.blRoot   = DigestFrom(txmFrom.blRoot)
+    return txm
 
 
+    
 class KV:
     def __init__(self,key: bytes,value:bytes):
         self.key=key
@@ -97,6 +123,28 @@ class KV:
         
 def EncodeKV(key: bytes, value: bytes):
     return KV(SET_KEY_PREFIX+key,PLAIN_VALUE_PREFIX+value)
+
+
+
+class LinearProof:
+    def __init__(self, sourceTxID:int, targetTxID:int, terms:list[bytes]):
+        self.sourceTxID=sourceTxID
+        self.targetTxID=targetTxID
+        self.terms=terms
+
+def LinearProofFrom(lp)->LinearProof:
+    print("LP",lp)
+    return LinearProof(lp.sourceTxId, lp.TargetTxId, lp.terms)
+
+def DigestFrom(slicedDigest: bytes)->bytes:
+    d=copy.copy(slicedDigest[:SHA256LEN])
+    return d
+
+def DigestsFrom(slicedTerms: list[bytes]) -> list[bytes]:
+    d=[copy.copy(i) for i in slicedTerms]
+    return d
+    
+
 
 def VerifyInclusion(proof, digest: bytes, root) -> bool:
     if proof==None:
@@ -115,3 +163,117 @@ def VerifyInclusion(proof, digest: bytes, root) -> bool:
         i=i/2
         r=r/2
     return i==r and root==calcRoot
+
+def leafFor(d:bytes)->bytes:
+    b=LEAF_PREFIX+d
+    return hashlib.sha256(b).digest()
+
+def VerifyDualProof(proof, sourceTxID, targetTxID , sourceAlh, targetAlh):
+    if (proof==None or
+        proof.sourceTxMetadata==None or
+        proof.targetTxMetadata==None or
+        proof.sourceTxMetadata.iD != sourceTxID or
+        proof.targetTxMetadata.iD != targetTxID):
+            return False
+    if proof.sourceTxMetadata==0 or proof.sourceTxMetadata.iD > proof.targetTxMetadata.iD:
+        return False
+    if sourceAlh != proof.sourceTxMetadata.alh():
+        return False
+    if targetAlh != proof.targetTxMetadata.alh():
+        return False
+    if sourceTxID < proof.targetTxMetadata.blTxID and VerifyInclusionAHT( 
+            proof.inclusionProof,
+            sourceTxID,
+            proof.targetTxMetadata.BlTxID,
+            leafFor(sourceAlh),
+            proof.targetTxMetadata.BlRoot)==False:
+                return False
+    if proof.sourceTxMetadata.BlTxID > 0 and VerifyInclusionAHT( 
+            proof.ConsistencyProof,
+            proof.SourceTxMetadata.BlTxID,
+            proof.TargetTxMetadata.BlTxID,
+            proof.SourceTxMetadata.BlRoot,
+            proof.TargetTxMetadata.BlRoot)==False:
+                return False
+    if proof.targetTxMetadata.BlTxID > 0 and VerifyLastInclusion( 
+            proof.inclusionProof,
+            proof.targetTxMetadata.BlTxID,
+            leafFor(proof.targetBlTxAlh),
+            proof.targetTxMetadata.BlRoot)==False:
+                return False
+    if sourceTxID < proof.TargetTxMetadata.blTxID:
+        ret=VerifyLinearProof(proof.linearProof, proof.targetTxMetadata.BlTxID, targetTxID, proof.targetBlTxAlh, targetAlh) 
+    else:
+        ret=VerifyLinearProof(proof.linearProof, sourceTxID, targetTxID, sourceAlh, targetAlh)
+    return ret
+
+def VerifyInclusionAHT(iproof:list[bytes], i:int, j:int, iLeaf:bytes, jRoot:bytes) -> bool:
+    if i>j or i==0 or i<j and len(iproof)==0:
+        return false
+    i1 = i - 1
+    j1 = j - 1
+    ciRoot = iLeaf
+    for h in iproof:
+        if i1%2 == 0 and i1 != j1:
+            b=NODE_PREFIX+ciRoot+h
+        else:
+            b=NODE_PREFIX+h+ciRoot
+        ciRoot = hashlib.sha256(b).digest()
+        i1=i1>>1
+        j1=j1>>1
+    return jRoot==ciRoot
+
+
+def EvalConsistency(cproof:list[bytes], i:int, j:int): # FIXME used?
+    fn = i - 1
+    sn = j - 1
+    while fn%2 == 1:
+        fn=fn>>1
+        sn=sn>>1
+    ciRoot, cjRoot = cproof[0], cproof[0]
+    b = NODE_PREFIX
+    for h in cproof[1:]:
+            if fn%2 == 1 or fn == sn:
+                b=b+h+ciRoot
+                ciRoot = hashlib.sha256(b).digest()
+                b=NODE_PREFIX+cjroot
+                cjRoot = hashlib.sha256(b).digest()
+                while fn%2 == 0 and fn != 0:
+                    fn=fn>>1
+                    sn=sn>>1
+            else:
+                b=NODE_PREFIX+cjRoot+h
+                cjRoot=hashlib.sha256(b).digest()
+            fn=fn>>1
+            sn=sn>>1
+    return ciRoot, cjRoot
+
+def VerifyLastInclusion(iproof:list[bytes], i:int, leaf:bytes, root:bytes)->bool:
+    if i==0:
+        return False
+    i1 = i - 1
+    iroot = leaf
+    for h in iproof:
+        b=NODE_PREFIX+h+iroot
+        iroot=hashlib.sha256(b).digest()
+        i1 >>= 1
+    return root==iroot
+    
+def VerifyLinearProof(proof , sourceTxID:int, targetTxID:int, sourceAlh:bytes, targetAlh:bytes) -> bool:
+    if proof == None or proof.sourceTxID != sourceTxID or proof.targetTxID != targetTxID:
+            return False
+
+    if (proof.sourceTxID == 0 or proof.sourceTxID > proof.targetTxID or
+            len(proof.terms) == 0 or sourceAlh != proof.Terms[0]):
+            return false
+
+    calculatedAlh = proof.terms[0]
+    for i in range(1,proof.terms):
+        bs=struct.pack(">Q",proof.sourceTxID+i)+calculatedAlh+proof.terms[i]
+        calculatedAlh=hashlib.sha256(bs)+digest()
+
+    return targetAlh == calculatedAlh
+
+    
+    
+    

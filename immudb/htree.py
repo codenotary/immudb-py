@@ -9,6 +9,17 @@ class InclusionProof:
         self.leaf=None
         self.width=None
         self.terms=b''
+
+class DualProof:
+    def __init__(self):
+        self.sourceTxMetadata=None
+        self.targetTxMetadata=None
+        self.inclusionProof=None
+        self.consistencyProof=None
+        self.targetBlTxAlh=None
+        self.lastInclusionProof=None
+        self.linearProof=None
+        
         
 class HTree:
     def __init__(self, maxWidth:int):
@@ -82,3 +93,14 @@ def InclusionProofFrom(iproof):
     h.width=int(iproof.width)
     h.terms=immudb.store.DigestFrom(iproof.terms)
     return h
+
+def DualProofFrom(dproof):
+    dp=DualProof()
+    dp.sourceTxMetadata=immudb.store.TxMetadataFrom(dproof.sourceTxMetadata)
+    dp.targetTxMetadata=immudb.store.TxMetadataFrom(dproof.targetTxMetadata)
+    dp.inclusionProof=immudb.store.DigestFrom(dproof.inclusionProof)
+    dp.consistencyProof=immudb.store.DigestFrom(dproof.consistencyProof)
+    dp.targetBlTxAlh=immudb.store.DigestFrom(dproof.lastInclusionProof)
+    dp.lastInclusionProof=immudb.store.DigestsFrom(dproof.lastInclusionProof)
+    dp.linearProof=immudb.store.LinearProofFrom(dproof.linearProof) ## TODO da schema_pb2
+    return dp
