@@ -82,13 +82,10 @@ class ImmudbClient:
         return setValue.call(self.__stub, self.__rs, request)
 
     def safeGet(self, key: bytes):
-        request = schema_pb2_grpc.schema__pb2.SafeGetOptions(key=key)
-        return safeGet.call(self.__stub, self.__rs, request)
+        return safeGet.call(self.__stub, self.__rs, key)
 
     def safeSet(self, key: bytes, value: bytes):
-        request = schema_pb2_grpc.schema__pb2.SafeSetOptions(
-            kv={"key": key, "value": value})
-        return safeSet.call(self.__stub, self.__rs, request)
+        return safeSet.call(self.__stub, self.__rs, key, value)
 
     def getAllItems(self, keys: list):
         klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
@@ -98,16 +95,16 @@ class ImmudbClient:
     def getAll(self, keys: list):
         klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
         request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
-        resp = batchGet.call(self.__stub, self.__rs, request)
+        resp = batchGet.call(self.__stub, self.__rs, klist)
         return resp
 
     def setAll(self, kv: dict):
-        _KVs = []
-        for i in kv.keys():
-            _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(
-                key=i, value=kv[i]))
-        request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
-        return batchSet.call(self.__stub, self.__rs, request)
+        #_KVs = []
+        #for i in kv.keys():
+            #_KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(
+                #key=i, value=kv[i]))
+        #request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
+        return batchSet.call(self.__stub, self.__rs, kv)
 
     def changePassword(self, user, newPassword, oldPassword):
         request = schema_pb2_grpc.schema__pb2.ChangePasswordRequest(
@@ -149,13 +146,7 @@ class ImmudbClient:
         return currentRoot.call(self.__stub, self.__rs, None)
 
     def history(self, key: bytes, offset: int, limit: int, sortorder: bool):
-        request = schema_pb2_grpc.schema__pb2.HistoryOptions(
-                key=key,
-                offset=offset,
-                limit=limit,
-                reverse=sortorder
-                )
-        return history.call(self.__stub, self.__rs, request)
+        return history.call(self.__stub, self.__rs, key, offset, limit, sortorder)
 
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())

@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z+github.com/codenotary/immudb/pkg/api/schema',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1bgoogle/protobuf/empty.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"T\n\x04Node\x12\t\n\x01i\x18\x01 \x01(\x0c\x12\t\n\x01h\x18\x02 \x01(\x0c\x12\x0c\n\x04refk\x18\x03 \x01(\x0c\x12\x0b\n\x03ref\x18\x04 \x01(\x08\x12\r\n\x05\x63\x61\x63he\x18\x05 \x01(\x08\x12\x0c\n\x04root\x18\x06 \x01(\x08\"\'\n\x05Layer\x12\x1e\n\x01l\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Node\"\'\n\x04Tree\x12\x1f\n\x01t\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Layer\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\"H\n\x12StructuredKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12%\n\x05value\x18\x02 \x01(\x0b\x32\x16.immudb.schema.Content\"-\n\x07\x43ontent\x12\x11\n\ttimestamp\x18\x01 \x01(\x04\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"\x16\n\x05Index\x12\r\n\x05index\x18\x01 \x01(\x04\"1\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\r\n\x05index\x18\x03 \x01(\x04\"S\n\x0eStructuredItem\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12%\n\x05value\x18\x02 \x01(\x0b\x32\x16.immudb.schema.Content\x12\r\n\x05index\x18\x03 \x01(\x04\".\n\x06KVList\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\":\n\x07SKVList\x12/\n\x04SKVs\x18\x01 \x03(\x0b\x32!.immudb.schema.StructuredKeyValue\"+\n\x07KeyList\x12 \n\x04keys\x18\x01 \x03(\x0b\x32\x12.immudb.schema.Key\".\n\x08ItemList\x12\"\n\x05items\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Item\"_\n\x05ZItem\x12!\n\x04item\x18\x01 \x01(\x0b\x32\x13.immudb.schema.Item\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x15\n\rcurrentOffset\x18\x03 \x01(\x0c\x12\r\n\x05index\x18\x04 \x01(\x04\"0\n\tZItemList\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.immudb.schema.ZItem\"B\n\x12StructuredItemList\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.immudb.schema.StructuredItem\"D\n\x13ZStructuredItemList\x12-\n\x05items\x18\x01 \x03(\x0b\x32\x1e.immudb.schema.ZStructuredItem\"s\n\x0fZStructuredItem\x12+\n\x04item\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.StructuredItem\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x15\n\rcurrentOffset\x18\x03 \x01(\x0c\x12\r\n\x05index\x18\x04 \x01(\x04\"^\n\x04Root\x12)\n\x07payload\x18\x01 \x01(\x0b\x32\x18.immudb.schema.RootIndex\x12+\n\tsignature\x18\x02 \x01(\x0b\x32\x18.immudb.schema.Signature\"(\n\tRootIndex\x12\r\n\x05index\x18\x01 \x01(\x04\x12\x0c\n\x04root\x18\x02 \x01(\x0c\"1\n\tSignature\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x11\n\tpublicKey\x18\x02 \x01(\x0c\"[\n\x0bScanOptions\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x0c\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\x12\x0c\n\x04\x64\x65\x65p\x18\x05 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nItemsCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"U\n\x0eInclusionProof\x12\n\n\x02\x61t\x18\x01 \x01(\x04\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0c\n\x04root\x18\x03 \x01(\x0c\x12\x0c\n\x04leaf\x18\x04 \x01(\x0c\x12\x0c\n\x04path\x18\x05 \x03(\x0c\"f\n\x10\x43onsistencyProof\x12\r\n\x05\x66irst\x18\x01 \x01(\x04\x12\x0e\n\x06second\x18\x02 \x01(\x04\x12\x11\n\tfirstRoot\x18\x03 \x01(\x0c\x12\x12\n\nsecondRoot\x18\x04 \x01(\x0c\x12\x0c\n\x04path\x18\x05 \x03(\x0c\"n\n\x05Proof\x12\x0c\n\x04leaf\x18\x01 \x01(\x0c\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0c\n\x04root\x18\x03 \x01(\x0c\x12\n\n\x02\x61t\x18\x04 \x01(\x04\x12\x15\n\rinclusionPath\x18\x05 \x03(\x0c\x12\x17\n\x0f\x63onsistencyPath\x18\x06 \x03(\x0c\"R\n\x08SafeItem\x12!\n\x04item\x18\x01 \x01(\x0b\x32\x13.immudb.schema.Item\x12#\n\x05proof\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Proof\"f\n\x12SafeStructuredItem\x12+\n\x04item\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.StructuredItem\x12#\n\x05proof\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Proof\"^\n\x0eSafeSetOptions\x12#\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValue\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"k\n\x10SafeSetSVOptions\x12.\n\x03skv\x18\x01 \x01(\x0b\x32!.immudb.schema.StructuredKeyValue\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"F\n\x0eSafeGetOptions\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"l\n\x14SafeReferenceOptions\x12+\n\x02ro\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceOptions\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"2\n\x10ReferenceOptions\x12\x11\n\treference\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\"q\n\x0bZAddOptions\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12#\n\x05score\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12#\n\x05index\x18\x04 \x01(\x0b\x32\x14.immudb.schema.Index\"\x91\x01\n\x0cZScanOptions\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x0c\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\x12!\n\x03min\x18\x05 \x01(\x0b\x32\x14.immudb.schema.Score\x12!\n\x03max\x18\x06 \x01(\x0b\x32\x14.immudb.schema.Score\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"4\n\x0cIScanOptions\x12\x10\n\x08pageSize\x18\x01 \x01(\x04\x12\x12\n\npageNumber\x18\x02 \x01(\x04\"8\n\x04Page\x12\"\n\x05items\x18\x01 \x03(\x0b\x32\x13.immudb.schema.Item\x12\x0c\n\x04more\x18\x03 \x01(\x08\"T\n\x05SPage\x12,\n\x05items\x18\x01 \x03(\x0b\x32\x1d.immudb.schema.StructuredItem\x12\x0f\n\x07pageNum\x18\x02 \x01(\x04\x12\x0c\n\x04more\x18\x03 \x01(\x08\"M\n\x0eHistoryOptions\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\"e\n\x0fSafeZAddOptions\x12)\n\x05zopts\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddOptions\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\"J\n\x10SafeIndexOptions\x12\r\n\x05index\x18\x01 \x01(\x04\x12\'\n\trootIndex\x18\x02 \x01(\x0b\x32\x14.immudb.schema.Index\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabasename\x18\x01 \x01(\t\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01\x32\xd1\x12\n\x0bImmuService\x12>\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x00\x12H\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x00\x12:\n\tPrintTree\x12\x16.google.protobuf.Empty\x1a\x13.immudb.schema.Tree\"\x00\x12\x44\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x00\x12:\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x36\n\x03Set\x12\x17.immudb.schema.KeyValue\x1a\x14.immudb.schema.Index\"\x00\x12@\n\x07SafeSet\x12\x1d.immudb.schema.SafeSetOptions\x1a\x14.immudb.schema.Proof\"\x00\x12\x30\n\x03Get\x12\x12.immudb.schema.Key\x1a\x13.immudb.schema.Item\"\x00\x12\x43\n\x07SafeGet\x12\x1d.immudb.schema.SafeGetOptions\x1a\x17.immudb.schema.SafeItem\"\x00\x12\x39\n\x08SetBatch\x12\x15.immudb.schema.KVList\x1a\x14.immudb.schema.Index\"\x00\x12=\n\x08GetBatch\x12\x16.immudb.schema.KeyList\x1a\x17.immudb.schema.ItemList\"\x00\x12=\n\x04Scan\x12\x1a.immudb.schema.ScanOptions\x1a\x17.immudb.schema.ItemList\"\x00\x12>\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.ItemsCount\"\x00\x12?\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.ItemsCount\"\x00\x12<\n\x0b\x43urrentRoot\x12\x16.google.protobuf.Empty\x1a\x13.immudb.schema.Root\"\x00\x12\x42\n\tInclusion\x12\x14.immudb.schema.Index\x1a\x1d.immudb.schema.InclusionProof\"\x00\x12\x46\n\x0b\x43onsistency\x12\x14.immudb.schema.Index\x1a\x1f.immudb.schema.ConsistencyProof\"\x00\x12\x36\n\x07\x42yIndex\x12\x14.immudb.schema.Index\x1a\x13.immudb.schema.Item\"\x00\x12I\n\x0b\x42ySafeIndex\x12\x1f.immudb.schema.SafeIndexOptions\x1a\x17.immudb.schema.SafeItem\"\x00\x12\x43\n\x07History\x12\x1d.immudb.schema.HistoryOptions\x1a\x17.immudb.schema.ItemList\"\x00\x12\x41\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x00\x12\x44\n\tReference\x12\x1f.immudb.schema.ReferenceOptions\x1a\x14.immudb.schema.Index\"\x00\x12L\n\rSafeReference\x12#.immudb.schema.SafeReferenceOptions\x1a\x14.immudb.schema.Proof\"\x00\x12:\n\x04ZAdd\x12\x1a.immudb.schema.ZAddOptions\x1a\x14.immudb.schema.Index\"\x00\x12@\n\x05ZScan\x12\x1b.immudb.schema.ZScanOptions\x1a\x18.immudb.schema.ZItemList\"\x00\x12\x42\n\x08SafeZAdd\x12\x1e.immudb.schema.SafeZAddOptions\x1a\x14.immudb.schema.Proof\"\x00\x12;\n\x05IScan\x12\x1b.immudb.schema.IScanOptions\x1a\x13.immudb.schema.Page\"\x00\x12\x43\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x00\x12I\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x00\x12T\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x00\x42-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3'
+  serialized_pb=b'\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1bgoogle/protobuf/empty.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\"_\n\x05\x45ntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12.\n\x0creferencedBy\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Reference\"2\n\tReference\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\"\x94\x01\n\x02Op\x12%\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValueH\x00\x12*\n\x04zAdd\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequestH\x00\x12.\n\x03ref\x18\x03 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequestH\x00\x42\x0b\n\toperation\"7\n\x0e\x45xecAllRequest\x12%\n\nOperations\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Op\"0\n\x07\x45ntries\x12%\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Entry\"d\n\x06ZEntry\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\r\n\x05score\x18\x04 \x01(\x01\x12\x0c\n\x04\x61tTx\x18\x05 \x01(\x04\"2\n\x08ZEntries\x12&\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"l\n\x0bScanRequest\x12\x0f\n\x07seekKey\x18\x01 \x01(\x0c\x12\x0e\n\x06prefix\x18\x02 \x01(\x0c\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12\r\n\x05limit\x18\x04 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nEntryCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"1\n\tSignature\x12\x11\n\tpublicKey\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"s\n\nTxMetadata\x12\n\n\x02id\x18\x01 \x01(\x04\x12\x0f\n\x07prevAlh\x18\x02 \x01(\x0c\x12\n\n\x02ts\x18\x03 \x01(\x03\x12\x10\n\x08nentries\x18\x04 \x01(\x05\x12\n\n\x02\x65H\x18\x05 \x01(\x0c\x12\x0e\n\x06\x62lTxId\x18\x06 \x01(\x04\x12\x0e\n\x06\x62lRoot\x18\x07 \x01(\x0c\"D\n\x0bLinearProof\x12\x12\n\nsourceTxId\x18\x01 \x01(\x04\x12\x12\n\nTargetTxId\x18\x02 \x01(\x04\x12\r\n\x05terms\x18\x03 \x03(\x0c\"\x8b\x02\n\tDualProof\x12\x33\n\x10sourceTxMetadata\x18\x01 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\x33\n\x10targetTxMetadata\x18\x02 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\x16\n\x0einclusionProof\x18\x03 \x03(\x0c\x12\x18\n\x10\x63onsistencyProof\x18\x04 \x03(\x0c\x12\x15\n\rtargetBlTxAlh\x18\x05 \x01(\x0c\x12\x1a\n\x12lastInclusionProof\x18\x06 \x03(\x0c\x12/\n\x0blinearProof\x18\x07 \x01(\x0b\x32\x1a.immudb.schema.LinearProof\"Z\n\x02Tx\x12+\n\x08metadata\x18\x01 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\'\n\x07\x65ntries\x18\x02 \x03(\x0b\x32\x16.immudb.schema.TxEntry\"B\n\x07TxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06hValue\x18\x02 \x01(\x0c\x12\x0c\n\x04vOff\x18\x03 \x01(\x03\x12\x0c\n\x04vLen\x18\x04 \x01(\x05\"\x87\x01\n\x0cVerifiableTx\x12\x1d\n\x02tx\x18\x01 \x01(\x0b\x32\x11.immudb.schema.Tx\x12+\n\tdualProof\x18\x02 \x01(\x0b\x32\x18.immudb.schema.DualProof\x12+\n\tsignature\x18\x03 \x01(\x0b\x32\x18.immudb.schema.Signature\"\xa0\x01\n\x0fVerifiableEntry\x12#\n\x05\x65ntry\x18\x01 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\"<\n\x0eInclusionProof\x12\x0c\n\x04leaf\x18\x01 \x01(\x05\x12\r\n\x05width\x18\x02 \x01(\x05\x12\r\n\x05terms\x18\x03 \x03(\x0c\"2\n\nSetRequest\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\"8\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x02 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\"/\n\x0eKeyListRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableSetRequest\x12-\n\nsetRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.SetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableGetRequest\x12-\n\nkeyRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.KeyRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"[\n\x0eImmutableState\x12\x0c\n\x04txId\x18\x03 \x01(\x04\x12\x0e\n\x06txHash\x18\x04 \x01(\x0c\x12+\n\tsignature\x18\x05 \x01(\x0b\x32\x18.immudb.schema.Signature\"V\n\x10ReferenceRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x15\n\rreferencedKey\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x04 \x01(\x08\"m\n\x1aVerifiableReferenceRequest\x12\x39\n\x10referenceRequest\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"V\n\x0bZAddRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x04 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x05 \x01(\x08\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"\xf6\x01\n\x0cZScanRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0f\n\x07seekKey\x18\x02 \x01(\x0c\x12\x11\n\tseekScore\x18\x03 \x01(\x01\x12\x10\n\x08seekAtTx\x18\x04 \x01(\x04\x12\x15\n\rinclusiveSeek\x18\x05 \x01(\x08\x12\r\n\x05limit\x18\x06 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x07 \x01(\x08\x12&\n\x08minScore\x18\x08 \x01(\x0b\x32\x14.immudb.schema.Score\x12&\n\x08maxScore\x18\t \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0f\n\x07sinceTx\x18\n \x01(\x04\x12\x0e\n\x06noWait\x18\x0b \x01(\x08\"[\n\x0eHistoryRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\x08\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\"^\n\x15VerifiableZAddRequest\x12/\n\x0bzAddRequest\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"\x17\n\tTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\"7\n\x13VerifiableTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabasename\x18\x01 \x01(\t\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01\x32\x9c\x12\n\x0bImmuService\x12>\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x00\x12H\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x00\x12:\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12=\n\x03Set\x12\x19.immudb.schema.SetRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12S\n\rVerifiableSet\x12#.immudb.schema.VerifiableSetRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12\x38\n\x03Get\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Entry\"\x00\x12V\n\rVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x1e.immudb.schema.VerifiableEntry\"\x00\x12\x41\n\x06GetAll\x12\x1d.immudb.schema.KeyListRequest\x1a\x16.immudb.schema.Entries\"\x00\x12\x45\n\x07\x45xecAll\x12\x1d.immudb.schema.ExecAllRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12<\n\x04Scan\x12\x1a.immudb.schema.ScanRequest\x1a\x16.immudb.schema.Entries\"\x00\x12>\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.EntryCount\"\x00\x12?\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.EntryCount\"\x00\x12\x37\n\x06TxById\x12\x18.immudb.schema.TxRequest\x1a\x11.immudb.schema.Tx\"\x00\x12U\n\x10VerifiableTxById\x12\".immudb.schema.VerifiableTxRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12\x42\n\x07History\x12\x1d.immudb.schema.HistoryRequest\x1a\x16.immudb.schema.Entries\"\x00\x12\x41\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x00\x12G\n\x0c\x43urrentState\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.ImmutableState\"\x00\x12L\n\x0cSetReference\x12\x1f.immudb.schema.ReferenceRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12\x62\n\x16VerifiableSetReference\x12).immudb.schema.VerifiableReferenceRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12?\n\x04ZAdd\x12\x1a.immudb.schema.ZAddRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12U\n\x0eVerifiableZAdd\x12$.immudb.schema.VerifiableZAddRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12?\n\x05ZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x17.immudb.schema.ZEntries\"\x00\x12\x43\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x00\x12I\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x00\x12>\n\nCleanIndex\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12T\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x42-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -45,8 +45,8 @@ _PERMISSIONACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=4145,
-  serialized_end=4186,
+  serialized_start=4109,
+  serialized_end=4150,
 )
 _sym_db.RegisterEnumDescriptor(_PERMISSIONACTION)
 
@@ -492,137 +492,6 @@ _MTLSCONFIG = _descriptor.Descriptor(
 )
 
 
-_NODE = _descriptor.Descriptor(
-  name='Node',
-  full_name='immudb.schema.Node',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='i', full_name='immudb.schema.Node.i', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='h', full_name='immudb.schema.Node.h', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='refk', full_name='immudb.schema.Node.refk', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='ref', full_name='immudb.schema.Node.ref', index=3,
-      number=4, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='cache', full_name='immudb.schema.Node.cache', index=4,
-      number=5, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='root', full_name='immudb.schema.Node.root', index=5,
-      number=6, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=661,
-  serialized_end=745,
-)
-
-
-_LAYER = _descriptor.Descriptor(
-  name='Layer',
-  full_name='immudb.schema.Layer',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='l', full_name='immudb.schema.Layer.l', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=747,
-  serialized_end=786,
-)
-
-
-_TREE = _descriptor.Descriptor(
-  name='Tree',
-  full_name='immudb.schema.Tree',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='t', full_name='immudb.schema.Tree.t', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=788,
-  serialized_end=827,
-)
-
-
 _KEYVALUE = _descriptor.Descriptor(
   name='KeyValue',
   full_name='immudb.schema.KeyValue',
@@ -657,561 +526,43 @@ _KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=829,
-  serialized_end=867,
+  serialized_start=661,
+  serialized_end=699,
 )
 
 
-_STRUCTUREDKEYVALUE = _descriptor.Descriptor(
-  name='StructuredKeyValue',
-  full_name='immudb.schema.StructuredKeyValue',
+_ENTRY = _descriptor.Descriptor(
+  name='Entry',
+  full_name='immudb.schema.Entry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.StructuredKeyValue.key', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='immudb.schema.StructuredKeyValue.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=869,
-  serialized_end=941,
-)
-
-
-_CONTENT = _descriptor.Descriptor(
-  name='Content',
-  full_name='immudb.schema.Content',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='timestamp', full_name='immudb.schema.Content.timestamp', index=0,
+      name='tx', full_name='immudb.schema.Entry.tx', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='payload', full_name='immudb.schema.Content.payload', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=943,
-  serialized_end=988,
-)
-
-
-_INDEX = _descriptor.Descriptor(
-  name='Index',
-  full_name='immudb.schema.Index',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.Index.index', index=0,
-      number=1, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=990,
-  serialized_end=1012,
-)
-
-
-_ITEM = _descriptor.Descriptor(
-  name='Item',
-  full_name='immudb.schema.Item',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.Item.key', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='immudb.schema.Item.value', index=1,
+      name='key', full_name='immudb.schema.Entry.key', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.Item.index', index=2,
-      number=3, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1014,
-  serialized_end=1063,
-)
-
-
-_STRUCTUREDITEM = _descriptor.Descriptor(
-  name='StructuredItem',
-  full_name='immudb.schema.StructuredItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.StructuredItem.key', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='immudb.schema.StructuredItem.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.StructuredItem.index', index=2,
-      number=3, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1065,
-  serialized_end=1148,
-)
-
-
-_KVLIST = _descriptor.Descriptor(
-  name='KVList',
-  full_name='immudb.schema.KVList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='KVs', full_name='immudb.schema.KVList.KVs', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1150,
-  serialized_end=1196,
-)
-
-
-_SKVLIST = _descriptor.Descriptor(
-  name='SKVList',
-  full_name='immudb.schema.SKVList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='SKVs', full_name='immudb.schema.SKVList.SKVs', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1198,
-  serialized_end=1256,
-)
-
-
-_KEYLIST = _descriptor.Descriptor(
-  name='KeyList',
-  full_name='immudb.schema.KeyList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='keys', full_name='immudb.schema.KeyList.keys', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1258,
-  serialized_end=1301,
-)
-
-
-_ITEMLIST = _descriptor.Descriptor(
-  name='ItemList',
-  full_name='immudb.schema.ItemList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='items', full_name='immudb.schema.ItemList.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1303,
-  serialized_end=1349,
-)
-
-
-_ZITEM = _descriptor.Descriptor(
-  name='ZItem',
-  full_name='immudb.schema.ZItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='item', full_name='immudb.schema.ZItem.item', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='score', full_name='immudb.schema.ZItem.score', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='currentOffset', full_name='immudb.schema.ZItem.currentOffset', index=2,
+      name='value', full_name='immudb.schema.Entry.value', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.ZItem.index', index=3,
-      number=4, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1351,
-  serialized_end=1446,
-)
-
-
-_ZITEMLIST = _descriptor.Descriptor(
-  name='ZItemList',
-  full_name='immudb.schema.ZItemList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='items', full_name='immudb.schema.ZItemList.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1448,
-  serialized_end=1496,
-)
-
-
-_STRUCTUREDITEMLIST = _descriptor.Descriptor(
-  name='StructuredItemList',
-  full_name='immudb.schema.StructuredItemList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='items', full_name='immudb.schema.StructuredItemList.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1498,
-  serialized_end=1564,
-)
-
-
-_ZSTRUCTUREDITEMLIST = _descriptor.Descriptor(
-  name='ZStructuredItemList',
-  full_name='immudb.schema.ZStructuredItemList',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='items', full_name='immudb.schema.ZStructuredItemList.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1566,
-  serialized_end=1634,
-)
-
-
-_ZSTRUCTUREDITEM = _descriptor.Descriptor(
-  name='ZStructuredItem',
-  full_name='immudb.schema.ZStructuredItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='item', full_name='immudb.schema.ZStructuredItem.item', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='score', full_name='immudb.schema.ZStructuredItem.score', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='currentOffset', full_name='immudb.schema.ZStructuredItem.currentOffset', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.ZStructuredItem.index', index=3,
-      number=4, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1636,
-  serialized_end=1751,
-)
-
-
-_ROOT = _descriptor.Descriptor(
-  name='Root',
-  full_name='immudb.schema.Root',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='payload', full_name='immudb.schema.Root.payload', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='signature', full_name='immudb.schema.Root.signature', index=1,
-      number=2, type=11, cpp_type=10, label=1,
+      name='referencedBy', full_name='immudb.schema.Entry.referencedBy', index=3,
+      number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1228,128 +579,310 @@ _ROOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1753,
-  serialized_end=1847,
+  serialized_start=701,
+  serialized_end=796,
 )
 
 
-_ROOTINDEX = _descriptor.Descriptor(
-  name='RootIndex',
-  full_name='immudb.schema.RootIndex',
+_REFERENCE = _descriptor.Descriptor(
+  name='Reference',
+  full_name='immudb.schema.Reference',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.RootIndex.index', index=0,
+      name='tx', full_name='immudb.schema.Reference.tx', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='root', full_name='immudb.schema.RootIndex.root', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1849,
-  serialized_end=1889,
-)
-
-
-_SIGNATURE = _descriptor.Descriptor(
-  name='Signature',
-  full_name='immudb.schema.Signature',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='signature', full_name='immudb.schema.Signature.signature', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='publicKey', full_name='immudb.schema.Signature.publicKey', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1891,
-  serialized_end=1940,
-)
-
-
-_SCANOPTIONS = _descriptor.Descriptor(
-  name='ScanOptions',
-  full_name='immudb.schema.ScanOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='prefix', full_name='immudb.schema.ScanOptions.prefix', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='offset', full_name='immudb.schema.ScanOptions.offset', index=1,
+      name='key', full_name='immudb.schema.Reference.key', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='limit', full_name='immudb.schema.ScanOptions.limit', index=2,
+      name='atTx', full_name='immudb.schema.Reference.atTx', index=2,
       number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=798,
+  serialized_end=848,
+)
+
+
+_OP = _descriptor.Descriptor(
+  name='Op',
+  full_name='immudb.schema.Op',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='reverse', full_name='immudb.schema.ScanOptions.reverse', index=3,
-      number=4, type=8, cpp_type=7, label=1,
+      name='kv', full_name='immudb.schema.Op.kv', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='zAdd', full_name='immudb.schema.Op.zAdd', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='ref', full_name='immudb.schema.Op.ref', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+    _descriptor.OneofDescriptor(
+      name='operation', full_name='immudb.schema.Op.operation',
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
+  ],
+  serialized_start=851,
+  serialized_end=999,
+)
+
+
+_EXECALLREQUEST = _descriptor.Descriptor(
+  name='ExecAllRequest',
+  full_name='immudb.schema.ExecAllRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='Operations', full_name='immudb.schema.ExecAllRequest.Operations', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1001,
+  serialized_end=1056,
+)
+
+
+_ENTRIES = _descriptor.Descriptor(
+  name='Entries',
+  full_name='immudb.schema.Entries',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='entries', full_name='immudb.schema.Entries.entries', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1058,
+  serialized_end=1106,
+)
+
+
+_ZENTRY = _descriptor.Descriptor(
+  name='ZEntry',
+  full_name='immudb.schema.ZEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='set', full_name='immudb.schema.ZEntry.set', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='key', full_name='immudb.schema.ZEntry.key', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='entry', full_name='immudb.schema.ZEntry.entry', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='score', full_name='immudb.schema.ZEntry.score', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='atTx', full_name='immudb.schema.ZEntry.atTx', index=4,
+      number=5, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1108,
+  serialized_end=1208,
+)
+
+
+_ZENTRIES = _descriptor.Descriptor(
+  name='ZEntries',
+  full_name='immudb.schema.ZEntries',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='entries', full_name='immudb.schema.ZEntries.entries', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1210,
+  serialized_end=1260,
+)
+
+
+_SCANREQUEST = _descriptor.Descriptor(
+  name='ScanRequest',
+  full_name='immudb.schema.ScanRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='seekKey', full_name='immudb.schema.ScanRequest.seekKey', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='prefix', full_name='immudb.schema.ScanRequest.prefix', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='desc', full_name='immudb.schema.ScanRequest.desc', index=2,
+      number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='deep', full_name='immudb.schema.ScanOptions.deep', index=4,
-      number=5, type=8, cpp_type=7, label=1,
+      name='limit', full_name='immudb.schema.ScanRequest.limit', index=3,
+      number=4, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sinceTx', full_name='immudb.schema.ScanRequest.sinceTx', index=4,
+      number=5, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='noWait', full_name='immudb.schema.ScanRequest.noWait', index=5,
+      number=6, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1366,8 +899,8 @@ _SCANOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1942,
-  serialized_end=2033,
+  serialized_start=1262,
+  serialized_end=1370,
 )
 
 
@@ -1398,21 +931,21 @@ _KEYPREFIX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2035,
-  serialized_end=2062,
+  serialized_start=1372,
+  serialized_end=1399,
 )
 
 
-_ITEMSCOUNT = _descriptor.Descriptor(
-  name='ItemsCount',
-  full_name='immudb.schema.ItemsCount',
+_ENTRYCOUNT = _descriptor.Descriptor(
+  name='EntryCount',
+  full_name='immudb.schema.EntryCount',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='count', full_name='immudb.schema.ItemsCount.count', index=0,
+      name='count', full_name='immudb.schema.EntryCount.count', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -1430,8 +963,425 @@ _ITEMSCOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2064,
-  serialized_end=2091,
+  serialized_start=1401,
+  serialized_end=1428,
+)
+
+
+_SIGNATURE = _descriptor.Descriptor(
+  name='Signature',
+  full_name='immudb.schema.Signature',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='publicKey', full_name='immudb.schema.Signature.publicKey', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='signature', full_name='immudb.schema.Signature.signature', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1430,
+  serialized_end=1479,
+)
+
+
+_TXMETADATA = _descriptor.Descriptor(
+  name='TxMetadata',
+  full_name='immudb.schema.TxMetadata',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='immudb.schema.TxMetadata.id', index=0,
+      number=1, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='prevAlh', full_name='immudb.schema.TxMetadata.prevAlh', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='ts', full_name='immudb.schema.TxMetadata.ts', index=2,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='nentries', full_name='immudb.schema.TxMetadata.nentries', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='eH', full_name='immudb.schema.TxMetadata.eH', index=4,
+      number=5, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='blTxId', full_name='immudb.schema.TxMetadata.blTxId', index=5,
+      number=6, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='blRoot', full_name='immudb.schema.TxMetadata.blRoot', index=6,
+      number=7, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1481,
+  serialized_end=1596,
+)
+
+
+_LINEARPROOF = _descriptor.Descriptor(
+  name='LinearProof',
+  full_name='immudb.schema.LinearProof',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='sourceTxId', full_name='immudb.schema.LinearProof.sourceTxId', index=0,
+      number=1, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='TargetTxId', full_name='immudb.schema.LinearProof.TargetTxId', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='terms', full_name='immudb.schema.LinearProof.terms', index=2,
+      number=3, type=12, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1598,
+  serialized_end=1666,
+)
+
+
+_DUALPROOF = _descriptor.Descriptor(
+  name='DualProof',
+  full_name='immudb.schema.DualProof',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='sourceTxMetadata', full_name='immudb.schema.DualProof.sourceTxMetadata', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='targetTxMetadata', full_name='immudb.schema.DualProof.targetTxMetadata', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='inclusionProof', full_name='immudb.schema.DualProof.inclusionProof', index=2,
+      number=3, type=12, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='consistencyProof', full_name='immudb.schema.DualProof.consistencyProof', index=3,
+      number=4, type=12, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='targetBlTxAlh', full_name='immudb.schema.DualProof.targetBlTxAlh', index=4,
+      number=5, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='lastInclusionProof', full_name='immudb.schema.DualProof.lastInclusionProof', index=5,
+      number=6, type=12, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='linearProof', full_name='immudb.schema.DualProof.linearProof', index=6,
+      number=7, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1669,
+  serialized_end=1936,
+)
+
+
+_TX = _descriptor.Descriptor(
+  name='Tx',
+  full_name='immudb.schema.Tx',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='metadata', full_name='immudb.schema.Tx.metadata', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='entries', full_name='immudb.schema.Tx.entries', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1938,
+  serialized_end=2028,
+)
+
+
+_TXENTRY = _descriptor.Descriptor(
+  name='TxEntry',
+  full_name='immudb.schema.TxEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='immudb.schema.TxEntry.key', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='hValue', full_name='immudb.schema.TxEntry.hValue', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='vOff', full_name='immudb.schema.TxEntry.vOff', index=2,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='vLen', full_name='immudb.schema.TxEntry.vLen', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2030,
+  serialized_end=2096,
+)
+
+
+_VERIFIABLETX = _descriptor.Descriptor(
+  name='VerifiableTx',
+  full_name='immudb.schema.VerifiableTx',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='tx', full_name='immudb.schema.VerifiableTx.tx', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='dualProof', full_name='immudb.schema.VerifiableTx.dualProof', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='signature', full_name='immudb.schema.VerifiableTx.signature', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2099,
+  serialized_end=2234,
+)
+
+
+_VERIFIABLEENTRY = _descriptor.Descriptor(
+  name='VerifiableEntry',
+  full_name='immudb.schema.VerifiableEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='entry', full_name='immudb.schema.VerifiableEntry.entry', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='verifiableTx', full_name='immudb.schema.VerifiableEntry.verifiableTx', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='inclusionProof', full_name='immudb.schema.VerifiableEntry.inclusionProof', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2237,
+  serialized_end=2397,
 )
 
 
@@ -1444,36 +1394,22 @@ _INCLUSIONPROOF = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='at', full_name='immudb.schema.InclusionProof.at', index=0,
-      number=1, type=4, cpp_type=4, label=1,
+      name='leaf', full_name='immudb.schema.InclusionProof.leaf', index=0,
+      number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.InclusionProof.index', index=1,
-      number=2, type=4, cpp_type=4, label=1,
+      name='width', full_name='immudb.schema.InclusionProof.width', index=1,
+      number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='root', full_name='immudb.schema.InclusionProof.root', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='leaf', full_name='immudb.schema.InclusionProof.leaf', index=3,
-      number=4, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='path', full_name='immudb.schema.InclusionProof.path', index=4,
-      number=5, type=12, cpp_type=9, label=3,
+      name='terms', full_name='immudb.schema.InclusionProof.terms', index=2,
+      number=3, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1490,50 +1426,22 @@ _INCLUSIONPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2093,
-  serialized_end=2178,
+  serialized_start=2399,
+  serialized_end=2459,
 )
 
 
-_CONSISTENCYPROOF = _descriptor.Descriptor(
-  name='ConsistencyProof',
-  full_name='immudb.schema.ConsistencyProof',
+_SETREQUEST = _descriptor.Descriptor(
+  name='SetRequest',
+  full_name='immudb.schema.SetRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='first', full_name='immudb.schema.ConsistencyProof.first', index=0,
-      number=1, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='second', full_name='immudb.schema.ConsistencyProof.second', index=1,
-      number=2, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='firstRoot', full_name='immudb.schema.ConsistencyProof.firstRoot', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='secondRoot', full_name='immudb.schema.ConsistencyProof.secondRoot', index=3,
-      number=4, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='path', full_name='immudb.schema.ConsistencyProof.path', index=4,
-      number=5, type=12, cpp_type=9, label=3,
+      name='KVs', full_name='immudb.schema.SetRequest.KVs', index=0,
+      number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1550,58 +1458,76 @@ _CONSISTENCYPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2180,
-  serialized_end=2282,
+  serialized_start=2461,
+  serialized_end=2511,
 )
 
 
-_PROOF = _descriptor.Descriptor(
-  name='Proof',
-  full_name='immudb.schema.Proof',
+_KEYREQUEST = _descriptor.Descriptor(
+  name='KeyRequest',
+  full_name='immudb.schema.KeyRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='leaf', full_name='immudb.schema.Proof.leaf', index=0,
+      name='key', full_name='immudb.schema.KeyRequest.key', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.Proof.index', index=1,
+      name='atTx', full_name='immudb.schema.KeyRequest.atTx', index=1,
       number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='root', full_name='immudb.schema.Proof.root', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='at', full_name='immudb.schema.Proof.at', index=3,
-      number=4, type=4, cpp_type=4, label=1,
+      name='sinceTx', full_name='immudb.schema.KeyRequest.sinceTx', index=2,
+      number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2513,
+  serialized_end=2569,
+)
+
+
+_KEYLISTREQUEST = _descriptor.Descriptor(
+  name='KeyListRequest',
+  full_name='immudb.schema.KeyListRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='inclusionPath', full_name='immudb.schema.Proof.inclusionPath', index=4,
-      number=5, type=12, cpp_type=9, label=3,
+      name='keys', full_name='immudb.schema.KeyListRequest.keys', index=0,
+      number=1, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='consistencyPath', full_name='immudb.schema.Proof.consistencyPath', index=5,
-      number=6, type=12, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
+      name='sinceTx', full_name='immudb.schema.KeyListRequest.sinceTx', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -1617,30 +1543,30 @@ _PROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2284,
-  serialized_end=2394,
+  serialized_start=2571,
+  serialized_end=2618,
 )
 
 
-_SAFEITEM = _descriptor.Descriptor(
-  name='SafeItem',
-  full_name='immudb.schema.SafeItem',
+_VERIFIABLESETREQUEST = _descriptor.Descriptor(
+  name='VerifiableSetRequest',
+  full_name='immudb.schema.VerifiableSetRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='item', full_name='immudb.schema.SafeItem.item', index=0,
+      name='setRequest', full_name='immudb.schema.VerifiableSetRequest.setRequest', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='proof', full_name='immudb.schema.SafeItem.proof', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='proveSinceTx', full_name='immudb.schema.VerifiableSetRequest.proveSinceTx', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -1656,30 +1582,30 @@ _SAFEITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2396,
-  serialized_end=2478,
+  serialized_start=2620,
+  serialized_end=2711,
 )
 
 
-_SAFESTRUCTUREDITEM = _descriptor.Descriptor(
-  name='SafeStructuredItem',
-  full_name='immudb.schema.SafeStructuredItem',
+_VERIFIABLEGETREQUEST = _descriptor.Descriptor(
+  name='VerifiableGetRequest',
+  full_name='immudb.schema.VerifiableGetRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='item', full_name='immudb.schema.SafeStructuredItem.item', index=0,
+      name='keyRequest', full_name='immudb.schema.VerifiableGetRequest.keyRequest', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='proof', full_name='immudb.schema.SafeStructuredItem.proof', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='proveSinceTx', full_name='immudb.schema.VerifiableGetRequest.proveSinceTx', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -1695,164 +1621,8 @@ _SAFESTRUCTUREDITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2480,
-  serialized_end=2582,
-)
-
-
-_SAFESETOPTIONS = _descriptor.Descriptor(
-  name='SafeSetOptions',
-  full_name='immudb.schema.SafeSetOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='kv', full_name='immudb.schema.SafeSetOptions.kv', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='rootIndex', full_name='immudb.schema.SafeSetOptions.rootIndex', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=2584,
-  serialized_end=2678,
-)
-
-
-_SAFESETSVOPTIONS = _descriptor.Descriptor(
-  name='SafeSetSVOptions',
-  full_name='immudb.schema.SafeSetSVOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='skv', full_name='immudb.schema.SafeSetSVOptions.skv', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='rootIndex', full_name='immudb.schema.SafeSetSVOptions.rootIndex', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=2680,
-  serialized_end=2787,
-)
-
-
-_SAFEGETOPTIONS = _descriptor.Descriptor(
-  name='SafeGetOptions',
-  full_name='immudb.schema.SafeGetOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.SafeGetOptions.key', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='rootIndex', full_name='immudb.schema.SafeGetOptions.rootIndex', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=2789,
-  serialized_end=2859,
-)
-
-
-_SAFEREFERENCEOPTIONS = _descriptor.Descriptor(
-  name='SafeReferenceOptions',
-  full_name='immudb.schema.SafeReferenceOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='ro', full_name='immudb.schema.SafeReferenceOptions.ro', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='rootIndex', full_name='immudb.schema.SafeReferenceOptions.rootIndex', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=2861,
-  serialized_end=2969,
+  serialized_start=2713,
+  serialized_end=2804,
 )
 
 
@@ -1890,149 +1660,36 @@ _HEALTHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2971,
-  serialized_end=3020,
+  serialized_start=2806,
+  serialized_end=2855,
 )
 
 
-_REFERENCEOPTIONS = _descriptor.Descriptor(
-  name='ReferenceOptions',
-  full_name='immudb.schema.ReferenceOptions',
+_IMMUTABLESTATE = _descriptor.Descriptor(
+  name='ImmutableState',
+  full_name='immudb.schema.ImmutableState',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='reference', full_name='immudb.schema.ReferenceOptions.reference', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.ReferenceOptions.key', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3022,
-  serialized_end=3072,
-)
-
-
-_ZADDOPTIONS = _descriptor.Descriptor(
-  name='ZAddOptions',
-  full_name='immudb.schema.ZAddOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='set', full_name='immudb.schema.ZAddOptions.set', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='score', full_name='immudb.schema.ZAddOptions.score', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.ZAddOptions.key', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.ZAddOptions.index', index=3,
-      number=4, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3074,
-  serialized_end=3187,
-)
-
-
-_ZSCANOPTIONS = _descriptor.Descriptor(
-  name='ZScanOptions',
-  full_name='immudb.schema.ZScanOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='set', full_name='immudb.schema.ZScanOptions.set', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='offset', full_name='immudb.schema.ZScanOptions.offset', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"",
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='limit', full_name='immudb.schema.ZScanOptions.limit', index=2,
+      name='txId', full_name='immudb.schema.ImmutableState.txId', index=0,
       number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='reverse', full_name='immudb.schema.ZScanOptions.reverse', index=3,
-      number=4, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
+      name='txHash', full_name='immudb.schema.ImmutableState.txHash', index=1,
+      number=4, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='min', full_name='immudb.schema.ZScanOptions.min', index=4,
+      name='signature', full_name='immudb.schema.ImmutableState.signature', index=2,
       number=5, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='max', full_name='immudb.schema.ZScanOptions.max', index=5,
-      number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -2049,8 +1706,160 @@ _ZSCANOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3190,
-  serialized_end=3335,
+  serialized_start=2857,
+  serialized_end=2948,
+)
+
+
+_REFERENCEREQUEST = _descriptor.Descriptor(
+  name='ReferenceRequest',
+  full_name='immudb.schema.ReferenceRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='immudb.schema.ReferenceRequest.key', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='referencedKey', full_name='immudb.schema.ReferenceRequest.referencedKey', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='atTx', full_name='immudb.schema.ReferenceRequest.atTx', index=2,
+      number=3, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='boundRef', full_name='immudb.schema.ReferenceRequest.boundRef', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2950,
+  serialized_end=3036,
+)
+
+
+_VERIFIABLEREFERENCEREQUEST = _descriptor.Descriptor(
+  name='VerifiableReferenceRequest',
+  full_name='immudb.schema.VerifiableReferenceRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='referenceRequest', full_name='immudb.schema.VerifiableReferenceRequest.referenceRequest', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='proveSinceTx', full_name='immudb.schema.VerifiableReferenceRequest.proveSinceTx', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3038,
+  serialized_end=3147,
+)
+
+
+_ZADDREQUEST = _descriptor.Descriptor(
+  name='ZAddRequest',
+  full_name='immudb.schema.ZAddRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='set', full_name='immudb.schema.ZAddRequest.set', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='score', full_name='immudb.schema.ZAddRequest.score', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='key', full_name='immudb.schema.ZAddRequest.key', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='atTx', full_name='immudb.schema.ZAddRequest.atTx', index=3,
+      number=4, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='boundRef', full_name='immudb.schema.ZAddRequest.boundRef', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3149,
+  serialized_end=3235,
 )
 
 
@@ -2081,167 +1890,92 @@ _SCORE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3337,
-  serialized_end=3359,
+  serialized_start=3237,
+  serialized_end=3259,
 )
 
 
-_ISCANOPTIONS = _descriptor.Descriptor(
-  name='IScanOptions',
-  full_name='immudb.schema.IScanOptions',
+_ZSCANREQUEST = _descriptor.Descriptor(
+  name='ZScanRequest',
+  full_name='immudb.schema.ZScanRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='pageSize', full_name='immudb.schema.IScanOptions.pageSize', index=0,
-      number=1, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='pageNumber', full_name='immudb.schema.IScanOptions.pageNumber', index=1,
-      number=2, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3361,
-  serialized_end=3413,
-)
-
-
-_PAGE = _descriptor.Descriptor(
-  name='Page',
-  full_name='immudb.schema.Page',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='items', full_name='immudb.schema.Page.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='more', full_name='immudb.schema.Page.more', index=1,
-      number=3, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3415,
-  serialized_end=3471,
-)
-
-
-_SPAGE = _descriptor.Descriptor(
-  name='SPage',
-  full_name='immudb.schema.SPage',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='items', full_name='immudb.schema.SPage.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='pageNum', full_name='immudb.schema.SPage.pageNum', index=1,
-      number=2, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='more', full_name='immudb.schema.SPage.more', index=2,
-      number=3, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=3473,
-  serialized_end=3557,
-)
-
-
-_HISTORYOPTIONS = _descriptor.Descriptor(
-  name='HistoryOptions',
-  full_name='immudb.schema.HistoryOptions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='immudb.schema.HistoryOptions.key', index=0,
+      name='set', full_name='immudb.schema.ZScanRequest.set', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='offset', full_name='immudb.schema.HistoryOptions.offset', index=1,
-      number=2, type=4, cpp_type=4, label=1,
+      name='seekKey', full_name='immudb.schema.ZScanRequest.seekKey', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='seekScore', full_name='immudb.schema.ZScanRequest.seekScore', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='seekAtTx', full_name='immudb.schema.ZScanRequest.seekAtTx', index=3,
+      number=4, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='limit', full_name='immudb.schema.HistoryOptions.limit', index=2,
-      number=3, type=4, cpp_type=4, label=1,
+      name='inclusiveSeek', full_name='immudb.schema.ZScanRequest.inclusiveSeek', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='limit', full_name='immudb.schema.ZScanRequest.limit', index=5,
+      number=6, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='reverse', full_name='immudb.schema.HistoryOptions.reverse', index=3,
-      number=4, type=8, cpp_type=7, label=1,
+      name='desc', full_name='immudb.schema.ZScanRequest.desc', index=6,
+      number=7, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='minScore', full_name='immudb.schema.ZScanRequest.minScore', index=7,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='maxScore', full_name='immudb.schema.ZScanRequest.maxScore', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sinceTx', full_name='immudb.schema.ZScanRequest.sinceTx', index=9,
+      number=10, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='noWait', full_name='immudb.schema.ZScanRequest.noWait', index=10,
+      number=11, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -2258,30 +1992,90 @@ _HISTORYOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3559,
-  serialized_end=3636,
+  serialized_start=3262,
+  serialized_end=3508,
 )
 
 
-_SAFEZADDOPTIONS = _descriptor.Descriptor(
-  name='SafeZAddOptions',
-  full_name='immudb.schema.SafeZAddOptions',
+_HISTORYREQUEST = _descriptor.Descriptor(
+  name='HistoryRequest',
+  full_name='immudb.schema.HistoryRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='zopts', full_name='immudb.schema.SafeZAddOptions.zopts', index=0,
+      name='key', full_name='immudb.schema.HistoryRequest.key', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='offset', full_name='immudb.schema.HistoryRequest.offset', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='limit', full_name='immudb.schema.HistoryRequest.limit', index=2,
+      number=3, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='desc', full_name='immudb.schema.HistoryRequest.desc', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sinceTx', full_name='immudb.schema.HistoryRequest.sinceTx', index=4,
+      number=5, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3510,
+  serialized_end=3601,
+)
+
+
+_VERIFIABLEZADDREQUEST = _descriptor.Descriptor(
+  name='VerifiableZAddRequest',
+  full_name='immudb.schema.VerifiableZAddRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='zAddRequest', full_name='immudb.schema.VerifiableZAddRequest.zAddRequest', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='rootIndex', full_name='immudb.schema.SafeZAddOptions.rootIndex', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='proveSinceTx', full_name='immudb.schema.VerifiableZAddRequest.proveSinceTx', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -2297,30 +2091,23 @@ _SAFEZADDOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3638,
-  serialized_end=3739,
+  serialized_start=3603,
+  serialized_end=3697,
 )
 
 
-_SAFEINDEXOPTIONS = _descriptor.Descriptor(
-  name='SafeIndexOptions',
-  full_name='immudb.schema.SafeIndexOptions',
+_TXREQUEST = _descriptor.Descriptor(
+  name='TxRequest',
+  full_name='immudb.schema.TxRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='index', full_name='immudb.schema.SafeIndexOptions.index', index=0,
+      name='tx', full_name='immudb.schema.TxRequest.tx', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='rootIndex', full_name='immudb.schema.SafeIndexOptions.rootIndex', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -2336,8 +2123,47 @@ _SAFEINDEXOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3741,
-  serialized_end=3815,
+  serialized_start=3699,
+  serialized_end=3722,
+)
+
+
+_VERIFIABLETXREQUEST = _descriptor.Descriptor(
+  name='VerifiableTxRequest',
+  full_name='immudb.schema.VerifiableTxRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='tx', full_name='immudb.schema.VerifiableTxRequest.tx', index=0,
+      number=1, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='proveSinceTx', full_name='immudb.schema.VerifiableTxRequest.proveSinceTx', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3724,
+  serialized_end=3779,
 )
 
 
@@ -2368,8 +2194,8 @@ _DATABASE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3817,
-  serialized_end=3849,
+  serialized_start=3781,
+  serialized_end=3813,
 )
 
 
@@ -2400,8 +2226,8 @@ _USEDATABASEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3851,
-  serialized_end=3884,
+  serialized_start=3815,
+  serialized_end=3848,
 )
 
 
@@ -2453,8 +2279,8 @@ _CHANGEPERMISSIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3887,
-  serialized_end=4017,
+  serialized_start=3851,
+  serialized_end=3981,
 )
 
 
@@ -2492,8 +2318,8 @@ _SETACTIVEUSERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4019,
-  serialized_end=4075,
+  serialized_start=3983,
+  serialized_end=4039,
 )
 
 
@@ -2524,47 +2350,48 @@ _DATABASELISTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4077,
-  serialized_end=4143,
+  serialized_start=4041,
+  serialized_end=4107,
 )
 
 _USER.fields_by_name['permissions'].message_type = _PERMISSION
 _USERLIST.fields_by_name['users'].message_type = _USER
-_LAYER.fields_by_name['l'].message_type = _NODE
-_TREE.fields_by_name['t'].message_type = _LAYER
-_STRUCTUREDKEYVALUE.fields_by_name['value'].message_type = _CONTENT
-_STRUCTUREDITEM.fields_by_name['value'].message_type = _CONTENT
-_KVLIST.fields_by_name['KVs'].message_type = _KEYVALUE
-_SKVLIST.fields_by_name['SKVs'].message_type = _STRUCTUREDKEYVALUE
-_KEYLIST.fields_by_name['keys'].message_type = _KEY
-_ITEMLIST.fields_by_name['items'].message_type = _ITEM
-_ZITEM.fields_by_name['item'].message_type = _ITEM
-_ZITEMLIST.fields_by_name['items'].message_type = _ZITEM
-_STRUCTUREDITEMLIST.fields_by_name['items'].message_type = _STRUCTUREDITEM
-_ZSTRUCTUREDITEMLIST.fields_by_name['items'].message_type = _ZSTRUCTUREDITEM
-_ZSTRUCTUREDITEM.fields_by_name['item'].message_type = _STRUCTUREDITEM
-_ROOT.fields_by_name['payload'].message_type = _ROOTINDEX
-_ROOT.fields_by_name['signature'].message_type = _SIGNATURE
-_SAFEITEM.fields_by_name['item'].message_type = _ITEM
-_SAFEITEM.fields_by_name['proof'].message_type = _PROOF
-_SAFESTRUCTUREDITEM.fields_by_name['item'].message_type = _STRUCTUREDITEM
-_SAFESTRUCTUREDITEM.fields_by_name['proof'].message_type = _PROOF
-_SAFESETOPTIONS.fields_by_name['kv'].message_type = _KEYVALUE
-_SAFESETOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
-_SAFESETSVOPTIONS.fields_by_name['skv'].message_type = _STRUCTUREDKEYVALUE
-_SAFESETSVOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
-_SAFEGETOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
-_SAFEREFERENCEOPTIONS.fields_by_name['ro'].message_type = _REFERENCEOPTIONS
-_SAFEREFERENCEOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
-_ZADDOPTIONS.fields_by_name['score'].message_type = _SCORE
-_ZADDOPTIONS.fields_by_name['index'].message_type = _INDEX
-_ZSCANOPTIONS.fields_by_name['min'].message_type = _SCORE
-_ZSCANOPTIONS.fields_by_name['max'].message_type = _SCORE
-_PAGE.fields_by_name['items'].message_type = _ITEM
-_SPAGE.fields_by_name['items'].message_type = _STRUCTUREDITEM
-_SAFEZADDOPTIONS.fields_by_name['zopts'].message_type = _ZADDOPTIONS
-_SAFEZADDOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
-_SAFEINDEXOPTIONS.fields_by_name['rootIndex'].message_type = _INDEX
+_ENTRY.fields_by_name['referencedBy'].message_type = _REFERENCE
+_OP.fields_by_name['kv'].message_type = _KEYVALUE
+_OP.fields_by_name['zAdd'].message_type = _ZADDREQUEST
+_OP.fields_by_name['ref'].message_type = _REFERENCEREQUEST
+_OP.oneofs_by_name['operation'].fields.append(
+  _OP.fields_by_name['kv'])
+_OP.fields_by_name['kv'].containing_oneof = _OP.oneofs_by_name['operation']
+_OP.oneofs_by_name['operation'].fields.append(
+  _OP.fields_by_name['zAdd'])
+_OP.fields_by_name['zAdd'].containing_oneof = _OP.oneofs_by_name['operation']
+_OP.oneofs_by_name['operation'].fields.append(
+  _OP.fields_by_name['ref'])
+_OP.fields_by_name['ref'].containing_oneof = _OP.oneofs_by_name['operation']
+_EXECALLREQUEST.fields_by_name['Operations'].message_type = _OP
+_ENTRIES.fields_by_name['entries'].message_type = _ENTRY
+_ZENTRY.fields_by_name['entry'].message_type = _ENTRY
+_ZENTRIES.fields_by_name['entries'].message_type = _ZENTRY
+_DUALPROOF.fields_by_name['sourceTxMetadata'].message_type = _TXMETADATA
+_DUALPROOF.fields_by_name['targetTxMetadata'].message_type = _TXMETADATA
+_DUALPROOF.fields_by_name['linearProof'].message_type = _LINEARPROOF
+_TX.fields_by_name['metadata'].message_type = _TXMETADATA
+_TX.fields_by_name['entries'].message_type = _TXENTRY
+_VERIFIABLETX.fields_by_name['tx'].message_type = _TX
+_VERIFIABLETX.fields_by_name['dualProof'].message_type = _DUALPROOF
+_VERIFIABLETX.fields_by_name['signature'].message_type = _SIGNATURE
+_VERIFIABLEENTRY.fields_by_name['entry'].message_type = _ENTRY
+_VERIFIABLEENTRY.fields_by_name['verifiableTx'].message_type = _VERIFIABLETX
+_VERIFIABLEENTRY.fields_by_name['inclusionProof'].message_type = _INCLUSIONPROOF
+_SETREQUEST.fields_by_name['KVs'].message_type = _KEYVALUE
+_VERIFIABLESETREQUEST.fields_by_name['setRequest'].message_type = _SETREQUEST
+_VERIFIABLEGETREQUEST.fields_by_name['keyRequest'].message_type = _KEYREQUEST
+_IMMUTABLESTATE.fields_by_name['signature'].message_type = _SIGNATURE
+_VERIFIABLEREFERENCEREQUEST.fields_by_name['referenceRequest'].message_type = _REFERENCEREQUEST
+_ZSCANREQUEST.fields_by_name['minScore'].message_type = _SCORE
+_ZSCANREQUEST.fields_by_name['maxScore'].message_type = _SCORE
+_VERIFIABLEZADDREQUEST.fields_by_name['zAddRequest'].message_type = _ZADDREQUEST
 _CHANGEPERMISSIONREQUEST.fields_by_name['action'].enum_type = _PERMISSIONACTION
 _DATABASELISTRESPONSE.fields_by_name['databases'].message_type = _DATABASE
 DESCRIPTOR.message_types_by_name['Key'] = _KEY
@@ -2578,50 +2405,42 @@ DESCRIPTOR.message_types_by_name['LoginRequest'] = _LOGINREQUEST
 DESCRIPTOR.message_types_by_name['LoginResponse'] = _LOGINRESPONSE
 DESCRIPTOR.message_types_by_name['AuthConfig'] = _AUTHCONFIG
 DESCRIPTOR.message_types_by_name['MTLSConfig'] = _MTLSCONFIG
-DESCRIPTOR.message_types_by_name['Node'] = _NODE
-DESCRIPTOR.message_types_by_name['Layer'] = _LAYER
-DESCRIPTOR.message_types_by_name['Tree'] = _TREE
 DESCRIPTOR.message_types_by_name['KeyValue'] = _KEYVALUE
-DESCRIPTOR.message_types_by_name['StructuredKeyValue'] = _STRUCTUREDKEYVALUE
-DESCRIPTOR.message_types_by_name['Content'] = _CONTENT
-DESCRIPTOR.message_types_by_name['Index'] = _INDEX
-DESCRIPTOR.message_types_by_name['Item'] = _ITEM
-DESCRIPTOR.message_types_by_name['StructuredItem'] = _STRUCTUREDITEM
-DESCRIPTOR.message_types_by_name['KVList'] = _KVLIST
-DESCRIPTOR.message_types_by_name['SKVList'] = _SKVLIST
-DESCRIPTOR.message_types_by_name['KeyList'] = _KEYLIST
-DESCRIPTOR.message_types_by_name['ItemList'] = _ITEMLIST
-DESCRIPTOR.message_types_by_name['ZItem'] = _ZITEM
-DESCRIPTOR.message_types_by_name['ZItemList'] = _ZITEMLIST
-DESCRIPTOR.message_types_by_name['StructuredItemList'] = _STRUCTUREDITEMLIST
-DESCRIPTOR.message_types_by_name['ZStructuredItemList'] = _ZSTRUCTUREDITEMLIST
-DESCRIPTOR.message_types_by_name['ZStructuredItem'] = _ZSTRUCTUREDITEM
-DESCRIPTOR.message_types_by_name['Root'] = _ROOT
-DESCRIPTOR.message_types_by_name['RootIndex'] = _ROOTINDEX
-DESCRIPTOR.message_types_by_name['Signature'] = _SIGNATURE
-DESCRIPTOR.message_types_by_name['ScanOptions'] = _SCANOPTIONS
+DESCRIPTOR.message_types_by_name['Entry'] = _ENTRY
+DESCRIPTOR.message_types_by_name['Reference'] = _REFERENCE
+DESCRIPTOR.message_types_by_name['Op'] = _OP
+DESCRIPTOR.message_types_by_name['ExecAllRequest'] = _EXECALLREQUEST
+DESCRIPTOR.message_types_by_name['Entries'] = _ENTRIES
+DESCRIPTOR.message_types_by_name['ZEntry'] = _ZENTRY
+DESCRIPTOR.message_types_by_name['ZEntries'] = _ZENTRIES
+DESCRIPTOR.message_types_by_name['ScanRequest'] = _SCANREQUEST
 DESCRIPTOR.message_types_by_name['KeyPrefix'] = _KEYPREFIX
-DESCRIPTOR.message_types_by_name['ItemsCount'] = _ITEMSCOUNT
+DESCRIPTOR.message_types_by_name['EntryCount'] = _ENTRYCOUNT
+DESCRIPTOR.message_types_by_name['Signature'] = _SIGNATURE
+DESCRIPTOR.message_types_by_name['TxMetadata'] = _TXMETADATA
+DESCRIPTOR.message_types_by_name['LinearProof'] = _LINEARPROOF
+DESCRIPTOR.message_types_by_name['DualProof'] = _DUALPROOF
+DESCRIPTOR.message_types_by_name['Tx'] = _TX
+DESCRIPTOR.message_types_by_name['TxEntry'] = _TXENTRY
+DESCRIPTOR.message_types_by_name['VerifiableTx'] = _VERIFIABLETX
+DESCRIPTOR.message_types_by_name['VerifiableEntry'] = _VERIFIABLEENTRY
 DESCRIPTOR.message_types_by_name['InclusionProof'] = _INCLUSIONPROOF
-DESCRIPTOR.message_types_by_name['ConsistencyProof'] = _CONSISTENCYPROOF
-DESCRIPTOR.message_types_by_name['Proof'] = _PROOF
-DESCRIPTOR.message_types_by_name['SafeItem'] = _SAFEITEM
-DESCRIPTOR.message_types_by_name['SafeStructuredItem'] = _SAFESTRUCTUREDITEM
-DESCRIPTOR.message_types_by_name['SafeSetOptions'] = _SAFESETOPTIONS
-DESCRIPTOR.message_types_by_name['SafeSetSVOptions'] = _SAFESETSVOPTIONS
-DESCRIPTOR.message_types_by_name['SafeGetOptions'] = _SAFEGETOPTIONS
-DESCRIPTOR.message_types_by_name['SafeReferenceOptions'] = _SAFEREFERENCEOPTIONS
+DESCRIPTOR.message_types_by_name['SetRequest'] = _SETREQUEST
+DESCRIPTOR.message_types_by_name['KeyRequest'] = _KEYREQUEST
+DESCRIPTOR.message_types_by_name['KeyListRequest'] = _KEYLISTREQUEST
+DESCRIPTOR.message_types_by_name['VerifiableSetRequest'] = _VERIFIABLESETREQUEST
+DESCRIPTOR.message_types_by_name['VerifiableGetRequest'] = _VERIFIABLEGETREQUEST
 DESCRIPTOR.message_types_by_name['HealthResponse'] = _HEALTHRESPONSE
-DESCRIPTOR.message_types_by_name['ReferenceOptions'] = _REFERENCEOPTIONS
-DESCRIPTOR.message_types_by_name['ZAddOptions'] = _ZADDOPTIONS
-DESCRIPTOR.message_types_by_name['ZScanOptions'] = _ZSCANOPTIONS
+DESCRIPTOR.message_types_by_name['ImmutableState'] = _IMMUTABLESTATE
+DESCRIPTOR.message_types_by_name['ReferenceRequest'] = _REFERENCEREQUEST
+DESCRIPTOR.message_types_by_name['VerifiableReferenceRequest'] = _VERIFIABLEREFERENCEREQUEST
+DESCRIPTOR.message_types_by_name['ZAddRequest'] = _ZADDREQUEST
 DESCRIPTOR.message_types_by_name['Score'] = _SCORE
-DESCRIPTOR.message_types_by_name['IScanOptions'] = _ISCANOPTIONS
-DESCRIPTOR.message_types_by_name['Page'] = _PAGE
-DESCRIPTOR.message_types_by_name['SPage'] = _SPAGE
-DESCRIPTOR.message_types_by_name['HistoryOptions'] = _HISTORYOPTIONS
-DESCRIPTOR.message_types_by_name['SafeZAddOptions'] = _SAFEZADDOPTIONS
-DESCRIPTOR.message_types_by_name['SafeIndexOptions'] = _SAFEINDEXOPTIONS
+DESCRIPTOR.message_types_by_name['ZScanRequest'] = _ZSCANREQUEST
+DESCRIPTOR.message_types_by_name['HistoryRequest'] = _HISTORYREQUEST
+DESCRIPTOR.message_types_by_name['VerifiableZAddRequest'] = _VERIFIABLEZADDREQUEST
+DESCRIPTOR.message_types_by_name['TxRequest'] = _TXREQUEST
+DESCRIPTOR.message_types_by_name['VerifiableTxRequest'] = _VERIFIABLETXREQUEST
 DESCRIPTOR.message_types_by_name['Database'] = _DATABASE
 DESCRIPTOR.message_types_by_name['UseDatabaseReply'] = _USEDATABASEREPLY
 DESCRIPTOR.message_types_by_name['ChangePermissionRequest'] = _CHANGEPERMISSIONREQUEST
@@ -2707,27 +2526,6 @@ MTLSConfig = _reflection.GeneratedProtocolMessageType('MTLSConfig', (_message.Me
   })
 _sym_db.RegisterMessage(MTLSConfig)
 
-Node = _reflection.GeneratedProtocolMessageType('Node', (_message.Message,), {
-  'DESCRIPTOR' : _NODE,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Node)
-  })
-_sym_db.RegisterMessage(Node)
-
-Layer = _reflection.GeneratedProtocolMessageType('Layer', (_message.Message,), {
-  'DESCRIPTOR' : _LAYER,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Layer)
-  })
-_sym_db.RegisterMessage(Layer)
-
-Tree = _reflection.GeneratedProtocolMessageType('Tree', (_message.Message,), {
-  'DESCRIPTOR' : _TREE,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Tree)
-  })
-_sym_db.RegisterMessage(Tree)
-
 KeyValue = _reflection.GeneratedProtocolMessageType('KeyValue', (_message.Message,), {
   'DESCRIPTOR' : _KEYVALUE,
   '__module__' : 'schema_pb2'
@@ -2735,131 +2533,61 @@ KeyValue = _reflection.GeneratedProtocolMessageType('KeyValue', (_message.Messag
   })
 _sym_db.RegisterMessage(KeyValue)
 
-StructuredKeyValue = _reflection.GeneratedProtocolMessageType('StructuredKeyValue', (_message.Message,), {
-  'DESCRIPTOR' : _STRUCTUREDKEYVALUE,
+Entry = _reflection.GeneratedProtocolMessageType('Entry', (_message.Message,), {
+  'DESCRIPTOR' : _ENTRY,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.StructuredKeyValue)
+  # @@protoc_insertion_point(class_scope:immudb.schema.Entry)
   })
-_sym_db.RegisterMessage(StructuredKeyValue)
+_sym_db.RegisterMessage(Entry)
 
-Content = _reflection.GeneratedProtocolMessageType('Content', (_message.Message,), {
-  'DESCRIPTOR' : _CONTENT,
+Reference = _reflection.GeneratedProtocolMessageType('Reference', (_message.Message,), {
+  'DESCRIPTOR' : _REFERENCE,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Content)
+  # @@protoc_insertion_point(class_scope:immudb.schema.Reference)
   })
-_sym_db.RegisterMessage(Content)
+_sym_db.RegisterMessage(Reference)
 
-Index = _reflection.GeneratedProtocolMessageType('Index', (_message.Message,), {
-  'DESCRIPTOR' : _INDEX,
+Op = _reflection.GeneratedProtocolMessageType('Op', (_message.Message,), {
+  'DESCRIPTOR' : _OP,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Index)
+  # @@protoc_insertion_point(class_scope:immudb.schema.Op)
   })
-_sym_db.RegisterMessage(Index)
+_sym_db.RegisterMessage(Op)
 
-Item = _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), {
-  'DESCRIPTOR' : _ITEM,
+ExecAllRequest = _reflection.GeneratedProtocolMessageType('ExecAllRequest', (_message.Message,), {
+  'DESCRIPTOR' : _EXECALLREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Item)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ExecAllRequest)
   })
-_sym_db.RegisterMessage(Item)
+_sym_db.RegisterMessage(ExecAllRequest)
 
-StructuredItem = _reflection.GeneratedProtocolMessageType('StructuredItem', (_message.Message,), {
-  'DESCRIPTOR' : _STRUCTUREDITEM,
+Entries = _reflection.GeneratedProtocolMessageType('Entries', (_message.Message,), {
+  'DESCRIPTOR' : _ENTRIES,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.StructuredItem)
+  # @@protoc_insertion_point(class_scope:immudb.schema.Entries)
   })
-_sym_db.RegisterMessage(StructuredItem)
+_sym_db.RegisterMessage(Entries)
 
-KVList = _reflection.GeneratedProtocolMessageType('KVList', (_message.Message,), {
-  'DESCRIPTOR' : _KVLIST,
+ZEntry = _reflection.GeneratedProtocolMessageType('ZEntry', (_message.Message,), {
+  'DESCRIPTOR' : _ZENTRY,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.KVList)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZEntry)
   })
-_sym_db.RegisterMessage(KVList)
+_sym_db.RegisterMessage(ZEntry)
 
-SKVList = _reflection.GeneratedProtocolMessageType('SKVList', (_message.Message,), {
-  'DESCRIPTOR' : _SKVLIST,
+ZEntries = _reflection.GeneratedProtocolMessageType('ZEntries', (_message.Message,), {
+  'DESCRIPTOR' : _ZENTRIES,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SKVList)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZEntries)
   })
-_sym_db.RegisterMessage(SKVList)
+_sym_db.RegisterMessage(ZEntries)
 
-KeyList = _reflection.GeneratedProtocolMessageType('KeyList', (_message.Message,), {
-  'DESCRIPTOR' : _KEYLIST,
+ScanRequest = _reflection.GeneratedProtocolMessageType('ScanRequest', (_message.Message,), {
+  'DESCRIPTOR' : _SCANREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.KeyList)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ScanRequest)
   })
-_sym_db.RegisterMessage(KeyList)
-
-ItemList = _reflection.GeneratedProtocolMessageType('ItemList', (_message.Message,), {
-  'DESCRIPTOR' : _ITEMLIST,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ItemList)
-  })
-_sym_db.RegisterMessage(ItemList)
-
-ZItem = _reflection.GeneratedProtocolMessageType('ZItem', (_message.Message,), {
-  'DESCRIPTOR' : _ZITEM,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ZItem)
-  })
-_sym_db.RegisterMessage(ZItem)
-
-ZItemList = _reflection.GeneratedProtocolMessageType('ZItemList', (_message.Message,), {
-  'DESCRIPTOR' : _ZITEMLIST,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ZItemList)
-  })
-_sym_db.RegisterMessage(ZItemList)
-
-StructuredItemList = _reflection.GeneratedProtocolMessageType('StructuredItemList', (_message.Message,), {
-  'DESCRIPTOR' : _STRUCTUREDITEMLIST,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.StructuredItemList)
-  })
-_sym_db.RegisterMessage(StructuredItemList)
-
-ZStructuredItemList = _reflection.GeneratedProtocolMessageType('ZStructuredItemList', (_message.Message,), {
-  'DESCRIPTOR' : _ZSTRUCTUREDITEMLIST,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ZStructuredItemList)
-  })
-_sym_db.RegisterMessage(ZStructuredItemList)
-
-ZStructuredItem = _reflection.GeneratedProtocolMessageType('ZStructuredItem', (_message.Message,), {
-  'DESCRIPTOR' : _ZSTRUCTUREDITEM,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ZStructuredItem)
-  })
-_sym_db.RegisterMessage(ZStructuredItem)
-
-Root = _reflection.GeneratedProtocolMessageType('Root', (_message.Message,), {
-  'DESCRIPTOR' : _ROOT,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Root)
-  })
-_sym_db.RegisterMessage(Root)
-
-RootIndex = _reflection.GeneratedProtocolMessageType('RootIndex', (_message.Message,), {
-  'DESCRIPTOR' : _ROOTINDEX,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.RootIndex)
-  })
-_sym_db.RegisterMessage(RootIndex)
-
-Signature = _reflection.GeneratedProtocolMessageType('Signature', (_message.Message,), {
-  'DESCRIPTOR' : _SIGNATURE,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Signature)
-  })
-_sym_db.RegisterMessage(Signature)
-
-ScanOptions = _reflection.GeneratedProtocolMessageType('ScanOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SCANOPTIONS,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ScanOptions)
-  })
-_sym_db.RegisterMessage(ScanOptions)
+_sym_db.RegisterMessage(ScanRequest)
 
 KeyPrefix = _reflection.GeneratedProtocolMessageType('KeyPrefix', (_message.Message,), {
   'DESCRIPTOR' : _KEYPREFIX,
@@ -2868,12 +2596,68 @@ KeyPrefix = _reflection.GeneratedProtocolMessageType('KeyPrefix', (_message.Mess
   })
 _sym_db.RegisterMessage(KeyPrefix)
 
-ItemsCount = _reflection.GeneratedProtocolMessageType('ItemsCount', (_message.Message,), {
-  'DESCRIPTOR' : _ITEMSCOUNT,
+EntryCount = _reflection.GeneratedProtocolMessageType('EntryCount', (_message.Message,), {
+  'DESCRIPTOR' : _ENTRYCOUNT,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ItemsCount)
+  # @@protoc_insertion_point(class_scope:immudb.schema.EntryCount)
   })
-_sym_db.RegisterMessage(ItemsCount)
+_sym_db.RegisterMessage(EntryCount)
+
+Signature = _reflection.GeneratedProtocolMessageType('Signature', (_message.Message,), {
+  'DESCRIPTOR' : _SIGNATURE,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.Signature)
+  })
+_sym_db.RegisterMessage(Signature)
+
+TxMetadata = _reflection.GeneratedProtocolMessageType('TxMetadata', (_message.Message,), {
+  'DESCRIPTOR' : _TXMETADATA,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.TxMetadata)
+  })
+_sym_db.RegisterMessage(TxMetadata)
+
+LinearProof = _reflection.GeneratedProtocolMessageType('LinearProof', (_message.Message,), {
+  'DESCRIPTOR' : _LINEARPROOF,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.LinearProof)
+  })
+_sym_db.RegisterMessage(LinearProof)
+
+DualProof = _reflection.GeneratedProtocolMessageType('DualProof', (_message.Message,), {
+  'DESCRIPTOR' : _DUALPROOF,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.DualProof)
+  })
+_sym_db.RegisterMessage(DualProof)
+
+Tx = _reflection.GeneratedProtocolMessageType('Tx', (_message.Message,), {
+  'DESCRIPTOR' : _TX,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.Tx)
+  })
+_sym_db.RegisterMessage(Tx)
+
+TxEntry = _reflection.GeneratedProtocolMessageType('TxEntry', (_message.Message,), {
+  'DESCRIPTOR' : _TXENTRY,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.TxEntry)
+  })
+_sym_db.RegisterMessage(TxEntry)
+
+VerifiableTx = _reflection.GeneratedProtocolMessageType('VerifiableTx', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLETX,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableTx)
+  })
+_sym_db.RegisterMessage(VerifiableTx)
+
+VerifiableEntry = _reflection.GeneratedProtocolMessageType('VerifiableEntry', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLEENTRY,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableEntry)
+  })
+_sym_db.RegisterMessage(VerifiableEntry)
 
 InclusionProof = _reflection.GeneratedProtocolMessageType('InclusionProof', (_message.Message,), {
   'DESCRIPTOR' : _INCLUSIONPROOF,
@@ -2882,61 +2666,40 @@ InclusionProof = _reflection.GeneratedProtocolMessageType('InclusionProof', (_me
   })
 _sym_db.RegisterMessage(InclusionProof)
 
-ConsistencyProof = _reflection.GeneratedProtocolMessageType('ConsistencyProof', (_message.Message,), {
-  'DESCRIPTOR' : _CONSISTENCYPROOF,
+SetRequest = _reflection.GeneratedProtocolMessageType('SetRequest', (_message.Message,), {
+  'DESCRIPTOR' : _SETREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ConsistencyProof)
+  # @@protoc_insertion_point(class_scope:immudb.schema.SetRequest)
   })
-_sym_db.RegisterMessage(ConsistencyProof)
+_sym_db.RegisterMessage(SetRequest)
 
-Proof = _reflection.GeneratedProtocolMessageType('Proof', (_message.Message,), {
-  'DESCRIPTOR' : _PROOF,
+KeyRequest = _reflection.GeneratedProtocolMessageType('KeyRequest', (_message.Message,), {
+  'DESCRIPTOR' : _KEYREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Proof)
+  # @@protoc_insertion_point(class_scope:immudb.schema.KeyRequest)
   })
-_sym_db.RegisterMessage(Proof)
+_sym_db.RegisterMessage(KeyRequest)
 
-SafeItem = _reflection.GeneratedProtocolMessageType('SafeItem', (_message.Message,), {
-  'DESCRIPTOR' : _SAFEITEM,
+KeyListRequest = _reflection.GeneratedProtocolMessageType('KeyListRequest', (_message.Message,), {
+  'DESCRIPTOR' : _KEYLISTREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeItem)
+  # @@protoc_insertion_point(class_scope:immudb.schema.KeyListRequest)
   })
-_sym_db.RegisterMessage(SafeItem)
+_sym_db.RegisterMessage(KeyListRequest)
 
-SafeStructuredItem = _reflection.GeneratedProtocolMessageType('SafeStructuredItem', (_message.Message,), {
-  'DESCRIPTOR' : _SAFESTRUCTUREDITEM,
+VerifiableSetRequest = _reflection.GeneratedProtocolMessageType('VerifiableSetRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLESETREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeStructuredItem)
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableSetRequest)
   })
-_sym_db.RegisterMessage(SafeStructuredItem)
+_sym_db.RegisterMessage(VerifiableSetRequest)
 
-SafeSetOptions = _reflection.GeneratedProtocolMessageType('SafeSetOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SAFESETOPTIONS,
+VerifiableGetRequest = _reflection.GeneratedProtocolMessageType('VerifiableGetRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLEGETREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeSetOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableGetRequest)
   })
-_sym_db.RegisterMessage(SafeSetOptions)
-
-SafeSetSVOptions = _reflection.GeneratedProtocolMessageType('SafeSetSVOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SAFESETSVOPTIONS,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeSetSVOptions)
-  })
-_sym_db.RegisterMessage(SafeSetSVOptions)
-
-SafeGetOptions = _reflection.GeneratedProtocolMessageType('SafeGetOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SAFEGETOPTIONS,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeGetOptions)
-  })
-_sym_db.RegisterMessage(SafeGetOptions)
-
-SafeReferenceOptions = _reflection.GeneratedProtocolMessageType('SafeReferenceOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SAFEREFERENCEOPTIONS,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeReferenceOptions)
-  })
-_sym_db.RegisterMessage(SafeReferenceOptions)
+_sym_db.RegisterMessage(VerifiableGetRequest)
 
 HealthResponse = _reflection.GeneratedProtocolMessageType('HealthResponse', (_message.Message,), {
   'DESCRIPTOR' : _HEALTHRESPONSE,
@@ -2945,26 +2708,33 @@ HealthResponse = _reflection.GeneratedProtocolMessageType('HealthResponse', (_me
   })
 _sym_db.RegisterMessage(HealthResponse)
 
-ReferenceOptions = _reflection.GeneratedProtocolMessageType('ReferenceOptions', (_message.Message,), {
-  'DESCRIPTOR' : _REFERENCEOPTIONS,
+ImmutableState = _reflection.GeneratedProtocolMessageType('ImmutableState', (_message.Message,), {
+  'DESCRIPTOR' : _IMMUTABLESTATE,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ReferenceOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ImmutableState)
   })
-_sym_db.RegisterMessage(ReferenceOptions)
+_sym_db.RegisterMessage(ImmutableState)
 
-ZAddOptions = _reflection.GeneratedProtocolMessageType('ZAddOptions', (_message.Message,), {
-  'DESCRIPTOR' : _ZADDOPTIONS,
+ReferenceRequest = _reflection.GeneratedProtocolMessageType('ReferenceRequest', (_message.Message,), {
+  'DESCRIPTOR' : _REFERENCEREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ZAddOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ReferenceRequest)
   })
-_sym_db.RegisterMessage(ZAddOptions)
+_sym_db.RegisterMessage(ReferenceRequest)
 
-ZScanOptions = _reflection.GeneratedProtocolMessageType('ZScanOptions', (_message.Message,), {
-  'DESCRIPTOR' : _ZSCANOPTIONS,
+VerifiableReferenceRequest = _reflection.GeneratedProtocolMessageType('VerifiableReferenceRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLEREFERENCEREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.ZScanOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableReferenceRequest)
   })
-_sym_db.RegisterMessage(ZScanOptions)
+_sym_db.RegisterMessage(VerifiableReferenceRequest)
+
+ZAddRequest = _reflection.GeneratedProtocolMessageType('ZAddRequest', (_message.Message,), {
+  'DESCRIPTOR' : _ZADDREQUEST,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZAddRequest)
+  })
+_sym_db.RegisterMessage(ZAddRequest)
 
 Score = _reflection.GeneratedProtocolMessageType('Score', (_message.Message,), {
   'DESCRIPTOR' : _SCORE,
@@ -2973,47 +2743,40 @@ Score = _reflection.GeneratedProtocolMessageType('Score', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Score)
 
-IScanOptions = _reflection.GeneratedProtocolMessageType('IScanOptions', (_message.Message,), {
-  'DESCRIPTOR' : _ISCANOPTIONS,
+ZScanRequest = _reflection.GeneratedProtocolMessageType('ZScanRequest', (_message.Message,), {
+  'DESCRIPTOR' : _ZSCANREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.IScanOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.ZScanRequest)
   })
-_sym_db.RegisterMessage(IScanOptions)
+_sym_db.RegisterMessage(ZScanRequest)
 
-Page = _reflection.GeneratedProtocolMessageType('Page', (_message.Message,), {
-  'DESCRIPTOR' : _PAGE,
+HistoryRequest = _reflection.GeneratedProtocolMessageType('HistoryRequest', (_message.Message,), {
+  'DESCRIPTOR' : _HISTORYREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.Page)
+  # @@protoc_insertion_point(class_scope:immudb.schema.HistoryRequest)
   })
-_sym_db.RegisterMessage(Page)
+_sym_db.RegisterMessage(HistoryRequest)
 
-SPage = _reflection.GeneratedProtocolMessageType('SPage', (_message.Message,), {
-  'DESCRIPTOR' : _SPAGE,
+VerifiableZAddRequest = _reflection.GeneratedProtocolMessageType('VerifiableZAddRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLEZADDREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SPage)
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableZAddRequest)
   })
-_sym_db.RegisterMessage(SPage)
+_sym_db.RegisterMessage(VerifiableZAddRequest)
 
-HistoryOptions = _reflection.GeneratedProtocolMessageType('HistoryOptions', (_message.Message,), {
-  'DESCRIPTOR' : _HISTORYOPTIONS,
+TxRequest = _reflection.GeneratedProtocolMessageType('TxRequest', (_message.Message,), {
+  'DESCRIPTOR' : _TXREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.HistoryOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.TxRequest)
   })
-_sym_db.RegisterMessage(HistoryOptions)
+_sym_db.RegisterMessage(TxRequest)
 
-SafeZAddOptions = _reflection.GeneratedProtocolMessageType('SafeZAddOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SAFEZADDOPTIONS,
+VerifiableTxRequest = _reflection.GeneratedProtocolMessageType('VerifiableTxRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VERIFIABLETXREQUEST,
   '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeZAddOptions)
+  # @@protoc_insertion_point(class_scope:immudb.schema.VerifiableTxRequest)
   })
-_sym_db.RegisterMessage(SafeZAddOptions)
-
-SafeIndexOptions = _reflection.GeneratedProtocolMessageType('SafeIndexOptions', (_message.Message,), {
-  'DESCRIPTOR' : _SAFEINDEXOPTIONS,
-  '__module__' : 'schema_pb2'
-  # @@protoc_insertion_point(class_scope:immudb.schema.SafeIndexOptions)
-  })
-_sym_db.RegisterMessage(SafeIndexOptions)
+_sym_db.RegisterMessage(VerifiableTxRequest)
 
 Database = _reflection.GeneratedProtocolMessageType('Database', (_message.Message,), {
   'DESCRIPTOR' : _DATABASE,
@@ -3060,8 +2823,8 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=4189,
-  serialized_end=6574,
+  serialized_start=4153,
+  serialized_end=6485,
   methods=[
   _descriptor.MethodDescriptor(
     name='ListUsers',
@@ -3114,19 +2877,9 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='PrintTree',
-    full_name='immudb.schema.ImmuService.PrintTree',
-    index=5,
-    containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    output_type=_TREE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
     name='Login',
     full_name='immudb.schema.ImmuService.Login',
-    index=6,
+    index=5,
     containing_service=None,
     input_type=_LOGINREQUEST,
     output_type=_LOGINRESPONSE,
@@ -3136,7 +2889,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='Logout',
     full_name='immudb.schema.ImmuService.Logout',
-    index=7,
+    index=6,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -3146,157 +2899,127 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='Set',
     full_name='immudb.schema.ImmuService.Set',
-    index=8,
+    index=7,
     containing_service=None,
-    input_type=_KEYVALUE,
-    output_type=_INDEX,
+    input_type=_SETREQUEST,
+    output_type=_TXMETADATA,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SafeSet',
-    full_name='immudb.schema.ImmuService.SafeSet',
-    index=9,
+    name='VerifiableSet',
+    full_name='immudb.schema.ImmuService.VerifiableSet',
+    index=8,
     containing_service=None,
-    input_type=_SAFESETOPTIONS,
-    output_type=_PROOF,
+    input_type=_VERIFIABLESETREQUEST,
+    output_type=_VERIFIABLETX,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='Get',
     full_name='immudb.schema.ImmuService.Get',
+    index=9,
+    containing_service=None,
+    input_type=_KEYREQUEST,
+    output_type=_ENTRY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='VerifiableGet',
+    full_name='immudb.schema.ImmuService.VerifiableGet',
     index=10,
     containing_service=None,
-    input_type=_KEY,
-    output_type=_ITEM,
+    input_type=_VERIFIABLEGETREQUEST,
+    output_type=_VERIFIABLEENTRY,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SafeGet',
-    full_name='immudb.schema.ImmuService.SafeGet',
+    name='GetAll',
+    full_name='immudb.schema.ImmuService.GetAll',
     index=11,
     containing_service=None,
-    input_type=_SAFEGETOPTIONS,
-    output_type=_SAFEITEM,
+    input_type=_KEYLISTREQUEST,
+    output_type=_ENTRIES,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SetBatch',
-    full_name='immudb.schema.ImmuService.SetBatch',
+    name='ExecAll',
+    full_name='immudb.schema.ImmuService.ExecAll',
     index=12,
     containing_service=None,
-    input_type=_KVLIST,
-    output_type=_INDEX,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='GetBatch',
-    full_name='immudb.schema.ImmuService.GetBatch',
-    index=13,
-    containing_service=None,
-    input_type=_KEYLIST,
-    output_type=_ITEMLIST,
+    input_type=_EXECALLREQUEST,
+    output_type=_TXMETADATA,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='Scan',
     full_name='immudb.schema.ImmuService.Scan',
-    index=14,
+    index=13,
     containing_service=None,
-    input_type=_SCANOPTIONS,
-    output_type=_ITEMLIST,
+    input_type=_SCANREQUEST,
+    output_type=_ENTRIES,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='Count',
     full_name='immudb.schema.ImmuService.Count',
-    index=15,
+    index=14,
     containing_service=None,
     input_type=_KEYPREFIX,
-    output_type=_ITEMSCOUNT,
+    output_type=_ENTRYCOUNT,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='CountAll',
     full_name='immudb.schema.ImmuService.CountAll',
+    index=15,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_ENTRYCOUNT,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='TxById',
+    full_name='immudb.schema.ImmuService.TxById',
     index=16,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    output_type=_ITEMSCOUNT,
+    input_type=_TXREQUEST,
+    output_type=_TX,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='CurrentRoot',
-    full_name='immudb.schema.ImmuService.CurrentRoot',
+    name='VerifiableTxById',
+    full_name='immudb.schema.ImmuService.VerifiableTxById',
     index=17,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    output_type=_ROOT,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='Inclusion',
-    full_name='immudb.schema.ImmuService.Inclusion',
-    index=18,
-    containing_service=None,
-    input_type=_INDEX,
-    output_type=_INCLUSIONPROOF,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='Consistency',
-    full_name='immudb.schema.ImmuService.Consistency',
-    index=19,
-    containing_service=None,
-    input_type=_INDEX,
-    output_type=_CONSISTENCYPROOF,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='ByIndex',
-    full_name='immudb.schema.ImmuService.ByIndex',
-    index=20,
-    containing_service=None,
-    input_type=_INDEX,
-    output_type=_ITEM,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='BySafeIndex',
-    full_name='immudb.schema.ImmuService.BySafeIndex',
-    index=21,
-    containing_service=None,
-    input_type=_SAFEINDEXOPTIONS,
-    output_type=_SAFEITEM,
+    input_type=_VERIFIABLETXREQUEST,
+    output_type=_VERIFIABLETX,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='History',
     full_name='immudb.schema.ImmuService.History',
-    index=22,
+    index=18,
     containing_service=None,
-    input_type=_HISTORYOPTIONS,
-    output_type=_ITEMLIST,
+    input_type=_HISTORYREQUEST,
+    output_type=_ENTRIES,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='Health',
     full_name='immudb.schema.ImmuService.Health',
-    index=23,
+    index=19,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_HEALTHRESPONSE,
@@ -3304,69 +3027,69 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='Reference',
-    full_name='immudb.schema.ImmuService.Reference',
-    index=24,
+    name='CurrentState',
+    full_name='immudb.schema.ImmuService.CurrentState',
+    index=20,
     containing_service=None,
-    input_type=_REFERENCEOPTIONS,
-    output_type=_INDEX,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_IMMUTABLESTATE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='SafeReference',
-    full_name='immudb.schema.ImmuService.SafeReference',
-    index=25,
+    name='SetReference',
+    full_name='immudb.schema.ImmuService.SetReference',
+    index=21,
     containing_service=None,
-    input_type=_SAFEREFERENCEOPTIONS,
-    output_type=_PROOF,
+    input_type=_REFERENCEREQUEST,
+    output_type=_TXMETADATA,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='VerifiableSetReference',
+    full_name='immudb.schema.ImmuService.VerifiableSetReference',
+    index=22,
+    containing_service=None,
+    input_type=_VERIFIABLEREFERENCEREQUEST,
+    output_type=_VERIFIABLETX,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='ZAdd',
     full_name='immudb.schema.ImmuService.ZAdd',
-    index=26,
+    index=23,
     containing_service=None,
-    input_type=_ZADDOPTIONS,
-    output_type=_INDEX,
+    input_type=_ZADDREQUEST,
+    output_type=_TXMETADATA,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='VerifiableZAdd',
+    full_name='immudb.schema.ImmuService.VerifiableZAdd',
+    index=24,
+    containing_service=None,
+    input_type=_VERIFIABLEZADDREQUEST,
+    output_type=_VERIFIABLETX,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='ZScan',
     full_name='immudb.schema.ImmuService.ZScan',
-    index=27,
+    index=25,
     containing_service=None,
-    input_type=_ZSCANOPTIONS,
-    output_type=_ZITEMLIST,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='SafeZAdd',
-    full_name='immudb.schema.ImmuService.SafeZAdd',
-    index=28,
-    containing_service=None,
-    input_type=_SAFEZADDOPTIONS,
-    output_type=_PROOF,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='IScan',
-    full_name='immudb.schema.ImmuService.IScan',
-    index=29,
-    containing_service=None,
-    input_type=_ISCANOPTIONS,
-    output_type=_PAGE,
+    input_type=_ZSCANREQUEST,
+    output_type=_ZENTRIES,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='CreateDatabase',
     full_name='immudb.schema.ImmuService.CreateDatabase',
-    index=30,
+    index=26,
     containing_service=None,
     input_type=_DATABASE,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -3374,9 +3097,19 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='DatabaseList',
+    full_name='immudb.schema.ImmuService.DatabaseList',
+    index=27,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_DATABASELISTRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='UseDatabase',
     full_name='immudb.schema.ImmuService.UseDatabase',
-    index=31,
+    index=28,
     containing_service=None,
     input_type=_DATABASE,
     output_type=_USEDATABASEREPLY,
@@ -3384,9 +3117,19 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='CleanIndex',
+    full_name='immudb.schema.ImmuService.CleanIndex',
+    index=29,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='ChangePermission',
     full_name='immudb.schema.ImmuService.ChangePermission',
-    index=32,
+    index=30,
     containing_service=None,
     input_type=_CHANGEPERMISSIONREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -3396,20 +3139,10 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SetActiveUser',
     full_name='immudb.schema.ImmuService.SetActiveUser',
-    index=33,
+    index=31,
     containing_service=None,
     input_type=_SETACTIVEUSERREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='DatabaseList',
-    full_name='immudb.schema.ImmuService.DatabaseList',
-    index=34,
-    containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    output_type=_DATABASELISTRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

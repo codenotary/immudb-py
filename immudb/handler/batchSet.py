@@ -6,21 +6,20 @@ from immudb.rootService import RootService
 
 @dataclass
 class batchSetResponse:
-    index: schema_pb2.Index
+    metadata: schema_pb2.TxMetadata
 
 def _packValueTime(kv,tstamp):
     content=schema_pb2.Content(timestamp=tstamp, payload=kv.value)
     kv=schema_pb2.KeyValue(key=kv.key, value=content.SerializeToString())
     return kv
     
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KVList):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, kv: dict):
     currtime=int(time())
-    
-    rawRequest = schema_pb2.KVList(
-        KVs = [_packValueTime(kv,currtime) for kv in request.KVs],
+    rawRequest = schema_pb2.ExecAllRequest(
+        Op = [ schema_pb2.KeyValue(key=k, value=kv[k]) for k in kv.keys() ]
     )
 
-    idx = service.SetBatch(rawRequest)
+    md = service.SetBatch(rawRequest)
     return batchSetResponse(
-        index = idx
+        metadata=md
     )

@@ -6,15 +6,14 @@ from immudb.rootService import RootService
 
 @dataclass
 class batchGetResponse:
-    #keylist: schema_pb2.KeyList
-    itemlist: schema_pb2.ItemList
+    itemlist: schema_pb2.Entries
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KeyList):
-    rawRequest = schema_pb2.KeyList(
-        keys = request.keys
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: list):
+    rawRequest = schema_pb2.KeyListRequest(
+        keys = request
     )
 
-    msg = service.GetBatch(rawRequest)
+    msg = service.GetAll(rawRequest)
     ret={}
     for i in msg.items:
 	    content=schema_pb2.Content()

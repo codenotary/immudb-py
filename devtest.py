@@ -11,9 +11,9 @@ print(a.databaseUse(b"defaultdb"))
 
 # print(a.databaseUse(b"testdb"))
 
-# b = a.safeSet(b"pythonkey",b"thisismyvalue")
-# print(b)
-# print(a.safeGet(bytes("pythonkey", encoding="utf-8")))
+b = a.safeSet(b"pythonkey",b"thisismyvalue")
+print(b)
+print(a.safeGet(bytes("gorilla", encoding="utf-8")))
 
 # arr=[]
 # for i in range(0,100):
@@ -31,4 +31,4 @@ print(a.databaseUse(b"defaultdb"))
 
 #print(a.safeSet(b'keykey2', b'valval2'))
 #print(a.get(b'keykey2'))
-print(a.history(b'key1'))
+#print(a.history(b'key1',0,0,0))

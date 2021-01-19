@@ -11,7 +11,14 @@ class historyResponseItem:
     timestamp: int
     index: int
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.Key):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, offset: int, limit: int, sortorder: bool):
+
+    request = schema_pb2_grpc.schema__pb2.HistoryRequest(
+                key=key,
+                offset=offset,
+                limit=limit,
+                reverse=sortorder
+                )
     histo = service.History(request)
     histolist=[]
     for i in histo.items:
