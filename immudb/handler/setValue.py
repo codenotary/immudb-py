@@ -1,22 +1,19 @@
-from time import time
-from dataclasses import dataclass
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
+from immudb import datatypes
 
-@dataclass
-class SetResponse:
-    index: int
-
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KeyValue):
-
-    content=schema_pb2.Content(
-        timestamp=int(time()),
-        payload=request.value
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes): 
+    request=schema_pb2.SetRequest(
+        KVs=[schema_pb2.KeyValue(key=key, value=value)]
         )
-    
-    kv=schema_pb2.KeyValue(key=request.key, value=content.SerializeToString())
-    msg = service.Set(kv)
-
-    return SetResponse(index = msg.index)
+    msg = service.Set(request)
+    return datatypes.SetResponse(
+        id=msg.id,
+        prevAlh=msg.prevAlh,
+        timestamp=msg.ts,
+        eh=msg.eH,
+        blTxId=msg.blTxId,
+        blRoot=msg.blRoot,
+        verified=False,
+    )

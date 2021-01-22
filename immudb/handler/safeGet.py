@@ -1,19 +1,9 @@
-from dataclasses import dataclass
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import constants, proofs, item, htree, store
+from immudb import constants, proofs, item, htree, store, datatypes
 from immudb.exceptions import VerificationException
 
-@dataclass
-class SafeGetResponse:
-    index: int
-    key: bytes
-    value: bytes
-    timestamp: int
-    verified: bool
-    refkey: bytes
 
 import sys
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes):
@@ -69,7 +59,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         refkey=ventry.entry.referencedBy.key
     else:
         refkey=None
-    return SafeGetResponse(
+    return datatypes.SafeGetResponse(
         index=vTx,
         key=ventry.entry.key,
         value=ventry.entry.value,

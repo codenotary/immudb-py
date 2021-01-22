@@ -1,21 +1,11 @@
 from time import time
-from dataclasses import dataclass
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import constants
+from immudb import constants, datatypes
 
 import immudb.store
-@dataclass
-class SafeSetResponse:
-    id: int
-    prevAlh: bytes 
-    timestamp: int
-    eh: bytes
-    blTxId: int
-    blRoot: bytes
-    verified: bool
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes):
     state = rs.get()
@@ -51,7 +41,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     )
     if not verifies:
         raise VerificationException
-    return SafeSetResponse(
+    return datatypes.SetResponse(
         id=verifiableTx.tx.metadata.id,
         prevAlh=verifiableTx.tx.metadata.prevAlh,
         timestamp=verifiableTx.tx.metadata.ts,

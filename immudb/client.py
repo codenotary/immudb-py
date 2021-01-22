@@ -74,12 +74,16 @@ class ImmudbClient:
         return self.__stub
 
     def get(self, key: bytes):
-        request = schema_pb2_grpc.schema__pb2.Key(key=key)
-        return get.call(self.__stub, self.__rs, request)
+        return get.call(self.__stub, self.__rs, key)
+    
+    def getValue(self, key: bytes):
+        ret=get.call(self.__stub, self.__rs, key)
+        if ret==None:
+            return None
+        return ret.value
 
     def set(self, key: bytes, value: bytes):
-        request = schema_pb2_grpc.schema__pb2.KeyValue(key=key, value=value)
-        return setValue.call(self.__stub, self.__rs, request)
+        return setValue.call(self.__stub, self.__rs, key, value)
 
     def safeGet(self, key: bytes):
         return safeGet.call(self.__stub, self.__rs, key)
@@ -87,7 +91,7 @@ class ImmudbClient:
     def safeSet(self, key: bytes, value: bytes):
         return safeSet.call(self.__stub, self.__rs, key, value)
 
-    def getAllItems(self, keys: list):
+    def getAllValues(self, keys: list):
         resp = batchGet.call(self.__stub, self.__rs, keys)
         return resp
 
@@ -95,14 +99,7 @@ class ImmudbClient:
         resp = batchGet.call(self.__stub, self.__rs, keys)
         return {key:value.value for key, value in resp.items()}
 
-        
-
     def setAll(self, kv: dict):
-        #_KVs = []
-        #for i in kv.keys():
-            #_KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(
-                #key=i, value=kv[i]))
-        #request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
         return batchSet.call(self.__stub, self.__rs, kv)
 
     def changePassword(self, user, newPassword, oldPassword):

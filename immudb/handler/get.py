@@ -6,11 +6,23 @@ from immudb.rootService import RootService
 
 @dataclass
 class GetResponse:
+    tx: int
+    key: bytes
     value: bytes
-    timestamp: int
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.Key):
-    msg = service.Get(request)
-    content=schema_pb2.Content()
-    content.ParseFromString(msg.value)
-    return GetResponse( value = content.payload, timestamp=content.timestamp )
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key:bytes):
+    request=schema_pb2.KeyRequest(
+        key=key
+        )
+    try:
+        msg = service.Get(request)
+    except Exception as e:
+        if hasattr(e,'details') and e.details()=='key not found':
+            return None
+        raise e
+    
+    return GetResponse(
+        tx=msg.tx,
+        key=msg.key,
+        value=msg.value
+        )
