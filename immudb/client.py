@@ -88,15 +88,14 @@ class ImmudbClient:
         return safeSet.call(self.__stub, self.__rs, key, value)
 
     def getAllItems(self, keys: list):
-        klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
-        request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
-        return batchGet.call(self.__stub, self.__rs, request)
+        resp = batchGet.call(self.__stub, self.__rs, keys)
+        return resp
 
     def getAll(self, keys: list):
-        klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
-        request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
-        resp = batchGet.call(self.__stub, self.__rs, klist)
-        return resp
+        resp = batchGet.call(self.__stub, self.__rs, keys)
+        return {key:value.value for key, value in resp.items()}
+
+        
 
     def setAll(self, kv: dict):
         #_KVs = []
