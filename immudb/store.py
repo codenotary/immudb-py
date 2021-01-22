@@ -140,7 +140,9 @@ class KV(printable):
 def EncodeKV(key: bytes, value: bytes):
     return KV(SET_KEY_PREFIX+key,PLAIN_VALUE_PREFIX+value)
 
-
+def EncodeReference(key:bytes, referencedKey: bytes, atTx: int):
+    refVal=REFERENCE_VALUE_PREFIX+struct.pack(">Q",atTx)+SET_KEY_PREFIX+referencedKey
+    return KV(SET_KEY_PREFIX+key,refVal)
 
 class LinearProof(printable):
     def __init__(self, sourceTxID:int, targetTxID:int, terms:list[bytes]):
