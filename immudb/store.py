@@ -151,7 +151,6 @@ class LinearProof(printable):
         self.terms=terms
 
 def LinearProofFrom(lp)->LinearProof:
-    print("LP",lp)
     return LinearProof(lp.sourceTxId, lp.TargetTxId, lp.terms)
 
 def DigestFrom(slicedDigest: bytes)->bytes:

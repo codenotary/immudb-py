@@ -11,8 +11,9 @@ class SafeGetResponse:
     index: int
     key: bytes
     value: bytes
-    #timestamp: int
+    timestamp: int
     verified: bool
+    refkey: bytes
 
 import sys
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes):
@@ -30,7 +31,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         kv=store.EncodeKV(requestkey, ventry.entry.value)
     else:
         vTx = ventry.entry.referencedBy.tx
-        kv=store.EncodeReference(ventry.entry.referencedBy.key, ventry.entry.key, ventry.entry.referencedBy.atTx) # TODO
+        kv=store.EncodeReference(ventry.entry.referencedBy.key, ventry.entry.key, ventry.entry.referencedBy.atTx) 
         
     if state.txId <= vTx:
         eh=store.DigestFrom(ventry.verifiableTx.dualProof.targetTxMetadata.eH)
@@ -56,10 +57,23 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         targetalh)
     if not verifies:
         raise VerificationException
-    
+    #breakpoint()
+    state=schema_pb2.ImmutableState(
+            txId=      targetid,
+            txHash=    targetalh,
+            signature= ventry.verifiableTx.signature,
+            )
+    rs.set(state)
+    breakpoint()
+    if ventry.entry.referencedBy!=None and ventry.entry.referencedBy.key!=b'':
+        refkey=ventry.entry.referencedBy.key
+    else:
+        refkey=None
     return SafeGetResponse(
         index=vTx,
         key=ventry.entry.key,
         value=ventry.entry.value,
+        timestamp=ventry.verifiableTx.tx.metadata.ts,
         verified=verifies,
+        refkey=refkey
         )

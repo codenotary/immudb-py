@@ -102,5 +102,5 @@ def DualProofFrom(dproof):
     dp.consistencyProof=immudb.store.DigestFrom(dproof.consistencyProof)
     dp.targetBlTxAlh=immudb.store.DigestFrom(dproof.targetBlTxAlh)
     dp.lastInclusionProof=immudb.store.DigestsFrom(dproof.lastInclusionProof)
-    dp.linearProof=immudb.store.LinearProofFrom(dproof.linearProof) ## TODO da schema_pb2
+    dp.linearProof=immudb.store.LinearProofFrom(dproof.linearProof) 
     return dp

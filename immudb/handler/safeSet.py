@@ -9,14 +9,13 @@ from immudb import constants
 import immudb.store
 @dataclass
 class SafeSetResponse:
-    index: int
-    leaf: bytes 
-    root: bytes
-    at: int
-    inclusionPath: bytes
-    consistencyPath: bytes
+    id: int
+    prevAlh: bytes 
+    timestamp: int
+    eh: bytes
+    blTxId: int
+    blRoot: bytes
     verified: bool
-
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes):
     state = rs.get()
@@ -30,24 +29,35 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     inclusionProof=tx.Proof(constants.SET_KEY_PREFIX+key)
     ekv=immudb.store.EncodeKV(key, value)
     verifies=immudb.store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
-    print(verifies)
-    # ?? = item.digest(msg.index, rawRequest.kv.key, rawRequest.kv.value)
-    #verified = proofs.verify(msg, bytes(msg.leaf), root)
-    #if verified:
-        #toCache = schema_pb2.RootIndex(
-            #index=msg.at,
-            #root=msg.root
-        #)
-        #try:
-            #rs.set(toCache)
-        #except Exception as e:
-            #raise e
-    #return SafeSetResponse(
-        #index=msg.index,
-        #leaf=msg.leaf,
-        #root=msg.root,
-        #at=msg.at,
-        #inclusionPath=msg.inclusionPath,
-        #consistencyPath=msg.consistencyPath,
-        #verified=verified
-    #)
+    if not verifies:
+        raise VerificationException
+    if tx.eh() != immudb.store.DigestFrom(verifiableTx.dualProof.targetTxMetadata.eH):
+        raise VerificationException
+    if state.txId == 0:
+        sourceID = tx.iD
+        sourceAlh = tx.alh
+    else:
+        sourceID = state.txId
+        sourceAlh = immudb.store.DigestFrom(state.txHash)
+    targetID = tx.ID
+    targetAlh = tx.Alh
+
+    verifies = immudb.store.VerifyDualProof(
+            immudb.htree.DualProofFrom(verifiableTx.dualProof),
+            sourceID,
+            targetID,
+            sourceAlh,
+            targetAlh,
+    )
+    if not verifies:
+        raise VerificationException
+    return SafeSetResponse(
+        id=verifiableTx.tx.metadata.id,
+        prevAlh=verifiableTx.tx.metadata.prevAlh,
+        timestamp=verifiableTx.tx.metadata.ts,
+        eh=verifiableTx.tx.metadata.eH,
+        blTxId=verifiableTx.tx.metadata.blTxId,
+        blRoot=verifiableTx.tx.metadata.blRoot,
+        verified=verifies,
+    )
+    
