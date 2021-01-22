@@ -39,7 +39,7 @@ class TestBasicGetSet:
         a.safeSet(key.encode('utf8'),value.encode('utf8'))
         r2=a.currentRoot()
         
-        assert r2.index>r1.index
+        assert r2.id>r1.id
         a.logout()
         a.shutdown()
 

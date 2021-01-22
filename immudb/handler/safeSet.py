@@ -41,6 +41,12 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     )
     if not verifies:
         raise VerificationException
+    state=schema_pb2.ImmutableState(
+            txId=      targetID,
+            txHash=    targetAlh,
+            signature= verifiableTx.signature,
+            )
+    rs.set(state)
     return datatypes.SetResponse(
         id=verifiableTx.tx.metadata.id,
         prevAlh=verifiableTx.tx.metadata.prevAlh,

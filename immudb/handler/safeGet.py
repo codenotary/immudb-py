@@ -47,14 +47,12 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         targetalh)
     if not verifies:
         raise VerificationException
-    #breakpoint()
     state=schema_pb2.ImmutableState(
             txId=      targetid,
             txHash=    targetalh,
             signature= ventry.verifiableTx.signature,
             )
     rs.set(state)
-    breakpoint()
     if ventry.entry.referencedBy!=None and ventry.entry.referencedBy.key!=b'':
         refkey=ventry.entry.referencedBy.key
     else:

@@ -1,14 +1,8 @@
-from dataclasses import dataclass
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-
-@dataclass
-class CurrentRootResponse:
-    index: int
-    root: bytes
+from immudb import datatypes
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: None):
     root = rs.get()
-    return CurrentRootResponse(index=root.index, root=root.root)
+    return datatypes.CurrentRootResponse(id=root.txId, hash=root.txHash)

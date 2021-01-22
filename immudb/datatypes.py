@@ -18,3 +18,8 @@ class SafeGetResponse:
     timestamp: int
     verified: bool
     refkey: bytes
+
+@dataclass
+class CurrentRootResponse:
+    id: int
+    hash: bytes
