@@ -11,10 +11,11 @@ print(a.databaseUse(b"defaultdb"))
 
 # print(a.databaseUse(b"testdb"))
 
-b = a.safeSet(b"pythonkey",b"thisismyvalue")
-print(b)
+#b = a.safeSet(b"pythonkey",b"thisismyvalue")
+#print(b)
 print(a.safeGet(bytes("gorilla", encoding="utf-8")))
-
+for i in range(0,100):
+    print(a.safeGet(bytes("key{}".format(i), encoding="utf-8")))
 # arr=[]
 # for i in range(0,100):
 #     k="key_{}".format(i).encode('utf8')

@@ -204,21 +204,21 @@ def VerifyDualProof(proof, sourceTxID, targetTxID , sourceAlh, targetAlh):
             leafFor(sourceAlh),
             proof.targetTxMetadata.blRoot)==False:
                 return False
-    if proof.sourceTxMetadata.blTxID > 0 and VerifyInclusionAHT( 
-            proof.ConsistencyProof,
-            proof.SourceTxMetadata.blTxID,
-            proof.TargetTxMetadata.blTxID,
-            proof.SourceTxMetadata.blRoot,
-            proof.TargetTxMetadata.blRoot)==False:
+    if proof.sourceTxMetadata.blTxID > 0 and VerifyConsistency( 
+            proof.consistencyProof,
+            proof.sourceTxMetadata.blTxID,
+            proof.targetTxMetadata.blTxID,
+            proof.sourceTxMetadata.blRoot,
+            proof.targetTxMetadata.blRoot)==False:
                 return False
     if proof.targetTxMetadata.blTxID > 0 and VerifyLastInclusion( 
-            proof.inclusionProof,
+            proof.lastInclusionProof,
             proof.targetTxMetadata.blTxID,
             leafFor(proof.targetBlTxAlh),
             proof.targetTxMetadata.blRoot)==False:
                 return False
     if sourceTxID < proof.targetTxMetadata.blTxID:
-        ret=VerifyLinearProof(proof.linearProof, proof.targetTxMetadata.BlTxID, targetTxID, proof.targetBlTxAlh, targetAlh) 
+        ret=VerifyLinearProof(proof.linearProof, proof.targetTxMetadata.blTxID, targetTxID, proof.targetBlTxAlh, targetAlh) 
     else:
         ret=VerifyLinearProof(proof.linearProof, sourceTxID, targetTxID, sourceAlh, targetAlh)
     return ret
@@ -239,8 +239,12 @@ def VerifyInclusionAHT(iproof:list[bytes], i:int, j:int, iLeaf:bytes, jRoot:byte
         j1=j1>>1
     return jRoot==ciRoot
 
+def VerifyConsistency(cproof:list[bytes], i:int, j:int, iRoot:bytes, jRoot:bytes)-> bool:
+    if i > j or i == 0 or (i < j and len(cproof) == 0):
+            return False
+    if i == j and len(cproof) == 0:
+            return iRoot == jRoot
 
-def EvalConsistency(cproof:list[bytes], i:int, j:int): # FIXME used?
     fn = i - 1
     sn = j - 1
     while fn%2 == 1:
@@ -251,7 +255,7 @@ def EvalConsistency(cproof:list[bytes], i:int, j:int): # FIXME used?
             if fn%2 == 1 or fn == sn:
                 b=NODE_PREFIX+h+ciRoot
                 ciRoot = hashlib.sha256(b).digest()
-                b=NODE_PREFIX+cjroot
+                b=NODE_PREFIX+h+cjRoot
                 cjRoot = hashlib.sha256(b).digest()
                 while fn%2 == 0 and fn != 0:
                     fn=fn>>1
@@ -261,7 +265,8 @@ def EvalConsistency(cproof:list[bytes], i:int, j:int): # FIXME used?
                 cjRoot=hashlib.sha256(b).digest()
             fn=fn>>1
             sn=sn>>1
-    return ciRoot, cjRoot
+    return iRoot == ciRoot and jRoot == cjRoot
+    
 
 def VerifyLastInclusion(iproof:list[bytes], i:int, leaf:bytes, root:bytes)->bool:
     if i==0:
