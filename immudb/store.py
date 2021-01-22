@@ -6,7 +6,23 @@ import struct
 import hashlib
 from immudb.constants import *
 
-class TXe:
+class printable:
+    def __repr__(self)->str:
+        ret="class {}\n".format(type(self).__name__)
+        for k in self.__dict__:
+            v=self.__dict__[k]
+            if type(v)==bytes:
+                ret+="\t{}: {}\n".format(k,list(v))
+            elif hasattr(v,'__getitem__') and type(v[0])==bytes:
+                ret+="\t{}:\n".format(k)
+                for t in v:
+                    ret+="\t- {}\n".format(list(t))
+            else:
+                ret+="\t{}: {}\n".format(k,v)
+        return ret
+    
+
+class TXe(printable):
     def __init__(self):
         self.keyLen=None
         self.key=None
@@ -22,7 +38,7 @@ class TXe:
 
 
         
-class Tx:
+class Tx(printable):
     def __init__(self):
         self.ID=None
         self.Ts=None
@@ -83,7 +99,7 @@ def TxFrom(stx) -> Tx:
 
 
 
-class TxMetadata:
+class TxMetadata(printable):
     def __init__(self):
         self.iD       = None
         self.prevAlh  = None
@@ -98,7 +114,7 @@ class TxMetadata:
         bj=bj+self.eh+struct.pack(">Q",self.blTxID)+self.blRoot
         innerHash=hashlib.sha256(bj).digest()
         bi=bi+innerHash
-        return hashlib.sha256(bi).digest
+        return hashlib.sha256(bi).digest()
     
 def TxMetadataFrom(txmFrom):
     txm=TxMetadata()
@@ -113,7 +129,7 @@ def TxMetadataFrom(txmFrom):
 
 
     
-class KV:
+class KV(printable):
     def __init__(self,key: bytes,value:bytes):
         self.key=key
         self.value=value
@@ -126,7 +142,7 @@ def EncodeKV(key: bytes, value: bytes):
 
 
 
-class LinearProof:
+class LinearProof(printable):
     def __init__(self, sourceTxID:int, targetTxID:int, terms:list[bytes]):
         self.sourceTxID=sourceTxID
         self.targetTxID=targetTxID
@@ -184,24 +200,24 @@ def VerifyDualProof(proof, sourceTxID, targetTxID , sourceAlh, targetAlh):
     if sourceTxID < proof.targetTxMetadata.blTxID and VerifyInclusionAHT( 
             proof.inclusionProof,
             sourceTxID,
-            proof.targetTxMetadata.BlTxID,
+            proof.targetTxMetadata.blTxID,
             leafFor(sourceAlh),
-            proof.targetTxMetadata.BlRoot)==False:
+            proof.targetTxMetadata.blRoot)==False:
                 return False
-    if proof.sourceTxMetadata.BlTxID > 0 and VerifyInclusionAHT( 
+    if proof.sourceTxMetadata.blTxID > 0 and VerifyInclusionAHT( 
             proof.ConsistencyProof,
-            proof.SourceTxMetadata.BlTxID,
-            proof.TargetTxMetadata.BlTxID,
-            proof.SourceTxMetadata.BlRoot,
-            proof.TargetTxMetadata.BlRoot)==False:
+            proof.SourceTxMetadata.blTxID,
+            proof.TargetTxMetadata.blTxID,
+            proof.SourceTxMetadata.blRoot,
+            proof.TargetTxMetadata.blRoot)==False:
                 return False
-    if proof.targetTxMetadata.BlTxID > 0 and VerifyLastInclusion( 
+    if proof.targetTxMetadata.blTxID > 0 and VerifyLastInclusion( 
             proof.inclusionProof,
-            proof.targetTxMetadata.BlTxID,
+            proof.targetTxMetadata.blTxID,
             leafFor(proof.targetBlTxAlh),
-            proof.targetTxMetadata.BlRoot)==False:
+            proof.targetTxMetadata.blRoot)==False:
                 return False
-    if sourceTxID < proof.TargetTxMetadata.blTxID:
+    if sourceTxID < proof.targetTxMetadata.blTxID:
         ret=VerifyLinearProof(proof.linearProof, proof.targetTxMetadata.BlTxID, targetTxID, proof.targetBlTxAlh, targetAlh) 
     else:
         ret=VerifyLinearProof(proof.linearProof, sourceTxID, targetTxID, sourceAlh, targetAlh)
@@ -231,10 +247,9 @@ def EvalConsistency(cproof:list[bytes], i:int, j:int): # FIXME used?
         fn=fn>>1
         sn=sn>>1
     ciRoot, cjRoot = cproof[0], cproof[0]
-    b = NODE_PREFIX
     for h in cproof[1:]:
             if fn%2 == 1 or fn == sn:
-                b=b+h+ciRoot
+                b=NODE_PREFIX+h+ciRoot
                 ciRoot = hashlib.sha256(b).digest()
                 b=NODE_PREFIX+cjroot
                 cjRoot = hashlib.sha256(b).digest()
@@ -264,13 +279,13 @@ def VerifyLinearProof(proof , sourceTxID:int, targetTxID:int, sourceAlh:bytes, t
             return False
 
     if (proof.sourceTxID == 0 or proof.sourceTxID > proof.targetTxID or
-            len(proof.terms) == 0 or sourceAlh != proof.Terms[0]):
+            len(proof.terms) == 0 or sourceAlh != proof.terms[0]):
             return false
 
     calculatedAlh = proof.terms[0]
-    for i in range(1,proof.terms):
+    for i in range(1,len(proof.terms)):
         bs=struct.pack(">Q",proof.sourceTxID+i)+calculatedAlh+proof.terms[i]
-        calculatedAlh=hashlib.sha256(bs)+digest()
+        calculatedAlh=hashlib.sha256(bs).digest()
 
     return targetAlh == calculatedAlh
 

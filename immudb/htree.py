@@ -46,11 +46,11 @@ class HTree:
         l=0
         w=len(digests)
         while w>1:
-            b=NODE_PREFIX
+            
             wn=0
             i=0
             while i+1<w:
-                b+=self.levels[l][i]+self.levels[l][i+1]
+                b=NODE_PREFIX+self.levels[l][i]+self.levels[l][i+1]
                 self.levels[l+1][wn]=hashlib.sha256(b).digest()
                 wn=wn+1
                 i=i+2
@@ -100,7 +100,7 @@ def DualProofFrom(dproof):
     dp.targetTxMetadata=immudb.store.TxMetadataFrom(dproof.targetTxMetadata)
     dp.inclusionProof=immudb.store.DigestFrom(dproof.inclusionProof)
     dp.consistencyProof=immudb.store.DigestFrom(dproof.consistencyProof)
-    dp.targetBlTxAlh=immudb.store.DigestFrom(dproof.lastInclusionProof)
+    dp.targetBlTxAlh=immudb.store.DigestFrom(dproof.targetBlTxAlh)
     dp.lastInclusionProof=immudb.store.DigestsFrom(dproof.lastInclusionProof)
     dp.linearProof=immudb.store.LinearProofFrom(dproof.linearProof) ## TODO da schema_pb2
     return dp

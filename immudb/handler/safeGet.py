@@ -17,11 +17,14 @@ class SafeGetResponse:
 import sys
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes):
     state = rs.get()
+    print("STATE:",state.txId)
+    print("STATE:",list(state.txHash))
     req = schema_pb2.VerifiableGetRequest(
         keyRequest= schema_pb2.KeyRequest(key=requestkey),
         proveSinceTx= state.txId
         )
     ventry=service.VerifiableGet(req)
+    import pdb;pdb.set_trace()
     inclusionProof = htree.InclusionProofFrom(ventry.inclusionProof)
     dualProof = htree.DualProofFrom(ventry.verifiableTx.dualProof)
     
@@ -36,19 +39,19 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         eh=store.DigestFrom(ventry.verifiableTx.dualProof.targetTxMetadata.eH)
         sourceid=state.txId
         sourcealh=store.DigestFrom(state.txHash)
-        targedid=vTx
+        targetid=vTx
         targetalh=dualProof.targetTxMetadata.alh()
     else:
         eh=store.DigestFrom(ventry.verifiableTx.dualProof.sourceTxMetadata.eH)
         sourceid=vTx
-        sourcealh=dualProof.targetTxMetadata.alh()
+        sourcealh=dualProof.sourceTxMetadata.alh()
         targetid=state.txId
         targetalh=store.DigestFrom(state.txHash)
         
     verifies = store.VerifyInclusion(inclusionProof,kv.Digest(),eh)
     if not verifies:
         raise VerificationException
-    
+
     verifies=store.VerifyDualProof(
         dualProof,
         sourceid,
