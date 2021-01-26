@@ -4,6 +4,8 @@ from immudb.client import ImmudbClient
 a = ImmudbClient()
 a.login("immudb","immudb")
 print(a.databaseUse(b"defaultdb"))
+print(a.listUsers())
+print(a.currentRoot())
 #print(a.databaseCreate(b"testdb"))
 #print(a.databaseList())
 #print("Use:")
@@ -30,10 +32,10 @@ print(a.databaseUse(b"defaultdb"))
 #print(resp)
 
 
-xset = {b"key3": b"value3", b"key4": b"value4"}
-print(a.setAll(xset))
-print(a.getAll(xset.keys()))
+#xset = {b"key3": b"value3", b"key4": b"value4"}
+#print(a.setAll(xset))
+#print(a.getAll(xset.keys()))
 
-print(a.safeSet(b'keykey2', b'valval2'))
-print(a.getValue(b'keykeya2'))
+#print(a.safeSet(b'keykey2', b'valval2'))
+#print(a.getValue(b'keykeya2'))
 #print(a.history(b'key1',0,0,0))

@@ -16,7 +16,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, keys: list[b
     )
     msg = service.GetAll(request)
     ret={}
-    print(msg)
     for i in msg.entries:
         element=batchElement(
             tx=i.tx,

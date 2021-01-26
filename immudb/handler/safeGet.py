@@ -1,7 +1,7 @@
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import constants, proofs, item, htree, store, datatypes
+from immudb import constants, item, htree, store, datatypes
 from immudb.exceptions import VerificationException
 
 

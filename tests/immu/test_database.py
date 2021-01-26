@@ -13,7 +13,7 @@ class TestDatabase:
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
         resp=a.databaseList()
-        assert resp.dblist.databases[0].databasename=="defaultdb"
+        assert "defaultdb" in resp
         resp=a.databaseUse(b"defaultdb")
         assert type(resp.reply.token)==str
         
@@ -32,7 +32,7 @@ class TestDatabase:
         assert resp.verified==True
         readback=a.safeGet(key.encode('utf8'))
         assert readback.verified==True
-        assert value==readback.value
+        assert value.encode('utf8')==readback.value
         
         
 

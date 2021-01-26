@@ -24,8 +24,8 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     if tx.eh() != immudb.store.DigestFrom(verifiableTx.dualProof.targetTxMetadata.eH):
         raise VerificationException
     if state.txId == 0:
-        sourceID = tx.iD
-        sourceAlh = tx.alh
+        sourceID = tx.ID
+        sourceAlh = tx.Alh
     else:
         sourceID = state.txId
         sourceAlh = immudb.store.DigestFrom(state.txHash)

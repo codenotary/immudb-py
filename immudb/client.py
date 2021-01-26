@@ -9,8 +9,6 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
 from immudb.rootService import RootService
 from immudb.grpc import schema_pb2_grpc
 
-OLDEST_FIRST=True
-NEWEST_FIRST=False
 
 class ImmudbClient:
     def __init__(self, immudUrl=None):
@@ -123,7 +121,8 @@ class ImmudbClient:
         return listUsers.call(self.__stub, None)
     
     def databaseList(self):
-        return databaseList.call(self.__stub, self.__rs, None)
+        dbs=databaseList.call(self.__stub, self.__rs, None)
+        return [x.databasename for x in dbs.dblist.databases]
 
     def databaseUse(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
@@ -148,21 +147,11 @@ class ImmudbClient:
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__login_response = None
         
-    def scan(self, prefix: bytes, offset: bytes, limit:int=10, reverse:bool=False, deep:bool=False):
-        request = schema_pb2_grpc.schema__pb2.ScanOptions(
-            prefix=prefix,
-            offset=offset,
-            limit=limit,
-            reverse=reverse,
-            deep=deep)
-        return scan.call(self.__stub, self.__rs, request)
+    def scan(self, key:bytes, prefix:bytes, desc:bool, limit:int,sinceTx:int=None):
+        return scan.call(self.__stub, self.__rs, key, prefix, desc, limit, sinceTx)
     
-    def reference(self, refkey: bytes, key:  bytes):
-        request = schema_pb2_grpc.schema__pb2.ReferenceOptions(
-            reference = refkey,
-            key=key
-            )
-        return reference.call(self.__stub, self.__rs, request)
+    def reference(self, referredkey: bytes, newkey:  bytes):
+        return reference.call(self.__stub, self.__rs, referredkey, newkey)
     
     def zadd(self):
         pass

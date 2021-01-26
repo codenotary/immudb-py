@@ -23,3 +23,9 @@ class SafeGetResponse:
 class CurrentRootResponse:
     id: int
     hash: bytes
+
+@dataclass
+class historyResponseItem:
+    key: bytes
+    value: bytes
+    tx: int

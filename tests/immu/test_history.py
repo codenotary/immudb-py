@@ -1,5 +1,6 @@
 import pytest
 import immudb.client
+import immudb.constants
 from random import randint
 import grpc._channel
 
@@ -18,14 +19,13 @@ class TestHistory:
             a.safeSet(key.encode('ascii'),v.encode('ascii'))
             values.append(v)
             
-        hh=a.history(key.encode('ascii'),0,99,immudb.client.NEWEST_FIRST)
+        hh=a.history(key.encode('ascii'),0,99,immudb.constants.NEWEST_FIRST)
         assert(len(hh)==10)
         for i in range(0,10):
             assert(hh[i].value==values[9-i].encode('ascii'))
         
         idx=0
         for i in range(0,10):
-           hh=a.history(key.encode('ascii'),idx,1,immudb.client.OLDEST_FIRST)
+           hh=a.history(key.encode('ascii'),i,1,immudb.constants.OLDEST_FIRST)
            assert(len(hh)>0)
            assert(hh[0].value==values[i].encode('ascii'))
-           idx=hh[0].index
