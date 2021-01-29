@@ -10,7 +10,7 @@ class batchElement:
     key: bytes
     value: bytes
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, keys: list[bytes]):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, keys: list):
     request = schema_pb2.KeyListRequest(
         keys = keys#[schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
     )

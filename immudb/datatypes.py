@@ -29,3 +29,9 @@ class historyResponseItem:
     key: bytes
     value: bytes
     tx: int
+
+@dataclass
+class GetResponse:
+    tx: int
+    key: bytes
+    value: bytes

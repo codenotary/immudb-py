@@ -66,8 +66,15 @@ class Tx(printable):
     def eh(self):
         return self.htree.root
     def Proof(self, key:bytes):
+        kindex=None
         # find index of element holding given key 
-        kindex=next(k for k,v in enumerate(self.entries) if v.key==key)    
+        #kindex=next(k for k,v in enumerate(self.entries) if v.key==key)
+        for k,v in enumerate(self.entries):
+            if v.key==key:
+                kindex=k
+                break
+        if kindex==None:
+            raise LookupError
         return self.htree.InclusionProof(kindex)
 
 def NewTxWithEntries(entries:list[TXe]) -> Tx:
@@ -144,8 +151,17 @@ def EncodeReference(key:bytes, referencedKey: bytes, atTx: int):
     refVal=REFERENCE_VALUE_PREFIX+struct.pack(">Q",atTx)+SET_KEY_PREFIX+referencedKey
     return KV(SET_KEY_PREFIX+key,refVal)
 
+def EncodeZAdd(zset:bytes, score:float, key: bytes, attx:int):
+    zkey=SORTED_KEY_PREFIX
+    zkey+=struct.pack(">Q",len(zset))+zset
+    zkey+=struct.pack(">d",score)
+    zkey+=struct.pack(">Q",len(key))+key
+    zkey+=struct.pack(">Q",attx)
+    return KV(zkey,None)
+
+
 class LinearProof(printable):
-    def __init__(self, sourceTxID:int, targetTxID:int, terms:list[bytes]):
+    def __init__(self, sourceTxID:int, targetTxID:int, terms:list):
         self.sourceTxID=sourceTxID
         self.targetTxID=targetTxID
         self.terms=terms
@@ -157,7 +173,7 @@ def DigestFrom(slicedDigest: bytes)->bytes:
     d=copy.copy(slicedDigest[:SHA256LEN])
     return d
 
-def DigestsFrom(slicedTerms: list[bytes]) -> list[bytes]:
+def DigestsFrom(slicedTerms: list) -> list:
     d=[copy.copy(i) for i in slicedTerms]
     return d
     
@@ -224,7 +240,7 @@ def VerifyDualProof(proof, sourceTxID, targetTxID , sourceAlh, targetAlh):
         ret=VerifyLinearProof(proof.linearProof, sourceTxID, targetTxID, sourceAlh, targetAlh)
     return ret
 
-def VerifyInclusionAHT(iproof:list[bytes], i:int, j:int, iLeaf:bytes, jRoot:bytes) -> bool:
+def VerifyInclusionAHT(iproof:list, i:int, j:int, iLeaf:bytes, jRoot:bytes) -> bool:
     if i>j or i==0 or i<j and len(iproof)==0:
         return false
     i1 = i - 1
@@ -240,7 +256,7 @@ def VerifyInclusionAHT(iproof:list[bytes], i:int, j:int, iLeaf:bytes, jRoot:byte
         j1=j1>>1
     return jRoot==ciRoot
 
-def VerifyConsistency(cproof:list[bytes], i:int, j:int, iRoot:bytes, jRoot:bytes)-> bool:
+def VerifyConsistency(cproof:list, i:int, j:int, iRoot:bytes, jRoot:bytes)-> bool:
     if i > j or i == 0 or (i < j and len(cproof) == 0):
             return False
     if i == j and len(cproof) == 0:
@@ -269,7 +285,7 @@ def VerifyConsistency(cproof:list[bytes], i:int, j:int, iRoot:bytes, jRoot:bytes
     return iRoot == ciRoot and jRoot == cjRoot
     
 
-def VerifyLastInclusion(iproof:list[bytes], i:int, leaf:bytes, root:bytes)->bool:
+def VerifyLastInclusion(iproof:list, i:int, leaf:bytes, root:bytes)->bool:
     if i==0:
         return False
     i1 = i - 1

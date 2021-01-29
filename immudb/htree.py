@@ -35,7 +35,7 @@ class HTree:
         for l in range(0,height):
             self.levels[l]=[None]*(lw>>l)
 
-    def BuildWith(self, digests:list[bytes]):
+    def BuildWith(self, digests:list):
         if len(digests)>self.maxWidth:
             raise ErrMaxWidthExceeded
         if len(digests)==0:

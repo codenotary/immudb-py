@@ -5,7 +5,7 @@ from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           currentRoot, databaseCreate, databaseList, databaseUse, 
                           get, listUsers, verifiedGet, verifiedSet, setValue, history, 
-                          scan, reference)
+                          scan, reference, zadd, verifiedzadd, zscan)
 from immudb.rootService import RootService
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -50,6 +50,7 @@ class ImmudbClient:
         self.channel = None
         self.intercept_channel.close
         self.intercept_channel = None
+        self.__rs = None
 
     def set_token_header_interceptor(self, response):
         try:
@@ -167,8 +168,17 @@ class ImmudbClient:
     def reference(self, referredkey: bytes, newkey:  bytes):
         return reference.call(self.__stub, self.__rs, referredkey, newkey)
     
-    def zadd(self):
-        pass
+    def zAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
+        return zadd.call(self.__stub, self.__rs, zset, score, key, atTx)
     
-    def zscan(self):
-        pass
+    def verifiedZAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
+        return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx)
+    
+    
+    def zScan(self, zset:bytes, seekKey:bytes, seekScore:float,
+                          seekAtTx:int, inclusive: bool, limit:int, desc:bool, minscore:float,
+                          maxscore:float, sinceTx=None, nowait=False):
+        return zscan.call(self.__stub, self.__rs, zset, seekKey, seekScore,
+                          seekAtTx, inclusive, limit, desc, minscore,
+                          maxscore, sinceTx, nowait)
+                          
