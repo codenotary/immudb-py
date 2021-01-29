@@ -4,11 +4,11 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           currentRoot, databaseCreate, databaseList, databaseUse, 
-                          get, listUsers, safeGet, safeSet, setValue, history, 
+                          get, listUsers, verifiedGet, verifiedSet, setValue, history, 
                           scan, reference)
 from immudb.rootService import RootService
 from immudb.grpc import schema_pb2_grpc
-
+import warnings
 
 class ImmudbClient:
     def __init__(self, immudUrl=None):
@@ -84,10 +84,24 @@ class ImmudbClient:
         return setValue.call(self.__stub, self.__rs, key, value)
 
     def safeGet(self, key: bytes):
-        return safeGet.call(self.__stub, self.__rs, key)
+        warnings.warn("Call to deprecated safeGet. Use verifiedGet instead",
+            category=DeprecationWarning,
+            stacklevel=2
+            )
+        return verifiedGet.call(self.__stub, self.__rs, key)
+    
+    def verifiedGet(self, key: bytes):
+        return verifiedGet.call(self.__stub, self.__rs, key)
 
     def safeSet(self, key: bytes, value: bytes):
-        return safeSet.call(self.__stub, self.__rs, key, value)
+        warnings.warn("Call to deprecated safeSet. Use verifiedSet instead",
+            category=DeprecationWarning,
+            stacklevel=2
+            )
+        return verifiedSet.call(self.__stub, self.__rs, key, value)
+    
+    def verifiedSet(self, key: bytes, value: bytes):
+        return verifiedSet.call(self.__stub, self.__rs, key, value)
 
     def getAllValues(self, keys: list):
         resp = batchGet.call(self.__stub, self.__rs, keys)
