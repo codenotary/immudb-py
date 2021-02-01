@@ -141,7 +141,10 @@ class KV(printable):
         self.key=key
         self.value=value
     def Digest(self):
-        valdigest=hashlib.sha256(self.value).digest()
+        if self.value==None:
+            valdigest=hashlib.sha256(b'').digest()
+        else:
+            valdigest=hashlib.sha256(self.value).digest()
         return hashlib.sha256(self.key+valdigest).digest()
         
 def EncodeKV(key: bytes, value: bytes):
@@ -152,10 +155,11 @@ def EncodeReference(key:bytes, referencedKey: bytes, atTx: int):
     return KV(SET_KEY_PREFIX+key,refVal)
 
 def EncodeZAdd(zset:bytes, score:float, key: bytes, attx:int):
+    ekey=SET_KEY_PREFIX+key
     zkey=SORTED_KEY_PREFIX
     zkey+=struct.pack(">Q",len(zset))+zset
     zkey+=struct.pack(">d",score)
-    zkey+=struct.pack(">Q",len(key))+key
+    zkey+=struct.pack(">Q",len(ekey))+ekey
     zkey+=struct.pack(">Q",attx)
     return KV(zkey,None)
 

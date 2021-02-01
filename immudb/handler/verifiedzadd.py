@@ -19,16 +19,15 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, 
         proveSinceTx=state.txId
         )
     vtx = service.VerifiableZAdd(request)
-    print(vtx)
     if vtx.tx.metadata.nentries!=1:
         raise VerificationException
     tx = immudb.store.TxFrom(vtx.tx)
     ekv = immudb.store.EncodeZAdd(zset, score, key, atTx)
     inclusionProof=tx.Proof(ekv.key)
-    verifies = immudb.store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.Eh())
+    verifies = immudb.store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
     if not verifies:
         raise VerificationException
-    if tx.Eh() != immudb.store(vtx.dualProof.targetTxMetadata.eH):
+    if tx.eh() != immudb.store.DigestFrom(vtx.dualProof.targetTxMetadata.eH):
         raise VerificationException
     if state.txId == 0:
         sourceID = tx.ID
@@ -54,13 +53,12 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, 
             signature= vtx.signature,
             )
     rs.set(state)
-
     return datatypes.SetResponse(
-        id=msg.id,
-        prevAlh=msg.prevAlh,
-        timestamp=msg.ts,
-        eh=msg.eH,
-        blTxId=msg.blTxId,
-        blRoot=msg.blRoot,
+        id=vtx.tx.metadata.id,
+        prevAlh=vtx.tx.metadata.prevAlh,
+        timestamp=vtx.tx.metadata.ts,
+        eh=vtx.tx.metadata.eH,
+        blTxId=vtx.tx.metadata.blTxId,
+        blRoot=vtx.tx.metadata.blRoot,
         verified=True,
     )
