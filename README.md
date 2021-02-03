@@ -35,6 +35,10 @@ immu-py assumes there is an existing instance of the immudb server up and runnin
 Running `immudb` is quite simple, please refer to the
 following link for downloading and running it: https://immudb.io/docs/quickstart.html
 
+immudb-py requires python version 3.6 or greater.
+If you are using 3.6, you'll need dataclasses package; on 3.7+,
+dataclasses is part of the python distribution.
+
 ## Installation
 
 You can install latest version cloning this repository, and then use the make command to install
