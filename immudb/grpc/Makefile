@@ -24,7 +24,7 @@ ${PROTO_DIR}:
 	${PROTOC} -I${PROTO_DIR} ${PROTOC_INCLUDE_PATH} \
 	${PROTO_FILE} \
 	--python_out=. --grpc_out=. \
-	--plugin=protoc-gen-grpc=/home/simone/sw/immu-py/bin/grpc_python_plugin
+	--plugin=protoc-gen-grpc=../../bin/grpc_python_plugin
 	
 	
 # 	python3 -m grpc_tools.protoc \
