@@ -16,7 +16,7 @@ class TestHistory:
         values=[]
         for i in range(0,10):
             v="value_{:04d}".format(randint(0,9999))
-            a.safeSet(key.encode('ascii'),v.encode('ascii'))
+            a.verifiedSet(key.encode('ascii'),v.encode('ascii'))
             values.append(v)
             
         hh=a.history(key.encode('ascii'),0,99,immudb.constants.NEWEST_FIRST)

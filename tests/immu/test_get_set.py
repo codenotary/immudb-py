@@ -19,10 +19,10 @@ class TestGetSet:
                         if key not in [t[0] for t in kvs]:
                                 break
                 kvs.append((key,value))
-                resp=a.safeSet(key.encode('utf8'),value.encode('utf8'))
+                resp=a.verifiedSet(key.encode('utf8'),value.encode('utf8'))
                 assert resp.verified
         for (key,value) in kvs:
-                readback=a.safeGet(key.encode('utf8'))
+                readback=a.verifiedGet(key.encode('utf8'))
                 print (key,value,readback.value)
                 assert readback.verified
                 assert value.encode('utf8')==readback.value

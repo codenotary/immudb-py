@@ -58,7 +58,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
     else:
         refkey=None
     return datatypes.SafeGetResponse(
-        index=vTx,
+        id=vTx,
         key=ventry.entry.key,
         value=ventry.entry.value,
         timestamp=ventry.verifiableTx.tx.metadata.ts,

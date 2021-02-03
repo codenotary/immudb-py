@@ -28,9 +28,9 @@ class TestDatabase:
         key="test_key_{:04d}".format(randint(0,10000))
         value="test_value_{:04d}".format(randint(0,10000))
 
-        resp=a.safeSet(key.encode('utf8'),value.encode('utf8'))
+        resp=a.verifiedSet(key.encode('utf8'),value.encode('utf8'))
         assert resp.verified==True
-        readback=a.safeGet(key.encode('utf8'))
+        readback=a.verifiedGet(key.encode('utf8'))
         assert readback.verified==True
         assert value.encode('utf8')==readback.value
         

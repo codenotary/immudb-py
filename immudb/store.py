@@ -212,7 +212,7 @@ def VerifyDualProof(proof, sourceTxID, targetTxID , sourceAlh, targetAlh):
         proof.sourceTxMetadata.iD != sourceTxID or
         proof.targetTxMetadata.iD != targetTxID):
             return False
-    if proof.sourceTxMetadata==0 or proof.sourceTxMetadata.iD > proof.targetTxMetadata.iD:
+    if proof.sourceTxMetadata.iD==0 or proof.sourceTxMetadata.iD > proof.targetTxMetadata.iD:
         return False
     if sourceAlh != proof.sourceTxMetadata.alh():
         return False
@@ -246,7 +246,7 @@ def VerifyDualProof(proof, sourceTxID, targetTxID , sourceAlh, targetAlh):
 
 def VerifyInclusionAHT(iproof:list, i:int, j:int, iLeaf:bytes, jRoot:bytes) -> bool:
     if i>j or i==0 or i<j and len(iproof)==0:
-        return false
+        return False
     i1 = i - 1
     j1 = j - 1
     ciRoot = iLeaf
@@ -306,7 +306,7 @@ def VerifyLinearProof(proof , sourceTxID:int, targetTxID:int, sourceAlh:bytes, t
 
     if (proof.sourceTxID == 0 or proof.sourceTxID > proof.targetTxID or
             len(proof.terms) == 0 or sourceAlh != proof.terms[0]):
-            return false
+            return False
 
     calculatedAlh = proof.terms[0]
     for i in range(1,len(proof.terms)):

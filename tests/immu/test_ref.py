@@ -16,9 +16,9 @@ def test_reference():
     k="reftest.key."+get_random_string(16)
     v=get_random_string(32)
     r="reftest.reference."+get_random_string(16)
-    setresp=a.set(k.encode('ascii'),v.encode('ascii'))
+    setresp=a.verifiedSet(k.encode('ascii'),v.encode('ascii'))
     a.reference(k.encode('ascii'),r.encode('ascii'))
-    referred=a.safeGet(r.encode('ascii'))
-    original=a.safeGet(k.encode('ascii'))
+    referred=a.verifiedGet(r.encode('ascii'))
+    original=a.verifiedGet(k.encode('ascii'))
     assert original.key==referred.key
     assert original.value==referred.value

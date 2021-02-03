@@ -16,7 +16,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
                 )
     histo = service.History(request)
     histolist=[]
-    print(histo)
     for i in histo.entries:
         histolist.append( datatypes.historyResponseItem(
             key=i.key, 

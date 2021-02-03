@@ -57,6 +57,8 @@ class HTree:
             if w%2==1:
                 self.levels[l+1][wn]=self.levels[l][w-1]
                 wn=wn+1
+            l+=1
+            w=wn
         self.width=len(digests)
         self.root=self.levels[l][0]
     def InclusionProof(self, i):
@@ -70,7 +72,7 @@ class HTree:
         proof.width=self.width
         if self.width==1:
             return proof
-        while true:
+        while True:
             d=(n-1).bit_length()
             k=1<<(d-1)
             if m<k:
@@ -82,8 +84,8 @@ class HTree:
                 n=n-k
                 offset=offset+k
             layer=(r-l).bit_length()
-            index=l/(1<<layer)
-            proof.terms=t+levels[layer][index]+proof.terms
+            index=int(l/(1<<layer))
+            proof.terms=self.levels[layer][index]+proof.terms
             if n<1 or (n==1 and m==0):
                 return proof
             

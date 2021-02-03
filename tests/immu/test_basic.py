@@ -2,6 +2,7 @@ import pytest
 from immudb.client import ImmudbClient
 from random import randint
 import grpc._channel
+import warnings
 
 class TestBasicGetSet:
     def test_no_server(self):
@@ -23,7 +24,9 @@ class TestBasicGetSet:
         resp=a.set(key.encode('utf8'),value.encode('utf8'))
         readback=a.get(key.encode('utf8'))
         assert value==readback.value.decode('utf8')
-  
+        val=a.getValue(key.encode('utf8'))
+        assert val==value.encode('utf-8')
+        assert None==a.getValue(b'non_existing_key')
         a.logout()
         a.shutdown()
         
@@ -36,7 +39,7 @@ class TestBasicGetSet:
         r1=a.currentRoot()
         key="test_key_{:04d}".format(randint(0,10000))
         value="test_value_{:04d}".format(randint(0,10000))
-        a.safeSet(key.encode('utf8'),value.encode('utf8'))
+        a.verifiedSet(key.encode('utf8'),value.encode('utf8'))
         r2=a.currentRoot()
         
         assert r2.id>r1.id
@@ -51,3 +54,16 @@ class TestBasicGetSet:
             pytest.skip("Cannot reach immudb server")
         assert isinstance(a.stub,object)
         
+    def test_safeSet(self):
+        try:
+            a = ImmudbClient()
+            a.login("immudb","immudb")
+        except grpc._channel._InactiveRpcError as e:
+            pytest.skip("Cannot reach immudb server")
+        r1=a.currentRoot()
+        key="test_key_{:04d}".format(randint(0,10000))
+        value="test_value_{:04d}".format(randint(0,10000))
+        # explicitly test deprecated safeSet
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        a.safeSet(key.encode('utf8'),value.encode('utf8'))
+        a.safeGet(key.encode('utf8'))

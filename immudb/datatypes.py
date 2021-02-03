@@ -12,7 +12,7 @@ class SetResponse:
 
 @dataclass
 class SafeGetResponse:
-    index: int
+    id: int
     key: bytes
     value: bytes
     timestamp: int
