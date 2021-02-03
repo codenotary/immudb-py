@@ -77,7 +77,7 @@ class Tx(printable):
             raise LookupError
         return self.htree.InclusionProof(kindex)
 
-def NewTxWithEntries(entries:list[TXe]) -> Tx:
+def NewTxWithEntries(entries:list) -> Tx:
     tx=Tx()
     tx.ID=0
     tx.entries=entries
