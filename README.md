@@ -31,18 +31,27 @@ please read [immudb research paper] for details of how immutability is ensured b
 
 ## Prerequisites
 
-immu-py assumes there is an existing instance of the immudb server up and running. Running `immudb` is quite simple, please refer to the
+immu-py assumes there is an existing instance of the immudb server up and running. 
+Running `immudb` is quite simple, please refer to the
 following link for downloading and running it: https://immudb.io/docs/quickstart.html
 
 ## Installation
 
-Install the package using pip:
+You can install latest version cloning this repository, and then use the make command to install
+prerequisites and the package itself:
+
+```shell
+    make init
+    make install
+```
+
+Or, you can install latest stable version using pip:
 
 ```shell
     pip3 install immudb-py
 ```
 
- Then import the client as follows:
+Then, in you code, import the client library as as follows:
 
 ```python
     from immudb import ImmudbClient
@@ -58,7 +67,7 @@ Install the package using pip:
 
 immu-py supports the [latest immudb release].
 
-[latest immudb release]: https://github.com/codenotary/immudb/releases/tag/v0.7.1
+[latest immudb release]: https://github.com/codenotary/immudb/releases/tag/v0.9.0
 
 ## Quickstart
 
@@ -99,7 +108,8 @@ Use `login` and `logout` methods to initiate and terminate user sessions:
 ```
 ### Encoding
 
-Please note that, in order to provide maximum flexibility, all functions accept byte arrays as parameters. Therefore, unicode strings must be properly encoded.
+Please note that, in order to provide maximum flexibility, all functions accept byte arrays as parameters.
+Therefore, unicode strings must be properly encoded.
 It is possible to store structured objects, but they must be serialized (e.g., with pickle or json).
 
 ### Creating a database
@@ -130,7 +140,7 @@ may be used when validations can be post-poned:
     result = client.get(b"k123");
 ```
 
-### Verified or Safe read and write
+### Verified read and write
 
 immudb provides built-in cryptographic verification for any entry. The client
 implements the mathematical validations while the application uses as a traditional
@@ -138,8 +148,8 @@ read or write operation:
 
 ```python
     try:
-        client.safeSet(b"k123", new byte[]{1, 2, 3});
-        results = client.safeGet(b"k123");
+        client.verifiedSet(b"k123", b"v123");
+        results = client.verifiedGet(b"k123");
     Except VerificationException as e:
         # Do something
 ```
