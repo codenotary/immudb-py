@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z+github.com/codenotary/immudb/pkg/api/schema',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1bgoogle/protobuf/empty.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\"_\n\x05\x45ntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12.\n\x0creferencedBy\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Reference\"2\n\tReference\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\"\x94\x01\n\x02Op\x12%\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValueH\x00\x12*\n\x04zAdd\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequestH\x00\x12.\n\x03ref\x18\x03 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequestH\x00\x42\x0b\n\toperation\"7\n\x0e\x45xecAllRequest\x12%\n\nOperations\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Op\"0\n\x07\x45ntries\x12%\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Entry\"d\n\x06ZEntry\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\r\n\x05score\x18\x04 \x01(\x01\x12\x0c\n\x04\x61tTx\x18\x05 \x01(\x04\"2\n\x08ZEntries\x12&\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"l\n\x0bScanRequest\x12\x0f\n\x07seekKey\x18\x01 \x01(\x0c\x12\x0e\n\x06prefix\x18\x02 \x01(\x0c\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12\r\n\x05limit\x18\x04 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nEntryCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"1\n\tSignature\x12\x11\n\tpublicKey\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"s\n\nTxMetadata\x12\n\n\x02id\x18\x01 \x01(\x04\x12\x0f\n\x07prevAlh\x18\x02 \x01(\x0c\x12\n\n\x02ts\x18\x03 \x01(\x03\x12\x10\n\x08nentries\x18\x04 \x01(\x05\x12\n\n\x02\x65H\x18\x05 \x01(\x0c\x12\x0e\n\x06\x62lTxId\x18\x06 \x01(\x04\x12\x0e\n\x06\x62lRoot\x18\x07 \x01(\x0c\"D\n\x0bLinearProof\x12\x12\n\nsourceTxId\x18\x01 \x01(\x04\x12\x12\n\nTargetTxId\x18\x02 \x01(\x04\x12\r\n\x05terms\x18\x03 \x03(\x0c\"\x8b\x02\n\tDualProof\x12\x33\n\x10sourceTxMetadata\x18\x01 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\x33\n\x10targetTxMetadata\x18\x02 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\x16\n\x0einclusionProof\x18\x03 \x03(\x0c\x12\x18\n\x10\x63onsistencyProof\x18\x04 \x03(\x0c\x12\x15\n\rtargetBlTxAlh\x18\x05 \x01(\x0c\x12\x1a\n\x12lastInclusionProof\x18\x06 \x03(\x0c\x12/\n\x0blinearProof\x18\x07 \x01(\x0b\x32\x1a.immudb.schema.LinearProof\"Z\n\x02Tx\x12+\n\x08metadata\x18\x01 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\'\n\x07\x65ntries\x18\x02 \x03(\x0b\x32\x16.immudb.schema.TxEntry\"B\n\x07TxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06hValue\x18\x02 \x01(\x0c\x12\x0c\n\x04vOff\x18\x03 \x01(\x03\x12\x0c\n\x04vLen\x18\x04 \x01(\x05\"\x87\x01\n\x0cVerifiableTx\x12\x1d\n\x02tx\x18\x01 \x01(\x0b\x32\x11.immudb.schema.Tx\x12+\n\tdualProof\x18\x02 \x01(\x0b\x32\x18.immudb.schema.DualProof\x12+\n\tsignature\x18\x03 \x01(\x0b\x32\x18.immudb.schema.Signature\"\xa0\x01\n\x0fVerifiableEntry\x12#\n\x05\x65ntry\x18\x01 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\"<\n\x0eInclusionProof\x12\x0c\n\x04leaf\x18\x01 \x01(\x05\x12\r\n\x05width\x18\x02 \x01(\x05\x12\r\n\x05terms\x18\x03 \x03(\x0c\"2\n\nSetRequest\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\"8\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x02 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\"/\n\x0eKeyListRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableSetRequest\x12-\n\nsetRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.SetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableGetRequest\x12-\n\nkeyRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.KeyRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"[\n\x0eImmutableState\x12\x0c\n\x04txId\x18\x03 \x01(\x04\x12\x0e\n\x06txHash\x18\x04 \x01(\x0c\x12+\n\tsignature\x18\x05 \x01(\x0b\x32\x18.immudb.schema.Signature\"V\n\x10ReferenceRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x15\n\rreferencedKey\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x04 \x01(\x08\"m\n\x1aVerifiableReferenceRequest\x12\x39\n\x10referenceRequest\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"V\n\x0bZAddRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x04 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x05 \x01(\x08\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"\xf6\x01\n\x0cZScanRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0f\n\x07seekKey\x18\x02 \x01(\x0c\x12\x11\n\tseekScore\x18\x03 \x01(\x01\x12\x10\n\x08seekAtTx\x18\x04 \x01(\x04\x12\x15\n\rinclusiveSeek\x18\x05 \x01(\x08\x12\r\n\x05limit\x18\x06 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x07 \x01(\x08\x12&\n\x08minScore\x18\x08 \x01(\x0b\x32\x14.immudb.schema.Score\x12&\n\x08maxScore\x18\t \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0f\n\x07sinceTx\x18\n \x01(\x04\x12\x0e\n\x06noWait\x18\x0b \x01(\x08\"[\n\x0eHistoryRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\x08\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\"^\n\x15VerifiableZAddRequest\x12/\n\x0bzAddRequest\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"\x17\n\tTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\"7\n\x13VerifiableTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabasename\x18\x01 \x01(\t\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01\x32\x9c\x12\n\x0bImmuService\x12>\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x00\x12H\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x00\x12:\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12=\n\x03Set\x12\x19.immudb.schema.SetRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12S\n\rVerifiableSet\x12#.immudb.schema.VerifiableSetRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12\x38\n\x03Get\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Entry\"\x00\x12V\n\rVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x1e.immudb.schema.VerifiableEntry\"\x00\x12\x41\n\x06GetAll\x12\x1d.immudb.schema.KeyListRequest\x1a\x16.immudb.schema.Entries\"\x00\x12\x45\n\x07\x45xecAll\x12\x1d.immudb.schema.ExecAllRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12<\n\x04Scan\x12\x1a.immudb.schema.ScanRequest\x1a\x16.immudb.schema.Entries\"\x00\x12>\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.EntryCount\"\x00\x12?\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.EntryCount\"\x00\x12\x37\n\x06TxById\x12\x18.immudb.schema.TxRequest\x1a\x11.immudb.schema.Tx\"\x00\x12U\n\x10VerifiableTxById\x12\".immudb.schema.VerifiableTxRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12\x42\n\x07History\x12\x1d.immudb.schema.HistoryRequest\x1a\x16.immudb.schema.Entries\"\x00\x12\x41\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x00\x12G\n\x0c\x43urrentState\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.ImmutableState\"\x00\x12L\n\x0cSetReference\x12\x1f.immudb.schema.ReferenceRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12\x62\n\x16VerifiableSetReference\x12).immudb.schema.VerifiableReferenceRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12?\n\x04ZAdd\x12\x1a.immudb.schema.ZAddRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12U\n\x0eVerifiableZAdd\x12$.immudb.schema.VerifiableZAddRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12?\n\x05ZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x17.immudb.schema.ZEntries\"\x00\x12\x43\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x00\x12I\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x00\x12>\n\nCleanIndex\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12T\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x42-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3'
+  serialized_pb=b'\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1bgoogle/protobuf/empty.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\"_\n\x05\x45ntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12.\n\x0creferencedBy\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Reference\"2\n\tReference\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\"\x94\x01\n\x02Op\x12%\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValueH\x00\x12*\n\x04zAdd\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequestH\x00\x12.\n\x03ref\x18\x03 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequestH\x00\x42\x0b\n\toperation\"7\n\x0e\x45xecAllRequest\x12%\n\nOperations\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Op\"0\n\x07\x45ntries\x12%\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Entry\"d\n\x06ZEntry\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\r\n\x05score\x18\x04 \x01(\x01\x12\x0c\n\x04\x61tTx\x18\x05 \x01(\x04\"2\n\x08ZEntries\x12&\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"l\n\x0bScanRequest\x12\x0f\n\x07seekKey\x18\x01 \x01(\x0c\x12\x0e\n\x06prefix\x18\x02 \x01(\x0c\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12\r\n\x05limit\x18\x04 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nEntryCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"1\n\tSignature\x12\x11\n\tpublicKey\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"s\n\nTxMetadata\x12\n\n\x02id\x18\x01 \x01(\x04\x12\x0f\n\x07prevAlh\x18\x02 \x01(\x0c\x12\n\n\x02ts\x18\x03 \x01(\x03\x12\x10\n\x08nentries\x18\x04 \x01(\x05\x12\n\n\x02\x65H\x18\x05 \x01(\x0c\x12\x0e\n\x06\x62lTxId\x18\x06 \x01(\x04\x12\x0e\n\x06\x62lRoot\x18\x07 \x01(\x0c\"D\n\x0bLinearProof\x12\x12\n\nsourceTxId\x18\x01 \x01(\x04\x12\x12\n\nTargetTxId\x18\x02 \x01(\x04\x12\r\n\x05terms\x18\x03 \x03(\x0c\"\x8b\x02\n\tDualProof\x12\x33\n\x10sourceTxMetadata\x18\x01 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\x33\n\x10targetTxMetadata\x18\x02 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\x16\n\x0einclusionProof\x18\x03 \x03(\x0c\x12\x18\n\x10\x63onsistencyProof\x18\x04 \x03(\x0c\x12\x15\n\rtargetBlTxAlh\x18\x05 \x01(\x0c\x12\x1a\n\x12lastInclusionProof\x18\x06 \x03(\x0c\x12/\n\x0blinearProof\x18\x07 \x01(\x0b\x32\x1a.immudb.schema.LinearProof\"Z\n\x02Tx\x12+\n\x08metadata\x18\x01 \x01(\x0b\x32\x19.immudb.schema.TxMetadata\x12\'\n\x07\x65ntries\x18\x02 \x03(\x0b\x32\x16.immudb.schema.TxEntry\"B\n\x07TxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06hValue\x18\x02 \x01(\x0c\x12\x0c\n\x04vOff\x18\x03 \x01(\x03\x12\x0c\n\x04vLen\x18\x04 \x01(\x05\"\x87\x01\n\x0cVerifiableTx\x12\x1d\n\x02tx\x18\x01 \x01(\x0b\x32\x11.immudb.schema.Tx\x12+\n\tdualProof\x18\x02 \x01(\x0b\x32\x18.immudb.schema.DualProof\x12+\n\tsignature\x18\x03 \x01(\x0b\x32\x18.immudb.schema.Signature\"\xa0\x01\n\x0fVerifiableEntry\x12#\n\x05\x65ntry\x18\x01 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\"<\n\x0eInclusionProof\x12\x0c\n\x04leaf\x18\x01 \x01(\x05\x12\r\n\x05width\x18\x02 \x01(\x05\x12\r\n\x05terms\x18\x03 \x03(\x0c\"2\n\nSetRequest\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\"8\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x02 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\"/\n\x0eKeyListRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableSetRequest\x12-\n\nsetRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.SetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableGetRequest\x12-\n\nkeyRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.KeyRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"g\n\x0eImmutableState\x12\n\n\x02\x64\x62\x18\x01 \x01(\t\x12\x0c\n\x04txId\x18\x02 \x01(\x04\x12\x0e\n\x06txHash\x18\x03 \x01(\x0c\x12+\n\tsignature\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Signature\"V\n\x10ReferenceRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x15\n\rreferencedKey\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x04 \x01(\x08\"m\n\x1aVerifiableReferenceRequest\x12\x39\n\x10referenceRequest\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"V\n\x0bZAddRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x04 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x05 \x01(\x08\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"\xf6\x01\n\x0cZScanRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0f\n\x07seekKey\x18\x02 \x01(\x0c\x12\x11\n\tseekScore\x18\x03 \x01(\x01\x12\x10\n\x08seekAtTx\x18\x04 \x01(\x04\x12\x15\n\rinclusiveSeek\x18\x05 \x01(\x08\x12\r\n\x05limit\x18\x06 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x07 \x01(\x08\x12&\n\x08minScore\x18\x08 \x01(\x0b\x32\x14.immudb.schema.Score\x12&\n\x08maxScore\x18\t \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0f\n\x07sinceTx\x18\n \x01(\x04\x12\x0e\n\x06noWait\x18\x0b \x01(\x08\"[\n\x0eHistoryRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\x08\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\"^\n\x15VerifiableZAddRequest\x12/\n\x0bzAddRequest\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"\x17\n\tTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\"7\n\x13VerifiableTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabasename\x18\x01 \x01(\t\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01\x32\x9c\x12\n\x0bImmuService\x12>\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x00\x12H\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x00\x12:\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12=\n\x03Set\x12\x19.immudb.schema.SetRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12S\n\rVerifiableSet\x12#.immudb.schema.VerifiableSetRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12\x38\n\x03Get\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Entry\"\x00\x12V\n\rVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x1e.immudb.schema.VerifiableEntry\"\x00\x12\x41\n\x06GetAll\x12\x1d.immudb.schema.KeyListRequest\x1a\x16.immudb.schema.Entries\"\x00\x12\x45\n\x07\x45xecAll\x12\x1d.immudb.schema.ExecAllRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12<\n\x04Scan\x12\x1a.immudb.schema.ScanRequest\x1a\x16.immudb.schema.Entries\"\x00\x12>\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.EntryCount\"\x00\x12?\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.EntryCount\"\x00\x12\x37\n\x06TxById\x12\x18.immudb.schema.TxRequest\x1a\x11.immudb.schema.Tx\"\x00\x12U\n\x10VerifiableTxById\x12\".immudb.schema.VerifiableTxRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12\x42\n\x07History\x12\x1d.immudb.schema.HistoryRequest\x1a\x16.immudb.schema.Entries\"\x00\x12\x41\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x00\x12G\n\x0c\x43urrentState\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.ImmutableState\"\x00\x12L\n\x0cSetReference\x12\x1f.immudb.schema.ReferenceRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12\x62\n\x16VerifiableSetReference\x12).immudb.schema.VerifiableReferenceRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12?\n\x04ZAdd\x12\x1a.immudb.schema.ZAddRequest\x1a\x19.immudb.schema.TxMetadata\"\x00\x12U\n\x0eVerifiableZAdd\x12$.immudb.schema.VerifiableZAddRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x00\x12?\n\x05ZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x17.immudb.schema.ZEntries\"\x00\x12\x43\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x00\x12I\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x00\x12>\n\nCleanIndex\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12T\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x42-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -45,8 +45,8 @@ _PERMISSIONACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=4109,
-  serialized_end=4150,
+  serialized_start=4121,
+  serialized_end=4162,
 )
 _sym_db.RegisterEnumDescriptor(_PERMISSIONACTION)
 
@@ -1674,22 +1674,29 @@ _IMMUTABLESTATE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='txId', full_name='immudb.schema.ImmutableState.txId', index=0,
-      number=3, type=4, cpp_type=4, label=1,
+      name='db', full_name='immudb.schema.ImmutableState.db', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='txId', full_name='immudb.schema.ImmutableState.txId', index=1,
+      number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='txHash', full_name='immudb.schema.ImmutableState.txHash', index=1,
-      number=4, type=12, cpp_type=9, label=1,
+      name='txHash', full_name='immudb.schema.ImmutableState.txHash', index=2,
+      number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='immudb.schema.ImmutableState.signature', index=2,
-      number=5, type=11, cpp_type=10, label=1,
+      name='signature', full_name='immudb.schema.ImmutableState.signature', index=3,
+      number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1707,7 +1714,7 @@ _IMMUTABLESTATE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=2857,
-  serialized_end=2948,
+  serialized_end=2960,
 )
 
 
@@ -1759,8 +1766,8 @@ _REFERENCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2950,
-  serialized_end=3036,
+  serialized_start=2962,
+  serialized_end=3048,
 )
 
 
@@ -1798,8 +1805,8 @@ _VERIFIABLEREFERENCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3038,
-  serialized_end=3147,
+  serialized_start=3050,
+  serialized_end=3159,
 )
 
 
@@ -1858,8 +1865,8 @@ _ZADDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3149,
-  serialized_end=3235,
+  serialized_start=3161,
+  serialized_end=3247,
 )
 
 
@@ -1890,8 +1897,8 @@ _SCORE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3237,
-  serialized_end=3259,
+  serialized_start=3249,
+  serialized_end=3271,
 )
 
 
@@ -1992,8 +1999,8 @@ _ZSCANREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3262,
-  serialized_end=3508,
+  serialized_start=3274,
+  serialized_end=3520,
 )
 
 
@@ -2052,8 +2059,8 @@ _HISTORYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3510,
-  serialized_end=3601,
+  serialized_start=3522,
+  serialized_end=3613,
 )
 
 
@@ -2091,8 +2098,8 @@ _VERIFIABLEZADDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3603,
-  serialized_end=3697,
+  serialized_start=3615,
+  serialized_end=3709,
 )
 
 
@@ -2123,8 +2130,8 @@ _TXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3699,
-  serialized_end=3722,
+  serialized_start=3711,
+  serialized_end=3734,
 )
 
 
@@ -2162,8 +2169,8 @@ _VERIFIABLETXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3724,
-  serialized_end=3779,
+  serialized_start=3736,
+  serialized_end=3791,
 )
 
 
@@ -2194,8 +2201,8 @@ _DATABASE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3781,
-  serialized_end=3813,
+  serialized_start=3793,
+  serialized_end=3825,
 )
 
 
@@ -2226,8 +2233,8 @@ _USEDATABASEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3815,
-  serialized_end=3848,
+  serialized_start=3827,
+  serialized_end=3860,
 )
 
 
@@ -2279,8 +2286,8 @@ _CHANGEPERMISSIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3851,
-  serialized_end=3981,
+  serialized_start=3863,
+  serialized_end=3993,
 )
 
 
@@ -2318,8 +2325,8 @@ _SETACTIVEUSERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3983,
-  serialized_end=4039,
+  serialized_start=3995,
+  serialized_end=4051,
 )
 
 
@@ -2350,8 +2357,8 @@ _DATABASELISTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4041,
-  serialized_end=4107,
+  serialized_start=4053,
+  serialized_end=4119,
 )
 
 _USER.fields_by_name['permissions'].message_type = _PERMISSION
@@ -2823,8 +2830,8 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=4153,
-  serialized_end=6485,
+  serialized_start=4165,
+  serialized_end=6497,
   methods=[
   _descriptor.MethodDescriptor(
     name='ListUsers',

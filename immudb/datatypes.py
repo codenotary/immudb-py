@@ -35,3 +35,4 @@ class GetResponse:
     tx: int
     key: bytes
     value: bytes
+

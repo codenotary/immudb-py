@@ -6,15 +6,18 @@ from immudb.rootService import RootService
 from immudb import constants, datatypes
 
 import immudb.store
+#import base64
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes):
     state = rs.get()
+    # print(base64.b64encode(state.SerializeToString()))
     kv = schema_pb2.KeyValue(key=key, value=value)
     rawRequest = schema_pb2.VerifiableSetRequest(
         setRequest = schema_pb2.SetRequest(KVs=[kv]),
         proveSinceTx= state.txId,
     )
     verifiableTx = service.VerifiableSet(rawRequest)
+    # print(base64.b64encode(verifiableTx.SerializeToString()))
     tx=immudb.store.TxFrom(verifiableTx.tx)
     inclusionProof=tx.Proof(constants.SET_KEY_PREFIX+key)
     ekv=immudb.store.EncodeKV(key, value)

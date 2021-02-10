@@ -80,3 +80,22 @@ class TestGetSet:
                 pytest.skip("Cannot reach immudb server")
         r=a.get(b"not:existing:key")
         assert r==None
+        
+    def test_set_all_get_one(self):
+        try:
+                a = ImmudbClient("localhost:3322")
+                a.login("immudb","immudb")
+        except grpc._channel._InactiveRpcError as e:
+                pytest.skip("Cannot reach immudb server")
+        kvs={}
+        for t in range(0,100):
+                value="test_sago_value_{:04d}".format(randint(0,10000))
+                while True:
+                        key="test_sago_key_{:04d}".format(randint(0,10000))
+                        if key not in kvs:
+                                break
+                kvs[key.encode('ascii')]=value.encode('ascii')
+        resp=a.setAll(kvs)
+        for k in kvs.keys():
+            ret=a.verifiedGet(k)
+            assert ret.verified

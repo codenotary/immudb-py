@@ -147,6 +147,9 @@ class KV(printable):
             valdigest=hashlib.sha256(self.value).digest()
         return hashlib.sha256(self.key+valdigest).digest()
         
+def EncodeKey(key: bytes):
+    return SET_KEY_PREFIX+key
+
 def EncodeKV(key: bytes, value: bytes):
     return KV(SET_KEY_PREFIX+key,PLAIN_VALUE_PREFIX+value)
 
@@ -197,8 +200,8 @@ def VerifyInclusion(proof, digest: bytes, root) -> bool:
         else:
             b=b+t+calcRoot
         calcRoot=hashlib.sha256(b).digest()
-        i=i/2
-        r=r/2
+        i=i//2
+        r=r//2
     return i==r and root==calcRoot
 
 def leafFor(d:bytes)->bytes:

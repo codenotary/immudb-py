@@ -6,12 +6,18 @@ from immudb.exceptions import VerificationException
 
 
 import sys
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx:int=None):
     state = rs.get()
-    req = schema_pb2.VerifiableGetRequest(
-        keyRequest= schema_pb2.KeyRequest(key=requestkey),
-        proveSinceTx= state.txId
-        )
+    if atTx==None:
+        req = schema_pb2.VerifiableGetRequest(
+            keyRequest= schema_pb2.KeyRequest(key=requestkey),
+            proveSinceTx= state.txId
+            )
+    else:
+        req = schema_pb2.VerifiableGetRequest(
+            keyRequest= schema_pb2.KeyRequest(key=requestkey, atTx=atTx),
+            proveSinceTx= state.txId
+            )
     ventry=service.VerifiableGet(req)
     inclusionProof = htree.InclusionProofFrom(ventry.inclusionProof)
     dualProof = htree.DualProofFrom(ventry.verifiableTx.dualProof)

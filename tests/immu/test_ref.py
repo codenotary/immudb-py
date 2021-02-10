@@ -15,10 +15,15 @@ def test_reference():
         pytest.skip("Cannot reach immudb server")
     k="reftest.key."+get_random_string(16)
     v=get_random_string(32)
-    r="reftest.reference."+get_random_string(16)
+    r1="reftest.reference."+get_random_string(16)
+    r2="reftest.reference."+get_random_string(16)
     setresp=a.verifiedSet(k.encode('ascii'),v.encode('ascii'))
-    a.reference(k.encode('ascii'),r.encode('ascii'))
-    referred=a.verifiedGet(r.encode('ascii'))
+    a.setReference(k.encode('ascii'),r1.encode('ascii'))
+    a.verifiedSetReference(k.encode('ascii'),r2.encode('ascii'))
+    referred1=a.verifiedGet(r1.encode('ascii'))
+    referred2=a.verifiedGet(r1.encode('ascii'))
     original=a.verifiedGet(k.encode('ascii'))
-    assert original.key==referred.key
-    assert original.value==referred.value
+    assert original.key==referred1.key
+    assert original.value==referred1.value
+    assert original.key==referred2.key
+    assert original.value==referred2.value

@@ -5,7 +5,8 @@ from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           currentRoot, databaseCreate, databaseList, databaseUse, 
                           get, listUsers, verifiedGet, verifiedSet, setValue, history, 
-                          scan, reference, zadd, verifiedzadd, zscan)
+                          scan, reference, verifiedreference, zadd, verifiedzadd, 
+                          zscan, healthcheck, txbyid, verifiedtxbyid)
 from immudb.rootService import RootService
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -71,6 +72,10 @@ class ImmudbClient:
     @property
     def stub(self):
         return self.__stub
+    
+    def healthCheck(self):
+        return healthcheck.call(self.__stub, self.__rs)
+        
 
     def get(self, key: bytes):
         return get.call(self.__stub, self.__rs, key)
@@ -93,6 +98,9 @@ class ImmudbClient:
     
     def verifiedGet(self, key: bytes):
         return verifiedGet.call(self.__stub, self.__rs, key)
+    
+    def verifiedGetAt(self, key: bytes, atTx:int):
+        return verifiedGet.call(self.__stub, self.__rs, key, atTx)
 
     def safeSet(self, key: bytes, value: bytes):
         warnings.warn("Call to deprecated safeSet. Use verifiedSet instead",
@@ -152,7 +160,7 @@ class ImmudbClient:
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
         return databaseCreate.call(self.__stub, self.__rs, request)
 
-    def currentRoot(self):
+    def currentState(self):
         return currentRoot.call(self.__stub, self.__rs, None)
 
     def history(self, key: bytes, offset: int, limit: int, sortorder: bool):
@@ -165,15 +173,17 @@ class ImmudbClient:
     def scan(self, key:bytes, prefix:bytes, desc:bool, limit:int,sinceTx:int=None):
         return scan.call(self.__stub, self.__rs, key, prefix, desc, limit, sinceTx)
     
-    def reference(self, referredkey: bytes, newkey:  bytes):
+    def setReference(self, referredkey: bytes, newkey:  bytes):
         return reference.call(self.__stub, self.__rs, referredkey, newkey)
+    
+    def verifiedSetReference(self, referredkey: bytes, newkey:  bytes):
+        return verifiedreference.call(self.__stub, self.__rs, referredkey, newkey)
     
     def zAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
         return zadd.call(self.__stub, self.__rs, zset, score, key, atTx)
     
     def verifiedZAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
         return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx)
-    
     
     def zScan(self, zset:bytes, seekKey:bytes, seekScore:float,
                           seekAtTx:int, inclusive: bool, limit:int, desc:bool, minscore:float,
@@ -182,3 +192,10 @@ class ImmudbClient:
                           seekAtTx, inclusive, limit, desc, minscore,
                           maxscore, sinceTx, nowait)
                           
+    def txById(self, tx:int):
+        return txbyid.call(self.__stub, self.__rs, tx)
+    
+    def verifiedTxById(self, tx:int):
+        return verifiedtxbyid.call(self.__stub, self.__rs, tx)
+    
+        
