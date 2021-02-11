@@ -64,7 +64,7 @@ class HTree:
     def InclusionProof(self, i):
         if i>=self.width:
             raise ErrIllegalArguments
-        m=0
+        m=i
         n=self.width
         offset=0
         proof=InclusionProof()
