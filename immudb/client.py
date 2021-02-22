@@ -4,13 +4,12 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           currentRoot, databaseCreate, databaseList, databaseUse, 
-                          get, listUsers, safeGet, safeSet, setValue, history, 
-                          scan, reference)
+                          get, listUsers, verifiedGet, verifiedSet, setValue, history, 
+                          scan, reference, verifiedreference, zadd, verifiedzadd, 
+                          zscan, healthcheck, txbyid, verifiedtxbyid)
 from immudb.rootService import RootService
 from immudb.grpc import schema_pb2_grpc
-
-OLDEST_FIRST=True
-NEWEST_FIRST=False
+import warnings
 
 class ImmudbClient:
     def __init__(self, immudUrl=None):
@@ -52,6 +51,7 @@ class ImmudbClient:
         self.channel = None
         self.intercept_channel.close
         self.intercept_channel = None
+        self.__rs = None
 
     def set_token_header_interceptor(self, response):
         try:
@@ -72,42 +72,56 @@ class ImmudbClient:
     @property
     def stub(self):
         return self.__stub
+    
+    def healthCheck(self):
+        return healthcheck.call(self.__stub, self.__rs)
+        
 
     def get(self, key: bytes):
-        request = schema_pb2_grpc.schema__pb2.Key(key=key)
-        return get.call(self.__stub, self.__rs, request)
+        return get.call(self.__stub, self.__rs, key)
+    
+    def getValue(self, key: bytes):
+        ret=get.call(self.__stub, self.__rs, key)
+        if ret==None:
+            return None
+        return ret.value
 
     def set(self, key: bytes, value: bytes):
-        request = schema_pb2_grpc.schema__pb2.KeyValue(key=key, value=value)
-        return setValue.call(self.__stub, self.__rs, request)
+        return setValue.call(self.__stub, self.__rs, key, value)
 
     def safeGet(self, key: bytes):
-        request = schema_pb2_grpc.schema__pb2.SafeGetOptions(key=key)
-        return safeGet.call(self.__stub, self.__rs, request)
+        warnings.warn("Call to deprecated safeGet. Use verifiedGet instead",
+            category=DeprecationWarning,
+            stacklevel=2
+            )
+        return verifiedGet.call(self.__stub, self.__rs, key)
+    
+    def verifiedGet(self, key: bytes):
+        return verifiedGet.call(self.__stub, self.__rs, key)
+    
+    def verifiedGetAt(self, key: bytes, atTx:int):
+        return verifiedGet.call(self.__stub, self.__rs, key, atTx)
 
     def safeSet(self, key: bytes, value: bytes):
-        request = schema_pb2_grpc.schema__pb2.SafeSetOptions(
-            kv={"key": key, "value": value})
-        return safeSet.call(self.__stub, self.__rs, request)
+        warnings.warn("Call to deprecated safeSet. Use verifiedSet instead",
+            category=DeprecationWarning,
+            stacklevel=2
+            )
+        return verifiedSet.call(self.__stub, self.__rs, key, value)
+    
+    def verifiedSet(self, key: bytes, value: bytes):
+        return verifiedSet.call(self.__stub, self.__rs, key, value)
 
-    def getAllItems(self, keys: list):
-        klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
-        request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
-        return batchGet.call(self.__stub, self.__rs, request)
-
-    def getAll(self, keys: list):
-        klist = [schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
-        request = schema_pb2_grpc.schema__pb2.KeyList(keys=klist)
-        resp = batchGet.call(self.__stub, self.__rs, request)
+    def getAllValues(self, keys: list):
+        resp = batchGet.call(self.__stub, self.__rs, keys)
         return resp
 
+    def getAll(self, keys: list):
+        resp = batchGet.call(self.__stub, self.__rs, keys)
+        return {key:value.value for key, value in resp.items()}
+
     def setAll(self, kv: dict):
-        _KVs = []
-        for i in kv.keys():
-            _KVs.append(schema_pb2_grpc.schema__pb2.KeyValue(
-                key=i, value=kv[i]))
-        request = schema_pb2_grpc.schema__pb2.KVList(KVs=_KVs)
-        return batchSet.call(self.__stub, self.__rs, request)
+        return batchSet.call(self.__stub, self.__rs, kv)
 
     def changePassword(self, user, newPassword, oldPassword):
         request = schema_pb2_grpc.schema__pb2.ChangePasswordRequest(
@@ -130,7 +144,8 @@ class ImmudbClient:
         return listUsers.call(self.__stub, None)
     
     def databaseList(self):
-        return databaseList.call(self.__stub, self.__rs, None)
+        dbs=databaseList.call(self.__stub, self.__rs, None)
+        return [x.databasename for x in dbs.dblist.databases]
 
     def databaseUse(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
@@ -145,65 +160,42 @@ class ImmudbClient:
         request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
         return databaseCreate.call(self.__stub, self.__rs, request)
 
-    def currentRoot(self):
+    def currentState(self):
         return currentRoot.call(self.__stub, self.__rs, None)
 
     def history(self, key: bytes, offset: int, limit: int, sortorder: bool):
-        request = schema_pb2_grpc.schema__pb2.HistoryOptions(
-                key=key,
-                offset=offset,
-                limit=limit,
-                reverse=sortorder
-                )
-        return history.call(self.__stub, self.__rs, request)
+        return history.call(self.__stub, self.__rs, key, offset, limit, sortorder)
 
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__login_response = None
-
-    def scan(self, prefix: bytes, offset: bytes, limit:int=10, reverse:bool=False, deep:bool=False):
-        request = schema_pb2_grpc.schema__pb2.ScanOptions(
-            prefix=prefix,
-            offset=offset,
-            limit=limit,
-            reverse=reverse,
-            deep=deep)
-        return scan.call(self.__stub, self.__rs, request)
-    
-    def reference(self, refkey: bytes, key:  bytes):
-        request = schema_pb2_grpc.schema__pb2.ReferenceOptions(
-            reference = refkey,
-            key=key
-            )
-        return reference.call(self.__stub, self.__rs, request)
-
-    
-    def zadd(self):
-        pass
-    
-    def zscan(self):
-        pass
         
-
+    def scan(self, key:bytes, prefix:bytes, desc:bool, limit:int,sinceTx:int=None):
+        return scan.call(self.__stub, self.__rs, key, prefix, desc, limit, sinceTx)
+    
+    def setReference(self, referredkey: bytes, newkey:  bytes):
+        return reference.call(self.__stub, self.__rs, referredkey, newkey)
+    
+    def verifiedSetReference(self, referredkey: bytes, newkey:  bytes):
+        return verifiedreference.call(self.__stub, self.__rs, referredkey, newkey)
+    
+    def zAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
+        return zadd.call(self.__stub, self.__rs, zset, score, key, atTx)
+    
+    def verifiedZAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
+        return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx)
+    
+    def zScan(self, zset:bytes, seekKey:bytes, seekScore:float,
+                          seekAtTx:int, inclusive: bool, limit:int, desc:bool, minscore:float,
+                          maxscore:float, sinceTx=None, nowait=False):
+        return zscan.call(self.__stub, self.__rs, zset, seekKey, seekScore,
+                          seekAtTx, inclusive, limit, desc, minscore,
+                          maxscore, sinceTx, nowait)
+                          
+    def txById(self, tx:int):
+        return txbyid.call(self.__stub, self.__rs, tx)
+    
+    def verifiedTxById(self, tx:int):
+        return verifiedtxbyid.call(self.__stub, self.__rs, tx)
+    
         
-    def scan(self, prefix: bytes, offset: bytes, limit:int=10, reverse:bool=False, deep:bool=False):
-        request = schema_pb2_grpc.schema__pb2.ScanOptions(
-            prefix=prefix,
-            offset=offset,
-            limit=limit,
-            reverse=reverse,
-            deep=deep)
-        return scan.call(self.__stub, self.__rs, request)
-    
-    def reference(self, refkey: bytes, key:  bytes):
-        request = schema_pb2_grpc.schema__pb2.ReferenceOptions(
-            reference = refkey,
-            key=key
-            )
-        return reference.call(self.__stub, self.__rs, request)
-    
-    def zadd(self):
-        pass
-    
-    def zscan(self):
-        pass

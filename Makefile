@@ -4,6 +4,11 @@ SHELL := /bin/bash
 PYTEST ?= python -m pytest
 PIP ?= pip
 COVERAGE ?= $(shell which coverage)
+ifndef VIRTUAL_ENV
+USERFLAG="--user"
+else
+USERFLAG=
+endif
 
 all: init test
 
@@ -11,10 +16,10 @@ proto: immudb/grpc
 	make -C immudb/grpc
 
 init:
-	$(PIP) install -r requirements.txt --user
+	$(PIP) install -r requirements.txt $(USERFLAG)
 
 dev:
-	$(PIP) install -r requirements-dev.txt --user
+	$(PIP) install -r requirements-dev.txt $(USERFLAG)
 
 test:
 	$(PYTEST) -vv --color=yes tests/

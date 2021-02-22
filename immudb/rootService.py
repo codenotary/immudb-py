@@ -10,13 +10,13 @@ class RootService:
         self.__service = service
 
     def init(self):
-        root = self.__service.CurrentRoot(google_dot_protobuf_dot_empty__pb2.Empty())
-        self.__cache=root.payload
+        state = self.__service.CurrentState(google_dot_protobuf_dot_empty__pb2.Empty())
+        self.__cache=state
 
-    def get(self) -> schema_pb2.RootIndex:
+    def get(self) -> schema_pb2.ImmutableState:
         if self.__cache==None:
             self.init()
         return self.__cache
 
-    def set(self, root: schema_pb2.RootIndex):
+    def set(self, root: schema_pb2.ImmutableState):
         self.__cache=root

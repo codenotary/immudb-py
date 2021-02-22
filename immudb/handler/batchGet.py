@@ -5,19 +5,22 @@ from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 
 @dataclass
-class batchGetResponse:
-    #keylist: schema_pb2.KeyList
-    itemlist: schema_pb2.ItemList
+class batchElement:
+    tx: int
+    key: bytes
+    value: bytes
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: schema_pb2.KeyList):
-    rawRequest = schema_pb2.KeyList(
-        keys = request.keys
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, keys: list):
+    request = schema_pb2.KeyListRequest(
+        keys = keys#[schema_pb2_grpc.schema__pb2.Key(key=k) for k in keys]
     )
-
-    msg = service.GetBatch(rawRequest)
+    msg = service.GetAll(request)
     ret={}
-    for i in msg.items:
-	    content=schema_pb2.Content()
-	    content.ParseFromString(i.value)
-	    ret[i.key]=content.payload
+    for i in msg.entries:
+        element=batchElement(
+            tx=i.tx,
+            key=i.key,
+            value=i.value
+            )
+        ret[i.key]=element
     return ret
