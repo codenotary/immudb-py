@@ -1,11 +1,22 @@
+# Copyright 2021 CodeNotary, Inc. All rights reserved.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#       http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from time import time
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import constants, datatypes
+from immudb import constants, datatypes, store, htree
 
-import immudb.store
 #import base64
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes):
@@ -18,25 +29,25 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     )
     verifiableTx = service.VerifiableSet(rawRequest)
     # print(base64.b64encode(verifiableTx.SerializeToString()))
-    tx=immudb.store.TxFrom(verifiableTx.tx)
+    tx=store.TxFrom(verifiableTx.tx)
     inclusionProof=tx.Proof(constants.SET_KEY_PREFIX+key)
-    ekv=immudb.store.EncodeKV(key, value)
-    verifies=immudb.store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
+    ekv=store.EncodeKV(key, value)
+    verifies=store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
     if not verifies:
         raise VerificationException
-    if tx.eh() != immudb.store.DigestFrom(verifiableTx.dualProof.targetTxMetadata.eH):
+    if tx.eh() != store.DigestFrom(verifiableTx.dualProof.targetTxMetadata.eH):
         raise VerificationException
     if state.txId == 0:
         sourceID = tx.ID
         sourceAlh = tx.Alh
     else:
         sourceID = state.txId
-        sourceAlh = immudb.store.DigestFrom(state.txHash)
+        sourceAlh = store.DigestFrom(state.txHash)
     targetID = tx.ID
     targetAlh = tx.Alh
 
-    verifies = immudb.store.VerifyDualProof(
-            immudb.htree.DualProofFrom(verifiableTx.dualProof),
+    verifies = store.VerifyDualProof(
+            htree.DualProofFrom(verifiableTx.dualProof),
             sourceID,
             targetID,
             sourceAlh,
@@ -44,19 +55,16 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     )
     if not verifies:
         raise VerificationException
-    state=schema_pb2.ImmutableState(
+    newstate=datatypes.State(
+            db       = state.db,
             txId=      targetID,
             txHash=    targetAlh,
-            signature= verifiableTx.signature,
+            publicKey= verifiableTx.signature.publicKey,
+            signature= verifiableTx.signature.signature,
             )
-    rs.set(state)
+    rs.set(newstate)
     return datatypes.SetResponse(
         id=verifiableTx.tx.metadata.id,
-        prevAlh=verifiableTx.tx.metadata.prevAlh,
-        timestamp=verifiableTx.tx.metadata.ts,
-        eh=verifiableTx.tx.metadata.eH,
-        blTxId=verifiableTx.tx.metadata.blTxId,
-        blRoot=verifiableTx.tx.metadata.blRoot,
         verified=verifies,
     )
     

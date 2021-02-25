@@ -1,3 +1,15 @@
+# Copyright 2021 CodeNotary, Inc. All rights reserved.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#       http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
@@ -7,18 +19,21 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           get, listUsers, verifiedGet, verifiedSet, setValue, history, 
                           scan, reference, verifiedreference, zadd, verifiedzadd, 
                           zscan, healthcheck, txbyid, verifiedtxbyid)
-from immudb.rootService import RootService
+from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
 
 class ImmudbClient:
-    def __init__(self, immudUrl=None):
+    def __init__(self, immudUrl=None, rs:RootService=None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
-        self.__rs = None
-
+        if rs==None:
+            self.__rs=RootService()
+        else:
+            self.__rs=rs
+            
     def login(self, username, password, database=b"defaultdb"):
         req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(
             username, encoding='utf-8'), password=bytes(
@@ -38,13 +53,12 @@ class ImmudbClient:
         resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
 
-        self.init()
+        #self.init()
+        self.__rs.init(database, self.__stub)
         return self.__login_response
 
     def init(self):
-        rs = RootService(self.__stub)
-        rs.init()
-        self.__rs = rs
+        pass #self.__rs.init(self.__stub)
 
     def shutdown(self):
         self.channel.close()
@@ -152,8 +166,7 @@ class ImmudbClient:
         resp = databaseUse.call(self.__stub, self.__rs, request)
         # modify header token accordingly
         self.__stub = self.set_token_header_interceptor(resp)
-        self.__rs = RootService(self.__stub)
-        self.__rs.init()
+        self.__rs.init(dbName, self.__stub)
         return resp
 
     def databaseCreate(self, dbName: bytes):

@@ -1,3 +1,15 @@
+# Copyright 2021 CodeNotary, Inc. All rights reserved.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#       http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from dataclasses import dataclass
 
 from immudb.grpc import schema_pb2
@@ -47,18 +59,15 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, 
     if not verifies:
         raise VerificationException
 
-    state=schema_pb2.ImmutableState(
-            txId=      targetID,
-            txHash=    targetAlh,
-            signature= vtx.signature,
+    newstate=datatypes.State(
+            db       = state.db,
+            txId     = targetID,
+            txHash   = targetAlh,
+            publicKey= vtx.signature.publicKey,
+            signature= vtx.signature.signature,
             )
-    rs.set(state)
+    rs.set(newstate)
     return datatypes.SetResponse(
         id=vtx.tx.metadata.id,
-        prevAlh=vtx.tx.metadata.prevAlh,
-        timestamp=vtx.tx.metadata.ts,
-        eh=vtx.tx.metadata.eH,
-        blTxId=vtx.tx.metadata.blTxId,
-        blRoot=vtx.tx.metadata.blRoot,
         verified=True,
     )
