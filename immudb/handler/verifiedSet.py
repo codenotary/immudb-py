@@ -14,12 +14,12 @@ from time import time
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
-from immudb.rootService import RootService
+from immudb.rootService import RootService, State
 from immudb import constants, datatypes, store, htree
 
 #import base64
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes, verifying_key=None):
     state = rs.get()
     # print(base64.b64encode(state.SerializeToString()))
     kv = schema_pb2.KeyValue(key=key, value=value)
@@ -55,13 +55,15 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     )
     if not verifies:
         raise VerificationException
-    newstate=datatypes.State(
+    newstate=State(
             db       = state.db,
             txId=      targetID,
             txHash=    targetAlh,
             publicKey= verifiableTx.signature.publicKey,
             signature= verifiableTx.signature.signature,
             )
+    if verifying_key!=None:
+        newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
         id=verifiableTx.tx.metadata.id,

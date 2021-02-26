@@ -11,6 +11,7 @@
 # limitations under the License.
 
 from dataclasses import dataclass
+import struct
 
 @dataclass
 class SetResponse:
@@ -38,21 +39,4 @@ class GetResponse:
     key: bytes
     value: bytes
 
-@dataclass
-class State(object):
-    db: str
-    txId: int
-    txHash: bytes
-    publicKey: bytes
-    signature: bytes
-    @staticmethod
-    def FromGrpc(grpcState):
-        rs=State(
-            db=grpcState.db,
-            txId=grpcState.txId,
-            txHash=grpcState.txHash,
-            publicKey=grpcState.signature.publicKey,
-            signature=grpcState.signature.signature,
-            )
-        return rs
 

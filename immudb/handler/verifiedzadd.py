@@ -14,12 +14,12 @@ from dataclasses import dataclass
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
-from immudb.rootService import RootService
+from immudb.rootService import RootService, State
 from immudb.exceptions import VerificationException
 from immudb import datatypes
 import immudb.store
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, score:float, key:bytes, atTx:int=0):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, score:float, key:bytes, atTx:int=0, verifying_key=None):
     state = rs.get()
     request=schema_pb2.VerifiableZAddRequest(
         zAddRequest=schema_pb2.ZAddRequest(
@@ -59,13 +59,15 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, 
     if not verifies:
         raise VerificationException
 
-    newstate=datatypes.State(
+    newstate=State(
             db       = state.db,
             txId     = targetID,
             txHash   = targetAlh,
             publicKey= vtx.signature.publicKey,
             signature= vtx.signature.signature,
             )
+    if verifying_key!=None:
+        newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
         id=vtx.tx.metadata.id,

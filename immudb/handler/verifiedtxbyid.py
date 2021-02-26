@@ -14,10 +14,10 @@ from dataclasses import dataclass
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
-from immudb.rootService import RootService
+from immudb.rootService import RootService, State
 from immudb import datatypes, htree, store, exceptions
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx:int):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx:int, verifying_key=None):
     state = rs.get()
     request=schema_pb2.VerifiableTxRequest(
         tx=tx,
@@ -48,13 +48,15 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx:int):
         targetalh)
     if not verifies:
         raise exceptions.VerificationException
-    newstate=datatypes.State(
+    newstate=State(
             db       = state.db,
             txId     = targetid,
             txHash   = targetalh,
             publicKey= vtx.signature.publicKey,
             signature= vtx.signature.signature,
             )
+    if verifying_key!=None:
+        newstate.Verify(verifying_key)
     rs.set(newstate)
 
     ret=[]

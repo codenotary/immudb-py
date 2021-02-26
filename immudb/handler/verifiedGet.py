@@ -12,13 +12,12 @@
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
-from immudb.rootService import RootService
+from immudb.rootService import RootService, State
 from immudb import constants, htree, store, datatypes
 from immudb.exceptions import VerificationException
 
-
 import sys
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx:int=None):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx:int=None, verifying_key=None):
     state = rs.get()
     if atTx==None:
         req = schema_pb2.VerifiableGetRequest(
@@ -65,18 +64,21 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         targetalh)
     if not verifies:
         raise VerificationException
-    newstate=datatypes.State(
+    newstate=State(
             db       = state.db,
             txId     = targetid,
             txHash   = targetalh,
             publicKey= ventry.verifiableTx.signature.publicKey,
             signature= ventry.verifiableTx.signature.signature,
             )
+    if verifying_key!=None:
+        newstate.Verify(verifying_key)
     rs.set(newstate)
     if ventry.entry.referencedBy!=None and ventry.entry.referencedBy.key!=b'':
         refkey=ventry.entry.referencedBy.key
     else:
         refkey=None
+        
     return datatypes.SafeGetResponse(
         id=vTx,
         key=ventry.entry.key,

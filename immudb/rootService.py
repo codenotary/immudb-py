@@ -13,10 +13,35 @@
 from immudb import constants
 from immudb.grpc import schema_pb2, schema_pb2_grpc
 from google.protobuf import empty_pb2 as g_empty
-import pickle, os.path
-from immudb.datatypes import State    
+import pickle, os.path, hashlib, ecdsa, ecdsa.util, struct
+from dataclasses import dataclass
 
 _statefile=constants.ROOT_CACHE_PATH
+
+
+@dataclass
+class State(object):
+    db: str
+    txId: int
+    txHash: bytes
+    publicKey: bytes
+    signature: bytes
+    @staticmethod
+    def FromGrpc(grpcState):
+        rs=State(
+            db=grpcState.db,
+            txId=grpcState.txId,
+            txHash=grpcState.txHash,
+            publicKey=grpcState.signature.publicKey,
+            signature=grpcState.signature.signature,
+            )
+        return rs
+    def Hash(self):
+        b=struct.pack(">I",len(self.db))+self.db.encode('utf8')
+        b+=struct.pack(">Q",self.txId)+self.txHash
+        return b
+    def Verify(self, verifying_key):
+        verifying_key.verify(self.signature, self.Hash(), hashlib.sha256, sigdecode=ecdsa.util.sigdecode_der)
 
 
 # Sample reference implementation, with no state persistance on disk.

@@ -21,10 +21,10 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                           zscan, healthcheck, txbyid, verifiedtxbyid)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
-import warnings
+import warnings, ecdsa
 
 class ImmudbClient:
-    def __init__(self, immudUrl=None, rs:RootService=None):
+    def __init__(self, immudUrl=None, rs:RootService=None, publicKeyFile:str=None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
@@ -33,6 +33,16 @@ class ImmudbClient:
             self.__rs=RootService()
         else:
             self.__rs=rs
+        self.__url=immudUrl
+        self.loadKey(publicKeyFile)
+        
+    def loadKey(self, kfile: str):
+        if kfile==None:
+            self.__vk = None
+        else:
+            with open(kfile) as f:
+                self.__vk = ecdsa.VerifyingKey.from_pem(f.read())
+
             
     def login(self, username, password, database=b"defaultdb"):
         req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(
@@ -53,12 +63,8 @@ class ImmudbClient:
         resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
 
-        #self.init()
-        self.__rs.init(database, self.__stub)
+        self.__rs.init("%s/%s".format(self.__url,database), self.__stub)
         return self.__login_response
-
-    def init(self):
-        pass #self.__rs.init(self.__stub)
 
     def shutdown(self):
         self.channel.close()
@@ -108,13 +114,13 @@ class ImmudbClient:
             category=DeprecationWarning,
             stacklevel=2
             )
-        return verifiedGet.call(self.__stub, self.__rs, key)
+        return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
     
     def verifiedGet(self, key: bytes):
-        return verifiedGet.call(self.__stub, self.__rs, key)
+        return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
     
     def verifiedGetAt(self, key: bytes, atTx:int):
-        return verifiedGet.call(self.__stub, self.__rs, key, atTx)
+        return verifiedGet.call(self.__stub, self.__rs, key, atTx, self.__vk)
 
     def safeSet(self, key: bytes, value: bytes):
         warnings.warn("Call to deprecated safeSet. Use verifiedSet instead",
@@ -124,7 +130,7 @@ class ImmudbClient:
         return verifiedSet.call(self.__stub, self.__rs, key, value)
     
     def verifiedSet(self, key: bytes, value: bytes):
-        return verifiedSet.call(self.__stub, self.__rs, key, value)
+        return verifiedSet.call(self.__stub, self.__rs, key, value, self.__vk)
 
     def getAllValues(self, keys: list):
         resp = batchGet.call(self.__stub, self.__rs, keys)
@@ -190,13 +196,13 @@ class ImmudbClient:
         return reference.call(self.__stub, self.__rs, referredkey, newkey)
     
     def verifiedSetReference(self, referredkey: bytes, newkey:  bytes):
-        return verifiedreference.call(self.__stub, self.__rs, referredkey, newkey)
+        return verifiedreference.call(self.__stub, self.__rs, referredkey, newkey, verifying_key=self.__vk)
     
     def zAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
         return zadd.call(self.__stub, self.__rs, zset, score, key, atTx)
     
     def verifiedZAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
-        return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx)
+        return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx, self.__vk)
     
     def zScan(self, zset:bytes, seekKey:bytes, seekScore:float,
                           seekAtTx:int, inclusive: bool, limit:int, desc:bool, minscore:float,
@@ -209,6 +215,6 @@ class ImmudbClient:
         return txbyid.call(self.__stub, self.__rs, tx)
     
     def verifiedTxById(self, tx:int):
-        return verifiedtxbyid.call(self.__stub, self.__rs, tx)
+        return verifiedtxbyid.call(self.__stub, self.__rs, tx, self.__vk)
     
         
