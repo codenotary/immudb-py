@@ -246,6 +246,7 @@ Let's see a simple example that uses state persistance:
 ```python
 from immudb.client import ImmudbClient, PersistentRootService
 client=ImmudbClient(rs=PersistentRootService())
+client.login(username="immudb", password="immudb")
 client.verifiedTxById(42)
 client.verifiedGet(b"example")
 ```
