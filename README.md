@@ -6,7 +6,7 @@
 
 ## Official [immudb] client for Python.
 
-[immudb]: https://grpc.io/
+[immudb]: https://immudb.io
 
 ## Contents
 
