@@ -23,7 +23,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: |
-          pip install -e .
+          make init
+          make dev
       - name: Run tests
         run: |
           make test
