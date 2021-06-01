@@ -1,18 +1,29 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - '**'
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
+    services:
+      immudb:
+        image: codenotary/immudb:latest
+        ports:
+        - 3322:3322
+        options: --health-cmd "immuadmin status" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/setup-python@v1
         with:
           python-version: '3.8'
           architecture: 'x64'
       - uses: actions/checkout@v1
-      - name: Init
-        run: make init
-      - name: Dev init
-        run: make dev
-      - name: Test
-        run: make test
+      - name: Install dependencies
+        run: |
+          pip install -e .
+      - name: Run tests
+        run: |
+          make test
