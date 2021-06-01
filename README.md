@@ -10,7 +10,7 @@
 
 [![screenshot](playground.png)](https://play.codenotary.com)
 
-[immudb]: https://grpc.io/
+[immudb]: https://immudb.io
 
 ## Contents
 
