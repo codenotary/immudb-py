@@ -3,7 +3,7 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from . import schema_pb2 as schema__pb2
+import schema_pb2 as schema__pb2
 
 
 class ImmuServiceStub(object):
@@ -107,6 +107,11 @@ class ImmuServiceStub(object):
                 request_serializer=schema__pb2.VerifiableTxRequest.SerializeToString,
                 response_deserializer=schema__pb2.VerifiableTx.FromString,
                 )
+        self.TxScan = channel.unary_unary(
+                '/immudb.schema.ImmuService/TxScan',
+                request_serializer=schema__pb2.TxScanRequest.SerializeToString,
+                response_deserializer=schema__pb2.TxList.FromString,
+                )
         self.History = channel.unary_unary(
                 '/immudb.schema.ImmuService/History',
                 request_serializer=schema__pb2.HistoryRequest.SerializeToString,
@@ -176,6 +181,76 @@ class ImmuServiceStub(object):
                 '/immudb.schema.ImmuService/SetActiveUser',
                 request_serializer=schema__pb2.SetActiveUserRequest.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.streamGet = channel.unary_stream(
+                '/immudb.schema.ImmuService/streamGet',
+                request_serializer=schema__pb2.KeyRequest.SerializeToString,
+                response_deserializer=schema__pb2.Chunk.FromString,
+                )
+        self.streamSet = channel.stream_unary(
+                '/immudb.schema.ImmuService/streamSet',
+                request_serializer=schema__pb2.Chunk.SerializeToString,
+                response_deserializer=schema__pb2.TxMetadata.FromString,
+                )
+        self.streamVerifiableGet = channel.unary_stream(
+                '/immudb.schema.ImmuService/streamVerifiableGet',
+                request_serializer=schema__pb2.VerifiableGetRequest.SerializeToString,
+                response_deserializer=schema__pb2.Chunk.FromString,
+                )
+        self.streamVerifiableSet = channel.stream_unary(
+                '/immudb.schema.ImmuService/streamVerifiableSet',
+                request_serializer=schema__pb2.Chunk.SerializeToString,
+                response_deserializer=schema__pb2.VerifiableTx.FromString,
+                )
+        self.streamScan = channel.unary_stream(
+                '/immudb.schema.ImmuService/streamScan',
+                request_serializer=schema__pb2.ScanRequest.SerializeToString,
+                response_deserializer=schema__pb2.Chunk.FromString,
+                )
+        self.streamZScan = channel.unary_stream(
+                '/immudb.schema.ImmuService/streamZScan',
+                request_serializer=schema__pb2.ZScanRequest.SerializeToString,
+                response_deserializer=schema__pb2.Chunk.FromString,
+                )
+        self.streamHistory = channel.unary_stream(
+                '/immudb.schema.ImmuService/streamHistory',
+                request_serializer=schema__pb2.HistoryRequest.SerializeToString,
+                response_deserializer=schema__pb2.Chunk.FromString,
+                )
+        self.streamExecAll = channel.stream_unary(
+                '/immudb.schema.ImmuService/streamExecAll',
+                request_serializer=schema__pb2.Chunk.SerializeToString,
+                response_deserializer=schema__pb2.TxMetadata.FromString,
+                )
+        self.UseSnapshot = channel.unary_unary(
+                '/immudb.schema.ImmuService/UseSnapshot',
+                request_serializer=schema__pb2.UseSnapshotRequest.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.SQLExec = channel.unary_unary(
+                '/immudb.schema.ImmuService/SQLExec',
+                request_serializer=schema__pb2.SQLExecRequest.SerializeToString,
+                response_deserializer=schema__pb2.SQLExecResult.FromString,
+                )
+        self.SQLQuery = channel.unary_unary(
+                '/immudb.schema.ImmuService/SQLQuery',
+                request_serializer=schema__pb2.SQLQueryRequest.SerializeToString,
+                response_deserializer=schema__pb2.SQLQueryResult.FromString,
+                )
+        self.ListTables = channel.unary_unary(
+                '/immudb.schema.ImmuService/ListTables',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=schema__pb2.SQLQueryResult.FromString,
+                )
+        self.DescribeTable = channel.unary_unary(
+                '/immudb.schema.ImmuService/DescribeTable',
+                request_serializer=schema__pb2.Table.SerializeToString,
+                response_deserializer=schema__pb2.SQLQueryResult.FromString,
+                )
+        self.VerifiableSQLGet = channel.unary_unary(
+                '/immudb.schema.ImmuService/VerifiableSQLGet',
+                request_serializer=schema__pb2.VerifiableSQLGetRequest.SerializeToString,
+                response_deserializer=schema__pb2.VerifiableSQLEntry.FromString,
                 )
 
 
@@ -292,6 +367,12 @@ class ImmuServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def TxScan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def History(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -371,6 +452,92 @@ class ImmuServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def SetActiveUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamGet(self, request, context):
+        """Streams
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamSet(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamVerifiableGet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamVerifiableSet(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamScan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamZScan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamHistory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def streamExecAll(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UseSnapshot(self, request, context):
+        """SQL
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SQLExec(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SQLQuery(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListTables(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DescribeTable(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def VerifiableSQLGet(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -469,6 +636,11 @@ def add_ImmuServiceServicer_to_server(servicer, server):
                     request_deserializer=schema__pb2.VerifiableTxRequest.FromString,
                     response_serializer=schema__pb2.VerifiableTx.SerializeToString,
             ),
+            'TxScan': grpc.unary_unary_rpc_method_handler(
+                    servicer.TxScan,
+                    request_deserializer=schema__pb2.TxScanRequest.FromString,
+                    response_serializer=schema__pb2.TxList.SerializeToString,
+            ),
             'History': grpc.unary_unary_rpc_method_handler(
                     servicer.History,
                     request_deserializer=schema__pb2.HistoryRequest.FromString,
@@ -538,6 +710,76 @@ def add_ImmuServiceServicer_to_server(servicer, server):
                     servicer.SetActiveUser,
                     request_deserializer=schema__pb2.SetActiveUserRequest.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'streamGet': grpc.unary_stream_rpc_method_handler(
+                    servicer.streamGet,
+                    request_deserializer=schema__pb2.KeyRequest.FromString,
+                    response_serializer=schema__pb2.Chunk.SerializeToString,
+            ),
+            'streamSet': grpc.stream_unary_rpc_method_handler(
+                    servicer.streamSet,
+                    request_deserializer=schema__pb2.Chunk.FromString,
+                    response_serializer=schema__pb2.TxMetadata.SerializeToString,
+            ),
+            'streamVerifiableGet': grpc.unary_stream_rpc_method_handler(
+                    servicer.streamVerifiableGet,
+                    request_deserializer=schema__pb2.VerifiableGetRequest.FromString,
+                    response_serializer=schema__pb2.Chunk.SerializeToString,
+            ),
+            'streamVerifiableSet': grpc.stream_unary_rpc_method_handler(
+                    servicer.streamVerifiableSet,
+                    request_deserializer=schema__pb2.Chunk.FromString,
+                    response_serializer=schema__pb2.VerifiableTx.SerializeToString,
+            ),
+            'streamScan': grpc.unary_stream_rpc_method_handler(
+                    servicer.streamScan,
+                    request_deserializer=schema__pb2.ScanRequest.FromString,
+                    response_serializer=schema__pb2.Chunk.SerializeToString,
+            ),
+            'streamZScan': grpc.unary_stream_rpc_method_handler(
+                    servicer.streamZScan,
+                    request_deserializer=schema__pb2.ZScanRequest.FromString,
+                    response_serializer=schema__pb2.Chunk.SerializeToString,
+            ),
+            'streamHistory': grpc.unary_stream_rpc_method_handler(
+                    servicer.streamHistory,
+                    request_deserializer=schema__pb2.HistoryRequest.FromString,
+                    response_serializer=schema__pb2.Chunk.SerializeToString,
+            ),
+            'streamExecAll': grpc.stream_unary_rpc_method_handler(
+                    servicer.streamExecAll,
+                    request_deserializer=schema__pb2.Chunk.FromString,
+                    response_serializer=schema__pb2.TxMetadata.SerializeToString,
+            ),
+            'UseSnapshot': grpc.unary_unary_rpc_method_handler(
+                    servicer.UseSnapshot,
+                    request_deserializer=schema__pb2.UseSnapshotRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'SQLExec': grpc.unary_unary_rpc_method_handler(
+                    servicer.SQLExec,
+                    request_deserializer=schema__pb2.SQLExecRequest.FromString,
+                    response_serializer=schema__pb2.SQLExecResult.SerializeToString,
+            ),
+            'SQLQuery': grpc.unary_unary_rpc_method_handler(
+                    servicer.SQLQuery,
+                    request_deserializer=schema__pb2.SQLQueryRequest.FromString,
+                    response_serializer=schema__pb2.SQLQueryResult.SerializeToString,
+            ),
+            'ListTables': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListTables,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=schema__pb2.SQLQueryResult.SerializeToString,
+            ),
+            'DescribeTable': grpc.unary_unary_rpc_method_handler(
+                    servicer.DescribeTable,
+                    request_deserializer=schema__pb2.Table.FromString,
+                    response_serializer=schema__pb2.SQLQueryResult.SerializeToString,
+            ),
+            'VerifiableSQLGet': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerifiableSQLGet,
+                    request_deserializer=schema__pb2.VerifiableSQLGetRequest.FromString,
+                    response_serializer=schema__pb2.VerifiableSQLEntry.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -858,6 +1100,23 @@ class ImmuService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def TxScan(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/TxScan',
+            schema__pb2.TxScanRequest.SerializeToString,
+            schema__pb2.TxList.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def History(request,
             target,
             options=(),
@@ -1092,5 +1351,243 @@ class ImmuService(object):
         return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/SetActiveUser',
             schema__pb2.SetActiveUserRequest.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamGet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/immudb.schema.ImmuService/streamGet',
+            schema__pb2.KeyRequest.SerializeToString,
+            schema__pb2.Chunk.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamSet(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/immudb.schema.ImmuService/streamSet',
+            schema__pb2.Chunk.SerializeToString,
+            schema__pb2.TxMetadata.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamVerifiableGet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/immudb.schema.ImmuService/streamVerifiableGet',
+            schema__pb2.VerifiableGetRequest.SerializeToString,
+            schema__pb2.Chunk.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamVerifiableSet(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/immudb.schema.ImmuService/streamVerifiableSet',
+            schema__pb2.Chunk.SerializeToString,
+            schema__pb2.VerifiableTx.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamScan(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/immudb.schema.ImmuService/streamScan',
+            schema__pb2.ScanRequest.SerializeToString,
+            schema__pb2.Chunk.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamZScan(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/immudb.schema.ImmuService/streamZScan',
+            schema__pb2.ZScanRequest.SerializeToString,
+            schema__pb2.Chunk.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamHistory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/immudb.schema.ImmuService/streamHistory',
+            schema__pb2.HistoryRequest.SerializeToString,
+            schema__pb2.Chunk.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def streamExecAll(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/immudb.schema.ImmuService/streamExecAll',
+            schema__pb2.Chunk.SerializeToString,
+            schema__pb2.TxMetadata.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UseSnapshot(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/UseSnapshot',
+            schema__pb2.UseSnapshotRequest.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SQLExec(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/SQLExec',
+            schema__pb2.SQLExecRequest.SerializeToString,
+            schema__pb2.SQLExecResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SQLQuery(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/SQLQuery',
+            schema__pb2.SQLQueryRequest.SerializeToString,
+            schema__pb2.SQLQueryResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListTables(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/ListTables',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            schema__pb2.SQLQueryResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DescribeTable(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/DescribeTable',
+            schema__pb2.Table.SerializeToString,
+            schema__pb2.SQLQueryResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def VerifiableSQLGet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/VerifiableSQLGet',
+            schema__pb2.VerifiableSQLGetRequest.SerializeToString,
+            schema__pb2.VerifiableSQLEntry.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
