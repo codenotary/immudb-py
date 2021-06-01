@@ -6,6 +6,10 @@
 
 ## Official [immudb] client for Python.
 
+### Try it on the immudb Playground!
+
+[![screenshot](playground.png)](https://play.codenotary.com)
+
 [immudb]: https://immudb.io
 
 ## Contents
