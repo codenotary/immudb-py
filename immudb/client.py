@@ -59,7 +59,7 @@ class ImmudbClient:
             
         self.__stub = self.set_token_header_interceptor(self.__login_response)
         # Select database, modifying stub function accordingly
-        request = schema_pb2_grpc.schema__pb2.Database(databasename=database)
+        request = schema_pb2_grpc.schema__pb2.Database(databaseName=database)
         resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
 
@@ -165,10 +165,10 @@ class ImmudbClient:
     
     def databaseList(self):
         dbs=databaseList.call(self.__stub, self.__rs, None)
-        return [x.databasename for x in dbs.dblist.databases]
+        return [x.databaseName for x in dbs.dblist.databases]
 
     def databaseUse(self, dbName: bytes):
-        request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
+        request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
         resp = databaseUse.call(self.__stub, self.__rs, request)
         # modify header token accordingly
         self.__stub = self.set_token_header_interceptor(resp)
@@ -176,7 +176,7 @@ class ImmudbClient:
         return resp
 
     def databaseCreate(self, dbName: bytes):
-        request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
+        request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
         return databaseCreate.call(self.__stub, self.__rs, request)
 
     def currentState(self):
