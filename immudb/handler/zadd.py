@@ -18,16 +18,17 @@ from immudb.rootService import RootService
 from immudb.exceptions import VerificationException
 from immudb import datatypes
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, score:float, key:bytes, atTx:int=0):
-    request=schema_pb2.ZAddRequest(
-            set=      zset,
-            score=    score,
-            key=      key,
-            atTx=     atTx,
-            boundRef= atTx > 0,
-        )
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset: bytes, score: float, key: bytes, atTx: int = 0):
+    request = schema_pb2.ZAddRequest(
+        set=zset,
+        score=score,
+        key=key,
+        atTx=atTx,
+        boundRef=atTx > 0,
+    )
     msg = service.ZAdd(request)
-    if msg.nentries!=1:
+    if msg.nentries != 1:
         raise VerificationException
     return datatypes.SetResponse(
         id=msg.id,

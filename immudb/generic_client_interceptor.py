@@ -31,21 +31,21 @@ class _GenericClientInterceptor(grpc.UnaryUnaryClientInterceptor,
         return postprocess(response) if postprocess else response
 
     def intercept_unary_stream(self, continuation, client_call_details,
-                               request): # pragma no cover
+                               request):  # pragma no cover
         new_details, new_request_iterator, postprocess = self._fn(
             client_call_details, iter((request,)), False, True)
         response_it = continuation(new_details, next(new_request_iterator))
         return postprocess(response_it) if postprocess else response_it
 
     def intercept_stream_unary(self, continuation, client_call_details,
-                               request_iterator): # pragma no cover
+                               request_iterator):  # pragma no cover
         new_details, new_request_iterator, postprocess = self._fn(
             client_call_details, request_iterator, True, False)
         response = continuation(new_details, new_request_iterator)
         return postprocess(response) if postprocess else response
 
     def intercept_stream_stream(self, continuation, client_call_details,
-                                request_iterator): # pragma no cover
+                                request_iterator):  # pragma no cover
         new_details, new_request_iterator, postprocess = self._fn(
             client_call_details, request_iterator, True, True)
         response_it = continuation(new_details, new_request_iterator)

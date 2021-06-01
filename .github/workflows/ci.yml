@@ -28,3 +28,8 @@ jobs:
       - name: Run tests
         run: |
           make test
+      - name: Run linter (pep8)
+        run : |
+          pip install autopep8
+          export PATH="$HOME/.local/bin":$PATH
+          autopep8 --exit-code --diff immudb/*.py immudb/handler/*.py

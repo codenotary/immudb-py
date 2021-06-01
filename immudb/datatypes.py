@@ -13,10 +13,12 @@
 from dataclasses import dataclass
 import struct
 
+
 @dataclass
 class SetResponse:
     id: int
     verified: bool
+
 
 @dataclass
 class SafeGetResponse:
@@ -27,16 +29,16 @@ class SafeGetResponse:
     verified: bool
     refkey: bytes
 
+
 @dataclass
 class historyResponseItem:
     key: bytes
     value: bytes
     tx: int
 
+
 @dataclass
 class GetResponse:
     tx: int
     key: bytes
     value: bytes
-
-
