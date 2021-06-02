@@ -18,7 +18,7 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                             currentRoot, databaseCreate, databaseList, databaseUse,
                             get, listUsers, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
-                            zscan, healthcheck, txbyid, verifiedtxbyid)
+                            zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -218,3 +218,9 @@ class ImmudbClient:
 
     def verifiedTxById(self, tx: int):
         return verifiedtxbyid.call(self.__stub, self.__rs, tx, self.__vk)
+
+    def sqlExec(self, stmt, params={}, noWait=False):
+        return sqlexec.call(self.__stub, self.__rs, stmt, params, noWait)
+
+    def sqlQuery(self, query, params={}):
+        return sqlquery.call(self.__stub, self.__rs, query, params)
