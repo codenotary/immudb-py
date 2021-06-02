@@ -14,6 +14,7 @@ import pytest
 from immudb.client import ImmudbClient
 import grpc._channel
 
+
 class TestSql:
 
     def test_exec_query(self):
@@ -23,18 +24,21 @@ class TestSql:
         except grpc._channel._InactiveRpcError as e:
             pytest.skip("Cannot reach immudb server")
 
-        resp = client.sqlExec("create table test (id integer, name varchar, primary key id);")
+        resp = client.sqlExec(
+            "create table test (id integer, name varchar, primary key id);")
         assert(len(resp.ctxs) > 0)
         assert(len(resp.dtxs) == 0)
 
         resp = client.listTables()
         assert('test' in resp)
 
-        resp = client.sqlExec("insert into test (id, name) values (@id, @name);", {'id': 1, 'name': 'Joe' })
+        resp = client.sqlExec(
+            "insert into test (id, name) values (@id, @name);", {'id': 1, 'name': 'Joe'})
         assert(len(resp.ctxs) == 0)
         assert(len(resp.dtxs) > 0)
 
-        result = client.sqlQuery("select id,name from test where id=@id;", {'id': 1})
+        result = client.sqlQuery(
+            "select id,name from test where id=@id;", {'id': 1})
         assert(len(result) > 0)
 
         assert(result == [(1, "Joe")])

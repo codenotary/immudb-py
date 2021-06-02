@@ -1,21 +1,24 @@
 from immudb.grpc import schema_pb2
 from pprint import pformat
 
+
 def py_to_sqlvalue(value):
     sqlValue = None
     if value is None:
-        sqlValue=schema_pb2.SQLValue(null=value)
+        sqlValue = schema_pb2.SQLValue(null=value)
     elif isinstance(value, int):
-        sqlValue=schema_pb2.SQLValue(n=value)
+        sqlValue = schema_pb2.SQLValue(n=value)
     elif isinstance(value, bool):
-        sqlValue=schema_pb2.SQLValue(b=value)
+        sqlValue = schema_pb2.SQLValue(b=value)
     elif isinstance(value, str):
-        sqlValue=schema_pb2.SQLValue(s=value)
+        sqlValue = schema_pb2.SQLValue(s=value)
     elif isinstance(value, bytearray):
-        sqlValue=schema_pb2.SQLValue(bs=value)
+        sqlValue = schema_pb2.SQLValue(bs=value)
     else:
-        raise TypeError("Type not supported: %s".format(value.__class__.__name__))
+        raise TypeError("Type not supported: %s".format(
+            value.__class__.__name__))
     return sqlValue
+
 
 def sqlvalue_to_py(sqlValue):
     if sqlValue.HasField("n"):

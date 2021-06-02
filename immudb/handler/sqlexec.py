@@ -22,7 +22,8 @@ from immudb.typeconv import py_to_sqlvalue
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, stmt, params, noWait):
     paramsObj = []
     for key, value in params.items():
-        paramsObj.append(schema_pb2.NamedParam(name=key, value=py_to_sqlvalue(value)))
+        paramsObj.append(schema_pb2.NamedParam(
+            name=key, value=py_to_sqlvalue(value)))
 
     request = schema_pb2.SQLExecRequest(
         sql=stmt,
