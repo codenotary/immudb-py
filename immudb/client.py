@@ -18,7 +18,8 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                             currentRoot, databaseCreate, databaseList, databaseUse,
                             get, listUsers, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
-                            zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery)
+                            zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
+                            listtables)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -224,3 +225,6 @@ class ImmudbClient:
 
     def sqlQuery(self, query, params={}):
         return sqlquery.call(self.__stub, self.__rs, query, params)
+
+    def listTables(self):
+        return listtables.call(self.__stub, self.__rs)
