@@ -10,12 +10,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dataclasses import dataclass
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import datatypes
 from immudb.typeconv import py_to_sqlvalue
 from immudb.typeconv import sqlvalue_to_py
 
@@ -23,7 +20,8 @@ from immudb.typeconv import sqlvalue_to_py
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, params):
     paramsObj = []
     for key, value in params.items():
-        paramsObj.append(schema_pb2.NamedParam(name=key, value=py_to_sqlvalue(value)))
+        paramsObj.append(schema_pb2.NamedParam(
+            name=key, value=py_to_sqlvalue(value)))
 
     request = schema_pb2.SQLQueryRequest(
         sql=query,
