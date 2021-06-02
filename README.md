@@ -1,6 +1,6 @@
 # immudb-py [![License](https://img.shields.io/github/license/codenotary/immudb4j)](LICENSE)
 
-[![Build Status](https://travis-ci.com/codenotary/immudb-py.svg?branch=master)](https://travis-ci.com/codenotary/immudb-py)
+[![CI](https://github.com/codenotary/immudb-py/actions/workflows/ci.yml/badge.svg)](https://github.com/codenotary/immudb-py/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/codenotary/immudb-py/badge.svg?branch=master)](https://coveralls.io/github/codenotary/immudb-py?branch=master)[![Slack](https://img.shields.io/badge/join%20slack-%23immutability-brightgreen.svg)](https://slack.vchain.us/)
 [![Discuss at immudb@googlegroups.com](https://img.shields.io/badge/discuss-immudb%40googlegroups.com-blue.svg)](https://groups.google.com/group/immudb)
 
