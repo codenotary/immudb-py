@@ -17,46 +17,51 @@ from immudb import constants, htree, store, datatypes
 from immudb.exceptions import VerificationException
 
 import sys
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx:int=None, verifying_key=None):
+
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx: int = None, verifying_key=None):
     state = rs.get()
-    if atTx==None:
+    if atTx == None:
         req = schema_pb2.VerifiableGetRequest(
-            keyRequest= schema_pb2.KeyRequest(key=requestkey),
-            proveSinceTx= state.txId
-            )
+            keyRequest=schema_pb2.KeyRequest(key=requestkey),
+            proveSinceTx=state.txId
+        )
     else:
         req = schema_pb2.VerifiableGetRequest(
-            keyRequest= schema_pb2.KeyRequest(key=requestkey, atTx=atTx),
-            proveSinceTx= state.txId
-            )
-    ventry=service.VerifiableGet(req)
+            keyRequest=schema_pb2.KeyRequest(key=requestkey, atTx=atTx),
+            proveSinceTx=state.txId
+        )
+    ventry = service.VerifiableGet(req)
     inclusionProof = htree.InclusionProofFrom(ventry.inclusionProof)
     dualProof = htree.DualProofFrom(ventry.verifiableTx.dualProof)
-    
-    if ventry.entry.referencedBy==None or ventry.entry.referencedBy.key==b'':
-        vTx=ventry.entry.tx
-        kv=store.EncodeKV(requestkey, ventry.entry.value)
+
+    if ventry.entry.referencedBy == None or ventry.entry.referencedBy.key == b'':
+        vTx = ventry.entry.tx
+        kv = store.EncodeKV(requestkey, ventry.entry.value)
     else:
         vTx = ventry.entry.referencedBy.tx
-        kv=store.EncodeReference(ventry.entry.referencedBy.key, ventry.entry.key, ventry.entry.referencedBy.atTx) 
-        
+        kv = store.EncodeReference(
+            ventry.entry.referencedBy.key, ventry.entry.key, ventry.entry.referencedBy.atTx)
+
     if state.txId <= vTx:
-        eh=store.DigestFrom(ventry.verifiableTx.dualProof.targetTxMetadata.eH)
-        sourceid=state.txId
-        sourcealh=store.DigestFrom(state.txHash)
-        targetid=vTx
-        targetalh=dualProof.targetTxMetadata.alh()
+        eh = store.DigestFrom(
+            ventry.verifiableTx.dualProof.targetTxMetadata.eH)
+        sourceid = state.txId
+        sourcealh = store.DigestFrom(state.txHash)
+        targetid = vTx
+        targetalh = dualProof.targetTxMetadata.alh()
     else:
-        eh=store.DigestFrom(ventry.verifiableTx.dualProof.sourceTxMetadata.eH)
-        sourceid=vTx
-        sourcealh=dualProof.sourceTxMetadata.alh()
-        targetid=state.txId
-        targetalh=store.DigestFrom(state.txHash)
-        
-    verifies = store.VerifyInclusion(inclusionProof,kv.Digest(),eh)
+        eh = store.DigestFrom(
+            ventry.verifiableTx.dualProof.sourceTxMetadata.eH)
+        sourceid = vTx
+        sourcealh = dualProof.sourceTxMetadata.alh()
+        targetid = state.txId
+        targetalh = store.DigestFrom(state.txHash)
+
+    verifies = store.VerifyInclusion(inclusionProof, kv.Digest(), eh)
     if not verifies:
         raise VerificationException
-    verifies=store.VerifyDualProof(
+    verifies = store.VerifyDualProof(
         dualProof,
         sourceid,
         targetid,
@@ -64,21 +69,21 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         targetalh)
     if not verifies:
         raise VerificationException
-    newstate=State(
-            db       = state.db,
-            txId     = targetid,
-            txHash   = targetalh,
-            publicKey= ventry.verifiableTx.signature.publicKey,
-            signature= ventry.verifiableTx.signature.signature,
-            )
-    if verifying_key!=None:
+    newstate = State(
+        db=state.db,
+        txId=targetid,
+        txHash=targetalh,
+        publicKey=ventry.verifiableTx.signature.publicKey,
+        signature=ventry.verifiableTx.signature.signature,
+    )
+    if verifying_key != None:
         newstate.Verify(verifying_key)
     rs.set(newstate)
-    if ventry.entry.referencedBy!=None and ventry.entry.referencedBy.key!=b'':
-        refkey=ventry.entry.referencedBy.key
+    if ventry.entry.referencedBy != None and ventry.entry.referencedBy.key != b'':
+        refkey = ventry.entry.referencedBy.key
     else:
-        refkey=None
-        
+        refkey = None
+
     return datatypes.SafeGetResponse(
         id=vTx,
         key=ventry.entry.key,
@@ -86,4 +91,4 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         timestamp=ventry.verifiableTx.tx.metadata.ts,
         verified=verifies,
         refkey=refkey
-        )
+    )

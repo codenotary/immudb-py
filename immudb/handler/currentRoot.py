@@ -16,6 +16,7 @@ from immudb.rootService import RootService, State
 from immudb import datatypes
 from google.protobuf import empty_pb2 as g_empty
 
+
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, request: None):
     immudbstate = service.CurrentState(g_empty.Empty())
     state = State.FromGrpc(immudbstate)

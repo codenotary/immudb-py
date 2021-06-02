@@ -16,10 +16,11 @@ from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key:bytes, prefix:bytes, desc:bool, limit:int, sinceTx:int):
-    if sinceTx==None:
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, prefix: bytes, desc: bool, limit: int, sinceTx: int):
+    if sinceTx == None:
         state = rs.get()
-        sinceTx=state.txId
+        sinceTx = state.txId
     request = schema_pb2_grpc.schema__pb2.ScanRequest(
         seekKey=key,
         prefix=prefix,
@@ -27,9 +28,9 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key:bytes, p
         limit=limit,
         sinceTx=sinceTx,
         noWait=False
-        )
+    )
     msg = service.Scan(request)
-    ret={}
+    ret = {}
     for i in msg.entries:
-        ret[i.key]=i.value
+        ret[i.key] = i.value
     return ret

@@ -15,55 +15,57 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, createUser,
-                          currentRoot, databaseCreate, databaseList, databaseUse, 
-                          get, listUsers, verifiedGet, verifiedSet, setValue, history, 
-                          scan, reference, verifiedreference, zadd, verifiedzadd, 
-                          zscan, healthcheck, txbyid, verifiedtxbyid)
+                            currentRoot, databaseCreate, databaseList, databaseUse,
+                            get, listUsers, verifiedGet, verifiedSet, setValue, history,
+                            scan, reference, verifiedreference, zadd, verifiedzadd,
+                            zscan, healthcheck, txbyid, verifiedtxbyid)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
-import warnings, ecdsa
+import warnings
+import ecdsa
+
 
 class ImmudbClient:
-    def __init__(self, immudUrl=None, rs:RootService=None, publicKeyFile:str=None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
-        if rs==None:
-            self.__rs=RootService()
+        if rs == None:
+            self.__rs = RootService()
         else:
-            self.__rs=rs
-        self.__url=immudUrl
+            self.__rs = rs
+        self.__url = immudUrl
         self.loadKey(publicKeyFile)
-        
+
     def loadKey(self, kfile: str):
-        if kfile==None:
+        if kfile == None:
             self.__vk = None
         else:
             with open(kfile) as f:
                 self.__vk = ecdsa.VerifyingKey.from_pem(f.read())
 
-            
     def login(self, username, password, database=b"defaultdb"):
         req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(
             username, encoding='utf-8'), password=bytes(
                 password, encoding='utf-8'
-                ))
+        ))
         try:
             self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
                 self.__stub.Login(
                     req
                 )
         except ValueError as e:
-            raise Exception("Attempted to login on termninated client, channel has been shutdown") from e
-            
+            raise Exception(
+                "Attempted to login on termninated client, channel has been shutdown") from e
+
         self.__stub = self.set_token_header_interceptor(self.__login_response)
         # Select database, modifying stub function accordingly
-        request = schema_pb2_grpc.schema__pb2.Database(databasename=database)
+        request = schema_pb2_grpc.schema__pb2.Database(databaseName=database)
         resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
 
-        self.__rs.init("%s/%s".format(self.__url,database), self.__stub)
+        self.__rs.init("%s/%s".format(self.__url, database), self.__stub)
         return self.__login_response
 
     def shutdown(self):
@@ -86,23 +88,23 @@ class ImmudbClient:
             self.intercept_channel = grpc.intercept_channel(
                 self.channel, self.header_interceptor)
         except ValueError as e:
-            raise Exception("Attempted to login on termninated client, channel has been shutdown") from e
+            raise Exception(
+                "Attempted to login on termninated client, channel has been shutdown") from e
         return schema_pb2_grpc.ImmuServiceStub(self.intercept_channel)
 
     @property
     def stub(self):
         return self.__stub
-    
+
     def healthCheck(self):
         return healthcheck.call(self.__stub, self.__rs)
-        
 
     def get(self, key: bytes):
         return get.call(self.__stub, self.__rs, key)
-    
+
     def getValue(self, key: bytes):
-        ret=get.call(self.__stub, self.__rs, key)
-        if ret==None:
+        ret = get.call(self.__stub, self.__rs, key)
+        if ret == None:
             return None
         return ret.value
 
@@ -111,24 +113,24 @@ class ImmudbClient:
 
     def safeGet(self, key: bytes):
         warnings.warn("Call to deprecated safeGet. Use verifiedGet instead",
-            category=DeprecationWarning,
-            stacklevel=2
-            )
+                      category=DeprecationWarning,
+                      stacklevel=2
+                      )
         return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
-    
+
     def verifiedGet(self, key: bytes):
         return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
-    
-    def verifiedGetAt(self, key: bytes, atTx:int):
+
+    def verifiedGetAt(self, key: bytes, atTx: int):
         return verifiedGet.call(self.__stub, self.__rs, key, atTx, self.__vk)
 
     def safeSet(self, key: bytes, value: bytes):
         warnings.warn("Call to deprecated safeSet. Use verifiedSet instead",
-            category=DeprecationWarning,
-            stacklevel=2
-            )
+                      category=DeprecationWarning,
+                      stacklevel=2
+                      )
         return verifiedSet.call(self.__stub, self.__rs, key, value)
-    
+
     def verifiedSet(self, key: bytes, value: bytes):
         return verifiedSet.call(self.__stub, self.__rs, key, value, self.__vk)
 
@@ -138,37 +140,37 @@ class ImmudbClient:
 
     def getAll(self, keys: list):
         resp = batchGet.call(self.__stub, self.__rs, keys)
-        return {key:value.value for key, value in resp.items()}
+        return {key: value.value for key, value in resp.items()}
 
     def setAll(self, kv: dict):
         return batchSet.call(self.__stub, self.__rs, kv)
 
     def changePassword(self, user, newPassword, oldPassword):
         request = schema_pb2_grpc.schema__pb2.ChangePasswordRequest(
-                    user=bytes(user, encoding='utf-8'),                     
-                    newPassword=bytes(newPassword, encoding='utf-8'),
-                    oldPassword=bytes(oldPassword, encoding='utf-8')
-                    )
+            user=bytes(user, encoding='utf-8'),
+            newPassword=bytes(newPassword, encoding='utf-8'),
+            oldPassword=bytes(oldPassword, encoding='utf-8')
+        )
         return changePassword.call(self.__stub, self.__rs, request)
-    
+
     def createUser(self, user, password, permission, database):
         request = schema_pb2_grpc.schema__pb2.CreateUserRequest(
-                    user=bytes(user, encoding='utf-8'),
-                    password=bytes(password, encoding='utf-8'),
-                    permission=permission,
-                    database=database
-                    )
+            user=bytes(user, encoding='utf-8'),
+            password=bytes(password, encoding='utf-8'),
+            permission=permission,
+            database=database
+        )
         return createUser.call(self.__stub, self.__rs, request)
-    
+
     def listUsers(self):
         return listUsers.call(self.__stub, None)
-    
+
     def databaseList(self):
-        dbs=databaseList.call(self.__stub, self.__rs, None)
-        return [x.databasename for x in dbs.dblist.databases]
+        dbs = databaseList.call(self.__stub, self.__rs, None)
+        return [x.databaseName for x in dbs.dblist.databases]
 
     def databaseUse(self, dbName: bytes):
-        request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
+        request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
         resp = databaseUse.call(self.__stub, self.__rs, request)
         # modify header token accordingly
         self.__stub = self.set_token_header_interceptor(resp)
@@ -176,7 +178,7 @@ class ImmudbClient:
         return resp
 
     def databaseCreate(self, dbName: bytes):
-        request = schema_pb2_grpc.schema__pb2.Database(databasename=dbName)
+        request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
         return databaseCreate.call(self.__stub, self.__rs, request)
 
     def currentState(self):
@@ -188,33 +190,31 @@ class ImmudbClient:
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__login_response = None
-        
-    def scan(self, key:bytes, prefix:bytes, desc:bool, limit:int,sinceTx:int=None):
+
+    def scan(self, key: bytes, prefix: bytes, desc: bool, limit: int, sinceTx: int = None):
         return scan.call(self.__stub, self.__rs, key, prefix, desc, limit, sinceTx)
-    
+
     def setReference(self, referredkey: bytes, newkey:  bytes):
         return reference.call(self.__stub, self.__rs, referredkey, newkey)
-    
+
     def verifiedSetReference(self, referredkey: bytes, newkey:  bytes):
         return verifiedreference.call(self.__stub, self.__rs, referredkey, newkey, verifying_key=self.__vk)
-    
-    def zAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
+
+    def zAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0):
         return zadd.call(self.__stub, self.__rs, zset, score, key, atTx)
-    
-    def verifiedZAdd(self, zset:bytes, score:float, key:bytes, atTx:int=0):
+
+    def verifiedZAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0):
         return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx, self.__vk)
-    
-    def zScan(self, zset:bytes, seekKey:bytes, seekScore:float,
-                          seekAtTx:int, inclusive: bool, limit:int, desc:bool, minscore:float,
-                          maxscore:float, sinceTx=None, nowait=False):
+
+    def zScan(self, zset: bytes, seekKey: bytes, seekScore: float,
+              seekAtTx: int, inclusive: bool, limit: int, desc: bool, minscore: float,
+              maxscore: float, sinceTx=None, nowait=False):
         return zscan.call(self.__stub, self.__rs, zset, seekKey, seekScore,
                           seekAtTx, inclusive, limit, desc, minscore,
                           maxscore, sinceTx, nowait)
-                          
-    def txById(self, tx:int):
+
+    def txById(self, tx: int):
         return txbyid.call(self.__stub, self.__rs, tx)
-    
-    def verifiedTxById(self, tx:int):
+
+    def verifiedTxById(self, tx: int):
         return verifiedtxbyid.call(self.__stub, self.__rs, tx, self.__vk)
-    
-        

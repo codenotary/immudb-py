@@ -11,4 +11,3 @@
 # limitations under the License.
 
 from immudb.client import ImmudbClient
-

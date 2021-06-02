@@ -19,24 +19,26 @@ from immudb.exceptions import VerificationException
 from immudb import datatypes
 import immudb.store
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, score:float, key:bytes, atTx:int=0, verifying_key=None):
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset: bytes, score: float, key: bytes, atTx: int = 0, verifying_key=None):
     state = rs.get()
-    request=schema_pb2.VerifiableZAddRequest(
+    request = schema_pb2.VerifiableZAddRequest(
         zAddRequest=schema_pb2.ZAddRequest(
-            set=      zset,
-            score=    score,
-            key=      key,
-            atTx=     atTx,
+            set=zset,
+            score=score,
+            key=key,
+            atTx=atTx,
         ),
         proveSinceTx=state.txId
-        )
+    )
     vtx = service.VerifiableZAdd(request)
-    if vtx.tx.metadata.nentries!=1:
+    if vtx.tx.metadata.nentries != 1:
         raise VerificationException
     tx = immudb.store.TxFrom(vtx.tx)
     ekv = immudb.store.EncodeZAdd(zset, score, key, atTx)
-    inclusionProof=tx.Proof(ekv.key)
-    verifies = immudb.store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
+    inclusionProof = tx.Proof(ekv.key)
+    verifies = immudb.store.VerifyInclusion(
+        inclusionProof, ekv.Digest(), tx.eh())
     if not verifies:
         raise VerificationException
     if tx.eh() != immudb.store.DigestFrom(vtx.dualProof.targetTxMetadata.eH):
@@ -50,23 +52,23 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset:bytes, 
     targetID = tx.ID
     targetAlh = tx.Alh
     verifies = immudb.store.VerifyDualProof(
-            immudb.htree.DualProofFrom(vtx.dualProof),
-            sourceID,
-            targetID,
-            sourceAlh,
-            targetAlh,
+        immudb.htree.DualProofFrom(vtx.dualProof),
+        sourceID,
+        targetID,
+        sourceAlh,
+        targetAlh,
     )
     if not verifies:
         raise VerificationException
 
-    newstate=State(
-            db       = state.db,
-            txId     = targetID,
-            txHash   = targetAlh,
-            publicKey= vtx.signature.publicKey,
-            signature= vtx.signature.signature,
-            )
-    if verifying_key!=None:
+    newstate = State(
+        db=state.db,
+        txId=targetID,
+        txHash=targetAlh,
+        publicKey=vtx.signature.publicKey,
+        signature=vtx.signature.signature,
+    )
+    if verifying_key != None:
         newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
