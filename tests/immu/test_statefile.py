@@ -15,8 +15,10 @@ from immudb.client import ImmudbClient, PersistentRootService
 from random import randint
 import grpc._channel
 import warnings
-import tempfile,os
+import tempfile
+import os
 from immudb.rootService import _statefile
+
 
 @pytest.fixture(scope="module")
 def rootfile():
@@ -24,88 +26,93 @@ def rootfile():
         yield f.name
     os.unlink(f.name)
 
+
 def test_rs(rootfile):
-    rs=PersistentRootService()
-    s=None
+    rs = PersistentRootService()
+    s = None
     try:
-        s=rs.get()
+        s = rs.get()
     except:
-        pass # it is expected to fail
-    assert s==None
-    
+        pass  # it is expected to fail
+    assert s == None
+
+
 def test_basic(rootfile):
     try:
         a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb","immudb")
+        a.login("immudb", "immudb")
     except grpc._channel._InactiveRpcError as e:
         pytest.skip("Cannot reach immudb server")
-    key="test_key_{:04d}".format(randint(0,10000))
-    value="test_value_{:04d}".format(randint(0,10000))
+    key = "test_key_{:04d}".format(randint(0, 10000))
+    value = "test_value_{:04d}".format(randint(0, 10000))
 
-    resp=a.set(key.encode('utf8'),value.encode('utf8'))
-    readback=a.get(key.encode('utf8'))
-    assert value==readback.value.decode('utf8')
-    val=a.getValue(key.encode('utf8'))
-    assert val==value.encode('utf-8')
-    assert None==a.getValue(b'non_existing_key')
+    resp = a.set(key.encode('utf8'), value.encode('utf8'))
+    readback = a.get(key.encode('utf8'))
+    assert value == readback.value.decode('utf8')
+    val = a.getValue(key.encode('utf8'))
+    assert val == value.encode('utf-8')
+    assert None == a.getValue(b'non_existing_key')
     assert a.healthCheck()
     a.logout()
     a.shutdown()
-    
+
+
 def test_root(rootfile):
     try:
         a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb","immudb")
+        a.login("immudb", "immudb")
     except grpc._channel._InactiveRpcError as e:
         pytest.skip("Cannot reach immudb server")
-    r1=a.currentState()
-    key="test_key_{:04d}".format(randint(0,10000))
-    value="test_value_{:04d}".format(randint(0,10000))
-    a.verifiedSet(key.encode('utf8'),value.encode('utf8'))
-    r2=a.currentState()
-    
-    assert r2.txId>r1.txId
+    r1 = a.currentState()
+    key = "test_key_{:04d}".format(randint(0, 10000))
+    value = "test_value_{:04d}".format(randint(0, 10000))
+    a.verifiedSet(key.encode('utf8'), value.encode('utf8'))
+    r2 = a.currentState()
+
+    assert r2.txId > r1.txId
     a.logout()
     a.shutdown()
+
 
 def test_property(rootfile):
     try:
         a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb","immudb")
+        a.login("immudb", "immudb")
     except grpc._channel._InactiveRpcError as e:
         pytest.skip("Cannot reach immudb server")
-    assert isinstance(a.stub,object)
-    
+    assert isinstance(a.stub, object)
+
+
 def test_safeSet(rootfile):
     try:
         a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb","immudb")
+        a.login("immudb", "immudb")
     except grpc._channel._InactiveRpcError as e:
         pytest.skip("Cannot reach immudb server")
-    r1=a.currentState()
-    key="test_key_{:04d}".format(randint(0,10000))
-    value="test_value_{:04d}".format(randint(0,10000))
+    r1 = a.currentState()
+    key = "test_key_{:04d}".format(randint(0, 10000))
+    value = "test_value_{:04d}".format(randint(0, 10000))
     # explicitly test deprecated safeSet
     warnings.filterwarnings("ignore", category=DeprecationWarning)
-    a.safeSet(key.encode('utf8'),value.encode('utf8'))
+    a.safeSet(key.encode('utf8'), value.encode('utf8'))
     a.safeGet(key.encode('utf8'))
+
 
 def test_get_tx(rootfile):
     try:
         a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb","immudb")
+        a.login("immudb", "immudb")
     except grpc._channel._InactiveRpcError as e:
         pytest.skip("Cannot reach immudb server")
-    key0="test_key_{:04d}".format(randint(0,10000)).encode('ascii')
-    value0="test_value_{:04d}".format(randint(0,10000)).encode('ascii')
-    id0=a.verifiedSet(key0,value0).id
+    key0 = "test_key_{:04d}".format(randint(0, 10000)).encode('ascii')
+    value0 = "test_value_{:04d}".format(randint(0, 10000)).encode('ascii')
+    id0 = a.verifiedSet(key0, value0).id
     assert key0 in a.txById(id0)
     assert key0 in a.verifiedTxById(id0)
-    assert a.txById(id0+100)==None
-    assert a.verifiedTxById(id0+100)==None
-    for i in range(0,3):
-        key="test_key_{:04d}".format(randint(0,10000)).encode('ascii')
-        value="test_value_{:04d}".format(randint(0,10000)).encode('ascii')
-        a.verifiedSet(key,value)
+    assert a.txById(id0+100) == None
+    assert a.verifiedTxById(id0+100) == None
+    for i in range(0, 3):
+        key = "test_key_{:04d}".format(randint(0, 10000)).encode('ascii')
+        value = "test_value_{:04d}".format(randint(0, 10000)).encode('ascii')
+        a.verifiedSet(key, value)
     assert key0 in a.verifiedTxById(id0)
-    
