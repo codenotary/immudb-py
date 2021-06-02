@@ -30,5 +30,5 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, param
     resp = service.SQLQuery(request)
     result = []
     for row in resp.rows:
-        result.append([sqlvalue_to_py(i) for i in row.values])
+        result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
     return result
