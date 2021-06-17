@@ -19,7 +19,7 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                             get, listUsers, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
-                            listtables)
+                            listtables, execAll)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -27,6 +27,7 @@ import ecdsa
 
 
 class ImmudbClient:
+
     def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
@@ -83,7 +84,7 @@ class ImmudbClient:
             token = response.reply.token
         self.header_interceptor = \
             header_manipulator_client_interceptor.header_adder_interceptor(
-                'authorization', "Bearer "+token
+                'authorization', "Bearer " + token
             )
         try:
             self.intercept_channel = grpc.intercept_channel(
@@ -259,3 +260,6 @@ class ImmudbClient:
             ['table1', 'table2']
         """
         return listtables.call(self.__stub, self.__rs)
+
+    def execAll(self, ops: list, noWait=False):
+        return execAll.call(self.__stub, self.__rs, ops, noWait)
