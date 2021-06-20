@@ -9,3 +9,6 @@ build/
 dist/
 immudb_py.egg-info/
 lib/
+.settings
+.project
+.pydevproject
