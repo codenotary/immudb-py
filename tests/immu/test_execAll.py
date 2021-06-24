@@ -104,3 +104,14 @@ class TestExecAll:
                        True, 100, False, 0.0, 100.0, 0)
 
         assert len(resp.entries) == 10
+
+    def test_execAll_unknown(self):
+        try:
+            a = ImmudbClient("localhost:3322")
+            a.login("immudb", "immudb")
+        except grpc._channel._InactiveRpcError as e:
+            pytest.skip("Cannot reach immudb server")
+
+        with pytest.raises(Exception) as e_info:
+            bla = [{"foo": "bar"}]
+            resp = a.execAll(bla)
