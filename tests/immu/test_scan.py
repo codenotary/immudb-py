@@ -21,19 +21,14 @@ def get_random_string(length):
     return ''.join(random.choice(string.printable) for i in range(length))
 
 
-def test_scan_set():
-    try:
-        a = ImmudbClient("localhost:3322")
-        a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
-        pytest.skip("Cannot reach immudb server")
+def test_scan_set(client):
     xset = {}
     for i in range(0, 100):
         xset["scan:{:04X}".format(i).encode(
             'utf8')] = get_random_string(32).encode('utf8')
-    ret = a.setAll(xset)
+    ret = client.setAll(xset)
     off = None
-    kv = a.scan(None, b"scan:", False, 17, ret.id)
+    kv = client.scan(None, b"scan:", False, 17, ret.id)
     while len(kv) > 0:
         if len(kv) == 0:
             break
@@ -42,7 +37,7 @@ def test_scan_set():
             assert kv[k] == xset[k]
             del xset[k]
             off = k
-        kv = a.scan(off, b"scan:", False, 17)
+        kv = client.scan(off, b"scan:", False, 17)
     assert len(xset) == 0
 
 

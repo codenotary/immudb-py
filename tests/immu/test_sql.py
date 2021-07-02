@@ -17,13 +17,7 @@ import grpc._channel
 
 class TestSql:
 
-    def test_exec_query(self):
-        try:
-            client = ImmudbClient("localhost:3322")
-            client.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError as e:
-            pytest.skip("Cannot reach immudb server")
-
+    def test_exec_query(self, client):
         resp = client.sqlExec(
             "create table test (id integer, name varchar, primary key id);")
         assert(len(resp.ctxs) > 0)

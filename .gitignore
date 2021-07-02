@@ -12,3 +12,4 @@ lib/
 .settings
 .project
 .pydevproject
+.idea

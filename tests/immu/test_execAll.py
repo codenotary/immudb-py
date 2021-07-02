@@ -21,12 +21,7 @@ import pprint
 
 class TestExecAll:
 
-    def test_execAll_KV(self):
-        try:
-            a = ImmudbClient("localhost:3322")
-            a.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError as e:
-            pytest.skip("Cannot reach immudb server")
+    def test_execAll_KV(self, client):
         kvCompare = []
         kvsend = []
         for t in range(0, 100):
@@ -38,20 +33,15 @@ class TestExecAll:
             kvCompare.append((key, value))
             kvsend.append(KeyValue(key=key.encode(
                 'utf8'), value=value.encode('utf8')))
-        resp = a.execAll(kvsend)
+        resp = client.execAll(kvsend)
         assert resp.nentries == len(kvsend)
         for (key, value) in kvCompare:
-            readback = a.verifiedGet(key.encode('utf8'))
+            readback = client.verifiedGet(key.encode('utf8'))
             print(key, value, readback.value)
             assert readback.verified
             assert value.encode('utf8') == readback.value
 
-    def test_execAll_ref(self):
-        try:
-            a = ImmudbClient("localhost:3322")
-            a.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError as e:
-            pytest.skip("Cannot reach immudb server")
+    def test_execAll_ref(self, client):
         kvsend = []
         refCompare = []
         refsend = []
@@ -64,13 +54,13 @@ class TestExecAll:
             refCompare.append((key, refkey, value))
             refsend.append(ReferenceRequest(key=refkey.encode(),
                                             referencedKey=key.encode()))
-        resp = a.execAll(kvsend)
+        resp = client.execAll(kvsend)
         assert resp.nentries == len(kvsend)
-        resp = a.execAll(refsend)
+        resp = client.execAll(refsend)
         assert resp.nentries == len(refsend)
 
         for (key, refkey, value) in refCompare:
-            readback = a.verifiedGet(refkey.encode('utf8'))
+            readback = client.verifiedGet(refkey.encode('utf8'))
             assert readback.key == key.encode()
             assert readback.value == value.encode()
 
@@ -105,13 +95,7 @@ class TestExecAll:
 
         assert len(resp.entries) == 10
 
-    def test_execAll_unknown(self):
-        try:
-            a = ImmudbClient("localhost:3322")
-            a.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError as e:
-            pytest.skip("Cannot reach immudb server")
-
+    def test_execAll_unknown(self, client):
         with pytest.raises(Exception) as e_info:
             bla = [{"foo": "bar"}]
-            resp = a.execAll(bla)
+            resp = client.execAll(bla)
