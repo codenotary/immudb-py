@@ -10,11 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-from immudb.client import ImmudbClient
 from random import randint
-import grpc._channel
-import google.protobuf.empty_pb2
 
 
 def test_zfunc(client):
@@ -41,5 +37,5 @@ def test_zfunc(client):
             assert resp.verified
         lasttx = resp.id
     resp = client.zScan(zsetname, b'zset_key_', 0, 0,
-                   True, 10, False, 0.0, 10.0, lasttx)
+                        True, 10, False, 0.0, 10.0, lasttx)
     assert len(resp.entries) == 10
