@@ -23,20 +23,15 @@ def get_random_string(length):
 
 
 class TestGetSet:
-    def test_get_set_massive(self):
-        try:
-            a = ImmudbClient("localhost:3322")
-            a.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError as e:
-            pytest.skip("Cannot reach immudb server")
+    def test_get_set_massive(self, client):
         xset = {}
         for i in range(0, 1000):
             xset["massif:{:04X}".format(i).encode(
                 'utf8')] = get_random_string(32).encode('utf8')
-        assert type(a.setAll(xset)) != int
+        assert type(client.setAll(xset)) != int
         time.sleep(2)
         # test getAllValues
-        resp = a.getAllValues(xset.keys())
+        resp = client.getAllValues(xset.keys())
         for i in resp.keys():
             assert i in xset
             assert xset[i] == resp[i].value
@@ -44,7 +39,7 @@ class TestGetSet:
             assert i in resp
             assert xset[i] == resp[i].value
         # test getAll
-        resp = a.getAll(xset.keys())
+        resp = client.getAll(xset.keys())
         for i in resp.keys():
             assert i in xset
             assert xset[i] == resp[i]

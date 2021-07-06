@@ -15,16 +15,6 @@ from immudb.client import ImmudbClient, PersistentRootService
 from random import randint
 import grpc._channel
 import warnings
-import tempfile
-import os
-from immudb.rootService import _statefile
-
-
-@pytest.fixture(scope="module")
-def rootfile():
-    with tempfile.NamedTemporaryFile(delete=False) as f:
-        yield f.name
-    os.unlink(f.name)
 
 
 def test_rs(rootfile):
@@ -57,62 +47,42 @@ def test_basic(rootfile):
     a.shutdown()
 
 
-def test_root(rootfile):
-    try:
-        a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
-        pytest.skip("Cannot reach immudb server")
-    r1 = a.currentState()
+def test_root(client_rs):
+    r1 = client_rs.currentState()
     key = "test_key_{:04d}".format(randint(0, 10000))
     value = "test_value_{:04d}".format(randint(0, 10000))
-    a.verifiedSet(key.encode('utf8'), value.encode('utf8'))
-    r2 = a.currentState()
+    client_rs.verifiedSet(key.encode('utf8'), value.encode('utf8'))
+    r2 = client_rs.currentState()
 
     assert r2.txId > r1.txId
-    a.logout()
-    a.shutdown()
+    client_rs.logout()
+    client_rs.shutdown()
 
 
-def test_property(rootfile):
-    try:
-        a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
-        pytest.skip("Cannot reach immudb server")
-    assert isinstance(a.stub, object)
+def test_property(client_rs):
+    assert isinstance(client_rs.stub, object)
 
 
-def test_safeSet(rootfile):
-    try:
-        a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
-        pytest.skip("Cannot reach immudb server")
-    r1 = a.currentState()
+def test_safeSet(client_rs):
+    r1 = client_rs.currentState()
     key = "test_key_{:04d}".format(randint(0, 10000))
     value = "test_value_{:04d}".format(randint(0, 10000))
     # explicitly test deprecated safeSet
     warnings.filterwarnings("ignore", category=DeprecationWarning)
-    a.safeSet(key.encode('utf8'), value.encode('utf8'))
-    a.safeGet(key.encode('utf8'))
+    client_rs.safeSet(key.encode('utf8'), value.encode('utf8'))
+    client_rs.safeGet(key.encode('utf8'))
 
 
-def test_get_tx(rootfile):
-    try:
-        a = ImmudbClient(rs=PersistentRootService(rootfile))
-        a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
-        pytest.skip("Cannot reach immudb server")
+def test_get_tx(client_rs):
     key0 = "test_key_{:04d}".format(randint(0, 10000)).encode('ascii')
     value0 = "test_value_{:04d}".format(randint(0, 10000)).encode('ascii')
-    id0 = a.verifiedSet(key0, value0).id
-    assert key0 in a.txById(id0)
-    assert key0 in a.verifiedTxById(id0)
-    assert a.txById(id0+100) == None
-    assert a.verifiedTxById(id0+100) == None
+    id0 = client_rs.verifiedSet(key0, value0).id
+    assert key0 in client_rs.txById(id0)
+    assert key0 in client_rs.verifiedTxById(id0)
+    assert client_rs.txById(id0 + 100) == None
+    assert client_rs.verifiedTxById(id0 + 100) == None
     for i in range(0, 3):
         key = "test_key_{:04d}".format(randint(0, 10000)).encode('ascii')
         value = "test_value_{:04d}".format(randint(0, 10000)).encode('ascii')
-        a.verifiedSet(key, value)
-    assert key0 in a.verifiedTxById(id0)
+        client_rs.verifiedSet(key, value)
+    assert key0 in client_rs.verifiedTxById(id0)

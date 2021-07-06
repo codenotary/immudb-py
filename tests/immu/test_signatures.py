@@ -10,21 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-from immudb.client import ImmudbClient, PersistentRootService
 from random import randint
-import grpc._channel
-import warnings
-
-
-@pytest.fixture(scope="module")
-def client():
-    try:
-        a = ImmudbClient(publicKeyFile="tests/certs/pub.key.pem")
-        a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
-        return None
-    return a
+import pytest
 
 
 @pytest.fixture(scope="module")
@@ -38,8 +25,6 @@ def xval():
 
 
 def test_get_set(client, xkey, xval):
-    if client == None:
-        pytest.skip("Cannot reach immudb server")
     setresp = client.verifiedSet(xkey, xval)
     assert setresp.verified
     getresp = client.verifiedGet(xkey)
@@ -50,8 +35,6 @@ def test_get_set(client, xkey, xval):
 
 
 def test_ref(client, xkey, xval):
-    if client == None:
-        pytest.skip("Cannot reach immudb server")
     refkey = "test_ref_{:04d}".format(randint(0, 10000)).encode('ascii')
     refresp = client.verifiedSetReference(xkey, refkey)
     assert refresp.verified
@@ -61,8 +44,6 @@ def test_ref(client, xkey, xval):
 
 
 def test_z(client, xkey):
-    if client == None:
-        pytest.skip("Cannot reach immudb server")
     zsetname = "zset_{:04d}".format(randint(0, 10000)).encode('utf-8')
     zresp = client.verifiedZAdd(zsetname, 42.0, xkey)
     assert zresp.verified

@@ -18,7 +18,8 @@ from immudb.handler import (batchGet, batchSet, changePassword, createUser,
                             currentRoot, databaseCreate, databaseList, databaseUse,
                             get, listUsers, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
-                            zscan, healthcheck, txbyid, verifiedtxbyid)
+                            zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
+                            listtables, execAll)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -26,6 +27,7 @@ import ecdsa
 
 
 class ImmudbClient:
+
     def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
@@ -82,7 +84,7 @@ class ImmudbClient:
             token = response.reply.token
         self.header_interceptor = \
             header_manipulator_client_interceptor.header_adder_interceptor(
-                'authorization', "Bearer "+token
+                'authorization', "Bearer " + token
             )
         try:
             self.intercept_channel = grpc.intercept_channel(
@@ -218,3 +220,46 @@ class ImmudbClient:
 
     def verifiedTxById(self, tx: int):
         return verifiedtxbyid.call(self.__stub, self.__rs, tx, self.__vk)
+
+    def sqlExec(self, stmt, params={}, noWait=False):
+        """Executes an SQL statement
+        Args:
+            stmt: a statement in immudb SQL dialect.
+            params: a dictionary of parameters to replace in the statement
+            noWait: whether to wait for indexing. Set to True for fast inserts.
+
+        Returns:
+            An object with two lists: ctxs and dtxs, including transaction
+            metadata for both the catalog and the data store.
+
+            Each element of both lists contains an object with the Transaction ID
+            (id), timestamp (ts), and number of entries (nentries).
+        """
+
+        return sqlexec.call(self.__stub, self.__rs, stmt, params, noWait)
+
+    def sqlQuery(self, query, params={}):
+        """Queries the database using SQL
+        Args:
+            query: a query in immudb SQL dialect.
+            params: a dictionary of parameters to replace in the query
+
+        Returns:
+            A list of table names. For example:
+
+            ['table1', 'table2']
+        """
+        return sqlquery.call(self.__stub, self.__rs, query, params)
+
+    def listTables(self):
+        """List all tables in the current database
+
+        Returns:
+            A list of table names. For example:
+
+            ['table1', 'table2']
+        """
+        return listtables.call(self.__stub, self.__rs)
+
+    def execAll(self, ops: list, noWait=False):
+        return execAll.call(self.__stub, self.__rs, ops, noWait)
