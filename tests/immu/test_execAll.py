@@ -16,7 +16,6 @@ from immudb.datatypes import KeyValue, ZAddRequest, ReferenceRequest
 from random import randint
 import grpc._channel
 import time
-import pprint
 
 
 class TestExecAll:
