@@ -10,24 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LEAF_PREFIX = b'\x00'
-NODE_PREFIX = b'\x01'
-ROOT_CACHE_PATH = ".immudbRoot"
+from immudb.grpc import schema_pb2, schema_pb2_grpc
+from immudb.rootService import RootService
 
-PERMISSION_SYS_ADMIN = 255
-PERMISSION_ADMIN = 254
-PERMISSION_NONE = 0
-PERMISSION_R = 1
-PERMISSION_RW = 2
 
-SET_KEY_PREFIX = b'\x00'
-SORTED_KEY_PREFIX = b'\x01'
-
-PLAIN_VALUE_PREFIX = b'\x00'
-REFERENCE_VALUE_PREFIX = b'\x01'
-
-OLDEST_FIRST = False
-NEWEST_FIRST = True
-
-PERMISSION_GRANT = 0
-PERMISSION_REVOKE = 1
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, action, user, database, permissions):
+    # Parameter names as of go-client.
+    request = schema_pb2.ChangePermissionRequest(
+        action=action, username=user, database=database, permission=permissions)
+    msg = service.ChangePermission(request)
+    return msg

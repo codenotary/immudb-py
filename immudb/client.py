@@ -14,7 +14,7 @@ import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
-from immudb.handler import (batchGet, batchSet, changePassword, createUser,
+from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, databaseCreate, databaseList, databaseUse,
                             get, listUsers, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
@@ -154,6 +154,9 @@ class ImmudbClient:
             oldPassword=bytes(oldPassword, encoding='utf-8')
         )
         return changePassword.call(self.__stub, self.__rs, request)
+
+    def changePermission(self, action, user, database, permissions):
+        return changePermission.call(self.__stub, self.__rs, action, user, database, permissions)
 
     def createUser(self, user, password, permission, database):
         request = schema_pb2_grpc.schema__pb2.CreateUserRequest(
