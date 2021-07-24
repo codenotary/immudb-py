@@ -10,8 +10,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from dataclasses import dataclass
+
 from immudb.grpc import schema_pb2, schema_pb2_grpc
 from immudb.rootService import RootService
+from google.protobuf.empty_pb2 import Empty
+
+
+@dataclass
+class changePermissionResponse:
+    reply: Empty
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, action, user, database, permissions):
@@ -19,4 +27,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, action, user
     request = schema_pb2.ChangePermissionRequest(
         action=action, username=user, database=database, permission=permissions)
     msg = service.ChangePermission(request)
-    return msg
+    return changePermissionResponse(
+        reply=msg
+    )
