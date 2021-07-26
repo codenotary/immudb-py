@@ -21,7 +21,7 @@ class TestBasicGetSet:
         try:
             a = ImmudbClient("localhost:9999")
             a.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError:
+        except grpc.RpcError:
             pass
 
     def test_basic(self, client):

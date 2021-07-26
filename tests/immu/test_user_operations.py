@@ -32,7 +32,7 @@ class TestUser:
         try:
             resp = client.createUser(user, password, permission, database)
             assert False  # it is not allowed to create a user twice
-        except grpc._channel._InactiveRpcError as e:
+        except grpc.RpcError as e:
             assert e.details() == 'user already exists'
 
         user1 = "test_"+get_random_name(8)
@@ -43,13 +43,13 @@ class TestUser:
         try:
             resp = client.createUser(user1, "12345", permission, database)
             assert False  # it is not allowed to create a trivial password
-        except grpc._channel._InactiveRpcError as e:
+        except grpc.RpcError as e:
             pass
 
         try:
             resp = client.createUser(user1, "12345", permission, database)
             assert False  # it is not allowed to create a trivial password
-        except grpc._channel._InactiveRpcError as e:
+        except grpc.RpcError as e:
             pass
 
         newPassword = "Pw1:"+get_random_string(12)

@@ -23,7 +23,7 @@ def client_margs(*args, **kwargs):
         else:
             client = ImmudbClient(*args, **kwargs)
             client.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
+    except grpc.RpcError as e:
         pytest.skip("Cannot reach immudb server")
         return
     return client
