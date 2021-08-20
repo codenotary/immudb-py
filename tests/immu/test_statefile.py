@@ -31,7 +31,7 @@ def test_basic(rootfile):
     try:
         a = ImmudbClient(rs=PersistentRootService(rootfile))
         a.login("immudb", "immudb")
-    except grpc._channel._InactiveRpcError as e:
+    except grpc.RpcError as e:
         pytest.skip("Cannot reach immudb server")
     key = "test_key_{:04d}".format(randint(0, 10000))
     value = "test_value_{:04d}".format(randint(0, 10000))

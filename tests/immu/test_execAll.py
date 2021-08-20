@@ -67,7 +67,7 @@ class TestExecAll:
         try:
             a = ImmudbClient("localhost:3322")
             a.login("immudb", "immudb")
-        except grpc._channel._InactiveRpcError as e:
+        except grpc.RpcError as e:
             pytest.skip("Cannot reach immudb server")
         kvsend = []
         zaddsend = []

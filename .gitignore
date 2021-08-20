@@ -13,3 +13,4 @@ lib/
 .project
 .pydevproject
 .idea
+venv
