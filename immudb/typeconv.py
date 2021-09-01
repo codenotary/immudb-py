@@ -4,15 +4,16 @@ from pprint import pformat
 
 def py_to_sqlvalue(value):
     sqlValue = None
+    typ=type(value) 
     if value is None:
-        sqlValue = schema_pb2.SQLValue(null=value)
-    elif isinstance(value, int):
+        sqlValue = schema_pb2.SQLValue(null=True)
+    elif typ is int:
         sqlValue = schema_pb2.SQLValue(n=value)
-    elif isinstance(value, bool):
+    elif typ is bool:
         sqlValue = schema_pb2.SQLValue(b=value)
-    elif isinstance(value, str):
+    elif typ is str:
         sqlValue = schema_pb2.SQLValue(s=value)
-    elif isinstance(value, bytearray):
+    elif typ in (bytes, bytearray):
         sqlValue = schema_pb2.SQLValue(bs=value)
     else:
         raise TypeError("Type not supported: %s".format(
@@ -24,7 +25,7 @@ def sqlvalue_to_py(sqlValue):
     if sqlValue.HasField("n"):
         return sqlValue.n
     elif sqlValue.HasField("b"):
-        return sqlValue.b
+        return bool(sqlValue.b)
     elif sqlValue.HasField("bs"):
         return sqlValue.bs
     elif sqlValue.HasField("s"):

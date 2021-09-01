@@ -12,27 +12,49 @@
 
 import pytest
 from immudb.client import ImmudbClient
+from immudb.typeconv import py_to_sqlvalue, sqlvalue_to_py
+
 import grpc._channel
+from random import randint
 
 
 class TestSql:
+    def test_sqlvalue(self):
+        for v in (99, None, True, "fives", b'domino'):
+            vo=sqlvalue_to_py(py_to_sqlvalue(v))
+            assert v==vo
+            assert type(v)==type(vo)
+        try:
+            v=py_to_sqlvalue({'a':1})
+        except TypeError:
+            v="fail"
+        assert v=="fail"
+            
 
     def test_exec_query(self, client):
+        tabname="testtable{:04d}".format(randint(0, 10000))
         resp = client.sqlExec(
-            "create table test (id integer, name varchar, primary key id);")
+            "create table {table} (id integer, name varchar, primary key id);".format(
+                table=tabname 
+                )
+            )
         assert(len(resp.ctxs) > 0)
         assert(len(resp.dtxs) == 0)
 
         resp = client.listTables()
-        assert('test' in resp)
+        assert(tabname in resp)
 
         resp = client.sqlExec(
-            "insert into test (id, name) values (@id, @name);", {'id': 1, 'name': 'Joe'})
+            "insert into {table} (id, name) values (@id, @name);".format(table=tabname),
+            {'id': 1, 'name': 'Joe'}
+            )
         assert(len(resp.ctxs) == 0)
         assert(len(resp.dtxs) > 0)
 
         result = client.sqlQuery(
-            "select id,name from test where id=@id;", {'id': 1})
+            "select id,name from {table} where id=@id;".format(table=tabname),
+            {'id': 1}
+            )
         assert(len(result) > 0)
 
         assert(result == [(1, "Joe")])
