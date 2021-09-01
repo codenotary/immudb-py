@@ -21,23 +21,22 @@ from random import randint
 class TestSql:
     def test_sqlvalue(self):
         for v in (99, None, True, "fives", b'domino'):
-            vo=sqlvalue_to_py(py_to_sqlvalue(v))
-            assert v==vo
-            assert type(v)==type(vo)
+            vo = sqlvalue_to_py(py_to_sqlvalue(v))
+            assert v == vo
+            assert type(v) == type(vo)
         try:
-            v=py_to_sqlvalue({'a':1})
+            v = py_to_sqlvalue({'a': 1})
         except TypeError:
-            v="fail"
-        assert v=="fail"
-            
+            v = "fail"
+        assert v == "fail"
 
     def test_exec_query(self, client):
-        tabname="testtable{:04d}".format(randint(0, 10000))
+        tabname = "testtable{:04d}".format(randint(0, 10000))
         resp = client.sqlExec(
             "create table {table} (id integer, name varchar, primary key id);".format(
-                table=tabname 
-                )
+                table=tabname
             )
+        )
         assert(len(resp.ctxs) > 0)
         assert(len(resp.dtxs) == 0)
 
@@ -47,14 +46,14 @@ class TestSql:
         resp = client.sqlExec(
             "insert into {table} (id, name) values (@id, @name);".format(table=tabname),
             {'id': 1, 'name': 'Joe'}
-            )
+        )
         assert(len(resp.ctxs) == 0)
         assert(len(resp.dtxs) > 0)
 
         result = client.sqlQuery(
             "select id,name from {table} where id=@id;".format(table=tabname),
             {'id': 1}
-            )
+        )
         assert(len(result) > 0)
 
         assert(result == [(1, "Joe")])

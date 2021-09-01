@@ -4,7 +4,7 @@ from pprint import pformat
 
 def py_to_sqlvalue(value):
     sqlValue = None
-    typ=type(value) 
+    typ = type(value)
     if value is None:
         sqlValue = schema_pb2.SQLValue(null=True)
     elif typ is int:

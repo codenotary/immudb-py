@@ -34,7 +34,7 @@ setup(name='immudb-py',
           'google-api>=0.1.12',
           'google-api-core>=1.22.0',
           'ecdsa>=0.16.1'
-        ],
+      ],
       classifiers=[
           'Intended Audience :: Developers',
           'Topic :: Software Development :: Build Tools',

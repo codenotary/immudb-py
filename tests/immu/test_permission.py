@@ -18,12 +18,13 @@ from immudb.grpc.schema_pb2 import GRANT, REVOKE
 
 from random import randint
 
+
 class TestPermission:
     def test_createPermissionOnDatabase(self, client):
-        permtestdb1="permtestdb{:04d}".format(randint(0, 10000))
-        permtestdb2="permtestdb{:04d}".format(randint(0, 10000))
-        permtestuser="permtestuser{:04d}".format(randint(0, 10000))
-        
+        permtestdb1 = "permtestdb{:04d}".format(randint(0, 10000))
+        permtestdb2 = "permtestdb{:04d}".format(randint(0, 10000))
+        permtestuser = "permtestuser{:04d}".format(randint(0, 10000))
+
         client.databaseCreate(permtestdb1)
         client.createUser(permtestuser, "Password-2",
                           PERMISSION_RW, permtestdb1)
