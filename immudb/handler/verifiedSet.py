@@ -19,20 +19,21 @@ from immudb import constants, datatypes, store, htree
 
 #import base64
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value:bytes, verifying_key=None):
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes, verifying_key=None):
     state = rs.get()
     # print(base64.b64encode(state.SerializeToString()))
     kv = schema_pb2.KeyValue(key=key, value=value)
     rawRequest = schema_pb2.VerifiableSetRequest(
-        setRequest = schema_pb2.SetRequest(KVs=[kv]),
-        proveSinceTx= state.txId,
+        setRequest=schema_pb2.SetRequest(KVs=[kv]),
+        proveSinceTx=state.txId,
     )
     verifiableTx = service.VerifiableSet(rawRequest)
     # print(base64.b64encode(verifiableTx.SerializeToString()))
-    tx=store.TxFrom(verifiableTx.tx)
-    inclusionProof=tx.Proof(constants.SET_KEY_PREFIX+key)
-    ekv=store.EncodeKV(key, value)
-    verifies=store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
+    tx = store.TxFrom(verifiableTx.tx)
+    inclusionProof = tx.Proof(constants.SET_KEY_PREFIX+key)
+    ekv = store.EncodeKV(key, value)
+    verifies = store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
     if not verifies:
         raise VerificationException
     if tx.eh() != store.DigestFrom(verifiableTx.dualProof.targetTxMetadata.eH):
@@ -47,26 +48,25 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     targetAlh = tx.Alh
 
     verifies = store.VerifyDualProof(
-            htree.DualProofFrom(verifiableTx.dualProof),
-            sourceID,
-            targetID,
-            sourceAlh,
-            targetAlh,
+        htree.DualProofFrom(verifiableTx.dualProof),
+        sourceID,
+        targetID,
+        sourceAlh,
+        targetAlh,
     )
     if not verifies:
         raise VerificationException
-    newstate=State(
-            db       = state.db,
-            txId=      targetID,
-            txHash=    targetAlh,
-            publicKey= verifiableTx.signature.publicKey,
-            signature= verifiableTx.signature.signature,
-            )
-    if verifying_key!=None:
+    newstate = State(
+        db=state.db,
+        txId=targetID,
+        txHash=targetAlh,
+        publicKey=verifiableTx.signature.publicKey,
+        signature=verifiableTx.signature.signature,
+    )
+    if verifying_key != None:
         newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
         id=verifiableTx.tx.metadata.id,
         verified=verifies,
     )
-    

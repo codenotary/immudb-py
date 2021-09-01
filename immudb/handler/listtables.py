@@ -10,4 +10,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from immudb.client import ImmudbClient
+from dataclasses import dataclass
+
+from immudb.grpc import schema_pb2
+from immudb.grpc import schema_pb2_grpc
+from immudb.rootService import RootService
+from immudb.typeconv import sqlvalue_to_py
+from immudb import datatypes
+from google.protobuf.empty_pb2 import Empty
+
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService):
+    resp = service.ListTables(Empty())
+    result = []
+    for row in resp.rows:
+        result.append([sqlvalue_to_py(i) for i in row.values][0])
+    return result

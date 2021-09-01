@@ -13,10 +13,12 @@
 from dataclasses import dataclass
 import struct
 
+
 @dataclass
 class SetResponse:
     id: int
     verified: bool
+
 
 @dataclass
 class SafeGetResponse:
@@ -27,11 +29,13 @@ class SafeGetResponse:
     verified: bool
     refkey: bytes
 
+
 @dataclass
 class historyResponseItem:
     key: bytes
     value: bytes
     tx: int
+
 
 @dataclass
 class GetResponse:
@@ -40,3 +44,41 @@ class GetResponse:
     value: bytes
 
 
+@dataclass
+class KeyValue():
+    key: bytes
+    value: bytes
+
+
+@dataclass
+class ZAddRequest():
+    set: bytes
+    score: float
+    key: bytes
+    atTx: int
+    boundRef: bool
+    noWait: bool
+
+    def __init__(self, set, score, key, atTx=0, noWait=False):
+        self.set = set
+        self.score = score
+        self.key = key
+        self.atTx = atTx
+        self.boundRef = atTx > 0
+        self.noWait = noWait
+
+
+@dataclass
+class ReferenceRequest():
+    key: bytes
+    referencedKey: bytes
+    atTx: int
+    boundRef: bool
+    noWait: bool
+
+    def __init__(self, key, referencedKey, atTx=0, noWait=False):
+        self.key = key
+        self.referencedKey = referencedKey
+        self.atTx = atTx
+        self.boundRef = atTx > 0
+        self.noWait = noWait

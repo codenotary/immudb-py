@@ -12,25 +12,21 @@
 
 from dataclasses import dataclass
 
-from immudb.grpc import schema_pb2
-from immudb.grpc import schema_pb2_grpc
+from immudb.grpc import schema_pb2, schema_pb2_grpc
 from immudb.rootService import RootService
+from google.protobuf.empty_pb2 import Empty
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, prefix: bytes, desc: bool, limit: int, sinceTx: int):
-    if sinceTx == None:
-        state = rs.get()
-        sinceTx = state.txId
-    request = schema_pb2_grpc.schema__pb2.ScanRequest(
-        seekKey=key,
-        prefix=prefix,
-        desc=desc,
-        limit=limit,
-        sinceTx=sinceTx,
-        noWait=False
+@dataclass
+class changePermissionResponse:
+    reply: Empty
+
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, action, user, database, permissions):
+    # Parameter names as of go-client.
+    request = schema_pb2.ChangePermissionRequest(
+        action=action, username=user, database=database, permission=permissions)
+    msg = service.ChangePermission(request)
+    return changePermissionResponse(
+        reply=msg
     )
-    msg = service.Scan(request)
-    ret = {}
-    for i in msg.entries:
-        ret[i.key] = i.value
-    return ret

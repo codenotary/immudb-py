@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
 
-PYTEST ?= python -m pytest
-PIP ?= pip
+PYTEST ?= python3 -m pytest
+PIP ?= pip3
 COVERAGE ?= $(shell which coverage)
 ifndef VIRTUAL_ENV
 USERFLAG="--user"

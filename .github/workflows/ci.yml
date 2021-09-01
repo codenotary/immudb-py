@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches:
+    - '**'
+  pull_request:
+    branches:
+    - '**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          make init
+          make dev
+      - name: Start immudb container
+        run: |
+          docker run -d --health-cmd "immuadmin status" --health-interval 10s --health-timeout 5s --health-retries 5 -v ${{ github.workspace }}/tests/certs/my.key.pem:/key.pem -p 3322:3322 codenotary/immudb:latest --signingKey=/key.pem
+      - name: Run tests
+        run: |
+          make test
+      - name: Run linter (pep8)
+        run : |
+          pip install autopep8
+          export PATH="$HOME/.local/bin":$PATH
+          autopep8 --exit-code --diff --recursive .

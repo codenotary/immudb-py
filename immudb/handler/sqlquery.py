@@ -10,27 +10,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dataclasses import dataclass
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
+from immudb.typeconv import py_to_sqlvalue
+from immudb.typeconv import sqlvalue_to_py
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, prefix: bytes, desc: bool, limit: int, sinceTx: int):
-    if sinceTx == None:
-        state = rs.get()
-        sinceTx = state.txId
-    request = schema_pb2_grpc.schema__pb2.ScanRequest(
-        seekKey=key,
-        prefix=prefix,
-        desc=desc,
-        limit=limit,
-        sinceTx=sinceTx,
-        noWait=False
-    )
-    msg = service.Scan(request)
-    ret = {}
-    for i in msg.entries:
-        ret[i.key] = i.value
-    return ret
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, params):
+    paramsObj = []
+    for key, value in params.items():
+        paramsObj.append(schema_pb2.NamedParam(
+            name=key, value=py_to_sqlvalue(value)))
+
+    request = schema_pb2.SQLQueryRequest(
+        sql=query,
+        params=paramsObj)
+
+    resp = service.SQLQuery(request)
+    result = []
+    for row in resp.rows:
+        result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
+    return result
