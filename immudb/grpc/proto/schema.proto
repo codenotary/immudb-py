@@ -476,7 +476,7 @@ service ImmuService {
 	rpc CreateDatabase(Database) returns (google.protobuf.Empty);
 	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse);
 	rpc UseDatabase(Database) returns (UseDatabaseReply);
-	rpc CleanIndex(google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty);
 	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty);
 	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty);
 	// Streams

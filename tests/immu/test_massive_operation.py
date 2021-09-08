@@ -43,3 +43,6 @@ class TestGetSet:
         for i in resp.keys():
             assert i in xset
             assert xset[i] == resp[i]
+            
+    def test_compact(self, client):
+        client.compactIndex()

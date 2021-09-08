@@ -266,3 +266,6 @@ class ImmudbClient:
 
     def execAll(self, ops: list, noWait=False):
         return execAll.call(self.__stub, self.__rs, ops, noWait)
+
+    def compactIndex(self):
+        self.__stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
