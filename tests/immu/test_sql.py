@@ -57,3 +57,10 @@ class TestSql:
         assert(len(result) > 0)
 
         assert(result == [(1, "Joe")])
+        
+    def test_describe(self, client):
+        tbname = "test{:04d}".format(randint(0, 10000))
+        client.sqlExec(f"CREATE TABLE {tbname} (id INTEGER, name VARCHAR[100], PRIMARY KEY id)")
+        response = client.describeTable(tbname)
+        assert response == [('id', 'INTEGER', True, 'PRIMARY KEY', False, True), ('name', 'VARCHAR[100]', True, 'NO', False, False)]
+

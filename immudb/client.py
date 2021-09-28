@@ -16,7 +16,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, databaseCreate, databaseList, databaseUse,
-                            get, listUsers, verifiedGet, verifiedSet, setValue, history,
+                            get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
                             listtables, execAll)
@@ -269,3 +269,6 @@ class ImmudbClient:
 
     def compactIndex(self):
         self.__stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
+
+    def describeTable(self, table):
+        return sqldescribe.call(self.__stub, self.__rs, table)
