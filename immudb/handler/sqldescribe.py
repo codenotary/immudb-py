@@ -19,9 +19,20 @@ from immudb.rootService import RootService
 from google.protobuf.empty_pb2 import Empty
 
 
+@dataclass
+class SQLQueryResponse:
+    cols: [schema_pb2.Column]
+    rows: [schema_pb2.Row]
+    values: [tuple]
+
+
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table):
     res = service.DescribeTable(schema_pb2.Table(tableName=table.encode()))
     result = []
     for row in res.rows:
         result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
-    return result
+    response = SQLQueryResponse(
+        cols=res.columns, rows=res.rows, values=result
+    )
+    return response
+
