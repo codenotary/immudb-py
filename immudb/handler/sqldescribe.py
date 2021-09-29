@@ -16,23 +16,30 @@ from immudb.typeconv import sqlvalue_to_py
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from google.protobuf.empty_pb2 import Empty
 
 
 @dataclass
-class SQLQueryResponse:
-    cols: [schema_pb2.Column]
-    rows: [schema_pb2.Row]
-    values: [tuple]
+class ColumnDescription:
+    name: str
+    type: str
+    nullable: bool
+    index: str
+    autoincrement: bool
+    unique: bool
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table):
     res = service.DescribeTable(schema_pb2.Table(tableName=table.encode()))
     result = []
     for row in res.rows:
-        result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
-    response = SQLQueryResponse(
-        cols=res.columns, rows=res.rows, values=result
-    )
-    return response
-
+        result.append(
+            ColumnDescription(
+                name=sqlvalue_to_py(row.values[0]),
+                type=sqlvalue_to_py(row.values[1]),
+                nullable=sqlvalue_to_py(row.values[2]),
+                index=sqlvalue_to_py(row.values[3]),
+                autoincrement=sqlvalue_to_py(row.values[4]),
+                unique=sqlvalue_to_py(row.values[5]),
+            )
+        )
+    return result

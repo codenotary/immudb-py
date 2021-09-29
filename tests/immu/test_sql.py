@@ -12,6 +12,7 @@
 
 import pytest
 from immudb.client import ImmudbClient
+from immudb.handler.sqldescribe import ColumnDescription
 from immudb.typeconv import py_to_sqlvalue, sqlvalue_to_py
 
 import grpc._channel
@@ -62,5 +63,5 @@ class TestSql:
         tbname = "test{:04d}".format(randint(0, 10000))
         client.sqlExec(f"CREATE TABLE {tbname} (id INTEGER, name VARCHAR[100], PRIMARY KEY id)")
         response = client.describeTable(tbname)
-        assert response.values == [('id', 'INTEGER', True, 'PRIMARY KEY', False, True), ('name', 'VARCHAR[100]', True, 'NO', False, False)]
+        assert response == [ColumnDescription(name='id', type='INTEGER', nullable=True, index='PRIMARY KEY', autoincrement=False, unique=True), ColumnDescription(name='name', type='VARCHAR[100]', nullable=True, index='NO', autoincrement=False, unique=False)]
 
