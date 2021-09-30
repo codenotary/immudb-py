@@ -11,21 +11,11 @@
 # limitations under the License.
 
 from dataclasses import dataclass
+from immudb.datatypes import ColumnDescription
 from immudb.typeconv import sqlvalue_to_py
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-
-
-@dataclass
-class ColumnDescription:
-    name: str
-    type: str
-    nullable: bool
-    index: str
-    autoincrement: bool
-    unique: bool
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table):

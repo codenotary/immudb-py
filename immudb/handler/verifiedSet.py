@@ -11,6 +11,7 @@
 # limitations under the License.
 
 from time import time
+from immudb.exceptions import VerificationException
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
