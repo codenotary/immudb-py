@@ -82,3 +82,13 @@ class ReferenceRequest():
         self.atTx = atTx
         self.boundRef = atTx > 0
         self.noWait = noWait
+
+
+@dataclass
+class ColumnDescription:
+    name: str
+    type: str
+    nullable: bool
+    index: str
+    autoincrement: bool
+    unique: bool
