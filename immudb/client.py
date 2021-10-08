@@ -33,7 +33,7 @@ class ImmudbClient:
             immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
-        if rs == None:
+        if rs is None:
             self.__rs = RootService()
         else:
             self.__rs = rs
@@ -41,7 +41,7 @@ class ImmudbClient:
         self.loadKey(publicKeyFile)
 
     def loadKey(self, kfile: str):
-        if kfile == None:
+        if kfile is None:
             self.__vk = None
         else:
             with open(kfile) as f:
@@ -106,7 +106,7 @@ class ImmudbClient:
 
     def getValue(self, key: bytes):
         ret = get.call(self.__stub, self.__rs, key)
-        if ret == None:
+        if ret is None:
             return None
         return ret.value
 
