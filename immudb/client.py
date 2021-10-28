@@ -67,7 +67,7 @@ class ImmudbClient:
         resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
 
-        self.__rs.init("%s/%s".format(self.__url, database), self.__stub)
+        self.__rs.init("{}/{}".format(self.__url, database), self.__stub)
         return self.__login_response
 
     def shutdown(self):
