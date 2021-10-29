@@ -16,7 +16,7 @@ def py_to_sqlvalue(value):
     elif typ in (bytes, bytearray):
         sqlValue = schema_pb2.SQLValue(bs=value)
     else:
-        raise TypeError("Type not supported: %s".format(
+        raise TypeError("Type not supported: {}".format(
             value.__class__.__name__))
     return sqlValue
 
@@ -33,4 +33,5 @@ def sqlvalue_to_py(sqlValue):
     elif sqlValue.HasField("null"):
         return None
     else:
-        raise TypeError("Type not supported: %s", sqlValue.WhichOneof("value"))
+        raise TypeError("Type not supported: {}".format(
+            sqlValue.WhichOneof("value")))
