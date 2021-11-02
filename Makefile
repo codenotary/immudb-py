@@ -33,5 +33,5 @@ install:
 .PHONY: dist
 dist:
 	mkdir -p ./dist
-	rm -f ./dist/*
+	rm -fr ./dist/* ./build/*
 	python setup.py sdist bdist_wheel
