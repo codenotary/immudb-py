@@ -15,7 +15,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
-                            currentRoot, createDatabase, databaseList, databaseUse,
+                            currentRoot, createDatabase, databaseList, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
@@ -175,8 +175,15 @@ class ImmudbClient:
         return [x.databaseName for x in dbs.dblist.databases]
 
     def databaseUse(self, dbName: bytes):
+        warnings.warn("Call to deprecated databaseUse. Use useDatabase instead",
+                      category=DeprecationWarning,
+                      stacklevel=2
+                      )
+        return self.useDatabase(dbName)
+
+    def useDatabase(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
-        resp = databaseUse.call(self.__stub, self.__rs, request)
+        resp = useDatabase.call(self.__stub, self.__rs, request)
         # modify header token accordingly
         self.__stub = self.set_token_header_interceptor(resp)
         self.__rs.init(dbName, self.__stub)

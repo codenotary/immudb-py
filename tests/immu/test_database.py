@@ -10,7 +10,7 @@ class TestDatabase:
     def test_list_use(self, client):
         resp = client.databaseList()
         assert "defaultdb" in resp
-        resp = client.databaseUse(b"defaultdb")
+        resp = client.useDatabase(b"defaultdb")
         assert type(resp.reply.token) == str
 
         # create a new DB with a random name (must be lowercase)
@@ -18,7 +18,7 @@ class TestDatabase:
         resp = client.createDatabase(newdb)
         assert type(resp.reply) == google.protobuf.empty_pb2.Empty
         # try and use the new DB
-        resp = client.databaseUse(newdb)
+        resp = client.useDatabase(newdb)
         assert type(resp.reply.token) == str
 
         key = "test_key_{:04d}".format(randint(0, 10000))
@@ -34,3 +34,8 @@ class TestDatabase:
             randint(0, 65536)).encode('utf8')
         with pytest.deprecated_call():
             resp = client.databaseCreate(deprecatedDb)
+        assert type(resp.reply) == google.protobuf.empty_pb2.Empty
+
+        with pytest.deprecated_call():
+            resp = client.databaseUse(deprecatedDb)
+        assert type(resp.reply.token) == str
