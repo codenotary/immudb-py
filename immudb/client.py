@@ -15,7 +15,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
-                            currentRoot, databaseCreate, databaseList, databaseUse,
+                            currentRoot, createDatabase, databaseList, databaseUse,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
@@ -182,9 +182,16 @@ class ImmudbClient:
         self.__rs.init(dbName, self.__stub)
         return resp
 
-    def databaseCreate(self, dbName: bytes):
+    def createDatabase(self, dbName: bytes):
         request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
-        return databaseCreate.call(self.__stub, self.__rs, request)
+        return createDatabase.call(self.__stub, self.__rs, request)
+
+    def databaseCreate(self, dbName: bytes):
+        warnings.warn("Call to deprecated databaseCreate. Use createDatabase instead",
+                      category=DeprecationWarning,
+                      stacklevel=2
+                      )
+        return self.createDatabase(dbName)
 
     def currentState(self):
         return currentRoot.call(self.__stub, self.__rs, None)

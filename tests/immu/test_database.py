@@ -15,7 +15,7 @@ class TestDatabase:
 
         # create a new DB with a random name (must be lowercase)
         newdb = "testdb{:04x}".format(randint(0, 65536)).encode('utf8')
-        resp = client.databaseCreate(newdb)
+        resp = client.createDatabase(newdb)
         assert type(resp.reply) == google.protobuf.empty_pb2.Empty
         # try and use the new DB
         resp = client.databaseUse(newdb)
@@ -29,3 +29,8 @@ class TestDatabase:
         readback = client.verifiedGet(key.encode('utf8'))
         assert readback.verified == True
         assert value.encode('utf8') == readback.value
+
+        deprecatedDb = "deprecateddb{:04x}".format(
+            randint(0, 65536)).encode('utf8')
+        with pytest.deprecated_call():
+            resp = client.databaseCreate(deprecatedDb)
