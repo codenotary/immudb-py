@@ -15,7 +15,9 @@ from dataclasses import dataclass
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
-from immudb import datatypes, htree, store, exceptions
+from immudb import exceptions
+from immudb.embedded import store
+import immudb.schema as schema
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, verifying_key=None):
@@ -30,17 +32,17 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, ver
         if hasattr(e, 'details') and e.details() == 'tx not found':
             return None
         raise e
-    dualProof = htree.DualProofFrom(vtx.dualProof)
-    if state.txId <= vtx.tx.metadata.id:
+    dualProof = schema.DualProofFromProto(vtx.dualProof)
+    if state.txId <= vtx.tx.header.id:
         sourceid = state.txId
-        sourcealh = store.DigestFrom(state.txHash)
-        targetid = vtx.tx.metadata.id
-        targetalh = dualProof.targetTxMetadata.alh()
+        sourcealh = schema.DigestFromProto(state.txHash)
+        targetid = vtx.tx.header.id
+        targetalh = dualProof.targetTxHeader.Alh()
     else:
-        sourceid = vtx.tx.metadata.id
-        sourcealh = dualProof.sourceTxMetadata.alh()
+        sourceid = vtx.tx.header.id
+        sourcealh = dualProof.sourceTxHeader.Alh()
         targetid = state.txId
-        targetalh = store.DigestFrom(state.txHash)
+        targetalh = schema.DigestFromProto(state.txHash)
     verifies = store.VerifyDualProof(
         dualProof,
         sourceid,

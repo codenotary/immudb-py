@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2021 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,27 +11,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LEAF_PREFIX = b'\x00'
-NODE_PREFIX = b'\x01'
-ROOT_CACHE_PATH = ".immudbRoot"
+from immudb.constants import *
+from immudb.printable import printable
+import immudb.embedded.store as store
 
-PERMISSION_SYS_ADMIN = 255
-PERMISSION_ADMIN = 254
-PERMISSION_NONE = 0
-PERMISSION_R = 1
-PERMISSION_RW = 2
 
-SET_KEY_PREFIX = b'\x00'
-SORTED_KEY_PREFIX = b'\x01'
+class EntrySpec(printable):
+    # def __init__(self):
+    #    self.key = None
+    #    self.metadata = None
+    #    self.value = None
 
-PLAIN_VALUE_PREFIX = b'\x00'
-REFERENCE_VALUE_PREFIX = b'\x01'
-
-OLDEST_FIRST = False
-NEWEST_FIRST = True
-
-DELETED_ATTR_CODE = 0
-EXPIRES_AT_ATTR_CODE = 1
-NON_INDEXABLE_ATTR_CODE = 2
-
-SHA256LEN = 32
+    def __init__(self, key: bytes, md: store.KVMetadata, value: bytes):
+        self.key = key
+        self.metadata = md
+        self.value = value

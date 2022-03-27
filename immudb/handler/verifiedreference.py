@@ -10,13 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dataclasses import dataclass
-
-from immudb.grpc import schema_pb2, schema_pb2_grpc
+from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
-import immudb.store
+from immudb.embedded import store
 from immudb import datatypes
 from immudb.exceptions import VerificationException
+
+import immudb.database as database
+import immudb.schema as schema
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, refkey: bytes, key:  bytes, atTx=0, verifying_key=None):
@@ -32,25 +33,28 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, refkey: byte
         proveSinceTx=state.txId
     )
     vtx = service.VerifiableSetReference(vreq)
-    if vtx.tx.metadata.nentries != 1:
+    if vtx.tx.header.nentries != 1:
         raise VerificationException
-    tx = immudb.store.TxFrom(vtx.tx)
-    inclusionProof = tx.Proof(immudb.store.EncodeKey(key))
-    ekv = immudb.store.EncodeReference(key, refkey, atTx)
-    verifies = immudb.store.VerifyInclusion(
-        inclusionProof, ekv.Digest(), tx.eh())
+    tx = schema.TxFromProto(vtx.tx)
+    entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
+    inclusionProof = tx.Proof(database.EncodeKey(key))
+    # TODO: Is metadata missing here?
+    e = database.EncodeReference(key, None, refkey, atTx)
+
+    verifies = store.VerifyInclusion(
+        inclusionProof, entrySpecDigest(e), tx.header.eh)
     if not verifies:
         raise VerificationException
     if state.txId == 0:
-        sourceID = tx.ID
-        sourceAlh = tx.Alh
+        sourceID = tx.header.iD
+        sourceAlh = tx.header.Alh()
     else:
         sourceID = state.txId
-        sourceAlh = immudb.store.DigestFrom(state.txHash)
-    targetID = tx.ID
-    targetAlh = tx.Alh
-    verifies = immudb.store.VerifyDualProof(
-        immudb.htree.DualProofFrom(vtx.dualProof),
+        sourceAlh = schema.DigestFromProto(state.txHash)
+    targetID = tx.header.iD
+    targetAlh = tx.header.Alh()
+    verifies = store.VerifyDualProof(
+        schema.DualProofFromProto(vtx.dualProof),
         sourceID,
         targetID,
         sourceAlh,
@@ -69,6 +73,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, refkey: byte
         newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
-        id=vtx.tx.metadata.id,
+        id=vtx.tx.header.id,
         verified=True,
     )

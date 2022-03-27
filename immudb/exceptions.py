@@ -21,3 +21,23 @@ class ErrMaxWidthExceeded(Exception):
 
 class ErrIllegalArguments(Exception):
     pass
+
+
+class ErrUnsupportedTxVersion(Exception):
+    pass
+
+
+class ErrNonExpirable(Exception):
+    pass
+
+
+class ErrCorruptedData(Exception):
+    pass
+
+
+class ErrReadOnly(Exception):
+    pass
+
+
+class ErrKeyNotFound(Exception):
+    pass

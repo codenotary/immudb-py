@@ -12,10 +12,12 @@
 
 import pytest
 import base64
-import immudb.store
-import immudb.htree
+from immudb.embedded import store, htree, ahtree
 from immudb import constants
 from immudb.grpc import schema_pb2
+import immudb.database as database
+import immudb.schema as schema
+from immudb.exceptions import VerificationException
 
 v0 = b'CnIIGhIg0IswQi+55M5xLZSEZUNnpSqoU7JSjtSgNZBlyCMK/3IYzfrjgAYgASogsgXOdHznBIOL0fRjDit+QmDn+9M5FZms8jTI5fHfcpIwGTogmXu3vjcP/kHZTXvT0O158Tx9A3ywjmHG0LOPxS5Bk9kSOwoLAHNhbGFjYWR1bGESIMTfI1H+rKu77CCQQ/ktaUmx/krECfmjHSg+Gy3Zc2NvGMyAgICAgICAASAL'
 s1 = b'CglkZWZhdWx0ZGIaIOOwxEKY/BwUmvv0yJlvuSQnrkHkZJuTTKSVmRt4UrhV'
@@ -33,11 +35,17 @@ def test_verify_inclusion():
     vtx = schema_pb2.Tx()
     vtx.ParseFromString(base64.b64decode(v0))
 
-    tx = immudb.store.TxFrom(vtx)
-    inclusionProof = tx.Proof(constants.SET_KEY_PREFIX+key)
-    ekv = immudb.store.EncodeKV(key, value)
-    verifies = immudb.store.VerifyInclusion(
-        inclusionProof, ekv.Digest(), tx.eh())
+    tx = schema.TxFromProto(vtx)
+    entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
+    inclusionProof = tx.Proof(database.EncodeKey(key))
+    md = tx.entries[0].metadata()
+
+    if md != None and md.Deleted():
+        raise VerificationException
+
+    e = database.EncodeEntrySpec(key, md, value)
+    verifies = store.VerifyInclusion(
+        inclusionProof, entrySpecDigest(e), tx.header.eh)
     assert verifies
 
 
@@ -46,25 +54,39 @@ def simulated_set(ss, vv, key, value):
     state.ParseFromString(base64.b64decode(ss))
     verifiableTx = schema_pb2.VerifiableTx()
     verifiableTx.ParseFromString(base64.b64decode(vv))
-    tx = immudb.store.TxFrom(verifiableTx.tx)
-    inclusionProof = tx.Proof(constants.SET_KEY_PREFIX+key)
-    ekv = immudb.store.EncodeKV(key, value)
-    verifies = immudb.store.VerifyInclusion(
-        inclusionProof, ekv.Digest(), tx.eh())
+    tx = schema.TxFromProto(verifiableTx.tx)
+    entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
+    inclusionProof = tx.Proof(database.EncodeKey(key))
+    md = tx.entries[0].metadata()
+
+    if md != None and md.Deleted():
+        raise VerificationException
+    e = database.EncodeEntrySpec(key, md, value)
+    verifies = store.VerifyInclusion(
+        inclusionProof, entrySpecDigest(e), tx.header.eh)
     assert verifies
-    assert tx.eh() == immudb.store.DigestFrom(
-        verifiableTx.dualProof.targetTxMetadata.eH)
+    assert tx.header.eh == schema.DigestFromProto(
+        verifiableTx.dualProof.targetTxHeader.eH)
+    # if state.txId == 0:
+    #    sourceID = tx.ID
+    #    sourceAlh = tx.Alh
+    # else:
+    #    sourceID = state.txId
+    #    sourceAlh = immudb.embedded.store.DigestFrom(state.txHash)
+    #targetID = tx.ID
+    #targetAlh = tx.Alh
+    # TODO: Check this
     if state.txId == 0:
-        sourceID = tx.ID
-        sourceAlh = tx.Alh
+        sourceID = tx.header.iD
+        sourceAlh = tx.header.Alh()
     else:
         sourceID = state.txId
-        sourceAlh = immudb.store.DigestFrom(state.txHash)
-    targetID = tx.ID
-    targetAlh = tx.Alh
+        sourceAlh = schema.DigestFromProto(state.txHash)
+    targetID = tx.header.iD
+    targetAlh = tx.header.Alh()
 
-    assert immudb.store.VerifyDualProof(
-        immudb.htree.DualProofFrom(verifiableTx.dualProof),
+    assert store.VerifyDualProof(
+        schema.DualProofFromProto(verifiableTx.dualProof),
         sourceID,
         targetID,
         sourceAlh,
@@ -83,7 +105,7 @@ def test_simulated_set2():
 def test_printable():
     verifiableTx = schema_pb2.VerifiableTx()
     verifiableTx.ParseFromString(base64.b64decode(v2))
-    tx = immudb.store.TxFrom(verifiableTx.tx)
+    tx = schema.TxFromProto(verifiableTx.tx)
     s = repr(tx)
     assert type(s) == str
     txm = schema_pb2.TxMetadata()
@@ -97,67 +119,68 @@ class FakeProof(object):
 
 
 class FakeMetadata(object):
-    def alh(self):
+    def Alh(self):
         return b'42'
     pass
 
 
 def test_linearproof_fails():
-    assert not immudb.store.VerifyLinearProof(None, 0, 0, None, None)
+    assert not store.VerifyLinearProof(None, 0, 0, None, None)
     proof = FakeProof()
     proof.sourceTxID = 0
     proof.targetTxID = 0
-    assert not immudb.store.VerifyLinearProof(proof, 0, 0, None, None)
+    assert not store.VerifyLinearProof(proof, 0, 0, None, None)
 
 
 def test_lastinclusion_fails():
-    assert not immudb.store.VerifyInclusion(None, [], 0)
-    assert not immudb.store.VerifyLastInclusion([], 0, b'', b'')
+    assert not store.VerifyInclusion(None, [], 0)
+    assert not ahtree.VerifyLastInclusion([], 0, b'', b'')
 
 
 def test_consistency_fails():
-    assert not immudb.store.VerifyConsistency([], 0, 0, b'', b'')
-    assert not immudb.store.VerifyConsistency([], 1, 1, b'1', b'')
-    assert immudb.store.VerifyConsistency([], 1, 1, b'', b'')
+    assert not ahtree.VerifyConsistency([], 0, 0, b'', b'')
+    assert not ahtree.VerifyConsistency([], 1, 1, b'1', b'')
+    assert ahtree.VerifyConsistency([], 1, 1, b'', b'')
 
 
 def test_inclusionaht_fails():
-    assert not immudb.store.VerifyInclusionAHT([], 0, 0, b'', b'')
+    assert not ahtree.VerifyInclusion([], 0, 0, b'', b'')
 
 
 def test_dualproof_fails():
-    assert not immudb.store.VerifyDualProof(None, None, None, None, None)
+    assert not store.VerifyDualProof(
+        None, None, None, None, None)
     proof = FakeProof()
-    proof.sourceTxMetadata = FakeMetadata()
-    proof.targetTxMetadata = FakeMetadata()
-    proof.sourceTxMetadata.iD = 0
-    proof.targetTxMetadata.iD = 0
-    assert not immudb.store.VerifyDualProof(proof, 0, 0, b'', b'')
-    proof.sourceTxMetadata.iD = 5
-    proof.targetTxMetadata.iD = 5
-    assert not immudb.store.VerifyDualProof(proof, 5, 5, b'', b'')
-    assert not immudb.store.VerifyDualProof(proof, 5, 5, b'42', b'1')
+    proof.sourceTxHeader = FakeMetadata()
+    proof.targetTxHeader = FakeMetadata()
+    proof.sourceTxHeader.iD = 0
+    proof.targetTxHeader.iD = 0
+    assert not store.VerifyDualProof(proof, 0, 0, b'', b'')
+    proof.sourceTxHeader.iD = 5
+    proof.targetTxHeader.iD = 5
+    assert not store.VerifyDualProof(proof, 5, 5, b'', b'')
+    assert not store.VerifyDualProof(proof, 5, 5, b'42', b'1')
     proof.inclusionProof = b''
     proof.consistencyProof = b''
     proof.linearProof = b''
     proof.lastInclusionProof = b''
-    proof.sourceTxMetadata.blTxID = 6
-    proof.targetTxMetadata.blTxID = 6
-    proof.sourceTxMetadata.blRoot = b''
-    proof.targetTxMetadata.blRoot = b''
-    assert not immudb.store.VerifyDualProof(proof, 5, 5, b'42', b'42')
-    proof.targetTxMetadata.blTxID = 0
-    assert not immudb.store.VerifyDualProof(proof, 5, 5, b'42', b'42')
-    proof.targetTxMetadata.blTxID = 4
-    proof.sourceTxMetadata.blTxID = 4
+    proof.sourceTxHeader.blTxID = 6
+    proof.targetTxHeader.blTxID = 6
+    proof.sourceTxHeader.blRoot = b''
+    proof.targetTxHeader.blRoot = b''
+    assert not store.VerifyDualProof(proof, 5, 5, b'42', b'42')
+    proof.targetTxHeader.blTxID = 0
+    assert not store.VerifyDualProof(proof, 5, 5, b'42', b'42')
+    proof.targetTxHeader.blTxID = 4
+    proof.sourceTxHeader.blTxID = 4
     proof.targetBlTxAlh = b'42'
-    assert not immudb.store.VerifyDualProof(proof, 5, 5, b'42', b'42')
+    assert not store.VerifyDualProof(proof, 5, 5, b'42', b'42')
 
 
 def test_htree():
-    h = immudb.htree.HTree(0)
+    h = htree.HTree(0)
     assert not hasattr(h, 'levels')
-    h = immudb.htree.HTree(8)
+    h = htree.HTree(8)
     assert hasattr(h, 'levels')
     dig = [b'42', b'8853', b'ivoasiuyf', b'a0ds9zcv']
     h.BuildWith(dig)

@@ -17,7 +17,9 @@ from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
 from immudb.exceptions import VerificationException
 from immudb import datatypes
-import immudb.store
+from immudb.embedded import store
+import immudb.database as database
+import immudb.schema as schema
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset: bytes, score: float, key: bytes, atTx: int = 0, verifying_key=None):
@@ -32,27 +34,28 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset: bytes,
         proveSinceTx=state.txId
     )
     vtx = service.VerifiableZAdd(request)
-    if vtx.tx.metadata.nentries != 1:
+    if vtx.tx.header.nentries != 1:
         raise VerificationException
-    tx = immudb.store.TxFrom(vtx.tx)
-    ekv = immudb.store.EncodeZAdd(zset, score, key, atTx)
+    tx = schema.TxFromProto(vtx.tx)
+    entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
+    ekv = database.EncodeZAdd(zset, score, key, atTx)
     inclusionProof = tx.Proof(ekv.key)
-    verifies = immudb.store.VerifyInclusion(
-        inclusionProof, ekv.Digest(), tx.eh())
+    verifies = store.VerifyInclusion(
+        inclusionProof, entrySpecDigest(ekv), tx.header.eh)
     if not verifies:
         raise VerificationException
-    if tx.eh() != immudb.store.DigestFrom(vtx.dualProof.targetTxMetadata.eH):
+    if tx.header.eh != schema.DigestFromProto(vtx.dualProof.targetTxHeader.eH):
         raise VerificationException
     if state.txId == 0:
-        sourceID = tx.ID
-        sourceAlh = tx.Alh
+        sourceID = tx.header.iD
+        sourceAlh = tx.header.Alh()
     else:
         sourceID = state.txId
-        sourceAlh = immudb.store.DigestFrom(state.txHash)
-    targetID = tx.ID
-    targetAlh = tx.Alh
-    verifies = immudb.store.VerifyDualProof(
-        immudb.htree.DualProofFrom(vtx.dualProof),
+        sourceAlh = schema.DigestFromProto(state.txHash)
+    targetID = tx.header.iD
+    targetAlh = tx.header.Alh()
+    verifies = store.VerifyDualProof(
+        schema.DualProofFromProto(vtx.dualProof),
         sourceID,
         targetID,
         sourceAlh,
@@ -72,6 +75,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset: bytes,
         newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
-        id=vtx.tx.metadata.id,
+        id=vtx.tx.header.id,
         verified=True,
     )
