@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
@@ -21,8 +21,6 @@ import immudb.database as database
 import immudb.schema as schema
 
 #import base64
-
-# TODO: Discuss: VerificationException vs. ErrCorruptedData
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes, verifying_key=None):
@@ -36,32 +34,23 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     verifiableTx = service.VerifiableSet(rawRequest)
     # print(base64.b64encode(verifiableTx.SerializeToString()))
     if verifiableTx.tx.header.nentries != 1 or len(verifiableTx.tx.entries) != 1:
-        raise VerificationException
+        raise ErrCorruptedData
     tx = schema.TxFromProto(verifiableTx.tx)
     entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
     inclusionProof = tx.Proof(database.EncodeKey(key))
     md = tx.entries[0].metadata()
 
     if md != None and md.Deleted():
-        raise VerificationException
+        raise ErrCorruptedData
 
     e = database.EncodeEntrySpec(key, md, value)
 
     verifies = store.VerifyInclusion(
         inclusionProof, entrySpecDigest(e), tx.header.eh)
     if not verifies:
-        raise VerificationException
+        raise ErrCorruptedData
     if tx.header.eh != schema.DigestFromProto(verifiableTx.dualProof.targetTxHeader.eH):
-        raise VerificationException
-    # TODO: check this
-    # if state.txId == 0:
-    #     sourceID = tx.ID
-    #     sourceAlh = tx.Alh
-    # else:
-    #     sourceID = state.txId
-    #     sourceAlh = store.DigestFrom(state.txHash)
-    # targetID = tx.ID
-    # targetAlh = tx.Alh
+        raise ErrCorruptedData
     sourceID = state.txId
     sourceAlh = schema.DigestFromProto(state.txHash)
     targetID = tx.header.iD
@@ -76,7 +65,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
             targetAlh,
         )
         if not verifies:
-            raise VerificationException
+            raise ErrCorruptedData
 
     newstate = State(
         db=state.db,

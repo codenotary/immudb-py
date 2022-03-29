@@ -50,7 +50,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, ver
         sourcealh,
         targetalh)
     if not verifies:
-        raise exceptions.VerificationException
+        raise exceptions.ErrCorruptedData
     newstate = State(
         db=state.db,
         txId=targetid,

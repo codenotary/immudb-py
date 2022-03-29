@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService,

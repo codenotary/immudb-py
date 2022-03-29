@@ -54,8 +54,7 @@ def KVMetadataFromProto(md: grpc_KVMetadata) -> store.KVMetadata:
     kvmd = store.KVMetadata()
     kvmd.AsDeleted(md.deleted)
 
-    # TODO: Check this with Bart
-    if md.expiration != None and md.expiration.expiresAt:
+    if md.HasField("expiration"):
         kvmd.ExpiresAt(datetime.utcfromtimestamp(md.expiration.expiresAt))
 
     kvmd.AsNonIndexable(md.nonIndexable)
@@ -100,7 +99,6 @@ def TxHeaderFromProto(hdr: grpc_TxHeader) -> store.TxHeader:
 def TxMetadataFromProto(md: grpc_TxMetadata) -> store.TxMetadata:
     if md == None:
         return None
-    # TODO: Double check this
     return store.TxMetadata()
 
 

@@ -17,7 +17,7 @@ from immudb import constants
 from immudb.grpc import schema_pb2
 import immudb.database as database
 import immudb.schema as schema
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 
 v0 = b'CnIIGhIg0IswQi+55M5xLZSEZUNnpSqoU7JSjtSgNZBlyCMK/3IYzfrjgAYgASogsgXOdHznBIOL0fRjDit+QmDn+9M5FZms8jTI5fHfcpIwGTogmXu3vjcP/kHZTXvT0O158Tx9A3ywjmHG0LOPxS5Bk9kSOwoLAHNhbGFjYWR1bGESIMTfI1H+rKu77CCQQ/ktaUmx/krECfmjHSg+Gy3Zc2NvGMyAgICAgICAASAL'
 s1 = b'CglkZWZhdWx0ZGIaIOOwxEKY/BwUmvv0yJlvuSQnrkHkZJuTTKSVmRt4UrhV'
@@ -41,7 +41,7 @@ def test_verify_inclusion():
     md = tx.entries[0].metadata()
 
     if md != None and md.Deleted():
-        raise VerificationException
+        raise ErrCorruptedData
 
     e = database.EncodeEntrySpec(key, md, value)
     verifies = store.VerifyInclusion(
@@ -60,38 +60,27 @@ def simulated_set(ss, vv, key, value):
     md = tx.entries[0].metadata()
 
     if md != None and md.Deleted():
-        raise VerificationException
+        raise ErrCorruptedData
     e = database.EncodeEntrySpec(key, md, value)
     verifies = store.VerifyInclusion(
         inclusionProof, entrySpecDigest(e), tx.header.eh)
     assert verifies
     assert tx.header.eh == schema.DigestFromProto(
         verifiableTx.dualProof.targetTxHeader.eH)
-    # if state.txId == 0:
-    #    sourceID = tx.ID
-    #    sourceAlh = tx.Alh
-    # else:
-    #    sourceID = state.txId
-    #    sourceAlh = immudb.embedded.store.DigestFrom(state.txHash)
-    #targetID = tx.ID
-    #targetAlh = tx.Alh
-    # TODO: Check this
-    if state.txId == 0:
-        sourceID = tx.header.iD
-        sourceAlh = tx.header.Alh()
-    else:
-        sourceID = state.txId
-        sourceAlh = schema.DigestFromProto(state.txHash)
+
+    sourceID = state.txId
+    sourceAlh = schema.DigestFromProto(state.txHash)
     targetID = tx.header.iD
     targetAlh = tx.header.Alh()
 
-    assert store.VerifyDualProof(
-        schema.DualProofFromProto(verifiableTx.dualProof),
-        sourceID,
-        targetID,
-        sourceAlh,
-        targetAlh,
-    )
+    if state.txId > 0:
+        assert store.VerifyDualProof(
+            schema.DualProofFromProto(verifiableTx.dualProof),
+            sourceID,
+            targetID,
+            sourceAlh,
+            targetAlh,
+        )
 
 
 def test_simulated_set1():

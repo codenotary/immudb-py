@@ -15,7 +15,7 @@ from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
 from immudb import datatypes
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 import immudb.database as database
 import immudb.schema as schema
 
@@ -41,8 +41,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
     inclusionProof = schema.InclusionProofFromProto(ventry.inclusionProof)
     dualProof = schema.DualProofFromProto(ventry.verifiableTx.dualProof)
 
-    # TODO: looks similar to the prob with Expires in Metadata
-    if ventry.entry.referencedBy == None or ventry.entry.referencedBy.key == b'':
+    if not ventry.entry.HasField("referencedBy"):
         vTx = ventry.entry.tx
         e = database.EncodeEntrySpec(requestkey, schema.KVMetadataFromProto(
             ventry.entry.metadata), ventry.entry.value)
@@ -69,15 +68,17 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
 
     verifies = store.VerifyInclusion(inclusionProof, entrySpecDigest(e), eh)
     if not verifies:
-        raise VerificationException
-    verifies = store.VerifyDualProof(
-        dualProof,
-        sourceid,
-        targetid,
-        sourcealh,
-        targetalh)
-    if not verifies:
-        raise VerificationException
+        raise ErrCorruptedData
+
+    if state.txId > 0:
+        verifies = store.VerifyDualProof(
+            dualProof,
+            sourceid,
+            targetid,
+            sourcealh,
+            targetalh)
+        if not verifies:
+            raise ErrCorruptedData
     newstate = State(
         db=state.db,
         txId=targetid,
@@ -88,7 +89,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
     if verifying_key != None:
         newstate.Verify(verifying_key)
     rs.set(newstate)
-    if ventry.entry.referencedBy != None and ventry.entry.referencedBy.key != b'':
+    if ventry.entry.HasField("referencedBy"):
         refkey = ventry.entry.referencedBy.key
     else:
         refkey = None

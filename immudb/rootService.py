@@ -101,7 +101,7 @@ class PersistentRootService(RootService):
                 states = pickle.load(f)
                 if self.__dbname in states:
                     self.__cache = states[self.__dbname]
-                    # IMPROVEMENT: check state validity (TODO)
+                    # IMPROVEMENT: we could check here, if state is valid.
         except FileNotFoundError:
             pass
         except Exception as e:

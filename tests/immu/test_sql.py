@@ -38,9 +38,8 @@ class TestSql:
                 table=tabname
             )
         )
-        # TODO
-        #assert(len(resp.ctxs) > 0)
-        #assert(len(resp.dtxs) == 0)
+        assert(len(resp.txs) > 0)
+        assert(not resp.ongoingTx)
 
         resp = client.listTables()
         assert(tabname in resp)
@@ -49,9 +48,8 @@ class TestSql:
             "insert into {table} (id, name) values (@id, @name);".format(table=tabname),
             {'id': 1, 'name': 'Joe'}
         )
-        # TODO
-        #assert(len(resp.ctxs) == 0)
-        #assert(len(resp.dtxs) > 0)
+        assert(len(resp.txs) > 0)
+        assert(not resp.ongoingTx)
 
         result = client.sqlQuery(
             "select id,name from {table} where id=@id;".format(table=tabname),

@@ -11,10 +11,6 @@
 # limitations under the License.
 
 
-class VerificationException(Exception):
-    pass
-
-
 class ErrMaxWidthExceeded(Exception):
     pass
 
@@ -33,6 +29,10 @@ class ErrNonExpirable(Exception):
 
 class ErrCorruptedData(Exception):
     pass
+
+
+# Compatibility with older SDK
+VerificationException = ErrCorruptedData
 
 
 class ErrReadOnly(Exception):

@@ -14,7 +14,7 @@ from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
 from immudb.embedded import store
 from immudb import datatypes
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 
 import immudb.database as database
 import immudb.schema as schema
@@ -34,7 +34,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, refkey: byte
     )
     vtx = service.VerifiableSetReference(vreq)
     if vtx.tx.header.nentries != 1:
-        raise VerificationException
+        raise ErrCorruptedData
     tx = schema.TxFromProto(vtx.tx)
     entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
     inclusionProof = tx.Proof(database.EncodeKey(key))
@@ -44,24 +44,23 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, refkey: byte
     verifies = store.VerifyInclusion(
         inclusionProof, entrySpecDigest(e), tx.header.eh)
     if not verifies:
-        raise VerificationException
-    if state.txId == 0:
-        sourceID = tx.header.iD
-        sourceAlh = tx.header.Alh()
-    else:
-        sourceID = state.txId
-        sourceAlh = schema.DigestFromProto(state.txHash)
+        raise ErrCorruptedData
+
+    sourceID = state.txId
+    sourceAlh = schema.DigestFromProto(state.txHash)
     targetID = tx.header.iD
     targetAlh = tx.header.Alh()
-    verifies = store.VerifyDualProof(
-        schema.DualProofFromProto(vtx.dualProof),
-        sourceID,
-        targetID,
-        sourceAlh,
-        targetAlh,
-    )
-    if not verifies:
-        raise VerificationException
+
+    if state.txId > 0:
+        verifies = store.VerifyDualProof(
+            schema.DualProofFromProto(vtx.dualProof),
+            sourceID,
+            targetID,
+            sourceAlh,
+            targetAlh,
+        )
+        if not verifies:
+            raise ErrCorruptedData
     newstate = State(
         db=state.db,
         txId=targetID,
