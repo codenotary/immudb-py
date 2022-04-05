@@ -38,8 +38,10 @@ class TestSql:
                 table=tabname
             )
         )
-        assert(len(resp.txs) > 0)
-        assert(not resp.ongoingTx)
+
+        # when talking to an older server, we will have unknown fields.
+        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
+               or len(resp.UnknownFields()) > 0)
 
         resp = client.listTables()
         assert(tabname in resp)
@@ -48,8 +50,9 @@ class TestSql:
             "insert into {table} (id, name) values (@id, @name);".format(table=tabname),
             {'id': 1, 'name': 'Joe'}
         )
-        assert(len(resp.txs) > 0)
-        assert(not resp.ongoingTx)
+
+        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
+               or len(resp.UnknownFields()) > 0)
 
         result = client.sqlQuery(
             "select id,name from {table} where id=@id;".format(table=tabname),
