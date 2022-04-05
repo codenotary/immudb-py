@@ -17,10 +17,6 @@ import immudb.embedded.store as store
 
 
 class EntrySpec(printable):
-    # def __init__(self):
-    #    self.key = None
-    #    self.metadata = None
-    #    self.value = None
 
     def __init__(self, key: bytes, md: store.KVMetadata, value: bytes):
         self.key = key
