@@ -166,11 +166,6 @@ class ImmuServiceStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=schema__pb2.HealthResponse.FromString,
                 )
-        self.DatabaseHealth = channel.unary_unary(
-                '/immudb.schema.ImmuService/DatabaseHealth',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=schema__pb2.DatabaseHealthResponse.FromString,
-                )
         self.CurrentState = channel.unary_unary(
                 '/immudb.schema.ImmuService/CurrentState',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -224,16 +219,6 @@ class ImmuServiceStub(object):
         self.UpdateDatabase = channel.unary_unary(
                 '/immudb.schema.ImmuService/UpdateDatabase',
                 request_serializer=schema__pb2.DatabaseSettings.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                )
-        self.GetDatabaseSettings = channel.unary_unary(
-                '/immudb.schema.ImmuService/GetDatabaseSettings',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=schema__pb2.DatabaseSettings.FromString,
-                )
-        self.FlushIndex = channel.unary_unary(
-                '/immudb.schema.ImmuService/FlushIndex',
-                request_serializer=schema__pb2.FlushIndexRequest.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.CompactIndex = channel.unary_unary(
@@ -516,12 +501,6 @@ class ImmuServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def DatabaseHealth(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def CurrentState(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -584,18 +563,6 @@ class ImmuServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def UpdateDatabase(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetDatabaseSettings(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def FlushIndex(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -864,11 +831,6 @@ def add_ImmuServiceServicer_to_server(servicer, server):
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=schema__pb2.HealthResponse.SerializeToString,
             ),
-            'DatabaseHealth': grpc.unary_unary_rpc_method_handler(
-                    servicer.DatabaseHealth,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=schema__pb2.DatabaseHealthResponse.SerializeToString,
-            ),
             'CurrentState': grpc.unary_unary_rpc_method_handler(
                     servicer.CurrentState,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -922,16 +884,6 @@ def add_ImmuServiceServicer_to_server(servicer, server):
             'UpdateDatabase': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateDatabase,
                     request_deserializer=schema__pb2.DatabaseSettings.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            ),
-            'GetDatabaseSettings': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetDatabaseSettings,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=schema__pb2.DatabaseSettings.SerializeToString,
-            ),
-            'FlushIndex': grpc.unary_unary_rpc_method_handler(
-                    servicer.FlushIndex,
-                    request_deserializer=schema__pb2.FlushIndexRequest.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
             'CompactIndex': grpc.unary_unary_rpc_method_handler(
@@ -1546,23 +1498,6 @@ class ImmuService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def DatabaseHealth(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/DatabaseHealth',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            schema__pb2.DatabaseHealthResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def CurrentState(request,
             target,
             options=(),
@@ -1745,40 +1680,6 @@ class ImmuService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/UpdateDatabase',
             schema__pb2.DatabaseSettings.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetDatabaseSettings(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/GetDatabaseSettings',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            schema__pb2.DatabaseSettings.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def FlushIndex(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/immudb.schema.ImmuService/FlushIndex',
-            schema__pb2.FlushIndexRequest.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

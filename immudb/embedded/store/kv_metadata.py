@@ -61,13 +61,14 @@ class KVMetadata():
         else:
             raise ErrNonExpirable
 
-    def AsNonIndexable(self, nonIndexable: bool):
-        if self.readonly:
-            raise ErrReadOnly
-        if not nonIndexable:
-            self.attributes.pop(NON_INDEXABLE_ATTR_CODE, None)
-        else:
-            self.attributes[NON_INDEXABLE_ATTR_CODE] = None
+    # Prepared for v1.2.3
+    # def AsNonIndexable(self, nonIndexable: bool):
+    #     if self.readonly:
+    #         raise ErrReadOnly
+    #     if not nonIndexable:
+    #         self.attributes.pop(NON_INDEXABLE_ATTR_CODE, None)
+    #     else:
+    #         self.attributes[NON_INDEXABLE_ATTR_CODE] = None
 
-    def NonIndexable(self) -> bool:
-        return NON_INDEXABLE_ATTR_CODE in self.attributes
+    # def NonIndexable(self) -> bool:
+    #     return NON_INDEXABLE_ATTR_CODE in self.attributes
