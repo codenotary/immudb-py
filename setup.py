@@ -26,6 +26,7 @@ setup(name='immudb-py',
       url='https://github.com/codenotary/immu-py',
       # download_url='',
       packages=['immudb', 'immudb.database', 'immudb.embedded',
+                'immudb.embedded.ahtree', 'immudb.embedded.htree', 'immudb.embedded.store',
                 'immudb.grpc', 'immudb.handler', 'immudb.schema'],
       keywords=['immudb', 'immutable'],
       install_requires=[
