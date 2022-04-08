@@ -18,7 +18,7 @@ from immudb.handler import (batchGet, batchSet, changePassword, changePermission
                             currentRoot, createDatabase, databaseList, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
-                            zscan, healthcheck, txbyid, verifiedtxbyid, sqlexec, sqlquery,
+                            zscan, healthcheck, health, txbyid, verifiedtxbyid, sqlexec, sqlquery,
                             listtables, execAll)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
@@ -100,6 +100,9 @@ class ImmudbClient:
 
     def healthCheck(self):
         return healthcheck.call(self.__stub, self.__rs)
+
+    def health(self):
+        return health.call(self.__stub, self.__rs)
 
     def get(self, key: bytes):
         return get.call(self.__stub, self.__rs, key)
