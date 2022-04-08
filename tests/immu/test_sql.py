@@ -17,11 +17,18 @@ from immudb.typeconv import py_to_sqlvalue, sqlvalue_to_py
 
 import grpc._channel
 from random import randint
+from datetime import datetime
+import pytz
 
 
 class TestSql:
     def test_sqlvalue(self):
-        for v in (99, None, True, "fives", b'domino'):
+        for v in (99, None, True, "fives", b'domino',
+                  pytz.timezone(
+                      "US/Eastern").localize(datetime(2022, 5, 6, 1, 2, 3, 123456)),
+                  pytz.timezone("UTC").localize(
+                      datetime(2022, 5, 6, 1, 2, 3, 123456))
+                  ):
             vo = sqlvalue_to_py(py_to_sqlvalue(v))
             assert v == vo
             assert type(v) == type(vo)

@@ -1,5 +1,6 @@
 from immudb.grpc import schema_pb2
 from pprint import pformat
+from datetime import datetime, timezone
 
 
 def py_to_sqlvalue(value):
@@ -15,6 +16,9 @@ def py_to_sqlvalue(value):
         sqlValue = schema_pb2.SQLValue(s=value)
     elif typ in (bytes, bytearray):
         sqlValue = schema_pb2.SQLValue(bs=value)
+    elif typ is datetime:
+        sqlValue = schema_pb2.SQLValue(
+            ts=int(value.timestamp()*1e6))
     else:
         raise TypeError("Type not supported: {}".format(
             value.__class__.__name__))
@@ -30,6 +34,8 @@ def sqlvalue_to_py(sqlValue):
         return sqlValue.bs
     elif sqlValue.HasField("s"):
         return sqlValue.s
+    elif sqlValue.HasField("ts"):
+        return datetime.fromtimestamp(sqlValue.ts/1e6, timezone.utc)
     elif sqlValue.HasField("null"):
         return None
     else:
