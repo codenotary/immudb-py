@@ -38,7 +38,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, refkey: byte
     tx = schema.TxFromProto(vtx.tx)
     entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
     inclusionProof = tx.Proof(database.EncodeKey(key))
-    # TODO: Is metadata missing here?
+
     e = database.EncodeReference(key, None, refkey, atTx)
 
     verifies = store.VerifyInclusion(
