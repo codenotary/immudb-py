@@ -54,6 +54,6 @@ def client(request):
     return client_margs(immudUrl=request.param)
 
 
-@pytest.fixture(scope="function", params=["localhost:3322", "localhost:3333"])
+@pytest.fixture(scope="function", params=TESTURLS)
 def wrappedClient(request):
     return ImmuTestClient(client_margs(immudUrl=request.param))
