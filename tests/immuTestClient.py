@@ -19,7 +19,6 @@ class ImmuTestClient:
         toExecute.extend(queries)
         toExecute.append(self.transactionEnd)
         multiLineQuery = separator.join(toExecute)
-        print(multiLineQuery)
         resp = self.client.sqlExec(multiLineQuery, concatenatedParams)
         assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
                    or len(resp.UnknownFields()) > 0)
