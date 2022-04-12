@@ -10,69 +10,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-from immudb.client import ImmudbClient
 from immudb.handler.sqldescribe import ColumnDescription
 from immudb.typeconv import py_to_sqlvalue, sqlvalue_to_py
 
-import grpc._channel
-from random import randint
 from datetime import datetime
 import pytz
+from tests.immuTestClient import ImmuTestClient
+import pytest
 
 
 class TestSql:
     def test_sqlvalue(self):
-        for v in (99, None, True, "fives", b'domino',
+        for value in (99, None, True, "fives", b'domino',
                   pytz.timezone(
                       "US/Eastern").localize(datetime(2022, 5, 6, 1, 2, 3, 123456)),
                   pytz.timezone("UTC").localize(
                       datetime(2022, 5, 6, 1, 2, 3, 123456))
                   ):
-            vo = sqlvalue_to_py(py_to_sqlvalue(v))
-            assert v == vo
-            assert type(v) == type(vo)
-        try:
-            v = py_to_sqlvalue({'a': 1})
-        except TypeError:
-            v = "fail"
-        assert v == "fail"
+            reverseConvert = sqlvalue_to_py(py_to_sqlvalue(value))
+            assert value == reverseConvert
+            assert type(value) == type(reverseConvert)
+        with pytest.raises(TypeError):
+            value = py_to_sqlvalue({'a': 1})
 
-    def test_exec_query(self, client):
-        tabname = "testtable{:04d}".format(randint(0, 10000))
-        resp = client.sqlExec(
-            "create table {table} (id integer, name varchar, primary key id);".format(
-                table=tabname
-            )
-        )
-
-        # when talking to an older server, we will have unknown fields.
-        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
-               or len(resp.UnknownFields()) > 0)
-
-        resp = client.listTables()
-        assert(tabname in resp)
-
-        resp = client.sqlExec(
-            "insert into {table} (id, name) values (@id, @name);".format(table=tabname),
-            {'id': 1, 'name': 'Joe'}
-        )
-
-        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
-               or len(resp.UnknownFields()) > 0)
-
-        result = client.sqlQuery(
-            "select id,name from {table} where id=@id;".format(table=tabname),
-            {'id': 1}
-        )
+    def test_exec_query(self, wrappedClient: ImmuTestClient):
+        tabname = wrappedClient.createTestTable("id INTEGER", "name VARCHAR", "PRIMARY KEY id")
+        wrappedClient.insertToTable(tabname, ["id", "name"], ["@id", "@name"], {'id': 1, 'name': 'Joe'})
+        result = wrappedClient.simpleSelect(tabname, ["id", "name"], {'id': 1}, "id=@id")
         assert(len(result) > 0)
-
         assert(result == [(1, "Joe")])
 
-    def test_describe(self, client):
-        tbname = "test{:04d}".format(randint(0, 10000))
-        client.sqlExec(
-            f"CREATE TABLE {tbname} (id INTEGER, name VARCHAR[100], PRIMARY KEY id)")
-        response = client.describeTable(tbname)
+    def test_describe(self, wrappedClient: ImmuTestClient):
+        tbname = wrappedClient.createTestTable("id INTEGER", "name VARCHAR[100]", "PRIMARY KEY id")
+        
+        response = wrappedClient.client.describeTable(tbname)
         assert response == [ColumnDescription(name='id', type='INTEGER', nullable=True, index='PRIMARY KEY', autoincrement=False, unique=True), ColumnDescription(
             name='name', type='VARCHAR[100]', nullable=True, index='NO', autoincrement=False, unique=False)]

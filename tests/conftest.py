@@ -7,6 +7,7 @@ from immudb import ImmudbClient
 import grpc._channel
 
 from immudb.rootService import PersistentRootService
+from .immuTestClient import ImmuTestClient
 
 
 @pytest.fixture(scope="module")
@@ -43,3 +44,8 @@ def client_pem(request):
 @pytest.fixture(scope="function", params=["localhost:3322", "localhost:3333"])
 def client(request):
     return client_margs(immudUrl=request.param)
+
+
+@pytest.fixture(scope="function", params=["localhost:3322", "localhost:3333"])
+def wrappedClient(request):
+    return ImmuTestClient(client_margs(immudUrl=request.param))
