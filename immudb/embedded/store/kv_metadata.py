@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +15,10 @@ from immudb.exceptions import ErrNonExpirable, ErrReadOnly
 import datetime
 
 
+DELETED_ATTR_CODE = 0
+EXPIRES_AT_ATTR_CODE = 1
+
+
 class KVMetadata():
     def __init__(self):
         self.attributes = dict()
@@ -23,7 +26,7 @@ class KVMetadata():
 
     def Bytes(self):
         b = b''
-        for attrCode in [DELETED_ATTR_CODE, EXPIRES_AT_ATTR_CODE, NON_INDEXABLE_ATTR_CODE]:
+        for attrCode in [DELETED_ATTR_CODE, EXPIRES_AT_ATTR_CODE]:
             if attrCode in self.attributes:
                 b = b+attrCode.to_bytes(1, 'big')
                 if attrCode == EXPIRES_AT_ATTR_CODE:
@@ -60,15 +63,3 @@ class KVMetadata():
             return self.attributes[EXPIRES_AT_ATTR_CODE]
         else:
             raise ErrNonExpirable
-
-    # Prepared for v1.2.3
-    # def AsNonIndexable(self, nonIndexable: bool):
-    #     if self.readonly:
-    #         raise ErrReadOnly
-    #     if not nonIndexable:
-    #         self.attributes.pop(NON_INDEXABLE_ATTR_CODE, None)
-    #     else:
-    #         self.attributes[NON_INDEXABLE_ATTR_CODE] = None
-
-    # def NonIndexable(self) -> bool:
-    #     return NON_INDEXABLE_ATTR_CODE in self.attributes

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +20,8 @@ from immudb.grpc.schema_pb2 import TxHeader as grpc_TxHeader
 from immudb.grpc.schema_pb2 import LinearProof as grpc_LinearProof
 from immudb.grpc.schema_pb2 import InclusionProof as grpc_InclusionProof
 from datetime import datetime
+
+import hashlib
 
 
 def TxFromProto(stx) -> store.Tx():
@@ -56,9 +57,6 @@ def KVMetadataFromProto(md: grpc_KVMetadata) -> store.KVMetadata:
 
     if md.HasField("expiration"):
         kvmd.ExpiresAt(datetime.utcfromtimestamp(md.expiration.expiresAt))
-
-    # Prepared for v1.2.3
-    # kvmd.AsNonIndexable(md.nonIndexable)
 
     return kvmd
 
@@ -112,7 +110,7 @@ def LinearProofFromProto(lproof: grpc_LinearProof) -> store.LinearProof:
 
 
 def DigestFromProto(slicedDigest: bytes) -> bytes:
-    d = copy.copy(slicedDigest[:SHA256LEN])
+    d = copy.copy(slicedDigest[:hashlib.sha256().digest_size])
     return d
 
 
