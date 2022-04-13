@@ -15,7 +15,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
-                            currentRoot, createDatabase, databaseList, useDatabase,
+                            currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, health, txbyid, verifiedtxbyid, sqlexec, sqlquery,
@@ -24,6 +24,7 @@ from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
 import ecdsa
+from immudb.datatypes import DeleteKeysRequest
 
 
 class ImmudbClient:
@@ -250,7 +251,8 @@ class ImmudbClient:
         resp = batchGet.call(self.__stub, self.__rs, keys)
         return {key: value.value for key, value in resp.items()}
 
-    # Not implemented: delete
+    def delete(self, req: DeleteKeysRequest):
+        return deleteKeys.call(self.__stub, req)
 
     def execAll(self, ops: list, noWait=False):
         return execAll.call(self.__stub, self.__rs, ops, noWait)
