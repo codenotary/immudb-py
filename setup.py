@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2021 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,9 @@ setup(name='immudb-py',
       author='vChain',
       url='https://github.com/codenotary/immu-py',
       # download_url='',
-      packages=['immudb', 'immudb.handler', 'immudb.grpc'],
+      packages=['immudb', 'immudb.database', 'immudb.embedded',
+                'immudb.embedded.ahtree', 'immudb.embedded.htree', 'immudb.embedded.store',
+                'immudb.grpc', 'immudb.handler', 'immudb.schema'],
       keywords=['immudb', 'immutable'],
       install_requires=[
           'grpcio>=1.26.0',

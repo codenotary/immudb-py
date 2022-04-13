@@ -10,34 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-class ErrMaxWidthExceeded(Exception):
-    pass
-
-
-class ErrIllegalArguments(Exception):
-    pass
+from immudb.constants import *
+from immudb.printable import printable
+import immudb.embedded.store as store
 
 
-class ErrUnsupportedTxVersion(Exception):
-    pass
+class EntrySpec(printable):
 
-
-class ErrNonExpirable(Exception):
-    pass
-
-
-class ErrCorruptedData(Exception):
-    pass
-
-
-# Compatibility with older SDK
-VerificationException = ErrCorruptedData
-
-
-class ErrReadOnly(Exception):
-    pass
-
-
-class ErrKeyNotFound(Exception):
-    pass
+    def __init__(self, key: bytes, md: store.KVMetadata, value: bytes):
+        self.key = key
+        self.metadata = md
+        self.value = value

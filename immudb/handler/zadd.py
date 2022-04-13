@@ -1,4 +1,4 @@
-# Copyright 2021 CodeNotary, Inc. All rights reserved.
+# Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 from immudb import datatypes
 
 
@@ -29,7 +29,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, zset: bytes,
     )
     msg = service.ZAdd(request)
     if msg.nentries != 1:
-        raise VerificationException
+        raise ErrCorruptedData
     return datatypes.SetResponse(
         id=msg.id,
         verified=False,

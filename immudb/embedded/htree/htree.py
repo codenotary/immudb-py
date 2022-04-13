@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# Copyright 2021 CodeNotary, Inc. All rights reserved.
+# Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +12,6 @@
 import hashlib
 from immudb.constants import *
 from immudb.exceptions import *
-import immudb.store
 
 
 class InclusionProof:
@@ -21,17 +19,6 @@ class InclusionProof:
         self.leaf = None
         self.width = None
         self.terms = b''
-
-
-class DualProof:
-    def __init__(self):
-        self.sourceTxMetadata = None
-        self.targetTxMetadata = None
-        self.inclusionProof = None
-        self.consistencyProof = None
-        self.targetBlTxAlh = None
-        self.lastInclusionProof = None
-        self.linearProof = None
 
 
 class HTree:
@@ -102,23 +89,3 @@ class HTree:
             proof.terms = self.levels[layer][index]+proof.terms
             if n < 1 or (n == 1 and m == 0):
                 return proof
-
-
-def InclusionProofFrom(iproof):
-    h = InclusionProof()
-    h.leaf = int(iproof.leaf)
-    h.width = int(iproof.width)
-    h.terms = immudb.store.DigestFrom(iproof.terms)
-    return h
-
-
-def DualProofFrom(dproof):
-    dp = DualProof()
-    dp.sourceTxMetadata = immudb.store.TxMetadataFrom(dproof.sourceTxMetadata)
-    dp.targetTxMetadata = immudb.store.TxMetadataFrom(dproof.targetTxMetadata)
-    dp.inclusionProof = immudb.store.DigestFrom(dproof.inclusionProof)
-    dp.consistencyProof = immudb.store.DigestFrom(dproof.consistencyProof)
-    dp.targetBlTxAlh = immudb.store.DigestFrom(dproof.targetBlTxAlh)
-    dp.lastInclusionProof = immudb.store.DigestsFrom(dproof.lastInclusionProof)
-    dp.linearProof = immudb.store.LinearProofFrom(dproof.linearProof)
-    return dp

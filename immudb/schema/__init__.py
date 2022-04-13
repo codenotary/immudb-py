@@ -1,4 +1,4 @@
-# Copyright 2022 CodeNotary, Inc. All rights reserved.
+# Copyright 2021 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,34 +10,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-class ErrMaxWidthExceeded(Exception):
-    pass
-
-
-class ErrIllegalArguments(Exception):
-    pass
-
-
-class ErrUnsupportedTxVersion(Exception):
-    pass
-
-
-class ErrNonExpirable(Exception):
-    pass
-
-
-class ErrCorruptedData(Exception):
-    pass
-
-
-# Compatibility with older SDK
-VerificationException = ErrCorruptedData
-
-
-class ErrReadOnly(Exception):
-    pass
-
-
-class ErrKeyNotFound(Exception):
-    pass
+from immudb.schema.database_protoconv import *

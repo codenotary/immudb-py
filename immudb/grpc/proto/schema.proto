@@ -27,7 +27,7 @@ message Key {
 	bytes key = 1;
 }
 
-message Permission{
+message Permission {
 	string database = 1;
 	uint32 permission = 2;
 }
@@ -79,25 +79,39 @@ message MTLSConfig {
 	bool enabled = 1;
 }
 
+message OpenSessionRequest {
+	bytes username = 1;
+	bytes password = 2;
+	string databaseName = 3;
+}
+
+message OpenSessionResponse {
+	string sessionID = 1;
+	string serverUUID = 2;
+}
+
 ////////////////////////////////////////////////////////
 
 message KeyValue {
 	bytes key = 1;
 	bytes value = 2;
+	KVMetadata metadata = 3;
 }
 
 message Entry {
 	uint64 tx = 1;
 	bytes key = 2;
 	bytes value = 3;
-
 	Reference referencedBy = 4;
+	KVMetadata metadata = 5;
+	bool expired = 6;
 }
 
 message Reference {
 	uint64 tx = 1;
 	bytes key = 2;
 	uint64 atTx = 3;
+	KVMetadata metadata = 4;
 }
 
 message Op {
@@ -153,7 +167,7 @@ message Signature {
 	bytes signature = 2;
 }
 
-message TxMetadata {
+message TxHeader {
 	uint64 id = 1;
 	bytes prevAlh = 2;
 	int64 ts = 3;
@@ -161,6 +175,11 @@ message TxMetadata {
 	bytes eH = 5;
 	uint64 blTxId = 6;
 	bytes blRoot = 7;
+	int32 version = 8;
+	TxMetadata metadata = 9;
+}
+
+message TxMetadata {
 }
 
 message LinearProof {
@@ -170,8 +189,8 @@ message LinearProof {
 }
 
 message DualProof {
-	TxMetadata sourceTxMetadata = 1;
-	TxMetadata targetTxMetadata = 2;
+	TxHeader sourceTxHeader = 1;
+	TxHeader targetTxHeader = 2;
 
 	repeated bytes inclusionProof = 3;
 	repeated bytes consistencyProof = 4;
@@ -183,15 +202,24 @@ message DualProof {
 }
 
 message Tx {
-	TxMetadata metadata = 1;
+	TxHeader header = 1;
 	repeated TxEntry entries = 2;
 }
 
 message TxEntry {
 	bytes key = 1;
 	bytes hValue = 2;
-	int64 vOff = 3;
-	int32 vLen = 4;
+	int32 vLen = 3;
+	KVMetadata metadata = 4;
+}
+
+message KVMetadata {
+	bool deleted = 1;
+	Expiration expiration = 2;
+}
+
+message Expiration {
+	int64 expiresAt = 1;
 }
 
 message VerifiableTx {
@@ -228,6 +256,12 @@ message KeyRequest {
 message KeyListRequest {
 	repeated bytes keys = 1;
 	uint64 sinceTx = 2;
+}
+
+message DeleteKeysRequest {
+	repeated bytes keys = 1;
+	uint64 sinceTx = 2;
+	bool  noWait = 3;
 }
 
 message VerifiableSetRequest {
@@ -317,7 +351,7 @@ message VerifiableTxRequest {
 message TxScanRequest {
 	uint64 initialTx = 1;
 	uint32 limit = 2;
-    bool desc = 3;
+    bool   desc = 3;
 }
 
 message TxList {
@@ -328,38 +362,56 @@ message Database {
 	string databaseName = 1;
 }
 
+message DatabaseSettings {
+	string databaseName = 1;
+	bool   replica = 2;
+	string masterDatabase = 3;
+	string masterAddress = 4;
+	uint32 masterPort = 5;
+	string followerUsername = 6;
+	string followerPassword = 7;
+	uint32 fileSize = 8;
+	uint32 maxKeyLen = 9;
+	uint32 maxValueLen = 10;
+	uint32 maxTxEntries = 11;
+	bool   excludeCommitTime = 12;
+}
+
 message Table {
 	string tableName = 1;
 }
 
 message SQLGetRequest {
 	string table = 1;
-	SQLValue pkValue = 2;
+	repeated SQLValue pkValues = 2;
     uint64 atTx = 3;
 	uint64 sinceTx = 4;
 }
 
 message VerifiableSQLGetRequest {
 	SQLGetRequest sqlGetRequest = 1;
-	uint64 proveSinceTx = 2;
+	uint64        proveSinceTx = 2;
 }
 
 message SQLEntry {
 	uint64 tx = 1;
-	bytes key = 2;
-	bytes value = 3;
+	bytes  key = 2;
+	bytes  value = 3;
+	KVMetadata metadata = 4;
 }
 
 message VerifiableSQLEntry {
+	reserved 6;
 	SQLEntry sqlEntry = 1;
 	VerifiableTx verifiableTx = 2;
 	InclusionProof inclusionProof = 3;
-	uint64 DatabaseId = 4;
-	uint64 TableId = 5;
-	string PKName = 6;
-	map<uint64, string> ColIdsById = 8;
-	map<string, uint64> ColIdsByName = 9;
-	map<uint64, string> ColTypesById = 10;
+	uint32 DatabaseId = 4;
+	uint32 TableId = 5;
+	repeated uint32 PKIDs = 16;
+	map<uint32, string> ColNamesById = 8;
+	map<string, uint32> ColIdsByName = 9;
+	map<uint32, string> ColTypesById = 10;
+	map<uint32, int32> ColLenById = 11;
 }
 
 message UseDatabaseReply{
@@ -414,8 +466,15 @@ message NamedParam {
 }
 
 message SQLExecResult {
-	repeated TxMetadata ctxs = 1;
-	repeated TxMetadata dtxs = 2;
+	repeated CommittedSQLTx txs = 5;
+	bool ongoingTx = 6;
+}
+
+message CommittedSQLTx {
+	TxHeader header = 1;
+	uint32 updatedRows = 2;
+	map<string, SQLValue> lastInsertedPKs = 3;
+	map<string, SQLValue> firstInsertedPKs = 4;
 }
 
 message SQLQueryResult {
@@ -436,61 +495,114 @@ message Row {
 message SQLValue {
 	oneof value {
 		google.protobuf.NullValue null = 1;
-		uint64 n = 2;
+		int64 n = 2;
 		string s = 3;
 		bool b = 4;
 		bytes bs = 5;
+		int64 ts = 6;
 	}
 }
 
+enum TxMode {
+	ReadOnly = 0;
+	WriteOnly = 1;
+	ReadWrite = 2;
+}
+
+message NewTxRequest {
+	TxMode mode = 1;
+}
+
+message NewTxResponse {
+	string transactionID = 1;
+}
+
+
+message ErrorInfo {
+	string code = 1;
+	string cause = 2;
+}
+
+message DebugInfo {
+	string stack = 1;
+}
+
+message RetryInfo {
+	int32 retry_delay = 1;
+}
+
 // immudb gRPC & REST service
-// IMPORTANT: All get and safeget functions return base64-encoded keys and values, while all set and safeset functions expect base64-encoded inputs.
 service ImmuService {
 	rpc ListUsers (google.protobuf.Empty) returns (UserList);
 	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty);
 	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty);
-	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty);
-	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty);
+	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty); // DEPRECATED
+	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty); // DEPRECATED
+
+	rpc OpenSession (OpenSessionRequest) returns (OpenSessionResponse){};
+	rpc CloseSession (google.protobuf.Empty) returns (google.protobuf.Empty){};
+	rpc KeepAlive (google.protobuf.Empty) returns (google.protobuf.Empty){};
+
+	rpc NewTx (NewTxRequest) returns (NewTxResponse){};
+	rpc Commit (google.protobuf.Empty) returns (CommittedSQLTx){};
+	rpc Rollback (google.protobuf.Empty) returns (google.protobuf.Empty){};
+
+	rpc TxSQLExec(SQLExecRequest) returns (google.protobuf.Empty) {};
+	rpc TxSQLQuery(SQLQueryRequest) returns (SQLQueryResult) {};
+
 	rpc Login (LoginRequest) returns (LoginResponse);
 	rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty);
-	rpc Set (SetRequest) returns (TxMetadata);
+	rpc Set (SetRequest) returns (TxHeader);
 	rpc VerifiableSet (VerifiableSetRequest) returns (VerifiableTx);
 	rpc Get (KeyRequest) returns (Entry);
 	rpc VerifiableGet (VerifiableGetRequest) returns (VerifiableEntry);
+	rpc Delete(DeleteKeysRequest) returns (TxHeader);
 	rpc GetAll (KeyListRequest) returns (Entries);
-	rpc ExecAll (ExecAllRequest) returns (TxMetadata);
+	rpc ExecAll (ExecAllRequest) returns (TxHeader);
 	rpc Scan(ScanRequest) returns (Entries);
+
+	// NOT YET SUPPORTED
 	rpc Count(KeyPrefix) returns (EntryCount);
+
+	// NOT YET SUPPORTED
 	rpc CountAll(google.protobuf.Empty) returns (EntryCount);
+
 	rpc TxById(TxRequest) returns (Tx);
 	rpc VerifiableTxById(VerifiableTxRequest) returns (VerifiableTx);
 	rpc TxScan(TxScanRequest) returns (TxList);
 	rpc History(HistoryRequest) returns (Entries);
 	rpc Health (google.protobuf.Empty) returns (HealthResponse);
 	rpc CurrentState (google.protobuf.Empty) returns (ImmutableState);
-	rpc SetReference (ReferenceRequest) returns (TxMetadata);
+	rpc SetReference (ReferenceRequest) returns (TxHeader);
 	rpc VerifiableSetReference (VerifiableReferenceRequest) returns (VerifiableTx);
-	rpc ZAdd (ZAddRequest) returns (TxMetadata);
+	rpc ZAdd (ZAddRequest) returns (TxHeader);
 	rpc VerifiableZAdd (VerifiableZAddRequest) returns (VerifiableTx);
 	rpc ZScan (ZScanRequest) returns (ZEntries);
+
+	// DEPRECATED: kept for backward compatibility
 	rpc CreateDatabase(Database) returns (google.protobuf.Empty);
+
+	rpc CreateDatabaseWith(DatabaseSettings) returns (google.protobuf.Empty);
 	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse);
 	rpc UseDatabase(Database) returns (UseDatabaseReply);
+	rpc UpdateDatabase(DatabaseSettings) returns (google.protobuf.Empty);
 	rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty);
 	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty);
 	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty);
 	// Streams
-	rpc streamGet(KeyRequest) returns (stream Chunk);
-	rpc streamSet(stream Chunk) returns (TxMetadata);
-	rpc streamVerifiableGet(VerifiableGetRequest) returns (stream Chunk);
-	rpc streamVerifiableSet(stream Chunk) returns (VerifiableTx);
-	rpc streamScan(ScanRequest) returns (stream Chunk);
-	rpc streamZScan(ZScanRequest) returns (stream Chunk);
-	rpc streamHistory(HistoryRequest) returns (stream Chunk);
-	rpc streamExecAll(stream Chunk) returns (TxMetadata);
+	rpc streamGet(KeyRequest) returns (stream Chunk) {};
+	rpc streamSet(stream Chunk) returns (TxHeader) {};
+	rpc streamVerifiableGet(VerifiableGetRequest) returns (stream Chunk) {};
+	rpc streamVerifiableSet(stream Chunk) returns (VerifiableTx) {};
+	rpc streamScan(ScanRequest) returns (stream Chunk) {};
+	rpc streamZScan(ZScanRequest) returns (stream Chunk) {};
+	rpc streamHistory(HistoryRequest) returns (stream Chunk) {};
+	rpc streamExecAll(stream Chunk) returns (TxHeader) {};
 
-	// SQL
-	rpc UseSnapshot(UseSnapshotRequest) returns (google.protobuf.Empty);
+	// Replication
+	rpc exportTx(TxRequest) returns (stream Chunk) {};
+	rpc replicateTx(stream Chunk) returns (TxHeader) {};
+
 	rpc SQLExec(SQLExecRequest) returns (SQLExecResult);
 	rpc SQLQuery(SQLQueryRequest) returns (SQLQueryResult);
 	rpc ListTables(google.protobuf.Empty) returns (SQLQueryResult);

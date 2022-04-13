@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-
+PYTHON ?= python3
 PYTEST ?= python3 -m pytest
 PIP ?= pip3
 COVERAGE ?= $(shell which coverage)
@@ -28,10 +28,10 @@ coverage:
 	$(COVERAGE) run -m pytest tests
 
 install:
-	python setup.py install
+	$(PYTHON) setup.py install
 
 .PHONY: dist
 dist:
 	mkdir -p ./dist
 	rm -fr ./dist/* ./build/*
-	python setup.py sdist bdist_wheel
+	$(PYTHON) setup.py sdist bdist_wheel

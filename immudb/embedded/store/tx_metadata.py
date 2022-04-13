@@ -10,34 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-class ErrMaxWidthExceeded(Exception):
-    pass
-
-
-class ErrIllegalArguments(Exception):
-    pass
+from immudb.constants import *
+from immudb.printable import printable
 
 
-class ErrUnsupportedTxVersion(Exception):
-    pass
+class TxMetadata(printable):
+    def __init__(self):
+        pass
 
-
-class ErrNonExpirable(Exception):
-    pass
-
-
-class ErrCorruptedData(Exception):
-    pass
-
-
-# Compatibility with older SDK
-VerificationException = ErrCorruptedData
-
-
-class ErrReadOnly(Exception):
-    pass
-
-
-class ErrKeyNotFound(Exception):
-    pass
+    def Bytes(self):
+        return None

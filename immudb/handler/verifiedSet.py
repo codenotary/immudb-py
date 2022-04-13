@@ -1,4 +1,4 @@
-# Copyright 2021 CodeNotary, Inc. All rights reserved.
+# Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,13 +10,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from time import time
-from immudb.exceptions import VerificationException
+from immudb.exceptions import ErrCorruptedData
 
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
-from immudb import constants, datatypes, store, htree
+from immudb import datatypes
+from immudb.embedded import store
+import immudb.database as database
+import immudb.schema as schema
 
 #import base64
 
@@ -31,32 +33,40 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     )
     verifiableTx = service.VerifiableSet(rawRequest)
     # print(base64.b64encode(verifiableTx.SerializeToString()))
-    tx = store.TxFrom(verifiableTx.tx)
-    inclusionProof = tx.Proof(constants.SET_KEY_PREFIX+key)
-    ekv = store.EncodeKV(key, value)
-    verifies = store.VerifyInclusion(inclusionProof, ekv.Digest(), tx.eh())
-    if not verifies:
-        raise VerificationException
-    if tx.eh() != store.DigestFrom(verifiableTx.dualProof.targetTxMetadata.eH):
-        raise VerificationException
-    if state.txId == 0:
-        sourceID = tx.ID
-        sourceAlh = tx.Alh
-    else:
-        sourceID = state.txId
-        sourceAlh = store.DigestFrom(state.txHash)
-    targetID = tx.ID
-    targetAlh = tx.Alh
+    if verifiableTx.tx.header.nentries != 1 or len(verifiableTx.tx.entries) != 1:
+        raise ErrCorruptedData
+    tx = schema.TxFromProto(verifiableTx.tx)
+    entrySpecDigest = store.EntrySpecDigestFor(tx.header.version)
+    inclusionProof = tx.Proof(database.EncodeKey(key))
+    md = tx.entries[0].metadata()
 
-    verifies = store.VerifyDualProof(
-        htree.DualProofFrom(verifiableTx.dualProof),
-        sourceID,
-        targetID,
-        sourceAlh,
-        targetAlh,
-    )
+    if md != None and md.Deleted():
+        raise ErrCorruptedData
+
+    e = database.EncodeEntrySpec(key, md, value)
+
+    verifies = store.VerifyInclusion(
+        inclusionProof, entrySpecDigest(e), tx.header.eh)
     if not verifies:
-        raise VerificationException
+        raise ErrCorruptedData
+    if tx.header.eh != schema.DigestFromProto(verifiableTx.dualProof.targetTxHeader.eH):
+        raise ErrCorruptedData
+    sourceID = state.txId
+    sourceAlh = schema.DigestFromProto(state.txHash)
+    targetID = tx.header.iD
+    targetAlh = tx.header.Alh()
+
+    if state.txId > 0:
+        verifies = store.VerifyDualProof(
+            schema.DualProofFromProto(verifiableTx.dualProof),
+            sourceID,
+            targetID,
+            sourceAlh,
+            targetAlh,
+        )
+        if not verifies:
+            raise ErrCorruptedData
+
     newstate = State(
         db=state.db,
         txId=targetID,
@@ -68,6 +78,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
         newstate.Verify(verifying_key)
     rs.set(newstate)
     return datatypes.SetResponse(
-        id=verifiableTx.tx.metadata.id,
+        id=verifiableTx.tx.header.id,
         verified=verifies,
     )

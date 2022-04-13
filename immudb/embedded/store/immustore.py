@@ -10,34 +10,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-class ErrMaxWidthExceeded(Exception):
-    pass
-
-
-class ErrIllegalArguments(Exception):
-    pass
+from immudb.constants import *
+from immudb.printable import printable
+import immudb.embedded.store as store
 
 
-class ErrUnsupportedTxVersion(Exception):
-    pass
+class DualProof(printable):
+    def __init__(self):
+        self.sourceTxHeader = store.TxHeader()
+        self.targetTxHeader = store.TxHeader()
+        self.inclusionProof = None
+        self.consistencyProof = None
+        self.targetBlTxAlh = None
+        self.lastInclusionProof = None
+        self.linearProof = store.LinearProof()
 
 
-class ErrNonExpirable(Exception):
-    pass
-
-
-class ErrCorruptedData(Exception):
-    pass
-
-
-# Compatibility with older SDK
-VerificationException = ErrCorruptedData
-
-
-class ErrReadOnly(Exception):
-    pass
-
-
-class ErrKeyNotFound(Exception):
-    pass
+class LinearProof(printable):
+    def __init__(self):
+        self.sourceTxID = None
+        self.targetTxID = None
+        self.terms = None

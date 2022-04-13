@@ -1,4 +1,4 @@
-# Copyright 2021 CodeNotary, Inc. All rights reserved.
+# Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,11 +10,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from immudb.embedded import store
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
-from immudb import constants, htree, store, datatypes
-from immudb.exceptions import VerificationException
+from immudb import datatypes
+from immudb.exceptions import ErrCorruptedData
+import immudb.database as database
+import immudb.schema as schema
+
 
 import sys
 
@@ -32,43 +36,49 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
             proveSinceTx=state.txId
         )
     ventry = service.VerifiableGet(req)
-    inclusionProof = htree.InclusionProofFrom(ventry.inclusionProof)
-    dualProof = htree.DualProofFrom(ventry.verifiableTx.dualProof)
+    entrySpecDigest = store.EntrySpecDigestFor(
+        int(ventry.verifiableTx.tx.header.version))
+    inclusionProof = schema.InclusionProofFromProto(ventry.inclusionProof)
+    dualProof = schema.DualProofFromProto(ventry.verifiableTx.dualProof)
 
-    if ventry.entry.referencedBy == None or ventry.entry.referencedBy.key == b'':
+    if not ventry.entry.HasField("referencedBy"):
         vTx = ventry.entry.tx
-        kv = store.EncodeKV(requestkey, ventry.entry.value)
+        e = database.EncodeEntrySpec(requestkey, schema.KVMetadataFromProto(
+            ventry.entry.metadata), ventry.entry.value)
     else:
-        vTx = ventry.entry.referencedBy.tx
-        kv = store.EncodeReference(
-            ventry.entry.referencedBy.key, ventry.entry.key, ventry.entry.referencedBy.atTx)
+        ref = ventry.entry.referencedBy
+        vTx = ref.tx
+        e = database.EncodeReference(ref.key, schema.KVMetadataFromProto(
+            ref.metadata), ventry.entry.key, ref.atTx)
 
     if state.txId <= vTx:
-        eh = store.DigestFrom(
-            ventry.verifiableTx.dualProof.targetTxMetadata.eH)
+        eh = schema.DigestFromProto(
+            ventry.verifiableTx.dualProof.targetTxHeader.eH)
         sourceid = state.txId
-        sourcealh = store.DigestFrom(state.txHash)
+        sourcealh = schema.DigestFromProto(state.txHash)
         targetid = vTx
-        targetalh = dualProof.targetTxMetadata.alh()
+        targetalh = dualProof.targetTxHeader.Alh()
     else:
-        eh = store.DigestFrom(
-            ventry.verifiableTx.dualProof.sourceTxMetadata.eH)
+        eh = schema.DigestFromProto(
+            ventry.verifiableTx.dualProof.sourceTxHeader.eH)
         sourceid = vTx
-        sourcealh = dualProof.sourceTxMetadata.alh()
+        sourcealh = dualProof.sourceTxHeader.Alh()
         targetid = state.txId
-        targetalh = store.DigestFrom(state.txHash)
+        targetalh = schema.DigestFromProto(state.txHash)
 
-    verifies = store.VerifyInclusion(inclusionProof, kv.Digest(), eh)
+    verifies = store.VerifyInclusion(inclusionProof, entrySpecDigest(e), eh)
     if not verifies:
-        raise VerificationException
-    verifies = store.VerifyDualProof(
-        dualProof,
-        sourceid,
-        targetid,
-        sourcealh,
-        targetalh)
-    if not verifies:
-        raise VerificationException
+        raise ErrCorruptedData
+
+    if state.txId > 0:
+        verifies = store.VerifyDualProof(
+            dualProof,
+            sourceid,
+            targetid,
+            sourcealh,
+            targetalh)
+        if not verifies:
+            raise ErrCorruptedData
     newstate = State(
         db=state.db,
         txId=targetid,
@@ -79,7 +89,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
     if verifying_key != None:
         newstate.Verify(verifying_key)
     rs.set(newstate)
-    if ventry.entry.referencedBy != None and ventry.entry.referencedBy.key != b'':
+    if ventry.entry.HasField("referencedBy"):
         refkey = ventry.entry.referencedBy.key
     else:
         refkey = None
@@ -88,7 +98,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         id=vTx,
         key=ventry.entry.key,
         value=ventry.entry.value,
-        timestamp=ventry.verifiableTx.tx.metadata.ts,
+        timestamp=ventry.verifiableTx.tx.header.ts,
         verified=verifies,
         refkey=refkey
     )

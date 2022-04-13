@@ -1,4 +1,4 @@
-# Copyright 2021 CodeNotary, Inc. All rights reserved.
+# Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ from random import randint
 
 
 def test_zfunc(client):
-    client.databaseUse(b"defaultdb")
+    client.useDatabase(b"defaultdb")
     zsetname = "zset_{:04d}".format(randint(0, 10000)).encode('utf-8')
     keys = []
     for i in range(0, 10):

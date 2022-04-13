@@ -1,4 +1,4 @@
-# Copyright 2021 CodeNotary, Inc. All rights reserved.
+# Copyright 2022 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ class TestPermission:
         permtestdb2 = "permtestdb{:04d}".format(randint(0, 10000))
         permtestuser = "permtestuser{:04d}".format(randint(0, 10000))
 
-        client.databaseCreate(permtestdb1)
+        client.createDatabase(permtestdb1)
         client.createUser(permtestuser, "Password-2",
                           PERMISSION_RW, permtestdb1)
-        client.databaseCreate(permtestdb2)
+        client.createDatabase(permtestdb2)
         client.changePermission(GRANT, permtestuser,
                                 permtestdb2, PERMISSION_RW)
         has_permission = False
