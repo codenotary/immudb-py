@@ -17,7 +17,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='immudb-py',
-      version='1.1.0',
+      version='1.2.3',
       license="Apache License Version 2.0",
       description='Python SDK for Immudb',
       long_description=long_description,
