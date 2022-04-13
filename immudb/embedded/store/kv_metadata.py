@@ -17,6 +17,7 @@ import datetime
 
 DELETED_ATTR_CODE = 0
 EXPIRES_AT_ATTR_CODE = 1
+NON_INDEXABLE_ATTR_CODE = 2
 
 
 class KVMetadata():
@@ -26,7 +27,7 @@ class KVMetadata():
 
     def Bytes(self):
         b = b''
-        for attrCode in [DELETED_ATTR_CODE, EXPIRES_AT_ATTR_CODE]:
+        for attrCode in [DELETED_ATTR_CODE, EXPIRES_AT_ATTR_CODE, NON_INDEXABLE_ATTR_CODE]:
             if attrCode in self.attributes:
                 b = b+attrCode.to_bytes(1, 'big')
                 if attrCode == EXPIRES_AT_ATTR_CODE:
@@ -63,3 +64,14 @@ class KVMetadata():
             return self.attributes[EXPIRES_AT_ATTR_CODE]
         else:
             raise ErrNonExpirable
+
+    def AsNonIndexable(self, nonIndexable: bool):
+        if self.readonly:
+            raise ErrReadOnly
+        if not nonIndexable:
+            self.attributes.pop(NON_INDEXABLE_ATTR_CODE, None)
+        else:
+            self.attributes[NON_INDEXABLE_ATTR_CODE] = None
+
+    def NonIndexable(self) -> bool:
+        return NON_INDEXABLE_ATTR_CODE in self.attributes

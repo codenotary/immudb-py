@@ -58,6 +58,8 @@ def KVMetadataFromProto(md: grpc_KVMetadata) -> store.KVMetadata:
     if md.HasField("expiration"):
         kvmd.ExpiresAt(datetime.utcfromtimestamp(md.expiration.expiresAt))
 
+    kvmd.AsNonIndexable(md.nonIndexable)
+
     return kvmd
 
 
