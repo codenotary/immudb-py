@@ -10,8 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-from immudb.client import ImmudbClient
 
 from immudb.constants import PERMISSION_RW, PERMISSION_R
 from immudb.grpc.schema_pb2 import GRANT, REVOKE

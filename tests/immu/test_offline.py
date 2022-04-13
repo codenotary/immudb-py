@@ -10,10 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 import base64
 from immudb.embedded import store, htree, ahtree
-from immudb import constants
 from immudb.grpc import schema_pb2
 import immudb.database as database
 import immudb.schema as schema

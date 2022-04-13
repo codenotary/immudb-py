@@ -10,11 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-from immudb.client import ImmudbClient
 import string
 import random
-import grpc._channel
 import time
 
 
@@ -43,6 +40,6 @@ class TestGetSet:
         for i in resp.keys():
             assert i in xset
             assert xset[i] == resp[i]
-            
+
     def test_compact(self, client):
         client.compactIndex()

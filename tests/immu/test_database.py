@@ -11,9 +11,7 @@
 # limitations under the License.
 
 import pytest
-from immudb.client import ImmudbClient
 from random import randint
-import grpc._channel
 import google.protobuf.empty_pb2
 
 
