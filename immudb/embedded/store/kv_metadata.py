@@ -25,18 +25,6 @@ class KVMetadata():
         self.attributes = dict()
         self.readonly = False
 
-    def Bytes(self):
-        b = b''
-        for attrCode in [DELETED_ATTR_CODE, EXPIRES_AT_ATTR_CODE, NON_INDEXABLE_ATTR_CODE]:
-            if attrCode in self.attributes:
-                b = b+attrCode.to_bytes(1, 'big')
-                if attrCode == EXPIRES_AT_ATTR_CODE:
-                    # The attribute is a datetime. Convert it to epoch integer big endian 64 bit
-                    b = b + \
-                        int(self.attributes[attrCode].replace(tzinfo=datetime.timezone.utc).timestamp()).to_bytes(
-                            8, 'big')
-        return b
-
     def AsDeleted(self, deleted: bool):
         if self.readonly:
             raise ErrReadOnly
@@ -75,3 +63,15 @@ class KVMetadata():
 
     def NonIndexable(self) -> bool:
         return NON_INDEXABLE_ATTR_CODE in self.attributes
+
+    def Bytes(self):
+        b = b''
+        for attrCode in [DELETED_ATTR_CODE, EXPIRES_AT_ATTR_CODE, NON_INDEXABLE_ATTR_CODE]:
+            if attrCode in self.attributes:
+                b = b+attrCode.to_bytes(1, 'big')
+                if attrCode == EXPIRES_AT_ATTR_CODE:
+                    # The attribute is a datetime. Convert it to epoch integer big endian 64 bit
+                    b = b + \
+                        int(self.attributes[attrCode].replace(tzinfo=datetime.timezone.utc).timestamp()).to_bytes(
+                            8, 'big')
+        return b
