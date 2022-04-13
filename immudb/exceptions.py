@@ -41,3 +41,7 @@ class ErrReadOnly(Exception):
 
 class ErrKeyNotFound(Exception):
     pass
+
+
+class ErrMetadataUnsupported(Exception):
+    pass
