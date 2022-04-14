@@ -13,11 +13,12 @@
 import base64
 from string import printable
 from immudb.embedded import store, htree, ahtree
+from immudb.embedded.store.tx import TxEntryDigest_v1_1
 from immudb.grpc import schema_pb2
 import immudb.database as database
 import immudb.schema as schema
-from immudb.exceptions import ErrCorruptedData, ErrMaxWidthExceeded, ErrReadOnly, ErrIllegalArguments, ErrNonExpirable, ErrUnsupportedTxVersion
-from immudb.embedded.store import KVMetadata, EntrySpecDigestFor
+from immudb.exceptions import ErrCorruptedData, ErrKeyNotFound, ErrMaxWidthExceeded, ErrMetadataUnsupported, ErrReadOnly, ErrIllegalArguments, ErrNonExpirable, ErrUnsupportedTxVersion
+from immudb.embedded.store import KVMetadata, EntrySpecDigestFor, Tx as storeTx, TxHeader as storeTxHeader, TxEntry
 import pytest
 import datetime
 from immudb.printable import printable
@@ -104,6 +105,11 @@ def test_printable():
     txm.ParseFromString(base64.b64decode(md0))
     s = repr(txm)
     assert type(s) == str
+
+    q = printable()
+    q.a = [b'1', b'2']
+    dummy = str(q)
+    assert dummy == 'class printable\n\ta:\n\t- [49]\n\t- [50]\n'
 
 
 class FakeProof(object):
@@ -215,8 +221,35 @@ def test_unknownTxHeaderVersion():
         dummy = EntrySpecDigestFor(2)
 
 
-def test_printable():
-    q = printable()
-    q.a = [b'1', b'2']
-    dummy = str(q)
-    assert dummy == 'class printable\n\ta:\n\t- [49]\n\t- [50]\n'
+def test_tx():
+    tx = storeTx()
+    tx.header = storeTxHeader()
+    tx.header.version = 3
+    with pytest.raises(ErrCorruptedData):
+        dummy = tx.TxEntryDigest()
+
+    md = KVMetadata()
+    md.ExpiresAt(datetime.datetime.now())
+    txEntry = TxEntry(b'key', md, 0, b'123', 0)
+
+    tx.entries = [txEntry]
+
+    with pytest.raises(ErrKeyNotFound):
+        dummy = tx.IndexOf(b"asdf")
+
+
+def test_txEntryDigest_v1_1():
+    md = KVMetadata()
+    md.ExpiresAt(datetime.datetime.now())
+    txEntry = TxEntry(b'key', md, 0, b'123', 0)
+
+    with pytest.raises(ErrMetadataUnsupported):
+        q = TxEntryDigest_v1_1(txEntry)
+
+
+def test_KVMetadataFromProto():
+    assert schema.KVMetadataFromProto(None) == None
+
+
+def test_TxMetadataFromProto():
+    assert schema.TxMetadataFromProto(None) == None
