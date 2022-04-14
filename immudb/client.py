@@ -76,7 +76,7 @@ class ImmudbClient:
     def stub(self):
         return self.__stub
 
-# from here same order as in Golang ImmuClient interface (pkg/client/client.go)
+# from here on same order as in Golang ImmuClient interface (pkg/client/client.go)
 
     # Not implemented: disconnect
     # Not implemented: isConnected

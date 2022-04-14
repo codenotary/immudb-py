@@ -23,7 +23,7 @@ class TestDelete:
 
     def test_delete(self, wrappedClient: ImmuTestClient):
 
-        if(wrappedClient.amIHigherOrEqualsToVersion("1.2.0")):
+        if(wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
             key = "delete_key_{:04d}".format(randint(0, 10000))
             value = "delete_value_{:04d}".format(randint(0, 10000))
 
@@ -35,6 +35,7 @@ class TestDelete:
             req = DeleteKeysRequest([key.encode('utf8')])
 
             resp = wrappedClient.client.delete(req)
+            txid = resp.id
 
             assert resp.nentries == 1
 
@@ -45,3 +46,6 @@ class TestDelete:
                                                 immudb.constants.NEWEST_FIRST)
 
             assert len(hist) == 2  # ...but still there
+
+            verifiedDeletedReadback = wrappedClient.client.verifiedGetAt(
+                key=key.encode('utf8'), atTx=txid)
