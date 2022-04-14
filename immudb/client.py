@@ -25,6 +25,9 @@ from immudb.grpc import schema_pb2_grpc
 import warnings
 import ecdsa
 from immudb.datatypes import DeleteKeysRequest
+from immudb.embedded.store import KVMetadata
+
+import datetime
 
 
 class ImmudbClient:
@@ -195,6 +198,11 @@ class ImmudbClient:
     def verifiedSet(self, key: bytes, value: bytes):
         return verifiedSet.call(self.__stub, self.__rs, key, value, self.__vk)
 
+    def expireableSet(self, key: bytes, value: bytes, expiresAt: datetime.datetime):
+        metadata = KVMetadata()
+        metadata.ExpiresAt(expiresAt)
+        return setValue.call(self.__stub, self.__rs, key, value, metadata)
+
     def get(self, key: bytes):
         return get.call(self.__stub, self.__rs, key)
 
@@ -350,6 +358,7 @@ class ImmudbClient:
 
 
 # immudb-py only
+
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self.__stub, self.__rs, keys)

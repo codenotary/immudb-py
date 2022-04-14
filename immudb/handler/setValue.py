@@ -14,11 +14,16 @@ from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 from immudb import datatypes
+from immudb.embedded.store import KVMetadata
+from immudb.typeconv import MetadataToProto
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes, metadata: KVMetadata = None):
+    schemaMetadata = MetadataToProto(metadata)
+
     request = schema_pb2.SetRequest(
-        KVs=[schema_pb2.KeyValue(key=key, value=value)]
+        KVs=[schema_pb2.KeyValue(key=key, value=value,
+                                 metadata=schemaMetadata)]
     )
     msg = service.Set(request)
     return datatypes.SetResponse(
