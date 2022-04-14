@@ -15,32 +15,37 @@ from tests.immuTestClient import ImmuTestClient
 
 class TestSQLCount:
 
-
     def test_sql_count(self, wrappedClient: ImmuTestClient):
         # 1.2.0 introduces COUNT(*) instead of COUNT()
         queryToCount = "COUNT()"
-        if wrappedClient.amIHigherOrEqualsToVersion("1.2.0"):
+        if wrappedClient.serverHigherOrEqualsToVersion("1.2.0"):
             queryToCount = "COUNT(*)"
 
-        tabname = wrappedClient.createTestTable("id INTEGER AUTO_INCREMENT", "tester VARCHAR[10]", "PRIMARY KEY id")
-        wrappedClient.insertToTable(tabname, ["tester"], ["@test"], {"test": "test"})
-        result = wrappedClient.simpleSelect(tabname, ["tester"], {"testvalue": "test"}, "tester=@testvalue")
+        tabname = wrappedClient.createTestTable(
+            "id INTEGER AUTO_INCREMENT", "tester VARCHAR[10]", "PRIMARY KEY id")
+        wrappedClient.insertToTable(
+            tabname, ["tester"], ["@test"], {"test": "test"})
+        result = wrappedClient.simpleSelect(
+            tabname, ["tester"], {"testvalue": "test"}, "tester=@testvalue")
         assert(len(result) > 0)
         assert(result[0][0] == "test")
 
-        result = wrappedClient.simpleSelect(tabname, [queryToCount], {"testvalue": "test"}, "tester=@testvalue")
+        result = wrappedClient.simpleSelect(
+            tabname, [queryToCount], {"testvalue": "test"}, "tester=@testvalue")
         assert(len(result) > 0)
         assert(result[0][0] == 1)
 
-        wrappedClient.insertToTable(tabname, ["tester"], ["@test"], {"test": "test"})
-        result = wrappedClient.simpleSelect(tabname, [queryToCount], {"testvalue": "test"}, "tester=@testvalue")
+        wrappedClient.insertToTable(
+            tabname, ["tester"], ["@test"], {"test": "test"})
+        result = wrappedClient.simpleSelect(
+            tabname, [queryToCount], {"testvalue": "test"}, "tester=@testvalue")
         assert(len(result) > 0)
         assert(result[0][0] == 2)
 
         for index in range(0, 10):
-            wrappedClient.insertToTable(tabname, ["tester"], ["@test"], {"test": "test"})
-        result = wrappedClient.simpleSelect(tabname, [queryToCount], {"testvalue": "test"}, "tester=@testvalue")
+            wrappedClient.insertToTable(
+                tabname, ["tester"], ["@test"], {"test": "test"})
+        result = wrappedClient.simpleSelect(
+            tabname, [queryToCount], {"testvalue": "test"}, "tester=@testvalue")
         assert(len(result) > 0)
         assert(result[0][0] == 12)
-
-
