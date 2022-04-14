@@ -27,6 +27,9 @@ test:
 coverage:
 	$(COVERAGE) run -m pytest tests
 
+coverage-report:
+	$(COVERAGE) html
+
 install:
 	$(PYTHON) setup.py install
 

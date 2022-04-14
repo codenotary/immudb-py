@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 from datetime import datetime
 import pytz
 
@@ -46,4 +47,5 @@ class TestSqlTimestamp:
             assert(len(result) > 0)
             assert(result[0] == (2, tstest))
         else:
-            print("Feature wasn't supported before 1.2.0")
+            pytest.skip()
+            #print("Feature wasn't supported before 1.2.0")

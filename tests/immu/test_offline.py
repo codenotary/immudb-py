@@ -11,11 +11,16 @@
 # limitations under the License.
 
 import base64
+from string import printable
 from immudb.embedded import store, htree, ahtree
 from immudb.grpc import schema_pb2
 import immudb.database as database
 import immudb.schema as schema
-from immudb.exceptions import ErrCorruptedData
+from immudb.exceptions import ErrCorruptedData, ErrMaxWidthExceeded, ErrReadOnly, ErrIllegalArguments, ErrNonExpirable, ErrUnsupportedTxVersion
+from immudb.embedded.store import KVMetadata, EntrySpecDigestFor
+import pytest
+import datetime
+from immudb.printable import printable
 
 v0 = b'CnIIGhIg0IswQi+55M5xLZSEZUNnpSqoU7JSjtSgNZBlyCMK/3IYzfrjgAYgASogsgXOdHznBIOL0fRjDit+QmDn+9M5FZms8jTI5fHfcpIwGTogmXu3vjcP/kHZTXvT0O158Tx9A3ywjmHG0LOPxS5Bk9kSOwoLAHNhbGFjYWR1bGESIMTfI1H+rKu77CCQQ/ktaUmx/krECfmjHSg+Gy3Zc2NvGMyAgICAgICAASAL'
 s1 = b'CglkZWZhdWx0ZGIaIOOwxEKY/BwUmvv0yJlvuSQnrkHkZJuTTKSVmRt4UrhV'
@@ -175,3 +180,43 @@ def test_htree():
     dig = [b'42', b'8853', b'ivoasiuyf', b'a0ds9zcv', b'zotopac']
     h.BuildWith(dig)
     assert h.InclusionProof(1)
+
+    with pytest.raises(ErrMaxWidthExceeded):
+        dig = [b'42', b'8853', b'ivoasiuyf', b'a0ds9zcv', b'42', b'8853',
+               b'ivoasiuyf', b'a0ds9zcv', b'42', b'8853', b'ivoasiuyf', b'a0ds9zcv']
+        h.BuildWith(dig)
+
+    with pytest.raises(ErrIllegalArguments):
+        dig = []
+        h.BuildWith(dig)
+
+    with pytest.raises(ErrIllegalArguments):
+        h.InclusionProof(12)
+
+
+def test_kvmetadata():
+    md = KVMetadata()
+    md.readonly = True
+    with pytest.raises(ErrReadOnly):
+        md.AsDeleted(True)
+    with pytest.raises(ErrReadOnly):
+        md.ExpiresAt(datetime.datetime.now())
+    with pytest.raises(ErrReadOnly):
+        md.AsNonIndexable(True)
+    assert md.NonExpirable() == None
+    with pytest.raises(ErrNonExpirable):
+        dummy = md.ExpirationTime()
+
+
+def test_unknownTxHeaderVersion():
+    with pytest.raises(ErrUnsupportedTxVersion):
+        dummy = EntrySpecDigestFor(-1)
+    with pytest.raises(ErrUnsupportedTxVersion):
+        dummy = EntrySpecDigestFor(2)
+
+
+def test_printable():
+    q = printable()
+    q.a = [b'1', b'2']
+    dummy = str(q)
+    assert dummy == 'class printable\n\ta:\n\t- [49]\n\t- [50]\n'

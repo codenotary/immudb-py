@@ -10,13 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import pytest
 from random import randint
 
 from immudb.datatypes import DeleteKeysRequest
 
 from tests.immuTestClient import ImmuTestClient
 import immudb.constants
+import grpc._channel
 
 
 class TestDelete:
@@ -45,7 +46,10 @@ class TestDelete:
             hist = wrappedClient.client.history(key.encode('utf8'), 0, 99,
                                                 immudb.constants.NEWEST_FIRST)
 
-            assert len(hist) == 2  # ...but still there
+            assert len(hist) == 2  # ...and can be seen in history
 
-            verifiedDeletedReadback = wrappedClient.client.verifiedGetAt(
-                key=key.encode('utf8'), atTx=txid)
+            with pytest.raises(grpc._channel._InactiveRpcError):
+                verifiedDeletedReadback = wrappedClient.client.verifiedGetAt(
+                    key=key.encode('utf8'), atTx=txid)
+        else:
+            pytest.skip()

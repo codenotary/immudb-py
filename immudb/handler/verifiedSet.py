@@ -19,14 +19,16 @@ from immudb import datatypes
 from immudb.embedded import store
 import immudb.database as database
 import immudb.schema as schema
+from immudb.typeconv import MetadataToProto
 
 #import base64
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes, verifying_key=None):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes, verifying_key=None, metadata=None):
+    schemaMetadata = MetadataToProto(metadata)
     state = rs.get()
     # print(base64.b64encode(state.SerializeToString()))
-    kv = schema_pb2.KeyValue(key=key, value=value)
+    kv = schema_pb2.KeyValue(key=key, value=value, metadata=schemaMetadata)
     rawRequest = schema_pb2.VerifiableSetRequest(
         setRequest=schema_pb2.SetRequest(KVs=[kv]),
         proveSinceTx=state.txId,
