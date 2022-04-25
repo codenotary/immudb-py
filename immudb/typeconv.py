@@ -1,6 +1,7 @@
 from immudb.grpc import schema_pb2
 from pprint import pformat
 from datetime import datetime, timezone
+from immudb.embedded.store import KVMetadata
 
 
 def py_to_sqlvalue(value):
@@ -41,3 +42,17 @@ def sqlvalue_to_py(sqlValue):
     else:
         raise TypeError("Type not supported: {}".format(
             sqlValue.WhichOneof("value")))
+
+
+def MetadataToProto(metadata: KVMetadata):
+    schemaMetadata = None
+    if metadata:
+        schemaMetadata = schema_pb2.KVMetadata()
+        if metadata.Deleted():
+            schemaMetadata.deleted = True
+        if metadata.IsExpirable():
+            schemaMetadata.expiration.expiresAt = int(
+                metadata.ExpirationTime().timestamp())
+        if metadata.NonIndexable():
+            schemaMetadata.nonIndexable = True
+    return schemaMetadata

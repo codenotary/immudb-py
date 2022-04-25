@@ -10,11 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 from immudb.client import ImmudbClient
 from random import randint
-import grpc._channel
-import time
 
 
 class TestGetSet:

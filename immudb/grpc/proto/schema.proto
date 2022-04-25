@@ -92,6 +92,28 @@ message OpenSessionResponse {
 
 ////////////////////////////////////////////////////////
 
+message Precondition {
+
+	message KeyMustExistPrecondition {
+		bytes key = 1;
+	}
+	
+	message KeyMustNotExistPrecondition {
+		bytes key = 1;
+	}
+	
+	message KeyNotModifiedAfterTXPrecondition {
+		bytes key = 1;
+		uint64 txID = 2;
+	}
+
+	oneof precondition {
+		KeyMustExistPrecondition keyMustExist = 1;
+		KeyMustNotExistPrecondition keyMustNotExist = 2;
+		KeyNotModifiedAfterTXPrecondition keyNotModifiedAfterTX = 3;
+	}
+}
+
 message KeyValue {
 	bytes key = 1;
 	bytes value = 2;
@@ -125,6 +147,7 @@ message Op {
 message ExecAllRequest {
 	repeated Op Operations = 1;
 	bool  noWait = 2;
+	repeated Precondition preconditions = 3;
 }
 
 message Entries {
@@ -204,6 +227,8 @@ message DualProof {
 message Tx {
 	TxHeader header = 1;
 	repeated TxEntry entries = 2;
+	repeated Entry  kvEntries = 3;
+	repeated ZEntry zEntries = 4;
 }
 
 message TxEntry {
@@ -211,11 +236,13 @@ message TxEntry {
 	bytes hValue = 2;
 	int32 vLen = 3;
 	KVMetadata metadata = 4;
+	bytes value = 5; // value must be ignored when len(value) == 0 and vLen > 0. Otherwise, sha256(value) must be equal to hValue
 }
 
 message KVMetadata {
 	bool deleted = 1;
 	Expiration expiration = 2;
+	bool nonIndexable = 3;
 }
 
 message Expiration {
@@ -245,12 +272,14 @@ message InclusionProof {
 message SetRequest {
 	repeated KeyValue KVs = 1;
 	bool  noWait = 2;
+	repeated Precondition preconditions = 3;
 }
 
 message KeyRequest {
 	bytes key = 1;
     uint64 atTx = 2;
 	uint64 sinceTx = 3;
+	bool  noWait = 4;
 }
 
 message KeyListRequest {
@@ -279,6 +308,11 @@ message HealthResponse {
 	string version = 2;
 }
 
+message DatabaseHealthResponse {
+	uint32 pendingRequests = 1;
+	int64 lastRequestCompletedAt = 2;
+}
+
 message ImmutableState {
 	string db = 1;
 	uint64 txId = 2;
@@ -292,6 +326,7 @@ message ReferenceRequest {
 	uint64 atTx = 3;
 	bool boundRef = 4;
 	bool  noWait = 5;
+	repeated Precondition preconditions = 6;
 }
 
 message VerifiableReferenceRequest {
@@ -340,18 +375,44 @@ message VerifiableZAddRequest {
 }
 
 message TxRequest {
-	uint64 tx = 1;
+	uint64      tx = 1;
+	EntriesSpec entriesSpec = 2;
+	uint64 sinceTx  = 3;
+	bool   noWait   = 4;
+}
+
+message EntriesSpec {
+	EntryTypeSpec kvEntriesSpec  = 1;
+	EntryTypeSpec zEntriesSpec   = 2;
+	EntryTypeSpec sqlEntriesSpec = 3;
+}
+
+message EntryTypeSpec {
+	EntryTypeAction action = 1;
+}
+
+enum EntryTypeAction {
+	EXCLUDE     = 0;
+	ONLY_DIGEST = 1;
+	RAW_VALUE   = 2;
+	RESOLVE     = 3;
 }
 
 message VerifiableTxRequest {
 	uint64 tx = 1;
 	uint64 proveSinceTx = 2;
+	EntriesSpec entriesSpec = 3;
+	uint64 sinceTx  = 4;
+	bool   noWait   = 5;
 }
 
 message TxScanRequest {
 	uint64 initialTx = 1;
 	uint32 limit = 2;
     bool   desc = 3;
+	EntriesSpec entriesSpec = 4;
+	uint64 sinceTx  = 5;
+	bool   noWait   = 6;
 }
 
 message TxList {
@@ -364,17 +425,154 @@ message Database {
 
 message DatabaseSettings {
 	string databaseName = 1;
+
 	bool   replica = 2;
 	string masterDatabase = 3;
 	string masterAddress = 4;
 	uint32 masterPort = 5;
 	string followerUsername = 6;
 	string followerPassword = 7;
+
 	uint32 fileSize = 8;
 	uint32 maxKeyLen = 9;
 	uint32 maxValueLen = 10;
 	uint32 maxTxEntries = 11;
+
 	bool   excludeCommitTime = 12;
+}
+
+message CreateDatabaseRequest {
+	string name = 1;
+	DatabaseNullableSettings settings = 2;
+}
+
+message CreateDatabaseResponse {
+	string name = 1;
+	DatabaseNullableSettings settings = 2;
+}
+
+message UpdateDatabaseRequest {
+	string database = 1;
+	DatabaseNullableSettings settings = 2;
+}
+
+message UpdateDatabaseResponse {	// Reserved to reply with more advanced response later
+	string database = 1;
+	DatabaseNullableSettings settings = 2;
+}
+
+message DatabaseSettingsRequest {
+
+}
+
+message DatabaseSettingsResponse {
+	string database = 1;
+	DatabaseNullableSettings settings = 2;
+}
+
+message NullableUint32 {
+	uint32 value = 1;
+}
+
+message NullableUint64 {
+	uint64 value = 1;
+}
+
+message NullableFloat {
+	float value = 1;
+}
+
+message NullableBool {
+	bool value = 1;
+}
+
+message NullableString {
+	string value = 1;
+}
+
+message DatabaseNullableSettings {
+	ReplicationNullableSettings replicationSettings = 2;
+
+	NullableUint32 fileSize = 8;
+	NullableUint32 maxKeyLen = 9;
+	NullableUint32 maxValueLen = 10;
+	NullableUint32 maxTxEntries = 11;
+
+	NullableBool excludeCommitTime = 12;
+
+	NullableUint32 maxConcurrency = 13;
+	NullableUint32 maxIOConcurrency = 14;
+
+	NullableUint32 txLogCacheSize = 15;
+	NullableUint32 vLogMaxOpenedFiles = 16;
+	NullableUint32 txLogMaxOpenedFiles = 17;
+	NullableUint32 commitLogMaxOpenedFiles = 18;
+
+	IndexNullableSettings indexSettings = 19;
+
+	NullableUint32 writeTxHeaderVersion = 20;
+	
+	NullableBool autoload = 21;
+}
+
+message ReplicationNullableSettings {
+	NullableBool   replica = 1;
+	NullableString masterDatabase = 2;
+	NullableString masterAddress = 3;
+	NullableUint32 masterPort = 4;
+	NullableString followerUsername = 5;
+	NullableString followerPassword = 6;
+}
+
+message IndexNullableSettings {
+	NullableUint32  flushThreshold = 1;
+	NullableUint32  syncThreshold = 2;
+	NullableUint32  cacheSize = 3;
+	NullableUint32  maxNodeSize = 4;
+	NullableUint32  maxActiveSnapshots = 5;
+	NullableUint64  renewSnapRootAfter = 6;
+	NullableUint32  compactionThld = 7;
+	NullableUint32  delayDuringCompaction = 8;
+	NullableUint32  nodesLogMaxOpenedFiles = 9;
+	NullableUint32  historyLogMaxOpenedFiles = 10;
+	NullableUint32  commitLogMaxOpenedFiles = 11;
+	NullableUint32  flushBufferSize = 12;
+	NullableFloat   cleanupPercentage = 13;
+}
+
+message LoadDatabaseRequest {
+	string database = 1;
+	// may add createIfNotExist
+}
+
+message LoadDatabaseResponse {
+	string database = 1;
+	// may add setttings
+}
+
+message UnloadDatabaseRequest {
+	string database = 1;
+}
+
+message UnloadDatabaseResponse {
+	string database = 1;
+}
+
+message DeleteDatabaseRequest {
+	string database = 1;
+}
+
+message DeleteDatabaseResponse {
+	string database = 1;
+}
+
+message FlushIndexRequest {
+	float  cleanupPercentage = 1;
+	bool   synced = 2;
+}
+
+message FlushIndexResponse {
+	string database = 1;
 }
 
 message Table {
@@ -435,8 +633,21 @@ message SetActiveUserRequest {
 	string username = 2;
 }
 
-message DatabaseListResponse{
+message DatabaseListResponse {
 	repeated Database databases = 1;
+}
+
+message DatabaseListRequestV2 {
+}
+
+message DatabaseListResponseV2 {
+	repeated DatabaseWithSettings databases = 1;
+}
+
+message DatabaseWithSettings {
+	string name = 1;
+	DatabaseNullableSettings settings = 2;
+	bool loaded = 3;
 }
 
 message Chunk {
@@ -536,6 +747,8 @@ service ImmuService {
 	rpc ListUsers (google.protobuf.Empty) returns (UserList);
 	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty);
 	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty);
+	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty);
+	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty);
 	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty); // DEPRECATED
 	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty); // DEPRECATED
 
@@ -566,12 +779,12 @@ service ImmuService {
 
 	// NOT YET SUPPORTED
 	rpc CountAll(google.protobuf.Empty) returns (EntryCount);
-
 	rpc TxById(TxRequest) returns (Tx);
 	rpc VerifiableTxById(VerifiableTxRequest) returns (VerifiableTx);
 	rpc TxScan(TxScanRequest) returns (TxList);
 	rpc History(HistoryRequest) returns (Entries);
 	rpc Health (google.protobuf.Empty) returns (HealthResponse);
+	rpc DatabaseHealth (google.protobuf.Empty) returns (DatabaseHealthResponse);
 	rpc CurrentState (google.protobuf.Empty) returns (ImmutableState);
 	rpc SetReference (ReferenceRequest) returns (TxHeader);
 	rpc VerifiableSetReference (VerifiableReferenceRequest) returns (VerifiableTx);
@@ -581,14 +794,21 @@ service ImmuService {
 
 	// DEPRECATED: kept for backward compatibility
 	rpc CreateDatabase(Database) returns (google.protobuf.Empty);
-
 	rpc CreateDatabaseWith(DatabaseSettings) returns (google.protobuf.Empty);
+	rpc CreateDatabaseV2(CreateDatabaseRequest) returns (CreateDatabaseResponse);
+	rpc LoadDatabase(LoadDatabaseRequest) returns (LoadDatabaseResponse);
+	rpc UnloadDatabase(UnloadDatabaseRequest) returns (UnloadDatabaseResponse);
+	rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse);
 	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse);
+	rpc DatabaseListV2 (DatabaseListRequestV2) returns (DatabaseListResponseV2);
 	rpc UseDatabase(Database) returns (UseDatabaseReply);
 	rpc UpdateDatabase(DatabaseSettings) returns (google.protobuf.Empty);
+	rpc UpdateDatabaseV2(UpdateDatabaseRequest) returns (UpdateDatabaseResponse);
+	rpc GetDatabaseSettings(google.protobuf.Empty) returns (DatabaseSettings);
+	rpc GetDatabaseSettingsV2(DatabaseSettingsRequest) returns (DatabaseSettingsResponse);
+	rpc FlushIndex(FlushIndexRequest) returns (FlushIndexResponse);
 	rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty);
-	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty);
-	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty);
+
 	// Streams
 	rpc streamGet(KeyRequest) returns (stream Chunk) {};
 	rpc streamSet(stream Chunk) returns (TxHeader) {};
@@ -600,7 +820,7 @@ service ImmuService {
 	rpc streamExecAll(stream Chunk) returns (TxHeader) {};
 
 	// Replication
-	rpc exportTx(TxRequest) returns (stream Chunk) {};
+	rpc exportTx(ExportTxRequest) returns (stream Chunk) {};
 	rpc replicateTx(stream Chunk) returns (TxHeader) {};
 
 	rpc SQLExec(SQLExecRequest) returns (SQLExecResult);

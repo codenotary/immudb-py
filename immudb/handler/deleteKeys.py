@@ -1,4 +1,4 @@
-# Copyright 2022 CodeNotary, Inc. All rights reserved.
+# Copyright 2021 CodeNotary, Inc. All rights reserved.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,38 +10,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from immudb.datatypes import DeleteKeysRequest
 
-class ErrMaxWidthExceeded(Exception):
-    pass
-
-
-class ErrIllegalArguments(Exception):
-    pass
+from immudb.grpc import schema_pb2_grpc
 
 
-class ErrUnsupportedTxVersion(Exception):
-    pass
-
-
-class ErrNonExpirable(Exception):
-    pass
-
-
-class ErrCorruptedData(Exception):
-    pass
-
-
-# Compatibility with older SDK
-VerificationException = ErrCorruptedData
-
-
-class ErrReadOnly(Exception):
-    pass
-
-
-class ErrKeyNotFound(Exception):
-    pass
-
-
-class ErrMetadataUnsupported(Exception):
-    pass
+def call(service: schema_pb2_grpc.ImmuServiceStub, req: DeleteKeysRequest):
+    request = schema_pb2_grpc.schema__pb2.DeleteKeysRequest(
+        keys=req.keys,
+        sinceTx=req.sinceTx,
+        noWait=req.noWait
+    )
+    msg = service.Delete(request)
+    return msg

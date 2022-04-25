@@ -25,6 +25,19 @@ import hashlib
 
 
 def TxFromProto(stx) -> store.Tx():
+    header = store.TxHeader()
+    header.iD = stx.header.id
+    header.ts = stx.header.ts
+    header.blTxID = stx.header.blTxId
+    header.blRoot = DigestFromProto(stx.header.blRoot)
+    header.prevAlh = DigestFromProto(stx.header.prevAlh)
+
+    header.version = int(stx.header.version)
+    header.metadata = TxMetadataFromProto(stx.header.metadata)
+
+    header.nentries = int(stx.header.nentries)
+    header.eh = DigestFromProto(stx.header.eH)
+
     entries = []
     for e in stx.entries:
         entries.append(
@@ -35,15 +48,9 @@ def TxFromProto(stx) -> store.Tx():
                 DigestFromProto(e.hValue),
                 0)
         )
-    tx = store.NewTxWithEntries(entries)
-    hdr = tx.header
-    hdr.iD = stx.header.id
-    hdr.ts = stx.header.ts
-    hdr.prevAlh = DigestFromProto(stx.header.prevAlh)
-    hdr.blTxID = stx.header.blTxId
-    hdr.blRoot = DigestFromProto(stx.header.blRoot)
-    hdr.version = int(stx.header.version)
-    hdr.metadata = TxMetadataFromProto(stx.header.metadata)
+
+    tx = store.NewTxWithEntries(header, entries)
+
     tx.BuildHashTree()
 
     return tx
@@ -57,6 +64,8 @@ def KVMetadataFromProto(md: grpc_KVMetadata) -> store.KVMetadata:
 
     if md.HasField("expiration"):
         kvmd.ExpiresAt(datetime.utcfromtimestamp(md.expiration.expiresAt))
+
+    kvmd.AsNonIndexable(md.nonIndexable)
 
     return kvmd
 

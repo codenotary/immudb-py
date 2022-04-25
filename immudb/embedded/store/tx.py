@@ -13,8 +13,64 @@
 from immudb.embedded import store, htree
 from immudb.printable import printable
 import hashlib
-from immudb.exceptions import ErrCorruptedData, ErrKeyNotFound
+from immudb.exceptions import ErrCorruptedData, ErrKeyNotFound, ErrMetadataUnsupported
 import sys
+
+
+def NewTxWithEntries(header: "TxHeader", entries: list) -> "Tx":
+
+    _htree = htree.HTree(len(entries))
+
+    tx = Tx()
+    tx.header = header
+    tx.entries = entries
+    tx.htree = _htree
+    return tx
+
+
+class TxHeader(printable):
+    def __init__(self):
+        self.iD = None
+        self.ts = None
+        self.blTxID = None
+        self.blRoot = None
+        self.prevAlh = None
+
+        self.version = None
+        self.metadata = store.TxMetadata()
+
+        self.nentries = None
+        self.eh = None
+
+    def innerHash(self) -> bytes:
+        md = hashlib.sha256()
+        md.update(self.ts.to_bytes(8, 'big'))
+        md.update(self.version.to_bytes(2, 'big'))
+        if self.version == 0:
+            md.update(self.nentries.to_bytes(2, 'big'))
+        elif self.version == 1:
+            mdbs = b''
+            if self.metadata != None:
+                mdbs = self.metadata.Bytes()
+                if mdbs == None:
+                    mdbs = b''
+            md.update(len(mdbs).to_bytes(2, 'big'))
+            md.update(mdbs)
+            md.update(self.nentries.to_bytes(4, 'big'))
+        else:
+            sys.exit("missing tx hash calculation method for version %d" %
+                     self.version)
+        md.update(self.eh)
+        md.update(self.blTxID.to_bytes(8, 'big'))
+        md.update(self.blRoot)
+        return md.digest()
+
+    def Alh(self) -> bytes:
+        md = hashlib.sha256()
+        md.update(self.iD.to_bytes(8, 'big'))
+        md.update(self.prevAlh)
+        md.update(self.innerHash())
+        return md.digest()
 
 
 class Tx(printable):
@@ -55,60 +111,6 @@ class Tx(printable):
         return self.htree.InclusionProof(kindex)
 
 
-class TxHeader(printable):
-    def __init__(self):
-        self.iD = None
-        self.ts = None
-        self.blTxID = None
-        self.blRoot = None
-        self.prevAlh = None
-
-        self.version = None
-        self.metadata = store.TxMetadata()
-
-        self.nentries = None
-        self.eh = None
-
-    def Alh(self) -> bytes:
-        md = hashlib.sha256()
-        md.update(self.iD.to_bytes(8, 'big'))
-        md.update(self.prevAlh)
-        md.update(self.innerHash())
-        return md.digest()
-
-    def innerHash(self) -> bytes:
-        md = hashlib.sha256()
-        md.update(self.ts.to_bytes(8, 'big'))
-        md.update(self.version.to_bytes(2, 'big'))
-        if self.version == 0:
-            md.update(self.nentries.to_bytes(2, 'big'))
-        elif self.version == 1:
-            mdbs = b''
-            if self.metadata != None:
-                mdbs = self.metadata.Bytes()
-                if mdbs == None:
-                    mdbs = b''
-            md.update(len(mdbs).to_bytes(2, 'big'))
-            md.update(mdbs)
-            md.update(self.nentries.to_bytes(4, 'big'))
-        else:
-            sys.exit("missing tx hash calculation method for version %d" %
-                     self.version)
-        md.update(self.eh)
-        md.update(self.blTxID.to_bytes(8, 'big'))
-        md.update(self.blRoot)
-        return md.digest()
-
-
-def NewTxWithEntries(entries: list) -> Tx:
-    tx = Tx()
-    tx.header = TxHeader()
-    tx.header.nentries = len(entries)
-    tx.entries = entries
-    tx.htree = htree.HTree(len(entries))
-    return tx
-
-
 class TxEntry(printable):
     def __init__(self, key: bytes, md: store.KVMetadata, vLen: int, hVal: bytes, vOff: int):
         self.k = key
@@ -126,6 +128,8 @@ class TxEntry(printable):
 
 
 def TxEntryDigest_v1_1(e: TxEntry) -> bytes:
+    if len(e.md.Bytes()) > 0:  # n.b. contrary to Golang, in Pyhton e.md will not be None
+        raise ErrMetadataUnsupported
     md = hashlib.sha256()
     md.update(e.k)
     md.update(e.hVal)

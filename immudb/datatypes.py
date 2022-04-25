@@ -75,6 +75,7 @@ class ReferenceRequest():
     atTx: int
     boundRef: bool
     noWait: bool
+    # TODO: Preconditions
 
     def __init__(self, key, referencedKey, atTx=0, noWait=False):
         self.key = key
@@ -92,3 +93,15 @@ class ColumnDescription:
     index: str
     autoincrement: bool
     unique: bool
+
+
+@dataclass
+class DeleteKeysRequest():
+    keys: list
+    sinceTx: int
+    noWait: bool
+
+    def __init__(self, keys, sinceTx=0, noWait=False):
+        self.keys = keys
+        self.sinceTx = sinceTx
+        self.noWait = noWait
