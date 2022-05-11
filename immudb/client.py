@@ -299,7 +299,7 @@ class ImmudbClient:
 
         return sqlexec.call(self.__stub, self.__rs, stmt, params, noWait)
 
-    def sqlQuery(self, query, params={}):
+    def sqlQuery(self, query, params={}, columnNameMode=constants.COLUMN_NAME_MODE_NONE):
         """Queries the database using SQL
         Args:
             query: a query in immudb SQL dialect.
@@ -310,7 +310,7 @@ class ImmudbClient:
 
             ['table1', 'table2']
         """
-        return sqlquery.call(self.__stub, self.__rs, query, params)
+        return sqlquery.call(self.__stub, self.__rs, query, params, columnNameMode)
 
     def listTables(self):
         """List all tables in the current database

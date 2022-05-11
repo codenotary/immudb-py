@@ -45,3 +45,7 @@ class ErrKeyNotFound(Exception):
 
 class ErrMetadataUnsupported(Exception):
     pass
+
+
+class ErrPySDKInvalidColumnMode(Exception):
+    pass
