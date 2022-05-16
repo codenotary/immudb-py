@@ -17,7 +17,6 @@ from immudb.typeconv import py_to_sqlvalue
 from immudb.typeconv import sqlvalue_to_py
 from immudb import constants
 from immudb.exceptions import ErrPySDKInvalidColumnMode
-from requests.structures import CaseInsensitiveDict
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, params, columnNameMode):
@@ -40,7 +39,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, param
             result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
         else:
             result.append(
-                CaseInsensitiveDict(zip(columnNames, tuple([sqlvalue_to_py(i) for i in row.values]))))
+                dict(zip(columnNames, tuple([sqlvalue_to_py(i) for i in row.values]))))
     return result
 
 
