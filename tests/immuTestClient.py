@@ -1,5 +1,6 @@
 
 
+from immudb import constants
 from immudb.client import ImmudbClient
 import uuid
 from typing import List
@@ -68,10 +69,10 @@ class ImmuTestClient:
                or len(resp.UnknownFields()) > 0)
         return resp
 
-    def simpleSelect(self, fromWhat: str, whatToSelect: List[str], params: dict, *conditions: List[str]):
+    def simpleSelect(self, fromWhat: str, whatToSelect: List[str], params: dict, *conditions: List[str], columnNameMode = constants.COLUMN_NAME_MODE_NONE):
         preparedQuery = self.prepareSelectQuery(
             fromWhat, whatToSelect, conditions)
-        result = self.client.sqlQuery(preparedQuery, params)
+        result = self.client.sqlQuery(preparedQuery, params, columnNameMode=columnNameMode)
         return result
 
     def compare_version(self, a: str, b: str):
