@@ -275,7 +275,7 @@ class ImmudbClient:
         return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
 
     def verifiedGetSince(self, key: bytes, sinceTx: int):
-        return verifiedGet.call(self.__stub, self.__rs, key, sinceTx, self.__vk)
+        return verifiedGet.call(self.__stub, self.__rs, key, sinceTx = sinceTx, verifying_key = self.__vk)
 
     def verifiedGetAt(self, key: bytes, atTx: int):
         return verifiedGet.call(self.__stub, self.__rs, key, atTx, self.__vk)
