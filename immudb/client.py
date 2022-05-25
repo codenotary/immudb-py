@@ -14,18 +14,21 @@ import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import header_manipulator_client_interceptor
+from immudb.grpc.schema_pb2 import OpenSessionResponse
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, health, txbyid, verifiedtxbyid, sqlexec, sqlquery,
-                            listtables, execAll)
+                            listtables, execAll, transaction)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
 import ecdsa
-from immudb.datatypes import DeleteKeysRequest
+from immudb.datatypes import DeleteKeysRequest, TxMode
 from immudb.embedded.store import KVMetadata
+import threading
+import queue
 
 import datetime
 
@@ -36,13 +39,16 @@ class ImmudbClient:
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.channel = grpc.insecure_channel(immudUrl)
-        self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
+        self._resetStub()
         if rs is None:
             self.__rs = RootService()
         else:
             self.__rs = rs
         self.__url = immudUrl
         self.loadKey(publicKeyFile)
+        self.__login_response = None
+        self.__session_response = None
+        self.headersInterceptors = []
 
     def loadKey(self, kfile: str):
         if kfile is None:
@@ -58,18 +64,33 @@ class ImmudbClient:
         self.intercept_channel = None
         self.__rs = None
 
+    def set_session_id_interceptor(self, openSessionResponse):
+        sessionId = openSessionResponse.sessionID
+        self.headersInterceptors = [header_manipulator_client_interceptor.header_adder_interceptor('sessionid', sessionId)]
+        return self.get_intercepted_channel()
+
+    def set_transaction_id_interceptor(self, transactionResponse):
+        transactionId = transactionResponse.transactionID
+        sessionId = self.__session_response.sessionID
+        self.headersInterceptors = [header_manipulator_client_interceptor.header_adder_interceptor('sessionid', sessionId), header_manipulator_client_interceptor.header_adder_interceptor('transactionid', transactionId)]
+        return self.get_intercepted_channel()
+
     def set_token_header_interceptor(self, response):
         try:
             token = response.token
         except AttributeError:
             token = response.reply.token
-        self.header_interceptor = \
+        self.headersInterceptors = [
             header_manipulator_client_interceptor.header_adder_interceptor(
                 'authorization', "Bearer " + token
             )
+        ]
+        return self.get_intercepted_channel()
+
+    def get_intercepted_channel(self):
         try:
             self.intercept_channel = grpc.intercept_channel(
-                self.channel, self.header_interceptor)
+                self.channel, *self.headersInterceptors)
         except ValueError as e:
             raise Exception(
                 "Attempted to login on termninated client, channel has been shutdown") from e
@@ -115,9 +136,58 @@ class ImmudbClient:
     def logout(self):
         self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self.__login_response = None
+        self._resetStub()
 
-    # Not implemented: openSession
-    # Not implemented: closeSession
+    def _resetStub(self):
+        self.headersInterceptors = []
+        self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
+
+
+    def keepAlive(self):
+        self.__stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())
+
+    def openManagedSession(self, username, password, database=b"defaultdb", keepAliveInterval = 60):
+        class ManagedSession:
+            def __init__(this, keepAliveInterval):
+                this.keepAliveInterval = keepAliveInterval
+                this.keepAliveStarted = False
+                this.keepAliveProcess = None
+                this.queue = queue.Queue()
+
+            def manage(this):
+                while this.keepAliveStarted:
+                    try:
+                        what = this.queue.get(True, this.keepAliveInterval)
+                    except queue.Empty:
+                        self.keepAlive()
+
+            def __enter__(this):
+                self.openSession(username, password, database)
+                this.keepAliveStarted = True
+                this.keepAliveProcess = threading.Thread(target = this.manage)
+                this.keepAliveProcess.start()
+                return transaction.InteractiveTxInterface(self)
+
+            def __exit__(this, type, value, traceback):
+                this.keepAliveStarted = False
+                this.queue.put(b'0')
+                self.closeSession()
+                self._resetStub()
+
+        return ManagedSession(keepAliveInterval)
+    
+    def openSession(self, username, password, database=b"defaultdb"):
+        req = schema_pb2_grpc.schema__pb2.OpenSessionRequest(
+            username = bytes(username, encoding='utf-8'),
+            password = bytes(password, encoding='utf-8'),
+            databaseName = database
+        )
+        self.__session_response = schema_pb2_grpc.schema__pb2.OpenSessionResponse = self.__stub.OpenSession(req)
+        self.__stub = self.set_session_id_interceptor(self.__session_response)
+
+    def closeSession(self):
+        self.__stub.CloseSession(google_dot_protobuf_dot_empty__pb2.Empty())
+        self.__session_response = None
 
     def createUser(self, user, password, permission, database):
         request = schema_pb2_grpc.schema__pb2.CreateUserRequest(
@@ -326,7 +396,17 @@ class ImmudbClient:
         return sqldescribe.call(self.__stub, self.__rs, table)
 
     # Not implemented: verifyRow
-    # Not implemented: newTx
+    
+    def newTx(self, txMode = TxMode.ReadWrite):
+        interface = transaction.InteractiveTxInterface(self)
+        interface.newTx(txMode)
+        return interface
+
+    def _getStub(self):
+        return self.__stub
+
+    def _setStub(self, newStub):
+        self.__stub = newStub
 
 # deprecated
     def databaseCreate(self, dbName: bytes):

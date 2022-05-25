@@ -11,7 +11,12 @@
 # limitations under the License.
 
 from dataclasses import dataclass
-import struct
+from enum import IntEnum
+
+class TxMode(IntEnum):
+	ReadOnly = 0
+	WriteOnly = 1
+	ReadWrite = 2
 
 
 @dataclass
