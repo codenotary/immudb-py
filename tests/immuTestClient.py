@@ -14,18 +14,17 @@ class ImmuTestClient:
         self.currentTx = None
 
     def openSession(self, login, password, db):
-        self.client.openSession(login, password, db)
+        return self.client.openSession(login, password, db)
 
     def newTx(self):
-        interface = self.client.newTx()
-        self.currentTx = interface
+        interface = self.currentTx.newTx()
         return interface
 
     def commit(self):
-        self.currentTx.commit()
+        return self.currentTx.commit()
 
     def rollback(self):
-        self.currentTx.rollback()
+        return self.currentTx.rollback()
 
 
     def openManagedSession(self, login, password, db):
@@ -102,7 +101,6 @@ class ImmuTestClient:
     def insertToTable(self, table: str, fields: List[str], values: List, params: dict):
         preparedQuery = self.prepareInsertQuery(table, fields, values)
         if(self.currentTx):
-            print(preparedQuery)
             return self.currentTx.sqlExec(preparedQuery, params)
 
         resp = self.client.sqlExec(preparedQuery, params)
@@ -113,7 +111,6 @@ class ImmuTestClient:
     def simpleSelect(self, fromWhat: str, whatToSelect: List[str], params: dict, *conditions: List[str], columnNameMode = constants.COLUMN_NAME_MODE_NONE):
         preparedQuery = self.prepareSelectQuery(
             fromWhat, whatToSelect, conditions)
-        print(self.currentTx)
         if(self.currentTx):
             return self.currentTx.sqlQuery(preparedQuery, params, columnNameMode=columnNameMode)
         result = self.client.sqlQuery(preparedQuery, params, columnNameMode=columnNameMode)

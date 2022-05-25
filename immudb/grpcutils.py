@@ -17,6 +17,7 @@ import collections
 
 import grpc
 import immudb.generic_client_interceptor as generic_client_interceptor
+import immudb.grpc.schema_pb2_grpc as schema_pb2_grpc
 
 
 class _ClientCallDetails(
@@ -44,3 +45,12 @@ def header_adder_interceptor(header, value):
         return client_call_details, request_iterator, None
 
     return generic_client_interceptor.create(intercept_call)
+
+def get_intercepted_stub(channel, headers):
+    try:
+        intercepted =  grpc.intercept_channel(channel, *headers)
+        newStub = schema_pb2_grpc.ImmuServiceStub(intercepted)
+        return intercepted, newStub
+    except ValueError as e:
+        raise Exception(
+            "Attempted to login on termninated client, channel has been shutdown") from e
