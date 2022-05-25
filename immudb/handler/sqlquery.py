@@ -22,6 +22,7 @@ from immudb.exceptions import ErrPySDKInvalidColumnMode
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, params, columnNameMode):
     return _call_with_executor(query, params, columnNameMode, service.SQLQuery)
 
+
 def _call_with_executor(query, params, columnNameMode, executor):
     paramsObj = []
     for key, value in params.items():

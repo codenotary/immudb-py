@@ -17,7 +17,8 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from immudb import constants
 from immudb import grpcutils
 from immudb.handler.sqlquery import _call_with_executor as executeSQLQuery
-from immudb.handler.sqlexec import _call_with_executor  as executeSQLExec
+from immudb.handler.sqlexec import _call_with_executor as executeSQLExec
+
 
 class InteractiveTxInterface:
     def __init__(self, stub, session, channel):
@@ -29,12 +30,14 @@ class InteractiveTxInterface:
     def makeTransactionInterceptedStub(self, transactionResponse):
         transactionId = transactionResponse.transactionID
         sessionId = self.session.sessionID
-        headersInterceptors = [grpcutils.header_adder_interceptor('sessionid', sessionId), grpcutils.header_adder_interceptor('transactionid', transactionId)]
-        interceptedChannel, stub = grpcutils.get_intercepted_stub(self.channel, headersInterceptors)
+        headersInterceptors = [grpcutils.header_adder_interceptor(
+            'sessionid', sessionId), grpcutils.header_adder_interceptor('transactionid', transactionId)]
+        interceptedChannel, stub = grpcutils.get_intercepted_stub(
+            self.channel, headersInterceptors)
         return stub
-    
-    def newTx(self, mode = datatypes.TxMode.ReadWrite):
-        req = schema_pb2_grpc.schema__pb2.NewTxRequest(mode = mode)
+
+    def newTx(self, mode=datatypes.TxMode.ReadWrite):
+        req = schema_pb2_grpc.schema__pb2.NewTxRequest(mode=mode)
         resp = self.stub.NewTx(req)
         self.txStub = self.makeTransactionInterceptedStub(resp)
         return self
@@ -49,8 +52,8 @@ class InteractiveTxInterface:
         self.txStub = None
         return resp
 
-    def sqlQuery(self, query, params = dict(), columnNameMode = constants.COLUMN_NAME_MODE_NONE):
+    def sqlQuery(self, query, params=dict(), columnNameMode=constants.COLUMN_NAME_MODE_NONE):
         return executeSQLQuery(query, params, columnNameMode, self.txStub.TxSQLQuery)
 
-    def sqlExec(self, stmt, params = dict(), noWait = False):
+    def sqlExec(self, stmt, params=dict(), noWait=False):
         return executeSQLExec(stmt, params, noWait, self.txStub.TxSQLExec)

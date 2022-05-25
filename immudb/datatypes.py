@@ -13,10 +13,11 @@
 from dataclasses import dataclass
 from enum import IntEnum
 
+
 class TxMode(IntEnum):
-	ReadOnly = 0
-	WriteOnly = 1
-	ReadWrite = 2
+    ReadOnly = 0
+    WriteOnly = 1
+    ReadWrite = 2
 
 
 @dataclass

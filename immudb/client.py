@@ -66,9 +66,9 @@ class ImmudbClient:
 
     def set_session_id_interceptor(self, openSessionResponse):
         sessionId = openSessionResponse.sessionID
-        self.headersInterceptors = [grpcutils.header_adder_interceptor('sessionid', sessionId)]
+        self.headersInterceptors = [
+            grpcutils.header_adder_interceptor('sessionid', sessionId)]
         return self.get_intercepted_stub()
-
 
     def set_token_header_interceptor(self, response):
         try:
@@ -83,7 +83,8 @@ class ImmudbClient:
         return self.get_intercepted_stub()
 
     def get_intercepted_stub(self):
-        intercepted, newStub = grpcutils.get_intercepted_stub(self.channel, self.headersInterceptors)
+        intercepted, newStub = grpcutils.get_intercepted_stub(
+            self.channel, self.headersInterceptors)
         self.intercept_channel = intercepted
         return newStub
 
@@ -133,11 +134,10 @@ class ImmudbClient:
         self.headersInterceptors = []
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
 
-
     def keepAlive(self):
         self.__stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())
 
-    def openManagedSession(self, username, password, database=b"defaultdb", keepAliveInterval = 60):
+    def openManagedSession(self, username, password, database=b"defaultdb", keepAliveInterval=60):
         class ManagedSession:
             def __init__(this, keepAliveInterval):
                 this.keepAliveInterval = keepAliveInterval
@@ -155,7 +155,7 @@ class ImmudbClient:
             def __enter__(this):
                 interface = self.openSession(username, password, database)
                 this.keepAliveStarted = True
-                this.keepAliveProcess = threading.Thread(target = this.manage)
+                this.keepAliveProcess = threading.Thread(target=this.manage)
                 this.keepAliveProcess.start()
                 return interface
 
@@ -166,14 +166,15 @@ class ImmudbClient:
                 self._resetStub()
 
         return ManagedSession(keepAliveInterval)
-    
+
     def openSession(self, username, password, database=b"defaultdb"):
         req = schema_pb2_grpc.schema__pb2.OpenSessionRequest(
-            username = bytes(username, encoding='utf-8'),
-            password = bytes(password, encoding='utf-8'),
-            databaseName = database
+            username=bytes(username, encoding='utf-8'),
+            password=bytes(password, encoding='utf-8'),
+            databaseName=database
         )
-        self._session_response = schema_pb2_grpc.schema__pb2.OpenSessionResponse = self.__stub.OpenSession(req)
+        self._session_response = schema_pb2_grpc.schema__pb2.OpenSessionResponse = self.__stub.OpenSession(
+            req)
         self.__stub = self.set_session_id_interceptor(self._session_response)
         return transaction.InteractiveTxInterface(self.__stub, self._session_response, self.channel)
 
@@ -275,7 +276,7 @@ class ImmudbClient:
         return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
 
     def verifiedGetSince(self, key: bytes, sinceTx: int):
-        return verifiedGet.call(self.__stub, self.__rs, key, sinceTx = sinceTx, verifying_key = self.__vk)
+        return verifiedGet.call(self.__stub, self.__rs, key, sinceTx=sinceTx, verifying_key=self.__vk)
 
     def verifiedGetAt(self, key: bytes, atTx: int):
         return verifiedGet.call(self.__stub, self.__rs, key, atTx, self.__vk)

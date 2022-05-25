@@ -46,9 +46,10 @@ def header_adder_interceptor(header, value):
 
     return generic_client_interceptor.create(intercept_call)
 
+
 def get_intercepted_stub(channel, headers):
     try:
-        intercepted =  grpc.intercept_channel(channel, *headers)
+        intercepted = grpc.intercept_channel(channel, *headers)
         newStub = schema_pb2_grpc.ImmuServiceStub(intercepted)
         return intercepted, newStub
     except ValueError as e:
