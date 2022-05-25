@@ -25,7 +25,7 @@ from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
 import ecdsa
-from immudb.datatypes import DeleteKeysRequest, TxMode
+from immudb.datatypes import DeleteKeysRequest
 from immudb.embedded.store import KVMetadata
 import threading
 import queue
