@@ -163,7 +163,6 @@ class ImmudbClient:
                 this.keepAliveStarted = False
                 this.queue.put(b'0')
                 self.closeSession()
-                self._resetStub()
 
         return ManagedSession(keepAliveInterval)
 
