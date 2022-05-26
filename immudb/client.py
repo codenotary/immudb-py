@@ -181,6 +181,7 @@ class ImmudbClient:
     def closeSession(self):
         self.__stub.CloseSession(google_dot_protobuf_dot_empty__pb2.Empty())
         self._session_response = None
+        self._resetStub()
 
     def createUser(self, user, password, permission, database):
         request = schema_pb2_grpc.schema__pb2.CreateUserRequest(
