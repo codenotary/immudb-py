@@ -73,9 +73,6 @@ class ImmuTestClient:
             "CREATE TABLE {table} ({fieldsJoined});".format(
                 table=tabname, fieldsJoined=fieldsJoined)
         )
-        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
-               or len(resp.UnknownFields()) > 0)
-
         resp = self.client.listTables()
         assert tabname in resp
         return tabname
