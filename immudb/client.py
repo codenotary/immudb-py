@@ -100,12 +100,17 @@ class ImmudbClient:
         return healthcheck.call(self.__stub, self.__rs)
 
     # Not implemented: connect
+    def _convertToBytes(self, what):
+        if(type(what) != bytes):
+            return bytes(what, encoding='utf-8')
+        return what
 
     def login(self, username, password, database=b"defaultdb"):
-        req = schema_pb2_grpc.schema__pb2.LoginRequest(user=bytes(
-            username, encoding='utf-8'), password=bytes(
-                password, encoding='utf-8'
-        ))
+        convertedUsername = self._convertToBytes(username)
+        convertedPassword = self._convertToBytes(password)
+        convertedDatabase = self._convertToBytes(database)
+        req = schema_pb2_grpc.schema__pb2.LoginRequest(
+            user=convertedUsername, password=convertedPassword)
         try:
             self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
                 self.__stub.Login(
@@ -117,7 +122,8 @@ class ImmudbClient:
 
         self.__stub = self.set_token_header_interceptor(self.__login_response)
         # Select database, modifying stub function accordingly
-        request = schema_pb2_grpc.schema__pb2.Database(databaseName=database)
+        request = schema_pb2_grpc.schema__pb2.Database(
+            databaseName=convertedDatabase)
         resp = self.__stub.UseDatabase(request)
         self.__stub = self.set_token_header_interceptor(resp)
 
@@ -166,10 +172,13 @@ class ImmudbClient:
         return ManagedSession(keepAliveInterval)
 
     def openSession(self, username, password, database=b"defaultdb"):
+        convertedUsername = self._convertToBytes(username)
+        convertedPassword = self._convertToBytes(password)
+        convertedDatabase = self._convertToBytes(database)
         req = schema_pb2_grpc.schema__pb2.OpenSessionRequest(
-            username=bytes(username, encoding='utf-8'),
-            password=bytes(password, encoding='utf-8'),
-            databaseName=database
+            username=convertedUsername,
+            password=convertedPassword,
+            databaseName=convertedDatabase
         )
         self._session_response = schema_pb2_grpc.schema__pb2.OpenSessionResponse = self.__stub.OpenSession(
             req)
@@ -420,7 +429,6 @@ class ImmudbClient:
 
 
 # immudb-py only
-
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self.__stub, self.__rs, keys)
