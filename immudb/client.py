@@ -14,7 +14,6 @@ import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import grpcutils
-from immudb.grpc.schema_pb2 import OpenSessionResponse
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
@@ -180,7 +179,7 @@ class ImmudbClient:
             password=convertedPassword,
             databaseName=convertedDatabase
         )
-        self._session_response = schema_pb2_grpc.schema__pb2.OpenSessionResponse = self.__stub.OpenSession(
+        self._session_response = self.__stub.OpenSession(
             req)
         self.__stub = self.set_session_id_interceptor(self._session_response)
         return transaction.Tx(self.__stub, self._session_response, self.channel)
