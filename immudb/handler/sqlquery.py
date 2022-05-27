@@ -15,9 +15,15 @@ from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
 from immudb.typeconv import py_to_sqlvalue
 from immudb.typeconv import sqlvalue_to_py
+from immudb import constants
+from immudb.exceptions import ErrPySDKInvalidColumnMode
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, params):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, params, columnNameMode):
+    return _call_with_executor(query, params, columnNameMode, service.SQLQuery)
+
+
+def _call_with_executor(query, params, columnNameMode, executor):
     paramsObj = []
     for key, value in params.items():
         paramsObj.append(schema_pb2.NamedParam(
@@ -27,8 +33,32 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, query, param
         sql=query,
         params=paramsObj)
 
-    resp = service.SQLQuery(request)
+    resp = executor(request)
     result = []
+
+    columnNames = getColumnNames(resp, columnNameMode)
+
     for row in resp.rows:
-        result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
+        if columnNameMode == constants.COLUMN_NAME_MODE_NONE:
+            result.append(tuple([sqlvalue_to_py(i) for i in row.values]))
+        else:
+            result.append(
+                dict(zip(columnNames, tuple([sqlvalue_to_py(i) for i in row.values]))))
     return result
+
+
+def getColumnNames(resp, columnNameMode):
+    columnNames = []
+    if columnNameMode:
+        for column in resp.columns:
+            if columnNameMode == constants.COLUMN_NAME_MODE_FIELD:
+                columnNames.append(column.name.strip("()").split(".")[2])
+            elif columnNameMode == constants.COLUMN_NAME_MODE_TABLE:
+                columnNames.append(column.name.strip("()").split(".", 1)[1])
+            elif columnNameMode == constants.COLUMN_NAME_MODE_DATABASE:
+                columnNames.append(column.name.strip("()"))
+            elif columnNameMode == constants.COLUMN_NAME_MODE_FULL:
+                columnNames.append(column.name)
+            else:
+                raise ErrPySDKInvalidColumnMode
+    return columnNames

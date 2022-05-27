@@ -11,7 +11,14 @@
 # limitations under the License.
 
 from dataclasses import dataclass
-import struct
+from enum import IntEnum
+from immudb.grpc.schema_pb2 import ReadOnly, WriteOnly, ReadWrite
+
+
+class TxMode(IntEnum):
+    ReadOnly = ReadOnly
+    WriteOnly = WriteOnly
+    ReadWrite = ReadWrite
 
 
 @dataclass

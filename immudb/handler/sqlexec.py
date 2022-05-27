@@ -10,16 +10,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dataclasses import dataclass
-
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService
-from immudb import datatypes
 from immudb.typeconv import py_to_sqlvalue
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, stmt, params, noWait):
+    return _call_with_executor(stmt, params, noWait, service.SQLExec)
+
+
+def _call_with_executor(stmt, params, noWait, executor):
     paramsObj = []
     for key, value in params.items():
         paramsObj.append(schema_pb2.NamedParam(
@@ -30,5 +31,5 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, stmt, params
         params=paramsObj,
         noWait=noWait)
 
-    result = service.SQLExec(request)
+    result = executor(request)
     return result
