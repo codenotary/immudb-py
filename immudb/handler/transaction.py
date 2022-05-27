@@ -20,7 +20,7 @@ from immudb.handler.sqlquery import _call_with_executor as executeSQLQuery
 from immudb.handler.sqlexec import _call_with_executor as executeSQLExec
 
 
-class InteractiveTxInterface:
+class Tx:
     def __init__(self, stub, session, channel):
         self.stub = stub
         self.session = session

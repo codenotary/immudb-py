@@ -48,7 +48,6 @@ class ImmudbClient:
         self.loadKey(publicKeyFile)
         self.__login_response = None
         self._session_response = None
-        self.headersInterceptors = []
 
     def loadKey(self, kfile: str):
         if kfile is None:
@@ -175,7 +174,7 @@ class ImmudbClient:
         self._session_response = schema_pb2_grpc.schema__pb2.OpenSessionResponse = self.__stub.OpenSession(
             req)
         self.__stub = self.set_session_id_interceptor(self._session_response)
-        return transaction.InteractiveTxInterface(self.__stub, self._session_response, self.channel)
+        return transaction.Tx(self.__stub, self._session_response, self.channel)
 
     def closeSession(self):
         self.__stub.CloseSession(google_dot_protobuf_dot_empty__pb2.Empty())

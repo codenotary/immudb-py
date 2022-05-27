@@ -12,12 +12,13 @@
 
 from dataclasses import dataclass
 from enum import IntEnum
+from immudb.grpc.schema_pb2 import ReadOnly, WriteOnly, ReadWrite
 
 
 class TxMode(IntEnum):
-    ReadOnly = 0
-    WriteOnly = 1
-    ReadWrite = 2
+    ReadOnly = ReadOnly
+    WriteOnly = WriteOnly
+    ReadWrite = ReadWrite
 
 
 @dataclass
