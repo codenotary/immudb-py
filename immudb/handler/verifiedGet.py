@@ -27,7 +27,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
     state = rs.get()
     req = schema_pb2.VerifiableGetRequest(
         keyRequest=schema_pb2.KeyRequest(
-            key=requestkey, atTx=atTx, sinceTx=sinceTx, atRevision = atRevision),
+            key=requestkey, atTx=atTx, sinceTx=sinceTx, atRevision=atRevision),
         proveSinceTx=state.txId
     )
     ventry = service.VerifiableGet(req)
@@ -96,5 +96,5 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         timestamp=ventry.verifiableTx.tx.header.ts,
         verified=verifies,
         refkey=refkey,
-        revision = ventry.entry.revision
+        revision=ventry.entry.revision
     )

@@ -274,7 +274,7 @@ class ImmudbClient:
         return setValue.call(self.__stub, self.__rs, key, value, metadata)
 
     def get(self, key: bytes, atRevision: int = None):
-        return get.call(self.__stub, self.__rs, key, atRevision = atRevision)
+        return get.call(self.__stub, self.__rs, key, atRevision=atRevision)
 
     # Not implemented: getSince
     # Not implemented: getAt
