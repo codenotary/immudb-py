@@ -18,9 +18,10 @@ from immudb.rootService import RootService
 from immudb import datatypes
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, atRevision: int = None):
     request = schema_pb2.KeyRequest(
-        key=key
+        key=key,
+        atRevision = atRevision
     )
     try:
         msg = service.Get(request)
@@ -32,5 +33,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes):
     return datatypes.GetResponse(
         tx=msg.tx,
         key=msg.key,
-        value=msg.value
+        value=msg.value,
+        revision = msg.revision
     )

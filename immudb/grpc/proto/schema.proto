@@ -127,6 +127,7 @@ message Entry {
 	Reference referencedBy = 4;
 	KVMetadata metadata = 5;
 	bool expired = 6;
+	uint64 revision = 7;
 }
 
 message Reference {
@@ -134,6 +135,7 @@ message Reference {
 	bytes key = 2;
 	uint64 atTx = 3;
 	KVMetadata metadata = 4;
+	uint64 revision = 5;
 }
 
 message Op {
@@ -280,6 +282,7 @@ message KeyRequest {
     uint64 atTx = 2;
 	uint64 sinceTx = 3;
 	bool  noWait = 4;
+	int64 atRevision = 5;
 }
 
 message KeyListRequest {
@@ -417,6 +420,10 @@ message TxScanRequest {
 
 message TxList {
 	repeated Tx txs = 1;
+}
+
+message ExportTxRequest {
+	uint64 tx = 1;
 }
 
 message Database {

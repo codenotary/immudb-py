@@ -30,8 +30,11 @@ class ImmuTestClient:
     def openManagedSession(self, login, password, db):
         return self.client.openManagedSession(login, password, db)
 
-    def get(self, key: bytes):
-        return self.client.get(key)
+    def get(self, key: bytes, atRevision: int = None):
+        return self.client.get(key, atRevision = atRevision)
+
+    def verifiedGet(self, key: bytes, atRevision: int = None):
+        return self.client.verifiedGet(key, atRevision = atRevision)
         
     def set(self, key: bytes, value: bytes):
         return self.client.set(key, value)

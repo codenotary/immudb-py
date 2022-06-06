@@ -35,6 +35,7 @@ class SafeGetResponse:
     timestamp: int
     verified: bool
     refkey: bytes
+    revision: int
 
 
 @dataclass
@@ -49,6 +50,7 @@ class GetResponse:
     tx: int
     key: bytes
     value: bytes
+    revision: int
 
 
 @dataclass
