@@ -17,7 +17,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='immudb-py',
-      version='1.3.0',
+      version='1.3.0.post1',
       license="Apache License Version 2.0",
       description='Python SDK for Immudb',
       long_description=long_description,
@@ -32,7 +32,7 @@ setup(name='immudb-py',
       install_requires=[
           'grpcio>=1.31.0',
           'dataclasses>=0.6',
-          'protobuf>=3.13.0',
+          'protobuf>=3.13.0,<4.0.0',
           'google-api>=0.1.12',
           'google-api-core>=1.22.1',
           'ecdsa>=0.16.1'
