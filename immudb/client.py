@@ -273,14 +273,14 @@ class ImmudbClient:
         metadata.ExpiresAt(expiresAt)
         return setValue.call(self.__stub, self.__rs, key, value, metadata)
 
-    def get(self, key: bytes):
-        return get.call(self.__stub, self.__rs, key)
+    def get(self, key: bytes, atRevision: int = None):
+        return get.call(self.__stub, self.__rs, key, atRevision=atRevision)
 
     # Not implemented: getSince
     # Not implemented: getAt
 
-    def verifiedGet(self, key: bytes):
-        return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
+    def verifiedGet(self, key: bytes, atRevision: int = None):
+        return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk, atRevision=atRevision)
 
     def verifiedGetSince(self, key: bytes, sinceTx: int):
         return verifiedGet.call(self.__stub, self.__rs, key, sinceTx=sinceTx, verifying_key=self.__vk)

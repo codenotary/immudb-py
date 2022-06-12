@@ -23,11 +23,11 @@ import immudb.schema as schema
 import sys
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx: int = None, verifying_key=None, sinceTx: int = None):
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx: int = None, verifying_key=None, sinceTx: int = None, atRevision: int = None):
     state = rs.get()
     req = schema_pb2.VerifiableGetRequest(
         keyRequest=schema_pb2.KeyRequest(
-            key=requestkey, atTx=atTx, sinceTx=sinceTx),
+            key=requestkey, atTx=atTx, sinceTx=sinceTx, atRevision=atRevision),
         proveSinceTx=state.txId
     )
     ventry = service.VerifiableGet(req)
@@ -95,5 +95,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: 
         value=ventry.entry.value,
         timestamp=ventry.verifiableTx.tx.header.ts,
         verified=verifies,
-        refkey=refkey
+        refkey=refkey,
+        revision=ventry.entry.revision
     )
