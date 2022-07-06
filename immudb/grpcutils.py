@@ -28,7 +28,7 @@ class _ClientCallDetails(
     pass
 
 
-def timeout_adder_interceptor(stubTimeout = None):
+def timeout_adder_interceptor(stubTimeout=None):
 
     def intercept_call(client_call_details, request_iterator, request_streaming,
                        response_streaming):
@@ -41,6 +41,7 @@ def timeout_adder_interceptor(stubTimeout = None):
         return client_call_details, request_iterator, None
 
     return generic_client_interceptor.create(intercept_call)
+
 
 def header_adder_interceptor(header, value):
 

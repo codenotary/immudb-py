@@ -34,7 +34,7 @@ import datetime
 
 class ImmudbClient:
 
-    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout = None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.timeout = timeout
@@ -140,7 +140,8 @@ class ImmudbClient:
         self.headersInterceptors = []
         self.clientInterceptors = []
         if(self.timeout != None):
-            self.clientInterceptors.append(grpcutils.timeout_adder_interceptor(self.timeout))
+            self.clientInterceptors.append(
+                grpcutils.timeout_adder_interceptor(self.timeout))
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
         self.__stub = self.get_intercepted_stub()
 
