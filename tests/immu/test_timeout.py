@@ -39,10 +39,10 @@ class TestTimeout:
 
 
         with pytest.raises(RpcError) as excinfo: 
-            client = ImmudbClient(url, timeout=0.09)
+            client = ImmudbClient(url, timeout=0.05)
             client.login(login, password)
             keyVal, keys = generateBigDict()
             client.setAll(keyVal)
-            scanned = client.scan(b"", b"", False, 500)
+            scanned = client.scan(b"", b"", False, 400)
         assert excinfo.value.code() == StatusCode.DEADLINE_EXCEEDED
         
