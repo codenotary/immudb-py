@@ -34,9 +34,10 @@ import datetime
 
 class ImmudbClient:
 
-    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout = None):
         if immudUrl is None:
             immudUrl = "localhost:3322"
+        self.timeout = timeout
         self.channel = grpc.insecure_channel(immudUrl)
         self._resetStub()
         if rs is None:
@@ -81,8 +82,9 @@ class ImmudbClient:
         return self.get_intercepted_stub()
 
     def get_intercepted_stub(self):
+        allInterceptors = self.headersInterceptors + self.clientInterceptors
         intercepted, newStub = grpcutils.get_intercepted_stub(
-            self.channel, self.headersInterceptors)
+            self.channel, allInterceptors)
         self.intercept_channel = intercepted
         return newStub
 
@@ -136,7 +138,11 @@ class ImmudbClient:
 
     def _resetStub(self):
         self.headersInterceptors = []
+        self.clientInterceptors = []
+        if(self.timeout != None):
+            self.clientInterceptors.append(grpcutils.timeout_adder_interceptor(self.timeout))
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
+        self.__stub = self.get_intercepted_stub()
 
     def keepAlive(self):
         self.__stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())

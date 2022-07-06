@@ -28,6 +28,20 @@ class _ClientCallDetails(
     pass
 
 
+def timeout_adder_interceptor(stubTimeout = None):
+
+    def intercept_call(client_call_details, request_iterator, request_streaming,
+                       response_streaming):
+        timeoutToSet = client_call_details.timeout
+        if(timeoutToSet == None):
+            timeoutToSet = stubTimeout
+        client_call_details = _ClientCallDetails(
+            client_call_details.method, timeoutToSet, client_call_details.metadata,
+            client_call_details.credentials)
+        return client_call_details, request_iterator, None
+
+    return generic_client_interceptor.create(intercept_call)
+
 def header_adder_interceptor(header, value):
 
     def intercept_call(client_call_details, request_iterator, request_streaming,

@@ -53,7 +53,10 @@ def client_pem(request):
 def client(request):
     return client_margs(immudUrl=request.param)
 
-
 @pytest.fixture(scope="function", params=TESTURLS)
 def wrappedClient(request):
     return ImmuTestClient(client_margs(immudUrl=request.param))
+
+@pytest.fixture(scope="function", params=TESTURLS)
+def argsToBuildClient(request):
+    return (request.param, "immudb", "immudb")
