@@ -54,7 +54,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, ops: list, n
                 )
             )
         else:
-            raise("unknown op for execAll")
+            raise ("unknown op for execAll")
 
     request = schema_pb2.ExecAllRequest(Operations=request_ops, noWait=noWait)
     msg = service.ExecAll(request)

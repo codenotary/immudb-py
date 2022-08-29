@@ -33,7 +33,7 @@ def timeout_adder_interceptor(stubTimeout=None):
     def intercept_call(client_call_details, request_iterator, request_streaming,
                        response_streaming):
         timeoutToSet = client_call_details.timeout
-        if(timeoutToSet == None):
+        if (timeoutToSet == None):
             timeoutToSet = stubTimeout
         client_call_details = _ClientCallDetails(
             client_call_details.method, timeoutToSet, client_call_details.metadata,

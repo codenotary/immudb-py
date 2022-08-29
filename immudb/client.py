@@ -102,7 +102,7 @@ class ImmudbClient:
 
     # Not implemented: connect
     def _convertToBytes(self, what):
-        if(type(what) != bytes):
+        if (type(what) != bytes):
             return bytes(what, encoding='utf-8')
         return what
 
@@ -139,7 +139,7 @@ class ImmudbClient:
     def _resetStub(self):
         self.headersInterceptors = []
         self.clientInterceptors = []
-        if(self.timeout != None):
+        if (self.timeout != None):
             self.clientInterceptors.append(
                 grpcutils.timeout_adder_interceptor(self.timeout))
         self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
@@ -435,6 +435,7 @@ class ImmudbClient:
 
 
 # immudb-py only
+
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self.__stub, self.__rs, keys)
