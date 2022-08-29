@@ -13,6 +13,8 @@
 import string
 import random
 import time
+from tests.immuTestClient import ImmuTestClient
+import pytest
 
 
 def get_random_string(length):
@@ -41,5 +43,9 @@ class TestGetSet:
             assert i in xset
             assert xset[i] == resp[i]
 
-    def test_compact(self, client):
-        client.compactIndex()
+    def test_compact(self, wrappedClient: ImmuTestClient):
+        # Snapshot compaction fixed from 1.3.1
+        if(wrappedClient.serverHigherOrEqualsToVersion("1.3.0")):
+            wrappedClient.client.compactIndex()
+        else:
+            pytest.skip("Server version too low")
