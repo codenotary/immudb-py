@@ -26,7 +26,7 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     try:
         msg = service.Get(request)
     except Exception as e:
-        if hasattr(e, 'details') and e.details() == 'key not found':
+        if hasattr(e, 'details') and (e.details() == 'key not found' or e.details() == 'tbtree: key not found'):
             return None
         raise e
 
