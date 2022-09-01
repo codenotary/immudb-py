@@ -26,7 +26,6 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, 
     try:
         msg = service.Get(request)
     except Exception as e:
-        print(e, flush=True)
         if hasattr(e, 'details') and e.details().endswith('key not found'):
             return None
         raise e
