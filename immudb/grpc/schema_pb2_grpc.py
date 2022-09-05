@@ -170,6 +170,11 @@ class ImmuServiceStub(object):
         request_serializer=schema__pb2.HistoryRequest.SerializeToString,
         response_deserializer=schema__pb2.Entries.FromString,
         )
+    self.ServerInfo = channel.unary_unary(
+        '/immudb.schema.ImmuService/ServerInfo',
+        request_serializer=schema__pb2.ServerInfoRequest.SerializeToString,
+        response_deserializer=schema__pb2.ServerInfoResponse.FromString,
+        )
     self.Health = channel.unary_unary(
         '/immudb.schema.ImmuService/Health',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -402,15 +407,15 @@ class ImmuServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def UpdateAuthConfig(self, request, context):
-    """DEPRECATED
-    """
+    # missing associated documentation comment in .proto file
+    pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
   def UpdateMTLSConfig(self, request, context):
-    """DEPRECATED
-    """
+    # missing associated documentation comment in .proto file
+    pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -583,9 +588,17 @@ class ImmuServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def ServerInfo(self, request, context):
+    """ServerInfo returns information about the server instance.
+    ServerInfoRequest is defined for future extensions.
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def Health(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """DEPRECATED: Use ServerInfo
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -640,15 +653,15 @@ class ImmuServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def CreateDatabase(self, request, context):
-    """DEPRECATED: kept for backward compatibility
+    """DEPRECATED: Use CreateDatabaseV2
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
   def CreateDatabaseWith(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """DEPRECATED: Use CreateDatabaseV2
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -682,8 +695,8 @@ class ImmuServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def DatabaseList(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """DEPRECATED: Use DatabaseListV2
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -703,8 +716,8 @@ class ImmuServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def UpdateDatabase(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """DEPRECATED: Use UpdateDatabaseV2
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -717,8 +730,8 @@ class ImmuServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetDatabaseSettings(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """DEPRECATED: Use GetDatabaseSettingsV2
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -1006,6 +1019,11 @@ def add_ImmuServiceServicer_to_server(servicer, server):
           servicer.History,
           request_deserializer=schema__pb2.HistoryRequest.FromString,
           response_serializer=schema__pb2.Entries.SerializeToString,
+      ),
+      'ServerInfo': grpc.unary_unary_rpc_method_handler(
+          servicer.ServerInfo,
+          request_deserializer=schema__pb2.ServerInfoRequest.FromString,
+          response_serializer=schema__pb2.ServerInfoResponse.SerializeToString,
       ),
       'Health': grpc.unary_unary_rpc_method_handler(
           servicer.Health,

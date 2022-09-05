@@ -14,7 +14,9 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.api import annotations_pb2 as google_dot_api_dot_annotations__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from protoc_gen_swagger.options import annotations_pb2 as protoc__gen__swagger_dot_options_dot_annotations__pb2
 from google.protobuf import struct_pb2 as google_dot_protobuf_dot_struct__pb2
 
 
@@ -22,10 +24,10 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='schema.proto',
   package='immudb.schema',
   syntax='proto3',
-  serialized_options=_b('Z+github.com/codenotary/immudb/pkg/api/schema'),
-  serialized_pb=_b('\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"N\n\x12OpenSessionRequest\x12\x10\n\x08username\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x14\n\x0c\x64\x61tabaseName\x18\x03 \x01(\t\"<\n\x13OpenSessionResponse\x12\x11\n\tsessionID\x18\x01 \x01(\t\x12\x12\n\nserverUUID\x18\x02 \x01(\t\"\xb5\x03\n\x0cPrecondition\x12L\n\x0ckeyMustExist\x18\x01 \x01(\x0b\x32\x34.immudb.schema.Precondition.KeyMustExistPreconditionH\x00\x12R\n\x0fkeyMustNotExist\x18\x02 \x01(\x0b\x32\x37.immudb.schema.Precondition.KeyMustNotExistPreconditionH\x00\x12^\n\x15keyNotModifiedAfterTX\x18\x03 \x01(\x0b\x32=.immudb.schema.Precondition.KeyNotModifiedAfterTXPreconditionH\x00\x1a\'\n\x18KeyMustExistPrecondition\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x1a*\n\x1bKeyMustNotExistPrecondition\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x1a>\n!KeyNotModifiedAfterTXPrecondition\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04txID\x18\x02 \x01(\x04\x42\x0e\n\x0cprecondition\"S\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\x12+\n\x08metadata\x18\x03 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\"\xaf\x01\n\x05\x45ntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12.\n\x0creferencedBy\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Reference\x12+\n\x08metadata\x18\x05 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\x12\x0f\n\x07\x65xpired\x18\x06 \x01(\x08\x12\x10\n\x08revision\x18\x07 \x01(\x04\"q\n\tReference\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12+\n\x08metadata\x18\x04 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\x12\x10\n\x08revision\x18\x05 \x01(\x04\"\x94\x01\n\x02Op\x12%\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValueH\x00\x12*\n\x04zAdd\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequestH\x00\x12.\n\x03ref\x18\x03 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequestH\x00\x42\x0b\n\toperation\"{\n\x0e\x45xecAllRequest\x12%\n\nOperations\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Op\x12\x0e\n\x06noWait\x18\x02 \x01(\x08\x12\x32\n\rpreconditions\x18\x03 \x03(\x0b\x32\x1b.immudb.schema.Precondition\"0\n\x07\x45ntries\x12%\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Entry\"d\n\x06ZEntry\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\r\n\x05score\x18\x04 \x01(\x01\x12\x0c\n\x04\x61tTx\x18\x05 \x01(\x04\"2\n\x08ZEntries\x12&\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"l\n\x0bScanRequest\x12\x0f\n\x07seekKey\x18\x01 \x01(\x0c\x12\x0e\n\x06prefix\x18\x02 \x01(\x0c\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12\r\n\x05limit\x18\x04 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nEntryCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"1\n\tSignature\x12\x11\n\tpublicKey\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\xaf\x01\n\x08TxHeader\x12\n\n\x02id\x18\x01 \x01(\x04\x12\x0f\n\x07prevAlh\x18\x02 \x01(\x0c\x12\n\n\x02ts\x18\x03 \x01(\x03\x12\x10\n\x08nentries\x18\x04 \x01(\x05\x12\n\n\x02\x65H\x18\x05 \x01(\x0c\x12\x0e\n\x06\x62lTxId\x18\x06 \x01(\x04\x12\x0e\n\x06\x62lRoot\x18\x07 \x01(\x0c\x12\x0f\n\x07version\x18\x08 \x01(\x05\x12+\n\x08metadata\x18\t \x01(\x0b\x32\x19.immudb.schema.TxMetadata\"\x0c\n\nTxMetadata\"D\n\x0bLinearProof\x12\x12\n\nsourceTxId\x18\x01 \x01(\x04\x12\x12\n\nTargetTxId\x18\x02 \x01(\x04\x12\r\n\x05terms\x18\x03 \x03(\x0c\"\x83\x02\n\tDualProof\x12/\n\x0esourceTxHeader\x18\x01 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12/\n\x0etargetTxHeader\x18\x02 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12\x16\n\x0einclusionProof\x18\x03 \x03(\x0c\x12\x18\n\x10\x63onsistencyProof\x18\x04 \x03(\x0c\x12\x15\n\rtargetBlTxAlh\x18\x05 \x01(\x0c\x12\x1a\n\x12lastInclusionProof\x18\x06 \x03(\x0c\x12/\n\x0blinearProof\x18\x07 \x01(\x0b\x32\x1a.immudb.schema.LinearProof\"\xa8\x01\n\x02Tx\x12\'\n\x06header\x18\x01 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12\'\n\x07\x65ntries\x18\x02 \x03(\x0b\x32\x16.immudb.schema.TxEntry\x12\'\n\tkvEntries\x18\x03 \x03(\x0b\x32\x14.immudb.schema.Entry\x12\'\n\x08zEntries\x18\x04 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"p\n\x07TxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06hValue\x18\x02 \x01(\x0c\x12\x0c\n\x04vLen\x18\x03 \x01(\x05\x12+\n\x08metadata\x18\x04 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\x12\r\n\x05value\x18\x05 \x01(\x0c\"b\n\nKVMetadata\x12\x0f\n\x07\x64\x65leted\x18\x01 \x01(\x08\x12-\n\nexpiration\x18\x02 \x01(\x0b\x32\x19.immudb.schema.Expiration\x12\x14\n\x0cnonIndexable\x18\x03 \x01(\x08\"\x1f\n\nExpiration\x12\x11\n\texpiresAt\x18\x01 \x01(\x03\"\x87\x01\n\x0cVerifiableTx\x12\x1d\n\x02tx\x18\x01 \x01(\x0b\x32\x11.immudb.schema.Tx\x12+\n\tdualProof\x18\x02 \x01(\x0b\x32\x18.immudb.schema.DualProof\x12+\n\tsignature\x18\x03 \x01(\x0b\x32\x18.immudb.schema.Signature\"\xa0\x01\n\x0fVerifiableEntry\x12#\n\x05\x65ntry\x18\x01 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\"<\n\x0eInclusionProof\x12\x0c\n\x04leaf\x18\x01 \x01(\x05\x12\r\n\x05width\x18\x02 \x01(\x05\x12\r\n\x05terms\x18\x03 \x03(\x0c\"v\n\nSetRequest\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\x12\x0e\n\x06noWait\x18\x02 \x01(\x08\x12\x32\n\rpreconditions\x18\x03 \x03(\x0b\x32\x1b.immudb.schema.Precondition\"\\\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x02 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\x12\x0e\n\x06noWait\x18\x04 \x01(\x08\x12\x12\n\natRevision\x18\x05 \x01(\x03\"/\n\x0eKeyListRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\"B\n\x11\x44\x65leteKeysRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\x12\x0e\n\x06noWait\x18\x03 \x01(\x08\"[\n\x14VerifiableSetRequest\x12-\n\nsetRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.SetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableGetRequest\x12-\n\nkeyRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.KeyRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"Q\n\x16\x44\x61tabaseHealthResponse\x12\x17\n\x0fpendingRequests\x18\x01 \x01(\r\x12\x1e\n\x16lastRequestCompletedAt\x18\x02 \x01(\x03\"g\n\x0eImmutableState\x12\n\n\x02\x64\x62\x18\x01 \x01(\t\x12\x0c\n\x04txId\x18\x02 \x01(\x04\x12\x0e\n\x06txHash\x18\x03 \x01(\x0c\x12+\n\tsignature\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Signature\"\x9a\x01\n\x10ReferenceRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x15\n\rreferencedKey\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x04 \x01(\x08\x12\x0e\n\x06noWait\x18\x05 \x01(\x08\x12\x32\n\rpreconditions\x18\x06 \x03(\x0b\x32\x1b.immudb.schema.Precondition\"m\n\x1aVerifiableReferenceRequest\x12\x39\n\x10referenceRequest\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"f\n\x0bZAddRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x04 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x05 \x01(\x08\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"\xf6\x01\n\x0cZScanRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0f\n\x07seekKey\x18\x02 \x01(\x0c\x12\x11\n\tseekScore\x18\x03 \x01(\x01\x12\x10\n\x08seekAtTx\x18\x04 \x01(\x04\x12\x15\n\rinclusiveSeek\x18\x05 \x01(\x08\x12\r\n\x05limit\x18\x06 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x07 \x01(\x08\x12&\n\x08minScore\x18\x08 \x01(\x0b\x32\x14.immudb.schema.Score\x12&\n\x08maxScore\x18\t \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0f\n\x07sinceTx\x18\n \x01(\x04\x12\x0e\n\x06noWait\x18\x0b \x01(\x08\"[\n\x0eHistoryRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\x08\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\"^\n\x15VerifiableZAddRequest\x12/\n\x0bzAddRequest\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"i\n\tTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12/\n\x0b\x65ntriesSpec\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.EntriesSpec\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\x12\x0e\n\x06noWait\x18\x04 \x01(\x08\"\xac\x01\n\x0b\x45ntriesSpec\x12\x33\n\rkvEntriesSpec\x18\x01 \x01(\x0b\x32\x1c.immudb.schema.EntryTypeSpec\x12\x32\n\x0czEntriesSpec\x18\x02 \x01(\x0b\x32\x1c.immudb.schema.EntryTypeSpec\x12\x34\n\x0esqlEntriesSpec\x18\x03 \x01(\x0b\x32\x1c.immudb.schema.EntryTypeSpec\"?\n\rEntryTypeSpec\x12.\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1e.immudb.schema.EntryTypeAction\"\x89\x01\n\x13VerifiableTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\x12/\n\x0b\x65ntriesSpec\x18\x03 \x01(\x0b\x32\x1a.immudb.schema.EntriesSpec\x12\x0f\n\x07sinceTx\x18\x04 \x01(\x04\x12\x0e\n\x06noWait\x18\x05 \x01(\x08\"\x91\x01\n\rTxScanRequest\x12\x11\n\tinitialTx\x18\x01 \x01(\x04\x12\r\n\x05limit\x18\x02 \x01(\r\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12/\n\x0b\x65ntriesSpec\x18\x04 \x01(\x0b\x32\x1a.immudb.schema.EntriesSpec\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"(\n\x06TxList\x12\x1e\n\x03txs\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Tx\"\x1d\n\x0f\x45xportTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabaseName\x18\x01 \x01(\t\"\x9b\x02\n\x10\x44\x61tabaseSettings\x12\x14\n\x0c\x64\x61tabaseName\x18\x01 \x01(\t\x12\x0f\n\x07replica\x18\x02 \x01(\x08\x12\x16\n\x0emasterDatabase\x18\x03 \x01(\t\x12\x15\n\rmasterAddress\x18\x04 \x01(\t\x12\x12\n\nmasterPort\x18\x05 \x01(\r\x12\x18\n\x10\x66ollowerUsername\x18\x06 \x01(\t\x12\x18\n\x10\x66ollowerPassword\x18\x07 \x01(\t\x12\x10\n\x08\x66ileSize\x18\x08 \x01(\r\x12\x11\n\tmaxKeyLen\x18\t \x01(\r\x12\x13\n\x0bmaxValueLen\x18\n \x01(\r\x12\x14\n\x0cmaxTxEntries\x18\x0b \x01(\r\x12\x19\n\x11\x65xcludeCommitTime\x18\x0c \x01(\x08\"`\n\x15\x43reateDatabaseRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"a\n\x16\x43reateDatabaseResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"d\n\x15UpdateDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"e\n\x16UpdateDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"\x19\n\x17\x44\x61tabaseSettingsRequest\"g\n\x18\x44\x61tabaseSettingsResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"\x1f\n\x0eNullableUint32\x12\r\n\x05value\x18\x01 \x01(\r\"\x1f\n\x0eNullableUint64\x12\r\n\x05value\x18\x01 \x01(\x04\"\x1e\n\rNullableFloat\x12\r\n\x05value\x18\x01 \x01(\x02\"\x1d\n\x0cNullableBool\x12\r\n\x05value\x18\x01 \x01(\x08\"\x1f\n\x0eNullableString\x12\r\n\x05value\x18\x01 \x01(\t\"\xee\x06\n\x18\x44\x61tabaseNullableSettings\x12G\n\x13replicationSettings\x18\x02 \x01(\x0b\x32*.immudb.schema.ReplicationNullableSettings\x12/\n\x08\x66ileSize\x18\x08 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x30\n\tmaxKeyLen\x18\t \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x32\n\x0bmaxValueLen\x18\n \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x33\n\x0cmaxTxEntries\x18\x0b \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x36\n\x11\x65xcludeCommitTime\x18\x0c \x01(\x0b\x32\x1b.immudb.schema.NullableBool\x12\x35\n\x0emaxConcurrency\x18\r \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x10maxIOConcurrency\x18\x0e \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x35\n\x0etxLogCacheSize\x18\x0f \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x39\n\x12vLogMaxOpenedFiles\x18\x10 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12:\n\x13txLogMaxOpenedFiles\x18\x11 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12>\n\x17\x63ommitLogMaxOpenedFiles\x18\x12 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12;\n\rindexSettings\x18\x13 \x01(\x0b\x32$.immudb.schema.IndexNullableSettings\x12;\n\x14writeTxHeaderVersion\x18\x14 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12-\n\x08\x61utoload\x18\x15 \x01(\x0b\x32\x1b.immudb.schema.NullableBool\"\xdd\x02\n\x1bReplicationNullableSettings\x12,\n\x07replica\x18\x01 \x01(\x0b\x32\x1b.immudb.schema.NullableBool\x12\x35\n\x0emasterDatabase\x18\x02 \x01(\x0b\x32\x1d.immudb.schema.NullableString\x12\x34\n\rmasterAddress\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.NullableString\x12\x31\n\nmasterPort\x18\x04 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x10\x66ollowerUsername\x18\x05 \x01(\x0b\x32\x1d.immudb.schema.NullableString\x12\x37\n\x10\x66ollowerPassword\x18\x06 \x01(\x0b\x32\x1d.immudb.schema.NullableString\"\x86\x06\n\x15IndexNullableSettings\x12\x35\n\x0e\x66lushThreshold\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x34\n\rsyncThreshold\x18\x02 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x30\n\tcacheSize\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x32\n\x0bmaxNodeSize\x18\x04 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x39\n\x12maxActiveSnapshots\x18\x05 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x39\n\x12renewSnapRootAfter\x18\x06 \x01(\x0b\x32\x1d.immudb.schema.NullableUint64\x12\x35\n\x0e\x63ompactionThld\x18\x07 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12<\n\x15\x64\x65layDuringCompaction\x18\x08 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12=\n\x16nodesLogMaxOpenedFiles\x18\t \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12?\n\x18historyLogMaxOpenedFiles\x18\n \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12>\n\x17\x63ommitLogMaxOpenedFiles\x18\x0b \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x36\n\x0f\x66lushBufferSize\x18\x0c \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x11\x63leanupPercentage\x18\r \x01(\x0b\x32\x1c.immudb.schema.NullableFloat\"\'\n\x13LoadDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"(\n\x14LoadDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\")\n\x15UnloadDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"*\n\x16UnloadDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\")\n\x15\x44\x65leteDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"*\n\x16\x44\x65leteDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\">\n\x11\x46lushIndexRequest\x12\x19\n\x11\x63leanupPercentage\x18\x01 \x01(\x02\x12\x0e\n\x06synced\x18\x02 \x01(\x08\"&\n\x12\x46lushIndexResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"\x1a\n\x05Table\x12\x11\n\ttableName\x18\x01 \x01(\t\"h\n\rSQLGetRequest\x12\r\n\x05table\x18\x01 \x01(\t\x12)\n\x08pkValues\x18\x02 \x03(\x0b\x32\x17.immudb.schema.SQLValue\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x04 \x01(\x04\"d\n\x17VerifiableSQLGetRequest\x12\x33\n\rsqlGetRequest\x18\x01 \x01(\x0b\x32\x1c.immudb.schema.SQLGetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"_\n\x08SQLEntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12+\n\x08metadata\x18\x04 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\"\xdd\x05\n\x12VerifiableSQLEntry\x12)\n\x08sqlEntry\x18\x01 \x01(\x0b\x32\x17.immudb.schema.SQLEntry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\x12\x12\n\nDatabaseId\x18\x04 \x01(\r\x12\x0f\n\x07TableId\x18\x05 \x01(\r\x12\r\n\x05PKIDs\x18\x10 \x03(\r\x12I\n\x0c\x43olNamesById\x18\x08 \x03(\x0b\x32\x33.immudb.schema.VerifiableSQLEntry.ColNamesByIdEntry\x12I\n\x0c\x43olIdsByName\x18\t \x03(\x0b\x32\x33.immudb.schema.VerifiableSQLEntry.ColIdsByNameEntry\x12I\n\x0c\x43olTypesById\x18\n \x03(\x0b\x32\x33.immudb.schema.VerifiableSQLEntry.ColTypesByIdEntry\x12\x45\n\nColLenById\x18\x0b \x03(\x0b\x32\x31.immudb.schema.VerifiableSQLEntry.ColLenByIdEntry\x1a\x33\n\x11\x43olNamesByIdEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x33\n\x11\x43olIdsByNameEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\r:\x02\x38\x01\x1a\x33\n\x11\x43olTypesByIdEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x31\n\x0f\x43olLenByIdEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01J\x04\x08\x06\x10\x07\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database\"\x17\n\x15\x44\x61tabaseListRequestV2\"P\n\x16\x44\x61tabaseListResponseV2\x12\x36\n\tdatabases\x18\x01 \x03(\x0b\x32#.immudb.schema.DatabaseWithSettings\"o\n\x14\x44\x61tabaseWithSettings\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\x12\x0e\n\x06loaded\x18\x03 \x01(\x08\"\x18\n\x05\x43hunk\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\x0c\"9\n\x12UseSnapshotRequest\x12\x0f\n\x07sinceTx\x18\x01 \x01(\x04\x12\x12\n\nasBeforeTx\x18\x02 \x01(\x04\"X\n\x0eSQLExecRequest\x12\x0b\n\x03sql\x18\x01 \x01(\t\x12)\n\x06params\x18\x02 \x03(\x0b\x32\x19.immudb.schema.NamedParam\x12\x0e\n\x06noWait\x18\x03 \x01(\x08\"`\n\x0fSQLQueryRequest\x12\x0b\n\x03sql\x18\x01 \x01(\t\x12)\n\x06params\x18\x02 \x03(\x0b\x32\x19.immudb.schema.NamedParam\x12\x15\n\rreuseSnapshot\x18\x03 \x01(\x08\"B\n\nNamedParam\x12\x0c\n\x04name\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.immudb.schema.SQLValue\"N\n\rSQLExecResult\x12*\n\x03txs\x18\x05 \x03(\x0b\x32\x1d.immudb.schema.CommittedSQLTx\x12\x11\n\tongoingTx\x18\x06 \x01(\x08\"\x8d\x03\n\x0e\x43ommittedSQLTx\x12\'\n\x06header\x18\x01 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12\x13\n\x0bupdatedRows\x18\x02 \x01(\r\x12K\n\x0flastInsertedPKs\x18\x03 \x03(\x0b\x32\x32.immudb.schema.CommittedSQLTx.LastInsertedPKsEntry\x12M\n\x10\x66irstInsertedPKs\x18\x04 \x03(\x0b\x32\x33.immudb.schema.CommittedSQLTx.FirstInsertedPKsEntry\x1aO\n\x14LastInsertedPKsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.immudb.schema.SQLValue:\x02\x38\x01\x1aP\n\x15\x46irstInsertedPKsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.immudb.schema.SQLValue:\x02\x38\x01\"Z\n\x0eSQLQueryResult\x12&\n\x07\x63olumns\x18\x02 \x03(\x0b\x32\x15.immudb.schema.Column\x12 \n\x04rows\x18\x01 \x03(\x0b\x32\x12.immudb.schema.Row\"$\n\x06\x43olumn\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"?\n\x03Row\x12\x0f\n\x07\x63olumns\x18\x01 \x03(\t\x12\'\n\x06values\x18\x02 \x03(\x0b\x32\x17.immudb.schema.SQLValue\"\x82\x01\n\x08SQLValue\x12*\n\x04null\x18\x01 \x01(\x0e\x32\x1a.google.protobuf.NullValueH\x00\x12\x0b\n\x01n\x18\x02 \x01(\x03H\x00\x12\x0b\n\x01s\x18\x03 \x01(\tH\x00\x12\x0b\n\x01\x62\x18\x04 \x01(\x08H\x00\x12\x0c\n\x02\x62s\x18\x05 \x01(\x0cH\x00\x12\x0c\n\x02ts\x18\x06 \x01(\x03H\x00\x42\x07\n\x05value\"3\n\x0cNewTxRequest\x12#\n\x04mode\x18\x01 \x01(\x0e\x32\x15.immudb.schema.TxMode\"&\n\rNewTxResponse\x12\x15\n\rtransactionID\x18\x01 \x01(\t\"(\n\tErrorInfo\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\r\n\x05\x63\x61use\x18\x02 \x01(\t\"\x1a\n\tDebugInfo\x12\r\n\x05stack\x18\x01 \x01(\t\" \n\tRetryInfo\x12\x13\n\x0bretry_delay\x18\x01 \x01(\x05*K\n\x0f\x45ntryTypeAction\x12\x0b\n\x07\x45XCLUDE\x10\x00\x12\x0f\n\x0bONLY_DIGEST\x10\x01\x12\r\n\tRAW_VALUE\x10\x02\x12\x0b\n\x07RESOLVE\x10\x03*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01*4\n\x06TxMode\x12\x0c\n\x08ReadOnly\x10\x00\x12\r\n\tWriteOnly\x10\x01\x12\r\n\tReadWrite\x10\x02\x32\x82(\n\x0bImmuService\x12<\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\x12\x46\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\x12N\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\x12R\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\x12L\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\x12\x45\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\x12\x45\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\x12V\n\x0bOpenSession\x12!.immudb.schema.OpenSessionRequest\x1a\".immudb.schema.OpenSessionResponse\"\x00\x12@\n\x0c\x43loseSession\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12=\n\tKeepAlive\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\x05NewTx\x12\x1b.immudb.schema.NewTxRequest\x1a\x1c.immudb.schema.NewTxResponse\"\x00\x12\x41\n\x06\x43ommit\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.CommittedSQLTx\"\x00\x12<\n\x08Rollback\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\tTxSQLExec\x12\x1d.immudb.schema.SQLExecRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\nTxSQLQuery\x12\x1e.immudb.schema.SQLQueryRequest\x1a\x1d.immudb.schema.SQLQueryResult\"\x00\x12\x42\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\x12\x38\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12\x39\n\x03Set\x12\x19.immudb.schema.SetRequest\x1a\x17.immudb.schema.TxHeader\x12Q\n\rVerifiableSet\x12#.immudb.schema.VerifiableSetRequest\x1a\x1b.immudb.schema.VerifiableTx\x12\x36\n\x03Get\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Entry\x12T\n\rVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x1e.immudb.schema.VerifiableEntry\x12\x43\n\x06\x44\x65lete\x12 .immudb.schema.DeleteKeysRequest\x1a\x17.immudb.schema.TxHeader\x12?\n\x06GetAll\x12\x1d.immudb.schema.KeyListRequest\x1a\x16.immudb.schema.Entries\x12\x41\n\x07\x45xecAll\x12\x1d.immudb.schema.ExecAllRequest\x1a\x17.immudb.schema.TxHeader\x12:\n\x04Scan\x12\x1a.immudb.schema.ScanRequest\x1a\x16.immudb.schema.Entries\x12<\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.EntryCount\x12=\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.EntryCount\x12\x35\n\x06TxById\x12\x18.immudb.schema.TxRequest\x1a\x11.immudb.schema.Tx\x12S\n\x10VerifiableTxById\x12\".immudb.schema.VerifiableTxRequest\x1a\x1b.immudb.schema.VerifiableTx\x12=\n\x06TxScan\x12\x1c.immudb.schema.TxScanRequest\x1a\x15.immudb.schema.TxList\x12@\n\x07History\x12\x1d.immudb.schema.HistoryRequest\x1a\x16.immudb.schema.Entries\x12?\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\x12O\n\x0e\x44\x61tabaseHealth\x12\x16.google.protobuf.Empty\x1a%.immudb.schema.DatabaseHealthResponse\x12\x45\n\x0c\x43urrentState\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.ImmutableState\x12H\n\x0cSetReference\x12\x1f.immudb.schema.ReferenceRequest\x1a\x17.immudb.schema.TxHeader\x12`\n\x16VerifiableSetReference\x12).immudb.schema.VerifiableReferenceRequest\x1a\x1b.immudb.schema.VerifiableTx\x12;\n\x04ZAdd\x12\x1a.immudb.schema.ZAddRequest\x1a\x17.immudb.schema.TxHeader\x12S\n\x0eVerifiableZAdd\x12$.immudb.schema.VerifiableZAddRequest\x1a\x1b.immudb.schema.VerifiableTx\x12=\n\x05ZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x17.immudb.schema.ZEntries\x12\x41\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\x12M\n\x12\x43reateDatabaseWith\x12\x1f.immudb.schema.DatabaseSettings\x1a\x16.google.protobuf.Empty\x12_\n\x10\x43reateDatabaseV2\x12$.immudb.schema.CreateDatabaseRequest\x1a%.immudb.schema.CreateDatabaseResponse\x12W\n\x0cLoadDatabase\x12\".immudb.schema.LoadDatabaseRequest\x1a#.immudb.schema.LoadDatabaseResponse\x12]\n\x0eUnloadDatabase\x12$.immudb.schema.UnloadDatabaseRequest\x1a%.immudb.schema.UnloadDatabaseResponse\x12]\n\x0e\x44\x65leteDatabase\x12$.immudb.schema.DeleteDatabaseRequest\x1a%.immudb.schema.DeleteDatabaseResponse\x12K\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\x12]\n\x0e\x44\x61tabaseListV2\x12$.immudb.schema.DatabaseListRequestV2\x1a%.immudb.schema.DatabaseListResponseV2\x12G\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\x12I\n\x0eUpdateDatabase\x12\x1f.immudb.schema.DatabaseSettings\x1a\x16.google.protobuf.Empty\x12_\n\x10UpdateDatabaseV2\x12$.immudb.schema.UpdateDatabaseRequest\x1a%.immudb.schema.UpdateDatabaseResponse\x12N\n\x13GetDatabaseSettings\x12\x16.google.protobuf.Empty\x1a\x1f.immudb.schema.DatabaseSettings\x12h\n\x15GetDatabaseSettingsV2\x12&.immudb.schema.DatabaseSettingsRequest\x1a\'.immudb.schema.DatabaseSettingsResponse\x12Q\n\nFlushIndex\x12 .immudb.schema.FlushIndexRequest\x1a!.immudb.schema.FlushIndexResponse\x12>\n\x0c\x43ompactIndex\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12@\n\tstreamGet\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12>\n\tstreamSet\x12\x14.immudb.schema.Chunk\x1a\x17.immudb.schema.TxHeader\"\x00(\x01\x12T\n\x13streamVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12L\n\x13streamVerifiableSet\x12\x14.immudb.schema.Chunk\x1a\x1b.immudb.schema.VerifiableTx\"\x00(\x01\x12\x42\n\nstreamScan\x12\x1a.immudb.schema.ScanRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12\x44\n\x0bstreamZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12H\n\rstreamHistory\x12\x1d.immudb.schema.HistoryRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12\x42\n\rstreamExecAll\x12\x14.immudb.schema.Chunk\x1a\x17.immudb.schema.TxHeader\"\x00(\x01\x12\x44\n\x08\x65xportTx\x12\x1e.immudb.schema.ExportTxRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12@\n\x0breplicateTx\x12\x14.immudb.schema.Chunk\x1a\x17.immudb.schema.TxHeader\"\x00(\x01\x12\x46\n\x07SQLExec\x12\x1d.immudb.schema.SQLExecRequest\x1a\x1c.immudb.schema.SQLExecResult\x12I\n\x08SQLQuery\x12\x1e.immudb.schema.SQLQueryRequest\x1a\x1d.immudb.schema.SQLQueryResult\x12\x43\n\nListTables\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.SQLQueryResult\x12\x44\n\rDescribeTable\x12\x14.immudb.schema.Table\x1a\x1d.immudb.schema.SQLQueryResult\x12]\n\x10VerifiableSQLGet\x12&.immudb.schema.VerifiableSQLGetRequest\x1a!.immudb.schema.VerifiableSQLEntryB-Z+github.com/codenotary/immudb/pkg/api/schemab\x06proto3')
+  serialized_options=_b('Z+github.com/codenotary/immudb/pkg/api/schema\222A\332\002\022\356\001\n\017immudb REST API\022\332\001<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs.ZY\nW\n\006bearer\022M\010\002\0228Authentication token, prefixed by Bearer: Bearer <token>\032\rAuthorization \002b\014\n\n\n\006bearer\022\000'),
+  serialized_pb=_b('\n\x0cschema.proto\x12\rimmudb.schema\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a,protoc-gen-swagger/options/annotations.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"2\n\nPermission\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x12\n\npermission\x18\x02 \x01(\r\"z\n\x04User\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12.\n\x0bpermissions\x18\x03 \x03(\x0b\x32\x19.immudb.schema.Permission\x12\x11\n\tcreatedby\x18\x04 \x01(\t\x12\x11\n\tcreatedat\x18\x05 \x01(\t\x12\x0e\n\x06\x61\x63tive\x18\x06 \x01(\x08\".\n\x08UserList\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.immudb.schema.User\"Y\n\x11\x43reateUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x12\n\npermission\x18\x03 \x01(\r\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\"\x1b\n\x0bUserRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\"O\n\x15\x43hangePasswordRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x13\n\x0boldPassword\x18\x02 \x01(\x0c\x12\x13\n\x0bnewPassword\x18\x03 \x01(\x0c\".\n\x0cLoginRequest\x12\x0c\n\x04user\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\"/\n\rLoginResponse\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0f\n\x07warning\x18\x02 \x01(\x0c\"\x1a\n\nAuthConfig\x12\x0c\n\x04kind\x18\x01 \x01(\r\"\x1d\n\nMTLSConfig\x12\x0f\n\x07\x65nabled\x18\x01 \x01(\x08\"N\n\x12OpenSessionRequest\x12\x10\n\x08username\x18\x01 \x01(\x0c\x12\x10\n\x08password\x18\x02 \x01(\x0c\x12\x14\n\x0c\x64\x61tabaseName\x18\x03 \x01(\t\"<\n\x13OpenSessionResponse\x12\x11\n\tsessionID\x18\x01 \x01(\t\x12\x12\n\nserverUUID\x18\x02 \x01(\t\"\xb5\x03\n\x0cPrecondition\x12L\n\x0ckeyMustExist\x18\x01 \x01(\x0b\x32\x34.immudb.schema.Precondition.KeyMustExistPreconditionH\x00\x12R\n\x0fkeyMustNotExist\x18\x02 \x01(\x0b\x32\x37.immudb.schema.Precondition.KeyMustNotExistPreconditionH\x00\x12^\n\x15keyNotModifiedAfterTX\x18\x03 \x01(\x0b\x32=.immudb.schema.Precondition.KeyNotModifiedAfterTXPreconditionH\x00\x1a\'\n\x18KeyMustExistPrecondition\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x1a*\n\x1bKeyMustNotExistPrecondition\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x1a>\n!KeyNotModifiedAfterTXPrecondition\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04txID\x18\x02 \x01(\x04\x42\x0e\n\x0cprecondition\"S\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\r\n\x05value\x18\x02 \x01(\x0c\x12+\n\x08metadata\x18\x03 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\"\xaf\x01\n\x05\x45ntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12.\n\x0creferencedBy\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Reference\x12+\n\x08metadata\x18\x05 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\x12\x0f\n\x07\x65xpired\x18\x06 \x01(\x08\x12\x10\n\x08revision\x18\x07 \x01(\x04\"q\n\tReference\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12+\n\x08metadata\x18\x04 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\x12\x10\n\x08revision\x18\x05 \x01(\x04\"\x94\x01\n\x02Op\x12%\n\x02kv\x18\x01 \x01(\x0b\x32\x17.immudb.schema.KeyValueH\x00\x12*\n\x04zAdd\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequestH\x00\x12.\n\x03ref\x18\x03 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequestH\x00\x42\x0b\n\toperation\"{\n\x0e\x45xecAllRequest\x12%\n\nOperations\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Op\x12\x0e\n\x06noWait\x18\x02 \x01(\x08\x12\x32\n\rpreconditions\x18\x03 \x03(\x0b\x32\x1b.immudb.schema.Precondition\"0\n\x07\x45ntries\x12%\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x14.immudb.schema.Entry\"d\n\x06ZEntry\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12#\n\x05\x65ntry\x18\x03 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\r\n\x05score\x18\x04 \x01(\x01\x12\x0c\n\x04\x61tTx\x18\x05 \x01(\x04\"2\n\x08ZEntries\x12&\n\x07\x65ntries\x18\x01 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"\xb9\x01\n\x0bScanRequest\x12\x0f\n\x07seekKey\x18\x01 \x01(\x0c\x12\x0e\n\x06\x65ndKey\x18\x07 \x01(\x0c\x12\x0e\n\x06prefix\x18\x02 \x01(\x0c\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12\r\n\x05limit\x18\x04 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\x12\x15\n\rinclusiveSeek\x18\x08 \x01(\x08\x12\x14\n\x0cinclusiveEnd\x18\t \x01(\x08\x12\x0e\n\x06offset\x18\n \x01(\x04\"\x1b\n\tKeyPrefix\x12\x0e\n\x06prefix\x18\x01 \x01(\x0c\"\x1b\n\nEntryCount\x12\r\n\x05\x63ount\x18\x01 \x01(\x04\"1\n\tSignature\x12\x11\n\tpublicKey\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\xaf\x01\n\x08TxHeader\x12\n\n\x02id\x18\x01 \x01(\x04\x12\x0f\n\x07prevAlh\x18\x02 \x01(\x0c\x12\n\n\x02ts\x18\x03 \x01(\x03\x12\x10\n\x08nentries\x18\x04 \x01(\x05\x12\n\n\x02\x65H\x18\x05 \x01(\x0c\x12\x0e\n\x06\x62lTxId\x18\x06 \x01(\x04\x12\x0e\n\x06\x62lRoot\x18\x07 \x01(\x0c\x12\x0f\n\x07version\x18\x08 \x01(\x05\x12+\n\x08metadata\x18\t \x01(\x0b\x32\x19.immudb.schema.TxMetadata\"\x0c\n\nTxMetadata\"D\n\x0bLinearProof\x12\x12\n\nsourceTxId\x18\x01 \x01(\x04\x12\x12\n\nTargetTxId\x18\x02 \x01(\x04\x12\r\n\x05terms\x18\x03 \x03(\x0c\"\x83\x02\n\tDualProof\x12/\n\x0esourceTxHeader\x18\x01 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12/\n\x0etargetTxHeader\x18\x02 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12\x16\n\x0einclusionProof\x18\x03 \x03(\x0c\x12\x18\n\x10\x63onsistencyProof\x18\x04 \x03(\x0c\x12\x15\n\rtargetBlTxAlh\x18\x05 \x01(\x0c\x12\x1a\n\x12lastInclusionProof\x18\x06 \x03(\x0c\x12/\n\x0blinearProof\x18\x07 \x01(\x0b\x32\x1a.immudb.schema.LinearProof\"\xa8\x01\n\x02Tx\x12\'\n\x06header\x18\x01 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12\'\n\x07\x65ntries\x18\x02 \x03(\x0b\x32\x16.immudb.schema.TxEntry\x12\'\n\tkvEntries\x18\x03 \x03(\x0b\x32\x14.immudb.schema.Entry\x12\'\n\x08zEntries\x18\x04 \x03(\x0b\x32\x15.immudb.schema.ZEntry\"p\n\x07TxEntry\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06hValue\x18\x02 \x01(\x0c\x12\x0c\n\x04vLen\x18\x03 \x01(\x05\x12+\n\x08metadata\x18\x04 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\x12\r\n\x05value\x18\x05 \x01(\x0c\"b\n\nKVMetadata\x12\x0f\n\x07\x64\x65leted\x18\x01 \x01(\x08\x12-\n\nexpiration\x18\x02 \x01(\x0b\x32\x19.immudb.schema.Expiration\x12\x14\n\x0cnonIndexable\x18\x03 \x01(\x08\"\x1f\n\nExpiration\x12\x11\n\texpiresAt\x18\x01 \x01(\x03\"\x87\x01\n\x0cVerifiableTx\x12\x1d\n\x02tx\x18\x01 \x01(\x0b\x32\x11.immudb.schema.Tx\x12+\n\tdualProof\x18\x02 \x01(\x0b\x32\x18.immudb.schema.DualProof\x12+\n\tsignature\x18\x03 \x01(\x0b\x32\x18.immudb.schema.Signature\"\xa0\x01\n\x0fVerifiableEntry\x12#\n\x05\x65ntry\x18\x01 \x01(\x0b\x32\x14.immudb.schema.Entry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\"<\n\x0eInclusionProof\x12\x0c\n\x04leaf\x18\x01 \x01(\x05\x12\r\n\x05width\x18\x02 \x01(\x05\x12\r\n\x05terms\x18\x03 \x03(\x0c\"v\n\nSetRequest\x12$\n\x03KVs\x18\x01 \x03(\x0b\x32\x17.immudb.schema.KeyValue\x12\x0e\n\x06noWait\x18\x02 \x01(\x08\x12\x32\n\rpreconditions\x18\x03 \x03(\x0b\x32\x1b.immudb.schema.Precondition\"\\\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x02 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\x12\x0e\n\x06noWait\x18\x04 \x01(\x08\x12\x12\n\natRevision\x18\x05 \x01(\x03\"/\n\x0eKeyListRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\"B\n\x11\x44\x65leteKeysRequest\x12\x0c\n\x04keys\x18\x01 \x03(\x0c\x12\x0f\n\x07sinceTx\x18\x02 \x01(\x04\x12\x0e\n\x06noWait\x18\x03 \x01(\x08\"[\n\x14VerifiableSetRequest\x12-\n\nsetRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.SetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"[\n\x14VerifiableGetRequest\x12-\n\nkeyRequest\x18\x01 \x01(\x0b\x32\x19.immudb.schema.KeyRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"\x13\n\x11ServerInfoRequest\"%\n\x12ServerInfoResponse\x12\x0f\n\x07version\x18\x01 \x01(\t\"1\n\x0eHealthResponse\x12\x0e\n\x06status\x18\x01 \x01(\x08\x12\x0f\n\x07version\x18\x02 \x01(\t\"Q\n\x16\x44\x61tabaseHealthResponse\x12\x17\n\x0fpendingRequests\x18\x01 \x01(\r\x12\x1e\n\x16lastRequestCompletedAt\x18\x02 \x01(\x03\"g\n\x0eImmutableState\x12\n\n\x02\x64\x62\x18\x01 \x01(\t\x12\x0c\n\x04txId\x18\x02 \x01(\x04\x12\x0e\n\x06txHash\x18\x03 \x01(\x0c\x12+\n\tsignature\x18\x04 \x01(\x0b\x32\x18.immudb.schema.Signature\"\x9a\x01\n\x10ReferenceRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x15\n\rreferencedKey\x18\x02 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x04 \x01(\x08\x12\x0e\n\x06noWait\x18\x05 \x01(\x08\x12\x32\n\rpreconditions\x18\x06 \x03(\x0b\x32\x1b.immudb.schema.Precondition\"m\n\x1aVerifiableReferenceRequest\x12\x39\n\x10referenceRequest\x18\x01 \x01(\x0b\x32\x1f.immudb.schema.ReferenceRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"f\n\x0bZAddRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\r\n\x05score\x18\x02 \x01(\x01\x12\x0b\n\x03key\x18\x03 \x01(\x0c\x12\x0c\n\x04\x61tTx\x18\x04 \x01(\x04\x12\x10\n\x08\x62oundRef\x18\x05 \x01(\x08\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"\x16\n\x05Score\x12\r\n\x05score\x18\x01 \x01(\x01\"\x86\x02\n\x0cZScanRequest\x12\x0b\n\x03set\x18\x01 \x01(\x0c\x12\x0f\n\x07seekKey\x18\x02 \x01(\x0c\x12\x11\n\tseekScore\x18\x03 \x01(\x01\x12\x10\n\x08seekAtTx\x18\x04 \x01(\x04\x12\x15\n\rinclusiveSeek\x18\x05 \x01(\x08\x12\r\n\x05limit\x18\x06 \x01(\x04\x12\x0c\n\x04\x64\x65sc\x18\x07 \x01(\x08\x12&\n\x08minScore\x18\x08 \x01(\x0b\x32\x14.immudb.schema.Score\x12&\n\x08maxScore\x18\t \x01(\x0b\x32\x14.immudb.schema.Score\x12\x0f\n\x07sinceTx\x18\n \x01(\x04\x12\x0e\n\x06noWait\x18\x0b \x01(\x08\x12\x0e\n\x06offset\x18\x0c \x01(\x04\"[\n\x0eHistoryRequest\x12\x0b\n\x03key\x18\x01 \x01(\x0c\x12\x0e\n\x06offset\x18\x02 \x01(\x04\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\x08\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\"^\n\x15VerifiableZAddRequest\x12/\n\x0bzAddRequest\x18\x01 \x01(\x0b\x32\x1a.immudb.schema.ZAddRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"\x8b\x01\n\tTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12/\n\x0b\x65ntriesSpec\x18\x02 \x01(\x0b\x32\x1a.immudb.schema.EntriesSpec\x12\x0f\n\x07sinceTx\x18\x03 \x01(\x04\x12\x0e\n\x06noWait\x18\x04 \x01(\x08\x12 \n\x18keepReferencesUnresolved\x18\x05 \x01(\x08\"\xac\x01\n\x0b\x45ntriesSpec\x12\x33\n\rkvEntriesSpec\x18\x01 \x01(\x0b\x32\x1c.immudb.schema.EntryTypeSpec\x12\x32\n\x0czEntriesSpec\x18\x02 \x01(\x0b\x32\x1c.immudb.schema.EntryTypeSpec\x12\x34\n\x0esqlEntriesSpec\x18\x03 \x01(\x0b\x32\x1c.immudb.schema.EntryTypeSpec\"?\n\rEntryTypeSpec\x12.\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1e.immudb.schema.EntryTypeAction\"\xab\x01\n\x13VerifiableTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\x12/\n\x0b\x65ntriesSpec\x18\x03 \x01(\x0b\x32\x1a.immudb.schema.EntriesSpec\x12\x0f\n\x07sinceTx\x18\x04 \x01(\x04\x12\x0e\n\x06noWait\x18\x05 \x01(\x08\x12 \n\x18keepReferencesUnresolved\x18\x06 \x01(\x08\"\x91\x01\n\rTxScanRequest\x12\x11\n\tinitialTx\x18\x01 \x01(\x04\x12\r\n\x05limit\x18\x02 \x01(\r\x12\x0c\n\x04\x64\x65sc\x18\x03 \x01(\x08\x12/\n\x0b\x65ntriesSpec\x18\x04 \x01(\x0b\x32\x1a.immudb.schema.EntriesSpec\x12\x0f\n\x07sinceTx\x18\x05 \x01(\x04\x12\x0e\n\x06noWait\x18\x06 \x01(\x08\"(\n\x06TxList\x12\x1e\n\x03txs\x18\x01 \x03(\x0b\x32\x11.immudb.schema.Tx\"\x1d\n\x0f\x45xportTxRequest\x12\n\n\x02tx\x18\x01 \x01(\x04\" \n\x08\x44\x61tabase\x12\x14\n\x0c\x64\x61tabaseName\x18\x01 \x01(\t\"\x9b\x02\n\x10\x44\x61tabaseSettings\x12\x14\n\x0c\x64\x61tabaseName\x18\x01 \x01(\t\x12\x0f\n\x07replica\x18\x02 \x01(\x08\x12\x16\n\x0emasterDatabase\x18\x03 \x01(\t\x12\x15\n\rmasterAddress\x18\x04 \x01(\t\x12\x12\n\nmasterPort\x18\x05 \x01(\r\x12\x18\n\x10\x66ollowerUsername\x18\x06 \x01(\t\x12\x18\n\x10\x66ollowerPassword\x18\x07 \x01(\t\x12\x10\n\x08\x66ileSize\x18\x08 \x01(\r\x12\x11\n\tmaxKeyLen\x18\t \x01(\r\x12\x13\n\x0bmaxValueLen\x18\n \x01(\r\x12\x14\n\x0cmaxTxEntries\x18\x0b \x01(\r\x12\x19\n\x11\x65xcludeCommitTime\x18\x0c \x01(\x08\"u\n\x15\x43reateDatabaseRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\x12\x13\n\x0bifNotExists\x18\x03 \x01(\x08\"y\n\x16\x43reateDatabaseResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\x12\x16\n\x0e\x61lreadyExisted\x18\x03 \x01(\x08\"d\n\x15UpdateDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"e\n\x16UpdateDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"\x19\n\x17\x44\x61tabaseSettingsRequest\"g\n\x18\x44\x61tabaseSettingsResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\"\x1f\n\x0eNullableUint32\x12\r\n\x05value\x18\x01 \x01(\r\"\x1f\n\x0eNullableUint64\x12\r\n\x05value\x18\x01 \x01(\x04\"\x1e\n\rNullableFloat\x12\r\n\x05value\x18\x01 \x01(\x02\"\x1d\n\x0cNullableBool\x12\r\n\x05value\x18\x01 \x01(\x08\"\x1f\n\x0eNullableString\x12\r\n\x05value\x18\x01 \x01(\t\"%\n\x14NullableMilliseconds\x12\r\n\x05value\x18\x01 \x01(\x03\"\xd2\x08\n\x18\x44\x61tabaseNullableSettings\x12G\n\x13replicationSettings\x18\x02 \x01(\x0b\x32*.immudb.schema.ReplicationNullableSettings\x12/\n\x08\x66ileSize\x18\x08 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x30\n\tmaxKeyLen\x18\t \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x32\n\x0bmaxValueLen\x18\n \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x33\n\x0cmaxTxEntries\x18\x0b \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x36\n\x11\x65xcludeCommitTime\x18\x0c \x01(\x0b\x32\x1b.immudb.schema.NullableBool\x12\x35\n\x0emaxConcurrency\x18\r \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x10maxIOConcurrency\x18\x0e \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x35\n\x0etxLogCacheSize\x18\x0f \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x39\n\x12vLogMaxOpenedFiles\x18\x10 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12:\n\x13txLogMaxOpenedFiles\x18\x11 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12>\n\x17\x63ommitLogMaxOpenedFiles\x18\x12 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12;\n\rindexSettings\x18\x13 \x01(\x0b\x32$.immudb.schema.IndexNullableSettings\x12;\n\x14writeTxHeaderVersion\x18\x14 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12-\n\x08\x61utoload\x18\x15 \x01(\x0b\x32\x1b.immudb.schema.NullableBool\x12\x35\n\x0ereadTxPoolSize\x18\x16 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12:\n\rsyncFrequency\x18\x17 \x01(\x0b\x32#.immudb.schema.NullableMilliseconds\x12\x36\n\x0fwriteBufferSize\x18\x18 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x0b\x61htSettings\x18\x19 \x01(\x0b\x32\".immudb.schema.AHTNullableSettings\"\xdd\x02\n\x1bReplicationNullableSettings\x12,\n\x07replica\x18\x01 \x01(\x0b\x32\x1b.immudb.schema.NullableBool\x12\x35\n\x0emasterDatabase\x18\x02 \x01(\x0b\x32\x1d.immudb.schema.NullableString\x12\x34\n\rmasterAddress\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.NullableString\x12\x31\n\nmasterPort\x18\x04 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x10\x66ollowerUsername\x18\x05 \x01(\x0b\x32\x1d.immudb.schema.NullableString\x12\x37\n\x10\x66ollowerPassword\x18\x06 \x01(\x0b\x32\x1d.immudb.schema.NullableString\"\x86\x06\n\x15IndexNullableSettings\x12\x35\n\x0e\x66lushThreshold\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x34\n\rsyncThreshold\x18\x02 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x30\n\tcacheSize\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x32\n\x0bmaxNodeSize\x18\x04 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x39\n\x12maxActiveSnapshots\x18\x05 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x39\n\x12renewSnapRootAfter\x18\x06 \x01(\x0b\x32\x1d.immudb.schema.NullableUint64\x12\x35\n\x0e\x63ompactionThld\x18\x07 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12<\n\x15\x64\x65layDuringCompaction\x18\x08 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12=\n\x16nodesLogMaxOpenedFiles\x18\t \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12?\n\x18historyLogMaxOpenedFiles\x18\n \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12>\n\x17\x63ommitLogMaxOpenedFiles\x18\x0b \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x36\n\x0f\x66lushBufferSize\x18\x0c \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x37\n\x11\x63leanupPercentage\x18\r \x01(\x0b\x32\x1c.immudb.schema.NullableFloat\"\x83\x01\n\x13\x41HTNullableSettings\x12\x34\n\rsyncThreshold\x18\x01 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\x12\x36\n\x0fwriteBufferSize\x18\x02 \x01(\x0b\x32\x1d.immudb.schema.NullableUint32\"\'\n\x13LoadDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"(\n\x14LoadDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\")\n\x15UnloadDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"*\n\x16UnloadDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\")\n\x15\x44\x65leteDatabaseRequest\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"*\n\x16\x44\x65leteDatabaseResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\">\n\x11\x46lushIndexRequest\x12\x19\n\x11\x63leanupPercentage\x18\x01 \x01(\x02\x12\x0e\n\x06synced\x18\x02 \x01(\x08\"&\n\x12\x46lushIndexResponse\x12\x10\n\x08\x64\x61tabase\x18\x01 \x01(\t\"\x1a\n\x05Table\x12\x11\n\ttableName\x18\x01 \x01(\t\"h\n\rSQLGetRequest\x12\r\n\x05table\x18\x01 \x01(\t\x12)\n\x08pkValues\x18\x02 \x03(\x0b\x32\x17.immudb.schema.SQLValue\x12\x0c\n\x04\x61tTx\x18\x03 \x01(\x04\x12\x0f\n\x07sinceTx\x18\x04 \x01(\x04\"d\n\x17VerifiableSQLGetRequest\x12\x33\n\rsqlGetRequest\x18\x01 \x01(\x0b\x32\x1c.immudb.schema.SQLGetRequest\x12\x14\n\x0cproveSinceTx\x18\x02 \x01(\x04\"_\n\x08SQLEntry\x12\n\n\x02tx\x18\x01 \x01(\x04\x12\x0b\n\x03key\x18\x02 \x01(\x0c\x12\r\n\x05value\x18\x03 \x01(\x0c\x12+\n\x08metadata\x18\x04 \x01(\x0b\x32\x19.immudb.schema.KVMetadata\"\xdd\x05\n\x12VerifiableSQLEntry\x12)\n\x08sqlEntry\x18\x01 \x01(\x0b\x32\x17.immudb.schema.SQLEntry\x12\x31\n\x0cverifiableTx\x18\x02 \x01(\x0b\x32\x1b.immudb.schema.VerifiableTx\x12\x35\n\x0einclusionProof\x18\x03 \x01(\x0b\x32\x1d.immudb.schema.InclusionProof\x12\x12\n\nDatabaseId\x18\x04 \x01(\r\x12\x0f\n\x07TableId\x18\x05 \x01(\r\x12\r\n\x05PKIDs\x18\x10 \x03(\r\x12I\n\x0c\x43olNamesById\x18\x08 \x03(\x0b\x32\x33.immudb.schema.VerifiableSQLEntry.ColNamesByIdEntry\x12I\n\x0c\x43olIdsByName\x18\t \x03(\x0b\x32\x33.immudb.schema.VerifiableSQLEntry.ColIdsByNameEntry\x12I\n\x0c\x43olTypesById\x18\n \x03(\x0b\x32\x33.immudb.schema.VerifiableSQLEntry.ColTypesByIdEntry\x12\x45\n\nColLenById\x18\x0b \x03(\x0b\x32\x31.immudb.schema.VerifiableSQLEntry.ColLenByIdEntry\x1a\x33\n\x11\x43olNamesByIdEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x33\n\x11\x43olIdsByNameEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\r:\x02\x38\x01\x1a\x33\n\x11\x43olTypesByIdEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x31\n\x0f\x43olLenByIdEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01J\x04\x08\x06\x10\x07\"!\n\x10UseDatabaseReply\x12\r\n\x05token\x18\x01 \x01(\t\"\x82\x01\n\x17\x43hangePermissionRequest\x12/\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1f.immudb.schema.PermissionAction\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x03 \x01(\t\x12\x12\n\npermission\x18\x04 \x01(\r\"8\n\x14SetActiveUserRequest\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x10\n\x08username\x18\x02 \x01(\t\"B\n\x14\x44\x61tabaseListResponse\x12*\n\tdatabases\x18\x01 \x03(\x0b\x32\x17.immudb.schema.Database\"\x17\n\x15\x44\x61tabaseListRequestV2\"P\n\x16\x44\x61tabaseListResponseV2\x12\x36\n\tdatabases\x18\x01 \x03(\x0b\x32#.immudb.schema.DatabaseWithSettings\"o\n\x14\x44\x61tabaseWithSettings\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x39\n\x08settings\x18\x02 \x01(\x0b\x32\'.immudb.schema.DatabaseNullableSettings\x12\x0e\n\x06loaded\x18\x03 \x01(\x08\"\x18\n\x05\x43hunk\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\x0c\"9\n\x12UseSnapshotRequest\x12\x0f\n\x07sinceTx\x18\x01 \x01(\x04\x12\x12\n\nasBeforeTx\x18\x02 \x01(\x04\"X\n\x0eSQLExecRequest\x12\x0b\n\x03sql\x18\x01 \x01(\t\x12)\n\x06params\x18\x02 \x03(\x0b\x32\x19.immudb.schema.NamedParam\x12\x0e\n\x06noWait\x18\x03 \x01(\x08\"`\n\x0fSQLQueryRequest\x12\x0b\n\x03sql\x18\x01 \x01(\t\x12)\n\x06params\x18\x02 \x03(\x0b\x32\x19.immudb.schema.NamedParam\x12\x15\n\rreuseSnapshot\x18\x03 \x01(\x08\"B\n\nNamedParam\x12\x0c\n\x04name\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.immudb.schema.SQLValue\"N\n\rSQLExecResult\x12*\n\x03txs\x18\x05 \x03(\x0b\x32\x1d.immudb.schema.CommittedSQLTx\x12\x11\n\tongoingTx\x18\x06 \x01(\x08\"\x8d\x03\n\x0e\x43ommittedSQLTx\x12\'\n\x06header\x18\x01 \x01(\x0b\x32\x17.immudb.schema.TxHeader\x12\x13\n\x0bupdatedRows\x18\x02 \x01(\r\x12K\n\x0flastInsertedPKs\x18\x03 \x03(\x0b\x32\x32.immudb.schema.CommittedSQLTx.LastInsertedPKsEntry\x12M\n\x10\x66irstInsertedPKs\x18\x04 \x03(\x0b\x32\x33.immudb.schema.CommittedSQLTx.FirstInsertedPKsEntry\x1aO\n\x14LastInsertedPKsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.immudb.schema.SQLValue:\x02\x38\x01\x1aP\n\x15\x46irstInsertedPKsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12&\n\x05value\x18\x02 \x01(\x0b\x32\x17.immudb.schema.SQLValue:\x02\x38\x01\"Z\n\x0eSQLQueryResult\x12&\n\x07\x63olumns\x18\x02 \x03(\x0b\x32\x15.immudb.schema.Column\x12 \n\x04rows\x18\x01 \x03(\x0b\x32\x12.immudb.schema.Row\"$\n\x06\x43olumn\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"?\n\x03Row\x12\x0f\n\x07\x63olumns\x18\x01 \x03(\t\x12\'\n\x06values\x18\x02 \x03(\x0b\x32\x17.immudb.schema.SQLValue\"\x82\x01\n\x08SQLValue\x12*\n\x04null\x18\x01 \x01(\x0e\x32\x1a.google.protobuf.NullValueH\x00\x12\x0b\n\x01n\x18\x02 \x01(\x03H\x00\x12\x0b\n\x01s\x18\x03 \x01(\tH\x00\x12\x0b\n\x01\x62\x18\x04 \x01(\x08H\x00\x12\x0c\n\x02\x62s\x18\x05 \x01(\x0cH\x00\x12\x0c\n\x02ts\x18\x06 \x01(\x03H\x00\x42\x07\n\x05value\"3\n\x0cNewTxRequest\x12#\n\x04mode\x18\x01 \x01(\x0e\x32\x15.immudb.schema.TxMode\"&\n\rNewTxResponse\x12\x15\n\rtransactionID\x18\x01 \x01(\t\"(\n\tErrorInfo\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\r\n\x05\x63\x61use\x18\x02 \x01(\t\"\x1a\n\tDebugInfo\x12\r\n\x05stack\x18\x01 \x01(\t\" \n\tRetryInfo\x12\x13\n\x0bretry_delay\x18\x01 \x01(\x05*K\n\x0f\x45ntryTypeAction\x12\x0b\n\x07\x45XCLUDE\x10\x00\x12\x0f\n\x0bONLY_DIGEST\x10\x01\x12\r\n\tRAW_VALUE\x10\x02\x12\x0b\n\x07RESOLVE\x10\x03*)\n\x10PermissionAction\x12\t\n\x05GRANT\x10\x00\x12\n\n\x06REVOKE\x10\x01*4\n\x06TxMode\x12\x0c\n\x08ReadOnly\x10\x00\x12\r\n\tWriteOnly\x10\x01\x12\r\n\tReadWrite\x10\x02\x32\xea\x32\n\x0bImmuService\x12P\n\tListUsers\x12\x16.google.protobuf.Empty\x1a\x17.immudb.schema.UserList\"\x12\x82\xd3\xe4\x93\x02\x0c\x12\n/user/list\x12X\n\nCreateUser\x12 .immudb.schema.CreateUserRequest\x1a\x16.google.protobuf.Empty\"\x10\x82\xd3\xe4\x93\x02\n\"\x05/user:\x01*\x12p\n\x0e\x43hangePassword\x12$.immudb.schema.ChangePasswordRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a\"\x15/user/password/change:\x01*\x12u\n\x10\x43hangePermission\x12&.immudb.schema.ChangePermissionRequest\x1a\x16.google.protobuf.Empty\"!\x82\xd3\xe4\x93\x02\x1b\"\x16/user/changepermission:\x01*\x12l\n\rSetActiveUser\x12#.immudb.schema.SetActiveUserRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18\"\x13/user/setactiveUser:\x01*\x12J\n\x10UpdateAuthConfig\x12\x19.immudb.schema.AuthConfig\x1a\x16.google.protobuf.Empty\"\x03\x88\x02\x01\x12J\n\x10UpdateMTLSConfig\x12\x19.immudb.schema.MTLSConfig\x1a\x16.google.protobuf.Empty\"\x03\x88\x02\x01\x12V\n\x0bOpenSession\x12!.immudb.schema.OpenSessionRequest\x1a\".immudb.schema.OpenSessionResponse\"\x00\x12@\n\x0c\x43loseSession\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12=\n\tKeepAlive\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\x05NewTx\x12\x1b.immudb.schema.NewTxRequest\x1a\x1c.immudb.schema.NewTxResponse\"\x00\x12\x41\n\x06\x43ommit\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.CommittedSQLTx\"\x00\x12<\n\x08Rollback\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\tTxSQLExec\x12\x1d.immudb.schema.SQLExecRequest\x1a\x16.google.protobuf.Empty\"\x00\x12M\n\nTxSQLQuery\x12\x1e.immudb.schema.SQLQueryRequest\x1a\x1d.immudb.schema.SQLQueryResult\"\x00\x12]\n\x05Login\x12\x1b.immudb.schema.LoginRequest\x1a\x1c.immudb.schema.LoginResponse\"\x19\x88\x02\x01\x82\xd3\xe4\x93\x02\x0b\"\x06/login:\x01*\x92\x41\x02\x62\x00\x12O\n\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x15\x88\x02\x01\x82\xd3\xe4\x93\x02\x0c\"\x07/logout:\x01*\x12M\n\x03Set\x12\x19.immudb.schema.SetRequest\x1a\x17.immudb.schema.TxHeader\"\x12\x82\xd3\xe4\x93\x02\x0c\"\x07/db/set:\x01*\x12p\n\rVerifiableSet\x12#.immudb.schema.VerifiableSetRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x1d\x82\xd3\xe4\x93\x02\x17\"\x12/db/verifiable/set:\x01*\x12M\n\x03Get\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Entry\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/db/get/{key}\x12s\n\rVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x1e.immudb.schema.VerifiableEntry\"\x1d\x82\xd3\xe4\x93\x02\x17\"\x12/db/verifiable/get:\x01*\x12Z\n\x06\x44\x65lete\x12 .immudb.schema.DeleteKeysRequest\x1a\x17.immudb.schema.TxHeader\"\x15\x82\xd3\xe4\x93\x02\x0f\"\n/db/delete:\x01*\x12V\n\x06GetAll\x12\x1d.immudb.schema.KeyListRequest\x1a\x16.immudb.schema.Entries\"\x15\x82\xd3\xe4\x93\x02\x0f\"\n/db/getall:\x01*\x12Y\n\x07\x45xecAll\x12\x1d.immudb.schema.ExecAllRequest\x1a\x17.immudb.schema.TxHeader\"\x16\x82\xd3\xe4\x93\x02\x10\"\x0b/db/execall:\x01*\x12O\n\x04Scan\x12\x1a.immudb.schema.ScanRequest\x1a\x16.immudb.schema.Entries\"\x13\x82\xd3\xe4\x93\x02\r\"\x08/db/scan:\x01*\x12X\n\x05\x43ount\x12\x18.immudb.schema.KeyPrefix\x1a\x19.immudb.schema.EntryCount\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/db/count/{prefix}\x12S\n\x08\x43ountAll\x12\x16.google.protobuf.Empty\x1a\x19.immudb.schema.EntryCount\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\x0c/db/countall\x12J\n\x06TxById\x12\x18.immudb.schema.TxRequest\x1a\x11.immudb.schema.Tx\"\x13\x82\xd3\xe4\x93\x02\r\x12\x0b/db/tx/{tx}\x12s\n\x10VerifiableTxById\x12\".immudb.schema.VerifiableTxRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/db/verifiable/tx/{tx}\x12P\n\x06TxScan\x12\x1c.immudb.schema.TxScanRequest\x1a\x15.immudb.schema.TxList\"\x11\x82\xd3\xe4\x93\x02\x0b\"\x06/db/tx:\x01*\x12X\n\x07History\x12\x1d.immudb.schema.HistoryRequest\x1a\x16.immudb.schema.Entries\"\x16\x82\xd3\xe4\x93\x02\x10\"\x0b/db/history:\x01*\x12k\n\nServerInfo\x12 .immudb.schema.ServerInfoRequest\x1a!.immudb.schema.ServerInfoResponse\"\x18\x82\xd3\xe4\x93\x02\r\x12\x0b/serverinfo\x92\x41\x02\x62\x00\x12U\n\x06Health\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.HealthResponse\"\x14\x82\xd3\xe4\x93\x02\t\x12\x07/health\x92\x41\x02\x62\x00\x12h\n\x0e\x44\x61tabaseHealth\x12\x16.google.protobuf.Empty\x1a%.immudb.schema.DatabaseHealthResponse\"\x17\x82\xd3\xe4\x93\x02\x0c\x12\n/db/health\x92\x41\x02\x62\x00\x12]\n\x0c\x43urrentState\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.ImmutableState\"\x16\x82\xd3\xe4\x93\x02\x0b\x12\t/db/state\x92\x41\x02\x62\x00\x12\x65\n\x0cSetReference\x12\x1f.immudb.schema.ReferenceRequest\x1a\x17.immudb.schema.TxHeader\"\x1b\x82\xd3\xe4\x93\x02\x15\"\x10/db/setreference:\x01*\x12\x88\x01\n\x16VerifiableSetReference\x12).immudb.schema.VerifiableReferenceRequest\x1a\x1b.immudb.schema.VerifiableTx\"&\x82\xd3\xe4\x93\x02 \"\x1b/db/verifiable/setreference:\x01*\x12P\n\x04ZAdd\x12\x1a.immudb.schema.ZAddRequest\x1a\x17.immudb.schema.TxHeader\"\x13\x82\xd3\xe4\x93\x02\r\"\x08/db/zadd:\x01*\x12s\n\x0eVerifiableZAdd\x12$.immudb.schema.VerifiableZAddRequest\x1a\x1b.immudb.schema.VerifiableTx\"\x1e\x82\xd3\xe4\x93\x02\x18\"\x13/db/verifiable/zadd:\x01*\x12S\n\x05ZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x17.immudb.schema.ZEntries\"\x14\x82\xd3\xe4\x93\x02\x0e\"\t/db/zscan:\x01*\x12[\n\x0e\x43reateDatabase\x12\x17.immudb.schema.Database\x1a\x16.google.protobuf.Empty\"\x18\x88\x02\x01\x82\xd3\xe4\x93\x02\x0f\"\n/db/create:\x01*\x12k\n\x12\x43reateDatabaseWith\x12\x1f.immudb.schema.DatabaseSettings\x1a\x16.google.protobuf.Empty\"\x1c\x88\x02\x01\x82\xd3\xe4\x93\x02\x13\"\x0e/db/createwith:\x01*\x12y\n\x10\x43reateDatabaseV2\x12$.immudb.schema.CreateDatabaseRequest\x1a%.immudb.schema.CreateDatabaseResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\r/db/create/v2:\x01*\x12l\n\x0cLoadDatabase\x12\".immudb.schema.LoadDatabaseRequest\x1a#.immudb.schema.LoadDatabaseResponse\"\x13\x82\xd3\xe4\x93\x02\r\"\x08/db/load:\x01*\x12t\n\x0eUnloadDatabase\x12$.immudb.schema.UnloadDatabaseRequest\x1a%.immudb.schema.UnloadDatabaseResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\"\n/db/unload:\x01*\x12t\n\x0e\x44\x65leteDatabase\x12$.immudb.schema.DeleteDatabaseRequest\x1a%.immudb.schema.DeleteDatabaseResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\"\n/db/delete:\x01*\x12\x63\n\x0c\x44\x61tabaseList\x12\x16.google.protobuf.Empty\x1a#.immudb.schema.DatabaseListResponse\"\x16\x88\x02\x01\x82\xd3\xe4\x93\x02\r\"\x08/db/list:\x01*\x12u\n\x0e\x44\x61tabaseListV2\x12$.immudb.schema.DatabaseListRequestV2\x1a%.immudb.schema.DatabaseListResponseV2\"\x16\x82\xd3\xe4\x93\x02\x10\"\x0b/db/list/v2:\x01*\x12g\n\x0bUseDatabase\x12\x17.immudb.schema.Database\x1a\x1f.immudb.schema.UseDatabaseReply\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/db/use/{databaseName}\x12\x63\n\x0eUpdateDatabase\x12\x1f.immudb.schema.DatabaseSettings\x1a\x16.google.protobuf.Empty\"\x18\x88\x02\x01\x82\xd3\xe4\x93\x02\x0f\"\n/db/update:\x01*\x12y\n\x10UpdateDatabaseV2\x12$.immudb.schema.UpdateDatabaseRequest\x1a%.immudb.schema.UpdateDatabaseResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\r/db/update/v2:\x01*\x12j\n\x13GetDatabaseSettings\x12\x16.google.protobuf.Empty\x1a\x1f.immudb.schema.DatabaseSettings\"\x1a\x88\x02\x01\x82\xd3\xe4\x93\x02\x11\"\x0c/db/settings:\x01*\x12\x84\x01\n\x15GetDatabaseSettingsV2\x12&.immudb.schema.DatabaseSettingsRequest\x1a\'.immudb.schema.DatabaseSettingsResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\"\x0f/db/settings/v2:\x01*\x12i\n\nFlushIndex\x12 .immudb.schema.FlushIndexRequest\x1a!.immudb.schema.FlushIndexResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/db/flushindex\x12X\n\x0c\x43ompactIndex\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/db/compactindex\x12@\n\tstreamGet\x12\x19.immudb.schema.KeyRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12>\n\tstreamSet\x12\x14.immudb.schema.Chunk\x1a\x17.immudb.schema.TxHeader\"\x00(\x01\x12T\n\x13streamVerifiableGet\x12#.immudb.schema.VerifiableGetRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12L\n\x13streamVerifiableSet\x12\x14.immudb.schema.Chunk\x1a\x1b.immudb.schema.VerifiableTx\"\x00(\x01\x12\x42\n\nstreamScan\x12\x1a.immudb.schema.ScanRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12\x44\n\x0bstreamZScan\x12\x1b.immudb.schema.ZScanRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12H\n\rstreamHistory\x12\x1d.immudb.schema.HistoryRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12\x42\n\rstreamExecAll\x12\x14.immudb.schema.Chunk\x1a\x17.immudb.schema.TxHeader\"\x00(\x01\x12\x44\n\x08\x65xportTx\x12\x1e.immudb.schema.ExportTxRequest\x1a\x14.immudb.schema.Chunk\"\x00\x30\x01\x12@\n\x0breplicateTx\x12\x14.immudb.schema.Chunk\x1a\x17.immudb.schema.TxHeader\"\x00(\x01\x12^\n\x07SQLExec\x12\x1d.immudb.schema.SQLExecRequest\x1a\x1c.immudb.schema.SQLExecResult\"\x16\x82\xd3\xe4\x93\x02\x10\"\x0b/db/sqlexec:\x01*\x12\x62\n\x08SQLQuery\x12\x1e.immudb.schema.SQLQueryRequest\x1a\x1d.immudb.schema.SQLQueryResult\"\x17\x82\xd3\xe4\x93\x02\x11\"\x0c/db/sqlquery:\x01*\x12[\n\nListTables\x12\x16.google.protobuf.Empty\x1a\x1d.immudb.schema.SQLQueryResult\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/db/table/list\x12[\n\rDescribeTable\x12\x14.immudb.schema.Table\x1a\x1d.immudb.schema.SQLQueryResult\"\x15\x82\xd3\xe4\x93\x02\x0f\"\n/db/tables:\x01*\x12\x7f\n\x10VerifiableSQLGet\x12&.immudb.schema.VerifiableSQLGetRequest\x1a!.immudb.schema.VerifiableSQLEntry\" \x82\xd3\xe4\x93\x02\x1a\"\x15/db/verifiable/sqlget:\x01*B\x8b\x03Z+github.com/codenotary/immudb/pkg/api/schema\x92\x41\xda\x02\x12\xee\x01\n\x0fimmudb REST API\x12\xda\x01<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs.ZY\nW\n\x06\x62\x65\x61rer\x12M\x08\x02\x12\x38\x41uthentication token, prefixed by Bearer: Bearer <token>\x1a\rAuthorization \x02\x62\x0c\n\n\n\x06\x62\x65\x61rer\x12\x00\x62\x06proto3')
   ,
-  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_api_dot_annotations__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,protoc__gen__swagger_dot_options_dot_annotations__pb2.DESCRIPTOR,google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
 _ENTRYTYPEACTION = _descriptor.EnumDescriptor(
   name='EntryTypeAction',
@@ -52,8 +54,8 @@ _ENTRYTYPEACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=12269,
-  serialized_end=12344,
+  serialized_start=13014,
+  serialized_end=13089,
 )
 _sym_db.RegisterEnumDescriptor(_ENTRYTYPEACTION)
 
@@ -75,8 +77,8 @@ _PERMISSIONACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=12346,
-  serialized_end=12387,
+  serialized_start=13091,
+  serialized_end=13132,
 )
 _sym_db.RegisterEnumDescriptor(_PERMISSIONACTION)
 
@@ -102,8 +104,8 @@ _TXMODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=12389,
-  serialized_end=12441,
+  serialized_start=13134,
+  serialized_end=13186,
 )
 _sym_db.RegisterEnumDescriptor(_TXMODE)
 
@@ -146,8 +148,8 @@ _KEY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=90,
-  serialized_end=108,
+  serialized_start=166,
+  serialized_end=184,
 )
 
 
@@ -184,8 +186,8 @@ _PERMISSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=110,
-  serialized_end=160,
+  serialized_start=186,
+  serialized_end=236,
 )
 
 
@@ -243,8 +245,8 @@ _USER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=162,
-  serialized_end=284,
+  serialized_start=238,
+  serialized_end=360,
 )
 
 
@@ -274,8 +276,8 @@ _USERLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=286,
-  serialized_end=332,
+  serialized_start=362,
+  serialized_end=408,
 )
 
 
@@ -326,8 +328,8 @@ _CREATEUSERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=334,
-  serialized_end=423,
+  serialized_start=410,
+  serialized_end=499,
 )
 
 
@@ -357,8 +359,8 @@ _USERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=425,
-  serialized_end=452,
+  serialized_start=501,
+  serialized_end=528,
 )
 
 
@@ -402,8 +404,8 @@ _CHANGEPASSWORDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=454,
-  serialized_end=533,
+  serialized_start=530,
+  serialized_end=609,
 )
 
 
@@ -440,8 +442,8 @@ _LOGINREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=535,
-  serialized_end=581,
+  serialized_start=611,
+  serialized_end=657,
 )
 
 
@@ -478,8 +480,8 @@ _LOGINRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=583,
-  serialized_end=630,
+  serialized_start=659,
+  serialized_end=706,
 )
 
 
@@ -509,8 +511,8 @@ _AUTHCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=632,
-  serialized_end=658,
+  serialized_start=708,
+  serialized_end=734,
 )
 
 
@@ -540,8 +542,8 @@ _MTLSCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=660,
-  serialized_end=689,
+  serialized_start=736,
+  serialized_end=765,
 )
 
 
@@ -585,8 +587,8 @@ _OPENSESSIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=691,
-  serialized_end=769,
+  serialized_start=767,
+  serialized_end=845,
 )
 
 
@@ -623,8 +625,8 @@ _OPENSESSIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=771,
-  serialized_end=831,
+  serialized_start=847,
+  serialized_end=907,
 )
 
 
@@ -654,8 +656,8 @@ _PRECONDITION_KEYMUSTEXISTPRECONDITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1108,
-  serialized_end=1147,
+  serialized_start=1184,
+  serialized_end=1223,
 )
 
 _PRECONDITION_KEYMUSTNOTEXISTPRECONDITION = _descriptor.Descriptor(
@@ -684,8 +686,8 @@ _PRECONDITION_KEYMUSTNOTEXISTPRECONDITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1149,
-  serialized_end=1191,
+  serialized_start=1225,
+  serialized_end=1267,
 )
 
 _PRECONDITION_KEYNOTMODIFIEDAFTERTXPRECONDITION = _descriptor.Descriptor(
@@ -721,8 +723,8 @@ _PRECONDITION_KEYNOTMODIFIEDAFTERTXPRECONDITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1193,
-  serialized_end=1255,
+  serialized_start=1269,
+  serialized_end=1331,
 )
 
 _PRECONDITION = _descriptor.Descriptor(
@@ -768,8 +770,8 @@ _PRECONDITION = _descriptor.Descriptor(
       name='precondition', full_name='immudb.schema.Precondition.precondition',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=834,
-  serialized_end=1271,
+  serialized_start=910,
+  serialized_end=1347,
 )
 
 
@@ -813,8 +815,8 @@ _KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1273,
-  serialized_end=1356,
+  serialized_start=1349,
+  serialized_end=1432,
 )
 
 
@@ -886,8 +888,8 @@ _ENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1359,
-  serialized_end=1534,
+  serialized_start=1435,
+  serialized_end=1610,
 )
 
 
@@ -945,8 +947,8 @@ _REFERENCE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1536,
-  serialized_end=1649,
+  serialized_start=1612,
+  serialized_end=1725,
 )
 
 
@@ -993,8 +995,8 @@ _OP = _descriptor.Descriptor(
       name='operation', full_name='immudb.schema.Op.operation',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1652,
-  serialized_end=1800,
+  serialized_start=1728,
+  serialized_end=1876,
 )
 
 
@@ -1038,8 +1040,8 @@ _EXECALLREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1802,
-  serialized_end=1925,
+  serialized_start=1878,
+  serialized_end=2001,
 )
 
 
@@ -1069,8 +1071,8 @@ _ENTRIES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1927,
-  serialized_end=1975,
+  serialized_start=2003,
+  serialized_end=2051,
 )
 
 
@@ -1128,8 +1130,8 @@ _ZENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1977,
-  serialized_end=2077,
+  serialized_start=2053,
+  serialized_end=2153,
 )
 
 
@@ -1159,8 +1161,8 @@ _ZENTRIES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2079,
-  serialized_end=2129,
+  serialized_start=2155,
+  serialized_end=2205,
 )
 
 
@@ -1179,37 +1181,65 @@ _SCANREQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='prefix', full_name='immudb.schema.ScanRequest.prefix', index=1,
+      name='endKey', full_name='immudb.schema.ScanRequest.endKey', index=1,
+      number=7, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='prefix', full_name='immudb.schema.ScanRequest.prefix', index=2,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='desc', full_name='immudb.schema.ScanRequest.desc', index=2,
+      name='desc', full_name='immudb.schema.ScanRequest.desc', index=3,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='limit', full_name='immudb.schema.ScanRequest.limit', index=3,
+      name='limit', full_name='immudb.schema.ScanRequest.limit', index=4,
       number=4, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='sinceTx', full_name='immudb.schema.ScanRequest.sinceTx', index=4,
+      name='sinceTx', full_name='immudb.schema.ScanRequest.sinceTx', index=5,
       number=5, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='noWait', full_name='immudb.schema.ScanRequest.noWait', index=5,
+      name='noWait', full_name='immudb.schema.ScanRequest.noWait', index=6,
       number=6, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='inclusiveSeek', full_name='immudb.schema.ScanRequest.inclusiveSeek', index=7,
+      number=8, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='inclusiveEnd', full_name='immudb.schema.ScanRequest.inclusiveEnd', index=8,
+      number=9, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='offset', full_name='immudb.schema.ScanRequest.offset', index=9,
+      number=10, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -1225,8 +1255,8 @@ _SCANREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2131,
-  serialized_end=2239,
+  serialized_start=2208,
+  serialized_end=2393,
 )
 
 
@@ -1256,8 +1286,8 @@ _KEYPREFIX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2241,
-  serialized_end=2268,
+  serialized_start=2395,
+  serialized_end=2422,
 )
 
 
@@ -1287,8 +1317,8 @@ _ENTRYCOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2270,
-  serialized_end=2297,
+  serialized_start=2424,
+  serialized_end=2451,
 )
 
 
@@ -1325,8 +1355,8 @@ _SIGNATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2299,
-  serialized_end=2348,
+  serialized_start=2453,
+  serialized_end=2502,
 )
 
 
@@ -1412,8 +1442,8 @@ _TXHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2351,
-  serialized_end=2526,
+  serialized_start=2505,
+  serialized_end=2680,
 )
 
 
@@ -1436,8 +1466,8 @@ _TXMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2528,
-  serialized_end=2540,
+  serialized_start=2682,
+  serialized_end=2694,
 )
 
 
@@ -1481,8 +1511,8 @@ _LINEARPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2542,
-  serialized_end=2610,
+  serialized_start=2696,
+  serialized_end=2764,
 )
 
 
@@ -1554,8 +1584,8 @@ _DUALPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2613,
-  serialized_end=2872,
+  serialized_start=2767,
+  serialized_end=3026,
 )
 
 
@@ -1606,8 +1636,8 @@ _TX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2875,
-  serialized_end=3043,
+  serialized_start=3029,
+  serialized_end=3197,
 )
 
 
@@ -1665,8 +1695,8 @@ _TXENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3045,
-  serialized_end=3157,
+  serialized_start=3199,
+  serialized_end=3311,
 )
 
 
@@ -1710,8 +1740,8 @@ _KVMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3159,
-  serialized_end=3257,
+  serialized_start=3313,
+  serialized_end=3411,
 )
 
 
@@ -1741,8 +1771,8 @@ _EXPIRATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3259,
-  serialized_end=3290,
+  serialized_start=3413,
+  serialized_end=3444,
 )
 
 
@@ -1786,8 +1816,8 @@ _VERIFIABLETX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3293,
-  serialized_end=3428,
+  serialized_start=3447,
+  serialized_end=3582,
 )
 
 
@@ -1831,8 +1861,8 @@ _VERIFIABLEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3431,
-  serialized_end=3591,
+  serialized_start=3585,
+  serialized_end=3745,
 )
 
 
@@ -1876,8 +1906,8 @@ _INCLUSIONPROOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3593,
-  serialized_end=3653,
+  serialized_start=3747,
+  serialized_end=3807,
 )
 
 
@@ -1921,8 +1951,8 @@ _SETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3655,
-  serialized_end=3773,
+  serialized_start=3809,
+  serialized_end=3927,
 )
 
 
@@ -1980,8 +2010,8 @@ _KEYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3775,
-  serialized_end=3867,
+  serialized_start=3929,
+  serialized_end=4021,
 )
 
 
@@ -2018,8 +2048,8 @@ _KEYLISTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3869,
-  serialized_end=3916,
+  serialized_start=4023,
+  serialized_end=4070,
 )
 
 
@@ -2063,8 +2093,8 @@ _DELETEKEYSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3918,
-  serialized_end=3984,
+  serialized_start=4072,
+  serialized_end=4138,
 )
 
 
@@ -2101,8 +2131,8 @@ _VERIFIABLESETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3986,
-  serialized_end=4077,
+  serialized_start=4140,
+  serialized_end=4231,
 )
 
 
@@ -2139,8 +2169,63 @@ _VERIFIABLEGETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4079,
-  serialized_end=4170,
+  serialized_start=4233,
+  serialized_end=4324,
+)
+
+
+_SERVERINFOREQUEST = _descriptor.Descriptor(
+  name='ServerInfoRequest',
+  full_name='immudb.schema.ServerInfoRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=4326,
+  serialized_end=4345,
+)
+
+
+_SERVERINFORESPONSE = _descriptor.Descriptor(
+  name='ServerInfoResponse',
+  full_name='immudb.schema.ServerInfoResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='version', full_name='immudb.schema.ServerInfoResponse.version', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=4347,
+  serialized_end=4384,
 )
 
 
@@ -2177,8 +2262,8 @@ _HEALTHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4172,
-  serialized_end=4221,
+  serialized_start=4386,
+  serialized_end=4435,
 )
 
 
@@ -2215,8 +2300,8 @@ _DATABASEHEALTHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4223,
-  serialized_end=4304,
+  serialized_start=4437,
+  serialized_end=4518,
 )
 
 
@@ -2267,8 +2352,8 @@ _IMMUTABLESTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4306,
-  serialized_end=4409,
+  serialized_start=4520,
+  serialized_end=4623,
 )
 
 
@@ -2333,8 +2418,8 @@ _REFERENCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4412,
-  serialized_end=4566,
+  serialized_start=4626,
+  serialized_end=4780,
 )
 
 
@@ -2371,8 +2456,8 @@ _VERIFIABLEREFERENCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4568,
-  serialized_end=4677,
+  serialized_start=4782,
+  serialized_end=4891,
 )
 
 
@@ -2437,8 +2522,8 @@ _ZADDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4679,
-  serialized_end=4781,
+  serialized_start=4893,
+  serialized_end=4995,
 )
 
 
@@ -2468,8 +2553,8 @@ _SCORE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4783,
-  serialized_end=4805,
+  serialized_start=4997,
+  serialized_end=5019,
 )
 
 
@@ -2557,6 +2642,13 @@ _ZSCANREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='offset', full_name='immudb.schema.ZScanRequest.offset', index=11,
+      number=12, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -2569,8 +2661,8 @@ _ZSCANREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4808,
-  serialized_end=5054,
+  serialized_start=5022,
+  serialized_end=5284,
 )
 
 
@@ -2628,8 +2720,8 @@ _HISTORYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5056,
-  serialized_end=5147,
+  serialized_start=5286,
+  serialized_end=5377,
 )
 
 
@@ -2666,8 +2758,8 @@ _VERIFIABLEZADDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5149,
-  serialized_end=5243,
+  serialized_start=5379,
+  serialized_end=5473,
 )
 
 
@@ -2706,6 +2798,13 @@ _TXREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='keepReferencesUnresolved', full_name='immudb.schema.TxRequest.keepReferencesUnresolved', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -2718,8 +2817,8 @@ _TXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5245,
-  serialized_end=5350,
+  serialized_start=5476,
+  serialized_end=5615,
 )
 
 
@@ -2763,8 +2862,8 @@ _ENTRIESSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5353,
-  serialized_end=5525,
+  serialized_start=5618,
+  serialized_end=5790,
 )
 
 
@@ -2794,8 +2893,8 @@ _ENTRYTYPESPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5527,
-  serialized_end=5590,
+  serialized_start=5792,
+  serialized_end=5855,
 )
 
 
@@ -2841,6 +2940,13 @@ _VERIFIABLETXREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='keepReferencesUnresolved', full_name='immudb.schema.VerifiableTxRequest.keepReferencesUnresolved', index=5,
+      number=6, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -2853,8 +2959,8 @@ _VERIFIABLETXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5593,
-  serialized_end=5730,
+  serialized_start=5858,
+  serialized_end=6029,
 )
 
 
@@ -2919,8 +3025,8 @@ _TXSCANREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5733,
-  serialized_end=5878,
+  serialized_start=6032,
+  serialized_end=6177,
 )
 
 
@@ -2950,8 +3056,8 @@ _TXLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5880,
-  serialized_end=5920,
+  serialized_start=6179,
+  serialized_end=6219,
 )
 
 
@@ -2981,8 +3087,8 @@ _EXPORTTXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5922,
-  serialized_end=5951,
+  serialized_start=6221,
+  serialized_end=6250,
 )
 
 
@@ -3012,8 +3118,8 @@ _DATABASE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5953,
-  serialized_end=5985,
+  serialized_start=6252,
+  serialized_end=6284,
 )
 
 
@@ -3120,8 +3226,8 @@ _DATABASESETTINGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5988,
-  serialized_end=6271,
+  serialized_start=6287,
+  serialized_end=6570,
 )
 
 
@@ -3146,6 +3252,13 @@ _CREATEDATABASEREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='ifNotExists', full_name='immudb.schema.CreateDatabaseRequest.ifNotExists', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -3158,8 +3271,8 @@ _CREATEDATABASEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6273,
-  serialized_end=6369,
+  serialized_start=6572,
+  serialized_end=6689,
 )
 
 
@@ -3184,6 +3297,13 @@ _CREATEDATABASERESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='alreadyExisted', full_name='immudb.schema.CreateDatabaseResponse.alreadyExisted', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -3196,8 +3316,8 @@ _CREATEDATABASERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6371,
-  serialized_end=6468,
+  serialized_start=6691,
+  serialized_end=6812,
 )
 
 
@@ -3234,8 +3354,8 @@ _UPDATEDATABASEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6470,
-  serialized_end=6570,
+  serialized_start=6814,
+  serialized_end=6914,
 )
 
 
@@ -3272,8 +3392,8 @@ _UPDATEDATABASERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6572,
-  serialized_end=6673,
+  serialized_start=6916,
+  serialized_end=7017,
 )
 
 
@@ -3296,8 +3416,8 @@ _DATABASESETTINGSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6675,
-  serialized_end=6700,
+  serialized_start=7019,
+  serialized_end=7044,
 )
 
 
@@ -3334,8 +3454,8 @@ _DATABASESETTINGSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6702,
-  serialized_end=6805,
+  serialized_start=7046,
+  serialized_end=7149,
 )
 
 
@@ -3365,8 +3485,8 @@ _NULLABLEUINT32 = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6807,
-  serialized_end=6838,
+  serialized_start=7151,
+  serialized_end=7182,
 )
 
 
@@ -3396,8 +3516,8 @@ _NULLABLEUINT64 = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6840,
-  serialized_end=6871,
+  serialized_start=7184,
+  serialized_end=7215,
 )
 
 
@@ -3427,8 +3547,8 @@ _NULLABLEFLOAT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6873,
-  serialized_end=6903,
+  serialized_start=7217,
+  serialized_end=7247,
 )
 
 
@@ -3458,8 +3578,8 @@ _NULLABLEBOOL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6905,
-  serialized_end=6934,
+  serialized_start=7249,
+  serialized_end=7278,
 )
 
 
@@ -3489,8 +3609,39 @@ _NULLABLESTRING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6936,
-  serialized_end=6967,
+  serialized_start=7280,
+  serialized_end=7311,
+)
+
+
+_NULLABLEMILLISECONDS = _descriptor.Descriptor(
+  name='NullableMilliseconds',
+  full_name='immudb.schema.NullableMilliseconds',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='value', full_name='immudb.schema.NullableMilliseconds.value', index=0,
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=7313,
+  serialized_end=7350,
 )
 
 
@@ -3606,6 +3757,34 @@ _DATABASENULLABLESETTINGS = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='readTxPoolSize', full_name='immudb.schema.DatabaseNullableSettings.readTxPoolSize', index=15,
+      number=22, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='syncFrequency', full_name='immudb.schema.DatabaseNullableSettings.syncFrequency', index=16,
+      number=23, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='writeBufferSize', full_name='immudb.schema.DatabaseNullableSettings.writeBufferSize', index=17,
+      number=24, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='ahtSettings', full_name='immudb.schema.DatabaseNullableSettings.ahtSettings', index=18,
+      number=25, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -3618,8 +3797,8 @@ _DATABASENULLABLESETTINGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6970,
-  serialized_end=7848,
+  serialized_start=7353,
+  serialized_end=8459,
 )
 
 
@@ -3684,8 +3863,8 @@ _REPLICATIONNULLABLESETTINGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7851,
-  serialized_end=8200,
+  serialized_start=8462,
+  serialized_end=8811,
 )
 
 
@@ -3799,8 +3978,46 @@ _INDEXNULLABLESETTINGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8203,
-  serialized_end=8977,
+  serialized_start=8814,
+  serialized_end=9588,
+)
+
+
+_AHTNULLABLESETTINGS = _descriptor.Descriptor(
+  name='AHTNullableSettings',
+  full_name='immudb.schema.AHTNullableSettings',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='syncThreshold', full_name='immudb.schema.AHTNullableSettings.syncThreshold', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='writeBufferSize', full_name='immudb.schema.AHTNullableSettings.writeBufferSize', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=9591,
+  serialized_end=9722,
 )
 
 
@@ -3830,8 +4047,8 @@ _LOADDATABASEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8979,
-  serialized_end=9018,
+  serialized_start=9724,
+  serialized_end=9763,
 )
 
 
@@ -3861,8 +4078,8 @@ _LOADDATABASERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9020,
-  serialized_end=9060,
+  serialized_start=9765,
+  serialized_end=9805,
 )
 
 
@@ -3892,8 +4109,8 @@ _UNLOADDATABASEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9062,
-  serialized_end=9103,
+  serialized_start=9807,
+  serialized_end=9848,
 )
 
 
@@ -3923,8 +4140,8 @@ _UNLOADDATABASERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9105,
-  serialized_end=9147,
+  serialized_start=9850,
+  serialized_end=9892,
 )
 
 
@@ -3954,8 +4171,8 @@ _DELETEDATABASEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9149,
-  serialized_end=9190,
+  serialized_start=9894,
+  serialized_end=9935,
 )
 
 
@@ -3985,8 +4202,8 @@ _DELETEDATABASERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9192,
-  serialized_end=9234,
+  serialized_start=9937,
+  serialized_end=9979,
 )
 
 
@@ -4023,8 +4240,8 @@ _FLUSHINDEXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9236,
-  serialized_end=9298,
+  serialized_start=9981,
+  serialized_end=10043,
 )
 
 
@@ -4054,8 +4271,8 @@ _FLUSHINDEXRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9300,
-  serialized_end=9338,
+  serialized_start=10045,
+  serialized_end=10083,
 )
 
 
@@ -4085,8 +4302,8 @@ _TABLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9340,
-  serialized_end=9366,
+  serialized_start=10085,
+  serialized_end=10111,
 )
 
 
@@ -4137,8 +4354,8 @@ _SQLGETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9368,
-  serialized_end=9472,
+  serialized_start=10113,
+  serialized_end=10217,
 )
 
 
@@ -4175,8 +4392,8 @@ _VERIFIABLESQLGETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9474,
-  serialized_end=9574,
+  serialized_start=10219,
+  serialized_end=10319,
 )
 
 
@@ -4227,8 +4444,8 @@ _SQLENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9576,
-  serialized_end=9671,
+  serialized_start=10321,
+  serialized_end=10416,
 )
 
 
@@ -4265,8 +4482,8 @@ _VERIFIABLESQLENTRY_COLNAMESBYIDENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10193,
-  serialized_end=10244,
+  serialized_start=10938,
+  serialized_end=10989,
 )
 
 _VERIFIABLESQLENTRY_COLIDSBYNAMEENTRY = _descriptor.Descriptor(
@@ -4302,8 +4519,8 @@ _VERIFIABLESQLENTRY_COLIDSBYNAMEENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10246,
-  serialized_end=10297,
+  serialized_start=10991,
+  serialized_end=11042,
 )
 
 _VERIFIABLESQLENTRY_COLTYPESBYIDENTRY = _descriptor.Descriptor(
@@ -4339,8 +4556,8 @@ _VERIFIABLESQLENTRY_COLTYPESBYIDENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10299,
-  serialized_end=10350,
+  serialized_start=11044,
+  serialized_end=11095,
 )
 
 _VERIFIABLESQLENTRY_COLLENBYIDENTRY = _descriptor.Descriptor(
@@ -4376,8 +4593,8 @@ _VERIFIABLESQLENTRY_COLLENBYIDENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10352,
-  serialized_end=10401,
+  serialized_start=11097,
+  serialized_end=11146,
 )
 
 _VERIFIABLESQLENTRY = _descriptor.Descriptor(
@@ -4469,8 +4686,8 @@ _VERIFIABLESQLENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9674,
-  serialized_end=10407,
+  serialized_start=10419,
+  serialized_end=11152,
 )
 
 
@@ -4500,8 +4717,8 @@ _USEDATABASEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10409,
-  serialized_end=10442,
+  serialized_start=11154,
+  serialized_end=11187,
 )
 
 
@@ -4552,8 +4769,8 @@ _CHANGEPERMISSIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10445,
-  serialized_end=10575,
+  serialized_start=11190,
+  serialized_end=11320,
 )
 
 
@@ -4590,8 +4807,8 @@ _SETACTIVEUSERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10577,
-  serialized_end=10633,
+  serialized_start=11322,
+  serialized_end=11378,
 )
 
 
@@ -4621,8 +4838,8 @@ _DATABASELISTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10635,
-  serialized_end=10701,
+  serialized_start=11380,
+  serialized_end=11446,
 )
 
 
@@ -4645,8 +4862,8 @@ _DATABASELISTREQUESTV2 = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10703,
-  serialized_end=10726,
+  serialized_start=11448,
+  serialized_end=11471,
 )
 
 
@@ -4676,8 +4893,8 @@ _DATABASELISTRESPONSEV2 = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10728,
-  serialized_end=10808,
+  serialized_start=11473,
+  serialized_end=11553,
 )
 
 
@@ -4721,8 +4938,8 @@ _DATABASEWITHSETTINGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10810,
-  serialized_end=10921,
+  serialized_start=11555,
+  serialized_end=11666,
 )
 
 
@@ -4752,8 +4969,8 @@ _CHUNK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10923,
-  serialized_end=10947,
+  serialized_start=11668,
+  serialized_end=11692,
 )
 
 
@@ -4790,8 +5007,8 @@ _USESNAPSHOTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10949,
-  serialized_end=11006,
+  serialized_start=11694,
+  serialized_end=11751,
 )
 
 
@@ -4835,8 +5052,8 @@ _SQLEXECREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11008,
-  serialized_end=11096,
+  serialized_start=11753,
+  serialized_end=11841,
 )
 
 
@@ -4880,8 +5097,8 @@ _SQLQUERYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11098,
-  serialized_end=11194,
+  serialized_start=11843,
+  serialized_end=11939,
 )
 
 
@@ -4918,8 +5135,8 @@ _NAMEDPARAM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11196,
-  serialized_end=11262,
+  serialized_start=11941,
+  serialized_end=12007,
 )
 
 
@@ -4956,8 +5173,8 @@ _SQLEXECRESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11264,
-  serialized_end=11342,
+  serialized_start=12009,
+  serialized_end=12087,
 )
 
 
@@ -4994,8 +5211,8 @@ _COMMITTEDSQLTX_LASTINSERTEDPKSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11581,
-  serialized_end=11660,
+  serialized_start=12326,
+  serialized_end=12405,
 )
 
 _COMMITTEDSQLTX_FIRSTINSERTEDPKSENTRY = _descriptor.Descriptor(
@@ -5031,8 +5248,8 @@ _COMMITTEDSQLTX_FIRSTINSERTEDPKSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11662,
-  serialized_end=11742,
+  serialized_start=12407,
+  serialized_end=12487,
 )
 
 _COMMITTEDSQLTX = _descriptor.Descriptor(
@@ -5082,8 +5299,8 @@ _COMMITTEDSQLTX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11345,
-  serialized_end=11742,
+  serialized_start=12090,
+  serialized_end=12487,
 )
 
 
@@ -5120,8 +5337,8 @@ _SQLQUERYRESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11744,
-  serialized_end=11834,
+  serialized_start=12489,
+  serialized_end=12579,
 )
 
 
@@ -5158,8 +5375,8 @@ _COLUMN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11836,
-  serialized_end=11872,
+  serialized_start=12581,
+  serialized_end=12617,
 )
 
 
@@ -5196,8 +5413,8 @@ _ROW = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11874,
-  serialized_end=11937,
+  serialized_start=12619,
+  serialized_end=12682,
 )
 
 
@@ -5265,8 +5482,8 @@ _SQLVALUE = _descriptor.Descriptor(
       name='value', full_name='immudb.schema.SQLValue.value',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=11940,
-  serialized_end=12070,
+  serialized_start=12685,
+  serialized_end=12815,
 )
 
 
@@ -5296,8 +5513,8 @@ _NEWTXREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12072,
-  serialized_end=12123,
+  serialized_start=12817,
+  serialized_end=12868,
 )
 
 
@@ -5327,8 +5544,8 @@ _NEWTXRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12125,
-  serialized_end=12163,
+  serialized_start=12870,
+  serialized_end=12908,
 )
 
 
@@ -5365,8 +5582,8 @@ _ERRORINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12165,
-  serialized_end=12205,
+  serialized_start=12910,
+  serialized_end=12950,
 )
 
 
@@ -5396,8 +5613,8 @@ _DEBUGINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12207,
-  serialized_end=12233,
+  serialized_start=12952,
+  serialized_end=12978,
 )
 
 
@@ -5427,8 +5644,8 @@ _RETRYINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12235,
-  serialized_end=12267,
+  serialized_start=12980,
+  serialized_end=13012,
 )
 
 _USER.fields_by_name['permissions'].message_type = _PERMISSION
@@ -5523,6 +5740,10 @@ _DATABASENULLABLESETTINGS.fields_by_name['commitLogMaxOpenedFiles'].message_type
 _DATABASENULLABLESETTINGS.fields_by_name['indexSettings'].message_type = _INDEXNULLABLESETTINGS
 _DATABASENULLABLESETTINGS.fields_by_name['writeTxHeaderVersion'].message_type = _NULLABLEUINT32
 _DATABASENULLABLESETTINGS.fields_by_name['autoload'].message_type = _NULLABLEBOOL
+_DATABASENULLABLESETTINGS.fields_by_name['readTxPoolSize'].message_type = _NULLABLEUINT32
+_DATABASENULLABLESETTINGS.fields_by_name['syncFrequency'].message_type = _NULLABLEMILLISECONDS
+_DATABASENULLABLESETTINGS.fields_by_name['writeBufferSize'].message_type = _NULLABLEUINT32
+_DATABASENULLABLESETTINGS.fields_by_name['ahtSettings'].message_type = _AHTNULLABLESETTINGS
 _REPLICATIONNULLABLESETTINGS.fields_by_name['replica'].message_type = _NULLABLEBOOL
 _REPLICATIONNULLABLESETTINGS.fields_by_name['masterDatabase'].message_type = _NULLABLESTRING
 _REPLICATIONNULLABLESETTINGS.fields_by_name['masterAddress'].message_type = _NULLABLESTRING
@@ -5542,6 +5763,8 @@ _INDEXNULLABLESETTINGS.fields_by_name['historyLogMaxOpenedFiles'].message_type =
 _INDEXNULLABLESETTINGS.fields_by_name['commitLogMaxOpenedFiles'].message_type = _NULLABLEUINT32
 _INDEXNULLABLESETTINGS.fields_by_name['flushBufferSize'].message_type = _NULLABLEUINT32
 _INDEXNULLABLESETTINGS.fields_by_name['cleanupPercentage'].message_type = _NULLABLEFLOAT
+_AHTNULLABLESETTINGS.fields_by_name['syncThreshold'].message_type = _NULLABLEUINT32
+_AHTNULLABLESETTINGS.fields_by_name['writeBufferSize'].message_type = _NULLABLEUINT32
 _SQLGETREQUEST.fields_by_name['pkValues'].message_type = _SQLVALUE
 _VERIFIABLESQLGETREQUEST.fields_by_name['sqlGetRequest'].message_type = _SQLGETREQUEST
 _SQLENTRY.fields_by_name['metadata'].message_type = _KVMETADATA
@@ -5637,6 +5860,8 @@ DESCRIPTOR.message_types_by_name['KeyListRequest'] = _KEYLISTREQUEST
 DESCRIPTOR.message_types_by_name['DeleteKeysRequest'] = _DELETEKEYSREQUEST
 DESCRIPTOR.message_types_by_name['VerifiableSetRequest'] = _VERIFIABLESETREQUEST
 DESCRIPTOR.message_types_by_name['VerifiableGetRequest'] = _VERIFIABLEGETREQUEST
+DESCRIPTOR.message_types_by_name['ServerInfoRequest'] = _SERVERINFOREQUEST
+DESCRIPTOR.message_types_by_name['ServerInfoResponse'] = _SERVERINFORESPONSE
 DESCRIPTOR.message_types_by_name['HealthResponse'] = _HEALTHRESPONSE
 DESCRIPTOR.message_types_by_name['DatabaseHealthResponse'] = _DATABASEHEALTHRESPONSE
 DESCRIPTOR.message_types_by_name['ImmutableState'] = _IMMUTABLESTATE
@@ -5667,9 +5892,11 @@ DESCRIPTOR.message_types_by_name['NullableUint64'] = _NULLABLEUINT64
 DESCRIPTOR.message_types_by_name['NullableFloat'] = _NULLABLEFLOAT
 DESCRIPTOR.message_types_by_name['NullableBool'] = _NULLABLEBOOL
 DESCRIPTOR.message_types_by_name['NullableString'] = _NULLABLESTRING
+DESCRIPTOR.message_types_by_name['NullableMilliseconds'] = _NULLABLEMILLISECONDS
 DESCRIPTOR.message_types_by_name['DatabaseNullableSettings'] = _DATABASENULLABLESETTINGS
 DESCRIPTOR.message_types_by_name['ReplicationNullableSettings'] = _REPLICATIONNULLABLESETTINGS
 DESCRIPTOR.message_types_by_name['IndexNullableSettings'] = _INDEXNULLABLESETTINGS
+DESCRIPTOR.message_types_by_name['AHTNullableSettings'] = _AHTNULLABLESETTINGS
 DESCRIPTOR.message_types_by_name['LoadDatabaseRequest'] = _LOADDATABASEREQUEST
 DESCRIPTOR.message_types_by_name['LoadDatabaseResponse'] = _LOADDATABASERESPONSE
 DESCRIPTOR.message_types_by_name['UnloadDatabaseRequest'] = _UNLOADDATABASEREQUEST
@@ -6036,6 +6263,20 @@ VerifiableGetRequest = _reflection.GeneratedProtocolMessageType('VerifiableGetRe
   })
 _sym_db.RegisterMessage(VerifiableGetRequest)
 
+ServerInfoRequest = _reflection.GeneratedProtocolMessageType('ServerInfoRequest', (_message.Message,), {
+  'DESCRIPTOR' : _SERVERINFOREQUEST,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ServerInfoRequest)
+  })
+_sym_db.RegisterMessage(ServerInfoRequest)
+
+ServerInfoResponse = _reflection.GeneratedProtocolMessageType('ServerInfoResponse', (_message.Message,), {
+  'DESCRIPTOR' : _SERVERINFORESPONSE,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.ServerInfoResponse)
+  })
+_sym_db.RegisterMessage(ServerInfoResponse)
+
 HealthResponse = _reflection.GeneratedProtocolMessageType('HealthResponse', (_message.Message,), {
   'DESCRIPTOR' : _HEALTHRESPONSE,
   '__module__' : 'schema_pb2'
@@ -6246,6 +6487,13 @@ NullableString = _reflection.GeneratedProtocolMessageType('NullableString', (_me
   })
 _sym_db.RegisterMessage(NullableString)
 
+NullableMilliseconds = _reflection.GeneratedProtocolMessageType('NullableMilliseconds', (_message.Message,), {
+  'DESCRIPTOR' : _NULLABLEMILLISECONDS,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.NullableMilliseconds)
+  })
+_sym_db.RegisterMessage(NullableMilliseconds)
+
 DatabaseNullableSettings = _reflection.GeneratedProtocolMessageType('DatabaseNullableSettings', (_message.Message,), {
   'DESCRIPTOR' : _DATABASENULLABLESETTINGS,
   '__module__' : 'schema_pb2'
@@ -6266,6 +6514,13 @@ IndexNullableSettings = _reflection.GeneratedProtocolMessageType('IndexNullableS
   # @@protoc_insertion_point(class_scope:immudb.schema.IndexNullableSettings)
   })
 _sym_db.RegisterMessage(IndexNullableSettings)
+
+AHTNullableSettings = _reflection.GeneratedProtocolMessageType('AHTNullableSettings', (_message.Message,), {
+  'DESCRIPTOR' : _AHTNULLABLESETTINGS,
+  '__module__' : 'schema_pb2'
+  # @@protoc_insertion_point(class_scope:immudb.schema.AHTNullableSettings)
+  })
+_sym_db.RegisterMessage(AHTNullableSettings)
 
 LoadDatabaseRequest = _reflection.GeneratedProtocolMessageType('LoadDatabaseRequest', (_message.Message,), {
   'DESCRIPTOR' : _LOADDATABASEREQUEST,
@@ -6582,8 +6837,8 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=12444,
-  serialized_end=17566,
+  serialized_start=13189,
+  serialized_end=19695,
   methods=[
   _descriptor.MethodDescriptor(
     name='ListUsers',
@@ -6592,7 +6847,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_USERLIST,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\014\022\n/user/list'),
   ),
   _descriptor.MethodDescriptor(
     name='CreateUser',
@@ -6601,7 +6856,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_CREATEUSERREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\n\"\005/user:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='ChangePassword',
@@ -6610,7 +6865,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_CHANGEPASSWORDREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\032\"\025/user/password/change:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='ChangePermission',
@@ -6619,7 +6874,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_CHANGEPERMISSIONREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\033\"\026/user/changepermission:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='SetActiveUser',
@@ -6628,7 +6883,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_SETACTIVEUSERREQUEST,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\030\"\023/user/setactiveUser:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='UpdateAuthConfig',
@@ -6637,7 +6892,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_AUTHCONFIG,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001'),
   ),
   _descriptor.MethodDescriptor(
     name='UpdateMTLSConfig',
@@ -6646,7 +6901,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_MTLSCONFIG,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001'),
   ),
   _descriptor.MethodDescriptor(
     name='OpenSession',
@@ -6727,7 +6982,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_LOGINREQUEST,
     output_type=_LOGINRESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\013\"\006/login:\001*\222A\002b\000'),
   ),
   _descriptor.MethodDescriptor(
     name='Logout',
@@ -6736,7 +6991,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\014\"\007/logout:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='Set',
@@ -6745,7 +7000,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_SETREQUEST,
     output_type=_TXHEADER,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\014\"\007/db/set:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='VerifiableSet',
@@ -6754,7 +7009,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_VERIFIABLESETREQUEST,
     output_type=_VERIFIABLETX,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\027\"\022/db/verifiable/set:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='Get',
@@ -6763,7 +7018,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_KEYREQUEST,
     output_type=_ENTRY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\017\022\r/db/get/{key}'),
   ),
   _descriptor.MethodDescriptor(
     name='VerifiableGet',
@@ -6772,7 +7027,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_VERIFIABLEGETREQUEST,
     output_type=_VERIFIABLEENTRY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\027\"\022/db/verifiable/get:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='Delete',
@@ -6781,7 +7036,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_DELETEKEYSREQUEST,
     output_type=_TXHEADER,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\017\"\n/db/delete:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='GetAll',
@@ -6790,7 +7045,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_KEYLISTREQUEST,
     output_type=_ENTRIES,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\017\"\n/db/getall:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='ExecAll',
@@ -6799,7 +7054,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_EXECALLREQUEST,
     output_type=_TXHEADER,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\020\"\013/db/execall:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='Scan',
@@ -6808,7 +7063,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_SCANREQUEST,
     output_type=_ENTRIES,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\r\"\010/db/scan:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='Count',
@@ -6817,7 +7072,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_KEYPREFIX,
     output_type=_ENTRYCOUNT,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\024\022\022/db/count/{prefix}'),
   ),
   _descriptor.MethodDescriptor(
     name='CountAll',
@@ -6826,7 +7081,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_ENTRYCOUNT,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\016\022\014/db/countall'),
   ),
   _descriptor.MethodDescriptor(
     name='TxById',
@@ -6835,7 +7090,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_TXREQUEST,
     output_type=_TX,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\r\022\013/db/tx/{tx}'),
   ),
   _descriptor.MethodDescriptor(
     name='VerifiableTxById',
@@ -6844,7 +7099,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_VERIFIABLETXREQUEST,
     output_type=_VERIFIABLETX,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\030\022\026/db/verifiable/tx/{tx}'),
   ),
   _descriptor.MethodDescriptor(
     name='TxScan',
@@ -6853,7 +7108,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_TXSCANREQUEST,
     output_type=_TXLIST,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\013\"\006/db/tx:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='History',
@@ -6862,219 +7117,228 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_HISTORYREQUEST,
     output_type=_ENTRIES,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\020\"\013/db/history:\001*'),
+  ),
+  _descriptor.MethodDescriptor(
+    name='ServerInfo',
+    full_name='immudb.schema.ImmuService.ServerInfo',
+    index=31,
+    containing_service=None,
+    input_type=_SERVERINFOREQUEST,
+    output_type=_SERVERINFORESPONSE,
+    serialized_options=_b('\202\323\344\223\002\r\022\013/serverinfo\222A\002b\000'),
   ),
   _descriptor.MethodDescriptor(
     name='Health',
     full_name='immudb.schema.ImmuService.Health',
-    index=31,
+    index=32,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_HEALTHRESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\t\022\007/health\222A\002b\000'),
   ),
   _descriptor.MethodDescriptor(
     name='DatabaseHealth',
     full_name='immudb.schema.ImmuService.DatabaseHealth',
-    index=32,
+    index=33,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_DATABASEHEALTHRESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\014\022\n/db/health\222A\002b\000'),
   ),
   _descriptor.MethodDescriptor(
     name='CurrentState',
     full_name='immudb.schema.ImmuService.CurrentState',
-    index=33,
+    index=34,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_IMMUTABLESTATE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\013\022\t/db/state\222A\002b\000'),
   ),
   _descriptor.MethodDescriptor(
     name='SetReference',
     full_name='immudb.schema.ImmuService.SetReference',
-    index=34,
+    index=35,
     containing_service=None,
     input_type=_REFERENCEREQUEST,
     output_type=_TXHEADER,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\025\"\020/db/setreference:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='VerifiableSetReference',
     full_name='immudb.schema.ImmuService.VerifiableSetReference',
-    index=35,
+    index=36,
     containing_service=None,
     input_type=_VERIFIABLEREFERENCEREQUEST,
     output_type=_VERIFIABLETX,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002 \"\033/db/verifiable/setreference:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='ZAdd',
     full_name='immudb.schema.ImmuService.ZAdd',
-    index=36,
+    index=37,
     containing_service=None,
     input_type=_ZADDREQUEST,
     output_type=_TXHEADER,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\r\"\010/db/zadd:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='VerifiableZAdd',
     full_name='immudb.schema.ImmuService.VerifiableZAdd',
-    index=37,
+    index=38,
     containing_service=None,
     input_type=_VERIFIABLEZADDREQUEST,
     output_type=_VERIFIABLETX,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\030\"\023/db/verifiable/zadd:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='ZScan',
     full_name='immudb.schema.ImmuService.ZScan',
-    index=38,
+    index=39,
     containing_service=None,
     input_type=_ZSCANREQUEST,
     output_type=_ZENTRIES,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\016\"\t/db/zscan:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='CreateDatabase',
     full_name='immudb.schema.ImmuService.CreateDatabase',
-    index=39,
+    index=40,
     containing_service=None,
     input_type=_DATABASE,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\017\"\n/db/create:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='CreateDatabaseWith',
     full_name='immudb.schema.ImmuService.CreateDatabaseWith',
-    index=40,
+    index=41,
     containing_service=None,
     input_type=_DATABASESETTINGS,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\023\"\016/db/createwith:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='CreateDatabaseV2',
     full_name='immudb.schema.ImmuService.CreateDatabaseV2',
-    index=41,
+    index=42,
     containing_service=None,
     input_type=_CREATEDATABASEREQUEST,
     output_type=_CREATEDATABASERESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\022\"\r/db/create/v2:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='LoadDatabase',
     full_name='immudb.schema.ImmuService.LoadDatabase',
-    index=42,
+    index=43,
     containing_service=None,
     input_type=_LOADDATABASEREQUEST,
     output_type=_LOADDATABASERESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\r\"\010/db/load:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='UnloadDatabase',
     full_name='immudb.schema.ImmuService.UnloadDatabase',
-    index=43,
+    index=44,
     containing_service=None,
     input_type=_UNLOADDATABASEREQUEST,
     output_type=_UNLOADDATABASERESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\017\"\n/db/unload:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='DeleteDatabase',
     full_name='immudb.schema.ImmuService.DeleteDatabase',
-    index=44,
+    index=45,
     containing_service=None,
     input_type=_DELETEDATABASEREQUEST,
     output_type=_DELETEDATABASERESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\017\"\n/db/delete:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='DatabaseList',
     full_name='immudb.schema.ImmuService.DatabaseList',
-    index=45,
+    index=46,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_DATABASELISTRESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\r\"\010/db/list:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='DatabaseListV2',
     full_name='immudb.schema.ImmuService.DatabaseListV2',
-    index=46,
+    index=47,
     containing_service=None,
     input_type=_DATABASELISTREQUESTV2,
     output_type=_DATABASELISTRESPONSEV2,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\020\"\013/db/list/v2:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='UseDatabase',
     full_name='immudb.schema.ImmuService.UseDatabase',
-    index=47,
+    index=48,
     containing_service=None,
     input_type=_DATABASE,
     output_type=_USEDATABASEREPLY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\030\022\026/db/use/{databaseName}'),
   ),
   _descriptor.MethodDescriptor(
     name='UpdateDatabase',
     full_name='immudb.schema.ImmuService.UpdateDatabase',
-    index=48,
+    index=49,
     containing_service=None,
     input_type=_DATABASESETTINGS,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\017\"\n/db/update:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='UpdateDatabaseV2',
     full_name='immudb.schema.ImmuService.UpdateDatabaseV2',
-    index=49,
+    index=50,
     containing_service=None,
     input_type=_UPDATEDATABASEREQUEST,
     output_type=_UPDATEDATABASERESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\022\"\r/db/update/v2:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='GetDatabaseSettings',
     full_name='immudb.schema.ImmuService.GetDatabaseSettings',
-    index=50,
+    index=51,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_DATABASESETTINGS,
-    serialized_options=None,
+    serialized_options=_b('\210\002\001\202\323\344\223\002\021\"\014/db/settings:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='GetDatabaseSettingsV2',
     full_name='immudb.schema.ImmuService.GetDatabaseSettingsV2',
-    index=51,
+    index=52,
     containing_service=None,
     input_type=_DATABASESETTINGSREQUEST,
     output_type=_DATABASESETTINGSRESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\024\"\017/db/settings/v2:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='FlushIndex',
     full_name='immudb.schema.ImmuService.FlushIndex',
-    index=52,
+    index=53,
     containing_service=None,
     input_type=_FLUSHINDEXREQUEST,
     output_type=_FLUSHINDEXRESPONSE,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\020\022\016/db/flushindex'),
   ),
   _descriptor.MethodDescriptor(
     name='CompactIndex',
     full_name='immudb.schema.ImmuService.CompactIndex',
-    index=53,
+    index=54,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\022\022\020/db/compactindex'),
   ),
   _descriptor.MethodDescriptor(
     name='streamGet',
     full_name='immudb.schema.ImmuService.streamGet',
-    index=54,
+    index=55,
     containing_service=None,
     input_type=_KEYREQUEST,
     output_type=_CHUNK,
@@ -7083,7 +7347,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamSet',
     full_name='immudb.schema.ImmuService.streamSet',
-    index=55,
+    index=56,
     containing_service=None,
     input_type=_CHUNK,
     output_type=_TXHEADER,
@@ -7092,7 +7356,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamVerifiableGet',
     full_name='immudb.schema.ImmuService.streamVerifiableGet',
-    index=56,
+    index=57,
     containing_service=None,
     input_type=_VERIFIABLEGETREQUEST,
     output_type=_CHUNK,
@@ -7101,7 +7365,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamVerifiableSet',
     full_name='immudb.schema.ImmuService.streamVerifiableSet',
-    index=57,
+    index=58,
     containing_service=None,
     input_type=_CHUNK,
     output_type=_VERIFIABLETX,
@@ -7110,7 +7374,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamScan',
     full_name='immudb.schema.ImmuService.streamScan',
-    index=58,
+    index=59,
     containing_service=None,
     input_type=_SCANREQUEST,
     output_type=_CHUNK,
@@ -7119,7 +7383,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamZScan',
     full_name='immudb.schema.ImmuService.streamZScan',
-    index=59,
+    index=60,
     containing_service=None,
     input_type=_ZSCANREQUEST,
     output_type=_CHUNK,
@@ -7128,7 +7392,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamHistory',
     full_name='immudb.schema.ImmuService.streamHistory',
-    index=60,
+    index=61,
     containing_service=None,
     input_type=_HISTORYREQUEST,
     output_type=_CHUNK,
@@ -7137,7 +7401,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='streamExecAll',
     full_name='immudb.schema.ImmuService.streamExecAll',
-    index=61,
+    index=62,
     containing_service=None,
     input_type=_CHUNK,
     output_type=_TXHEADER,
@@ -7146,7 +7410,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='exportTx',
     full_name='immudb.schema.ImmuService.exportTx',
-    index=62,
+    index=63,
     containing_service=None,
     input_type=_EXPORTTXREQUEST,
     output_type=_CHUNK,
@@ -7155,7 +7419,7 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='replicateTx',
     full_name='immudb.schema.ImmuService.replicateTx',
-    index=63,
+    index=64,
     containing_service=None,
     input_type=_CHUNK,
     output_type=_TXHEADER,
@@ -7164,47 +7428,47 @@ _IMMUSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SQLExec',
     full_name='immudb.schema.ImmuService.SQLExec',
-    index=64,
+    index=65,
     containing_service=None,
     input_type=_SQLEXECREQUEST,
     output_type=_SQLEXECRESULT,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\020\"\013/db/sqlexec:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='SQLQuery',
     full_name='immudb.schema.ImmuService.SQLQuery',
-    index=65,
+    index=66,
     containing_service=None,
     input_type=_SQLQUERYREQUEST,
     output_type=_SQLQUERYRESULT,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\021\"\014/db/sqlquery:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='ListTables',
     full_name='immudb.schema.ImmuService.ListTables',
-    index=66,
+    index=67,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_SQLQUERYRESULT,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\020\022\016/db/table/list'),
   ),
   _descriptor.MethodDescriptor(
     name='DescribeTable',
     full_name='immudb.schema.ImmuService.DescribeTable',
-    index=67,
+    index=68,
     containing_service=None,
     input_type=_TABLE,
     output_type=_SQLQUERYRESULT,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\017\"\n/db/tables:\001*'),
   ),
   _descriptor.MethodDescriptor(
     name='VerifiableSQLGet',
     full_name='immudb.schema.ImmuService.VerifiableSQLGet',
-    index=68,
+    index=69,
     containing_service=None,
     input_type=_VERIFIABLESQLGETREQUEST,
     output_type=_VERIFIABLESQLENTRY,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\032\"\025/db/verifiable/sqlget:\001*'),
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_IMMUSERVICE)
