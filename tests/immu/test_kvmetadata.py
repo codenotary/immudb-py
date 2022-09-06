@@ -33,15 +33,15 @@ class TestKVMetadata:
             metadata.ExpiresAt(expiresAt)
             metadata.AsNonIndexable(True)
 
-            resp = verifiedSet.call(wrappedClient.client._ImmudbClient__stub,
-                                    wrappedClient.client._ImmudbClient__rs, key.encode("utf8"), value.encode("utf8"), metadata=metadata)
+            resp = verifiedSet.call(wrappedClient.client._stub,
+                                    wrappedClient.client._rs, key.encode("utf8"), value.encode("utf8"), metadata=metadata)
 
             assert resp.verified == True
 
             metadata.AsDeleted(True)
 
             with pytest.raises(ErrCorruptedData):
-                resp = verifiedSet.call(wrappedClient.client._ImmudbClient__stub,
-                                        wrappedClient.client._ImmudbClient__rs, key.encode("utf8"), value.encode("utf8"), metadata=metadata)
+                resp = verifiedSet.call(wrappedClient.client._stub,
+                                        wrappedClient.client._rs, key.encode("utf8"), value.encode("utf8"), metadata=metadata)
         else:
             pytest.skip()

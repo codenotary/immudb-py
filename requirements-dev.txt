@@ -1,4 +1,4 @@
 -r requirements.txt
 
 pytest>=4.6.9
-grpcio-tools==1.26.0
+grpcio-tools==1.48.1

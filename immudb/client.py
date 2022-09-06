@@ -10,10 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
 import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import grpcutils
+from immudb.grpc.schema_pb2 import EntriesSpec, EntryTypeSpec, TxScanRequest
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
@@ -28,13 +30,15 @@ from immudb.datatypes import DeleteKeysRequest
 from immudb.embedded.store import KVMetadata
 import threading
 import queue
+import immudb.datatypesv2 as datatypesv2
+import immudb.dataconverter as dataconverter
 
 import datetime
 
 
 class ImmudbClient:
 
-    def __init__(self, immudbUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None):
         """Immudb client
 
         Args:
@@ -43,19 +47,19 @@ class ImmudbClient:
             publicKeyFile (str, optional): path to the public key that would be used to authenticate requests with. Defaults to None.
             timeout (int, optional): global timeout for GRPC requests, if None - it would hang until server respond. Defaults to None.
         """
-        if immudbUrl is None:
-            immudbUrl = "localhost:3322"
+        if immudUrl is None:
+            immudUrl = "localhost:3322"
         self.timeout = timeout
-        self.channel = grpc.insecure_channel(immudbUrl)
+        self.channel = grpc.insecure_channel(immudUrl)
         self._resetStub()
         if rs is None:
-            self.__rs = RootService()
+            self._rs = RootService()
         else:
-            self.__rs = rs
-        self.__url = immudbUrl
-        self.loadKey(publicKeyFile)
-        self.__login_response = None
-        self._session_response = None
+            self._rs = rs
+        self._url = immudUrl
+        self._vk = None
+        if publicKeyFile:
+            self.loadKey(publicKeyFile)
 
     def loadKey(self, kfile: str):
         """Loads public key from path
@@ -63,11 +67,15 @@ class ImmudbClient:
         Args:
             kfile (str): key file path
         """
-        if kfile is None:
-            self.__vk = None
-        else:
-            with open(kfile) as f:
-                self.__vk = ecdsa.VerifyingKey.from_pem(f.read())
+        with open(kfile) as f:
+            self._vk = ecdsa.VerifyingKey.from_pem(f.read())
+    def loadKeyFromString(self, key: str):
+        """Loads public key from parameter
+
+        Args:
+            key (str): key 
+        """
+        self._vk = ecdsa.VerifyingKey.from_pem(key)
 
     def shutdown(self):
         """Shutdowns client
@@ -76,7 +84,7 @@ class ImmudbClient:
         self.channel = None
         self.intercept_channel.close
         self.intercept_channel = None
-        self.__rs = None
+        self._rs = None
 
     def set_session_id_interceptor(self, openSessionResponse):
         sessionId = openSessionResponse.sessionID
@@ -105,7 +113,7 @@ class ImmudbClient:
 
     @property
     def stub(self):
-        return self.__stub
+        return self._stub
 
 # from here on same order as in Golang ImmuClient interface (pkg/client/client.go)
 
@@ -118,7 +126,7 @@ class ImmudbClient:
         Returns:
             HealthResponse: contains status and version
         """
-        return healthcheck.call(self.__stub, self.__rs)
+        return healthcheck.call(self._stub, self._rs)
 
     # Not implemented: connect
     def _convertToBytes(self, what):
@@ -145,30 +153,30 @@ class ImmudbClient:
         convertedDatabase = self._convertToBytes(database)
         req = schema_pb2_grpc.schema__pb2.LoginRequest(
             user=convertedUsername, password=convertedPassword)
+        login_response = None
         try:
-            self.__login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
-                self.__stub.Login(
+            login_response = schema_pb2_grpc.schema__pb2.LoginResponse = \
+                self._stub.Login(
                     req
                 )
         except ValueError as e:
             raise Exception(
                 "Attempted to login on termninated client, channel has been shutdown") from e
 
-        self.__stub = self.set_token_header_interceptor(self.__login_response)
+        self._stub = self.set_token_header_interceptor(login_response)
         # Select database, modifying stub function accordingly
         request = schema_pb2_grpc.schema__pb2.Database(
             databaseName=convertedDatabase)
-        resp = self.__stub.UseDatabase(request)
-        self.__stub = self.set_token_header_interceptor(resp)
+        resp = self._stub.UseDatabase(request)
+        self._stub = self.set_token_header_interceptor(resp)
 
-        self.__rs.init("{}/{}".format(self.__url, database), self.__stub)
-        return self.__login_response
+        self._rs.init("{}/{}".format(self._url, database), self._stub)
+        return login_response
 
     def logout(self):
         """Logouts all sessions
         """
-        self.__stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
-        self.__login_response = None
+        self._stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self._resetStub()
 
     def _resetStub(self):
@@ -177,13 +185,13 @@ class ImmudbClient:
         if (self.timeout != None):
             self.clientInterceptors.append(
                 grpcutils.timeout_adder_interceptor(self.timeout))
-        self.__stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
-        self.__stub = self.get_intercepted_stub()
+        self._stub = schema_pb2_grpc.ImmuServiceStub(self.channel)
+        self._stub = self.get_intercepted_stub()
 
     def keepAlive(self):
         """Sends keep alive packet
         """
-        self.__stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())
+        self._stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())
 
     def openManagedSession(self, username, password, database=b"defaultdb", keepAliveInterval=60):
         """Opens managed session and returns ManagedSession object within you can manage SQL transactions
@@ -252,16 +260,15 @@ class ImmudbClient:
             password=convertedPassword,
             databaseName=convertedDatabase
         )
-        self._session_response = self.__stub.OpenSession(
+        session_response = self._stub.OpenSession(
             req)
-        self.__stub = self.set_session_id_interceptor(self._session_response)
-        return transaction.Tx(self.__stub, self._session_response, self.channel)
+        self._stub = self.set_session_id_interceptor(session_response)
+        return transaction.Tx(self._stub, session_response, self.channel)
 
     def closeSession(self):
         """Closes unmanaged session
         """
-        self.__stub.CloseSession(google_dot_protobuf_dot_empty__pb2.Empty())
-        self._session_response = None
+        self._stub.CloseSession(google_dot_protobuf_dot_empty__pb2.Empty())
         self._resetStub()
 
     def createUser(self, user, password, permission, database):
@@ -280,7 +287,7 @@ class ImmudbClient:
             permission=permission,
             database=database
         )
-        return createUser.call(self.__stub, self.__rs, request)
+        return createUser.call(self._stub, self._rs, request)
 
     def listUsers(self):
         """Returns all users on database
@@ -288,7 +295,7 @@ class ImmudbClient:
         Returns:
             ListUserResponse: List containing all users
         """
-        return listUsers.call(self.__stub, None)
+        return listUsers.call(self._stub)
 
     def changePassword(self, user, newPassword, oldPassword):
         """Changes password for user
@@ -304,7 +311,7 @@ class ImmudbClient:
             newPassword=bytes(newPassword, encoding='utf-8'),
             oldPassword=bytes(oldPassword, encoding='utf-8')
         )
-        return changePassword.call(self.__stub, self.__rs, request)
+        return changePassword.call(self._stub, self._rs, request)
 
     def changePermission(self, action, user, database, permission):
         """Changes permission for user
@@ -318,7 +325,7 @@ class ImmudbClient:
         Returns:
             _type_: _description_
         """
-        return changePermission.call(self.__stub, self.__rs, action, user, database, permission)
+        return changePermission.call(self._stub, self._rs, action, user, database, permission)
 
     # Not implemented: updateAuthConfig
     # Not implemented: updateMTLSConfig
@@ -335,7 +342,7 @@ class ImmudbClient:
         Returns:
             list[str]: database names
         """
-        dbs = databaseList.call(self.__stub, self.__rs, None)
+        dbs = databaseList.call(self._stub, self._rs, None)
         return [x.databaseName for x in dbs.dblist.databases]
 
     # Not implemented: databaseListV2
@@ -348,7 +355,7 @@ class ImmudbClient:
 
         """
         request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
-        return createDatabase.call(self.__stub, self.__rs, request)
+        return createDatabase.call(self._stub, self._rs, request)
 
     # Not implemented: createDatabaseV2
     # Not implemented: loadDatabase
@@ -363,10 +370,10 @@ class ImmudbClient:
 
         """
         request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
-        resp = useDatabase.call(self.__stub, self.__rs, request)
+        resp = useDatabase.call(self._stub, self._rs, request)
         # modify header token accordingly
-        self.__stub = self.set_token_header_interceptor(resp)
-        self.__rs.init(dbName, self.__stub)
+        self._stub = self.set_token_header_interceptor(resp)
+        self._rs.init(dbName, self._stub)
         return resp
 
     # Not implemented: updateDatabase
@@ -374,14 +381,20 @@ class ImmudbClient:
     # Not implemented: getDatabaseSettings
     # Not implemented: getDatabaseSettingsV2
 
-    # Not implemented: setActiveUser
+    def setActiveUser(self, active: bool, username: str) -> bool:
+        req = datatypesv2.SetActiveUserRequest(active, username)
+        resp = self._stub.SetActiveUser(req.getGRPC())
+        if(resp == google_dot_protobuf_dot_empty__pb2.Empty()):
+            return True
+        return False
+
 
     # Not implemented: flushIndex
 
     def compactIndex(self):
         """Starts index compaction
         """
-        self.__stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
+        self._stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
 
     def health(self):
         """Retrieves health response of immudb
@@ -389,7 +402,7 @@ class ImmudbClient:
         Returns:
             HealthResponse: contains status and version
         """
-        return health.call(self.__stub, self.__rs)
+        return health.call(self._stub, self._rs)
 
     def currentState(self):
         """Return current state of immudb (proof)
@@ -397,7 +410,7 @@ class ImmudbClient:
         Returns:
             State: state of immudb
         """
-        return currentRoot.call(self.__stub, self.__rs, None)
+        return currentRoot.call(self._stub, self._rs, None)
 
     def set(self, key: bytes, value: bytes):
         """Sets key into value in database
@@ -409,7 +422,7 @@ class ImmudbClient:
         Returns:
             SetResponse: response of request
         """
-        return setValue.call(self.__stub, self.__rs, key, value)
+        return setValue.call(self._stub, self._rs, key, value)
 
     def verifiedSet(self, key: bytes, value: bytes):
         """Sets key into value in database, and additionally checks it with state saved before
@@ -421,7 +434,7 @@ class ImmudbClient:
         Returns:
             SetResponse: response of request
         """
-        return verifiedSet.call(self.__stub, self.__rs, key, value, self.__vk)
+        return verifiedSet.call(self._stub, self._rs, key, value, self._vk)
 
     def expireableSet(self, key: bytes, value: bytes, expiresAt: datetime.datetime):
         """Sets key into value in database with additional expiration
@@ -436,7 +449,7 @@ class ImmudbClient:
         """
         metadata = KVMetadata()
         metadata.ExpiresAt(expiresAt)
-        return setValue.call(self.__stub, self.__rs, key, value, metadata)
+        return setValue.call(self._stub, self._rs, key, value, metadata)
 
     def get(self, key: bytes, atRevision: int = None):
         """Gets value for key
@@ -448,73 +461,81 @@ class ImmudbClient:
         Returns:
             GetResponse: contains tx, value, key and revision
         """
-        return get.call(self.__stub, self.__rs, key, atRevision=atRevision)
+        return get.call(self._stub, self._rs, key, atRevision=atRevision)
 
     # Not implemented: getSince
     # Not implemented: getAt
 
     def verifiedGet(self, key: bytes, atRevision: int = None):
-        return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk, atRevision=atRevision)
+        return verifiedGet.call(self._stub, self._rs, key, verifying_key=self._vk, atRevision=atRevision)
 
     def verifiedGetSince(self, key: bytes, sinceTx: int):
-        return verifiedGet.call(self.__stub, self.__rs, key, sinceTx=sinceTx, verifying_key=self.__vk)
+        return verifiedGet.call(self._stub, self._rs, key, sinceTx=sinceTx, verifying_key=self._vk)
 
     def verifiedGetAt(self, key: bytes, atTx: int):
-        return verifiedGet.call(self.__stub, self.__rs, key, atTx, self.__vk)
+        return verifiedGet.call(self._stub, self._rs, key, atTx, self._vk)
 
     def history(self, key: bytes, offset: int, limit: int, sortorder: bool):
-        return history.call(self.__stub, self.__rs, key, offset, limit, sortorder)
+        return history.call(self._stub, self._rs, key, offset, limit, sortorder)
 
     def zAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0):
-        return zadd.call(self.__stub, self.__rs, zset, score, key, atTx)
+        return zadd.call(self._stub, self._rs, zset, score, key, atTx)
 
     def verifiedZAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0):
-        return verifiedzadd.call(self.__stub, self.__rs, zset, score, key, atTx, self.__vk)
+        return verifiedzadd.call(self._stub, self._rs, zset, score, key, atTx, self._vk)
 
     # Not implemented: zAddAt
     # Not implemented: verifiedZAddAt
 
     def scan(self, key: bytes, prefix: bytes, desc: bool, limit: int, sinceTx: int = None):
-        return scan.call(self.__stub, self.__rs, key, prefix, desc, limit, sinceTx)
+        return scan.call(self._stub, self._rs, key, prefix, desc, limit, sinceTx)
 
     def zScan(self, zset: bytes, seekKey: bytes, seekScore: float,
               seekAtTx: int, inclusive: bool, limit: int, desc: bool, minscore: float,
               maxscore: float, sinceTx=None, nowait=False):
-        return zscan.call(self.__stub, self.__rs, zset, seekKey, seekScore,
+        return zscan.call(self._stub, self._rs, zset, seekKey, seekScore,
                           seekAtTx, inclusive, limit, desc, minscore,
                           maxscore, sinceTx, nowait)
 
     def txById(self, tx: int):
-        return txbyid.call(self.__stub, self.__rs, tx)
+        return txbyid.call(self._stub, self._rs, tx)
 
     def verifiedTxById(self, tx: int):
-        return verifiedtxbyid.call(self.__stub, self.__rs, tx, self.__vk)
+        return verifiedtxbyid.call(self._stub, self._rs, tx, self._vk)
 
     # Not implemented: txByIDWithSpec
+    defaultEntriesSpec = datatypesv2.EntriesSpec(
+        kvEntriesSpec=datatypesv2.EntryTypeSpec(action = datatypesv2.EntryTypeAction.EXCLUDE),
+        zEntriesSpec=datatypesv2.EntryTypeSpec(action = datatypesv2.EntryTypeAction.ONLY_DIGEST),
+        sqlEntriesSpec=datatypesv2.EntryTypeSpec(action = datatypesv2.EntryTypeAction.ONLY_DIGEST)
+    )
 
-    # Not implemented: txScan
+    def txScan(self, initialTx: int, limit: int = 1000, desc: bool = False, entriesSpec: datatypesv2.EntriesSpec = defaultEntriesSpec, sinceTx: int = 0, noWait: bool = False) -> datatypesv2.TxList:
+        req = datatypesv2.TxScanRequest(initialTx, limit, desc, entriesSpec, sinceTx, noWait)
+        resp = self._stub.TxScan(req.getGRPC())
+        return dataconverter.convertResponse(resp)
 
     # Not implemented: count
     # Not implemented: countAll
 
     def setAll(self, kv: dict):
-        return batchSet.call(self.__stub, self.__rs, kv)
+        return batchSet.call(self._stub, self._rs, kv)
 
     def getAll(self, keys: list):
-        resp = batchGet.call(self.__stub, self.__rs, keys)
+        resp = batchGet.call(self._stub, self._rs, keys)
         return {key: value.value for key, value in resp.items()}
 
     def delete(self, req: DeleteKeysRequest):
-        return deleteKeys.call(self.__stub, req)
+        return deleteKeys.call(self._stub, req)
 
     def execAll(self, ops: list, noWait=False):
-        return execAll.call(self.__stub, self.__rs, ops, noWait)
+        return execAll.call(self._stub, self._rs, ops, noWait)
 
     def setReference(self, referredkey: bytes, newkey:  bytes):
-        return reference.call(self.__stub, self.__rs, referredkey, newkey)
+        return reference.call(self._stub, self._rs, referredkey, newkey)
 
     def verifiedSetReference(self, referredkey: bytes, newkey:  bytes):
-        return verifiedreference.call(self.__stub, self.__rs, referredkey, newkey, verifying_key=self.__vk)
+        return verifiedreference.call(self._stub, self._rs, referredkey, newkey, verifying_key=self._vk)
 
     # Not implemented: setReferenceAt
     # Not implemented: verifiedSetReferenceAt
@@ -541,7 +562,7 @@ class ImmudbClient:
             (id), timestamp (ts), and number of entries (nentries).
         """
 
-        return sqlexec.call(self.__stub, self.__rs, stmt, params, noWait)
+        return sqlexec.call(self._stub, self._rs, stmt, params, noWait)
 
     def sqlQuery(self, query, params={}, columnNameMode=constants.COLUMN_NAME_MODE_NONE):
         """Queries the database using SQL
@@ -554,7 +575,7 @@ class ImmudbClient:
 
             ['table1', 'table2']
         """
-        return sqlquery.call(self.__stub, self.__rs, query, params, columnNameMode)
+        return sqlquery.call(self._stub, self._rs, query, params, columnNameMode)
 
     def listTables(self):
         """List all tables in the current database
@@ -564,10 +585,10 @@ class ImmudbClient:
 
             ['table1', 'table2']
         """
-        return listtables.call(self.__stub, self.__rs)
+        return listtables.call(self._stub, self._rs)
 
     def describeTable(self, table):
-        return sqldescribe.call(self.__stub, self.__rs, table)
+        return sqldescribe.call(self._stub, self._rs, table)
 
     # Not implemented: verifyRow
 
@@ -584,7 +605,7 @@ class ImmudbClient:
                       category=DeprecationWarning,
                       stacklevel=2
                       )
-        return verifiedGet.call(self.__stub, self.__rs, key, verifying_key=self.__vk)
+        return verifiedGet.call(self._stub, self._rs, key, verifying_key=self._vk)
 
     def databaseUse(self, dbName: bytes):  # deprecated
         warnings.warn("Call to deprecated databaseUse. Use useDatabase instead",
@@ -598,18 +619,18 @@ class ImmudbClient:
                       category=DeprecationWarning,
                       stacklevel=2
                       )
-        return verifiedSet.call(self.__stub, self.__rs, key, value)
+        return verifiedSet.call(self._stub, self._rs, key, value)
 
 
 # immudb-py only
 
 
     def getAllValues(self, keys: list):  # immudb-py only
-        resp = batchGet.call(self.__stub, self.__rs, keys)
+        resp = batchGet.call(self._stub, self._rs, keys)
         return resp
 
     def getValue(self, key: bytes):  # immudb-py only
-        ret = get.call(self.__stub, self.__rs, key)
+        ret = get.call(self._stub, self._rs, key)
         if ret is None:
             return None
         return ret.value
