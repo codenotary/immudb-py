@@ -13,3 +13,21 @@ def test_tx_scan(client: ImmudbClient):
     txId = response1.id
     result = client.txScan(txId, 3)
     assert len(result.txs) == 3
+
+
+    result = client.txScan(txId, 3, True)
+    assert result.txs[0].header.id > result.txs[1].header.id 
+    assert len(result.txs[0].entries) > 0
+
+    result = client.txScan(txId, 3, False)
+    assert result.txs[0].header.id < result.txs[1].header.id 
+    assert len(result.txs[0].entries) > 0
+
+    result = client.txScan(txId, 3, False, EntriesSpec(
+        kvEntriesSpec=EntryTypeSpec(action = EntryTypeAction.EXCLUDE),
+        sqlEntriesSpec=EntryTypeSpec(action = EntryTypeAction.RAW_VALUE),
+        zEntriesSpec=EntryTypeSpec(action = EntryTypeAction.RESOLVE),
+    ))
+    assert result.txs[0].kvEntries == None
+    assert result.txs[0].zEntries == None
+    assert result.txs[0].entries == None

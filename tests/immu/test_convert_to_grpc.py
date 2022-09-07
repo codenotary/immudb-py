@@ -6,7 +6,7 @@ from immudb.dataconverter import convertResponse
 def test_converting_to_grpc():
 
     key = datatypesv2.Key(key = b"tet")
-    grpcForm = key.getGRPC()
+    grpcForm = key._getGRPC()
     assert type(grpcForm) == Key
     assert grpcForm.key == b'tet'
 
@@ -17,6 +17,6 @@ def test_converting_to_grpc():
     precondition = datatypesv2.Precondition(mustExist, None, None)
     op = datatypesv2.Op(datatypesv2.KeyValue(b'test', b'bbb', None))
     ww = datatypesv2.ExecAllRequest([op], False, [precondition])
-    assert isinstance(ww.getGRPC(), ExecAllRequest)
+    assert isinstance(ww._getGRPC(), ExecAllRequest)
 
 

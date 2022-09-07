@@ -10,12 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
+from typing import Generator, List, Union
 import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import grpcutils
-from immudb.grpc.schema_pb2 import EntriesSpec, EntryTypeSpec, TxScanRequest
+from immudb.grpc.schema_pb2 import Chunk, EntriesSpec, EntryTypeSpec, TxScanRequest
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
@@ -35,10 +35,12 @@ import immudb.dataconverter as dataconverter
 
 import datetime
 
+from immudb.streamsutils import FullKeyValue, KeyHeader, StreamReader, ValueChunk
+
 
 class ImmudbClient:
 
-    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length = None):
         """Immudb client
 
         Args:
@@ -50,7 +52,13 @@ class ImmudbClient:
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.timeout = timeout
-        self.channel = grpc.insecure_channel(immudUrl)
+        options = []
+        if max_grpc_message_length:
+            options = [('grpc.max_receive_message_length', max_grpc_message_length)]
+            print(options)
+            self.channel = grpc.insecure_channel(immudUrl, options = options)
+        else:
+            self.channel = grpc.insecure_channel(immudUrl)
         self._resetStub()
         if rs is None:
             self._rs = RootService()
@@ -357,10 +365,36 @@ class ImmudbClient:
         request = schema_pb2_grpc.schema__pb2.Database(databaseName=dbName)
         return createDatabase.call(self._stub, self._rs, request)
 
-    # Not implemented: createDatabaseV2
-    # Not implemented: loadDatabase
-    # Not implemented: unloadDatabase
-    # Not implemented: deleteDatabase
+    def createDatabaseV2(self, name: str, settings: datatypesv2.DatabaseNullableSettings, ifNotExists: bool) -> datatypesv2.CreateDatabaseResponse:
+        request = datatypesv2.CreateDatabaseRequest(name = name, settings = settings, ifNotExists = ifNotExists)
+        resp = self._stub.CreateDatabaseV2(request._getGRPC())
+        return dataconverter.convertResponse(resp)
+
+    def databaseListV2(self) -> datatypesv2.DatabaseListResponseV2:
+        req = datatypesv2.DatabaseListRequestV2()
+        resp = self._stub.DatabaseListV2(req._getGRPC())
+        return dataconverter.convertResponse(resp)
+
+    def loadDatabase(self, database: str) -> datatypesv2.LoadDatabaseResponse:
+        req = datatypesv2.LoadDatabaseRequest(database)
+        resp = self._stub.LoadDatabase(req._getGRPC())
+        return dataconverter.convertResponse(resp)
+
+    def unloadDatabase(self, database: str) -> datatypesv2.UnloadDatabaseResponse:
+        req = datatypesv2.UnloadDatabaseRequest(database)
+        resp = self._stub.UnloadDatabase(req._getGRPC())
+        return dataconverter.convertResponse(resp)
+
+    def deleteDatabase(self, database: str) -> datatypesv2.DeleteDatabaseResponse:
+        req = datatypesv2.DeleteDatabaseResponse(database)
+        resp = self._stub.DeleteDatabase(req._getGRPC())
+        return dataconverter.convertResponse(resp)
+
+    def updateDatabaseV2(self, database: str, settings: datatypesv2.DatabaseNullableSettings) -> datatypesv2.UpdateDatabaseResponse:
+        request = datatypesv2.UpdateDatabaseRequest(database, settings)
+        resp = self._stub.UpdateDatabaseV2(request._getGRPC())
+        return dataconverter.convertResponse(resp)
+
 
     def useDatabase(self, dbName: bytes):
         """Switches database
@@ -376,25 +410,28 @@ class ImmudbClient:
         self._rs.init(dbName, self._stub)
         return resp
 
-    # Not implemented: updateDatabase
-    # Not implemented: updateDatabaseV2
     # Not implemented: getDatabaseSettings
-    # Not implemented: getDatabaseSettingsV2
+
+    def getDatabaseSettingsV2(self) -> datatypesv2.DatabaseSettingsResponse:
+        req = datatypesv2.DatabaseSettingsRequest()
+        resp = self._stub.GetDatabaseSettingsV2(req._getGRPC())
+        return dataconverter.convertResponse(resp)
 
     def setActiveUser(self, active: bool, username: str) -> bool:
         req = datatypesv2.SetActiveUserRequest(active, username)
-        resp = self._stub.SetActiveUser(req.getGRPC())
-        if(resp == google_dot_protobuf_dot_empty__pb2.Empty()):
-            return True
-        return False
+        resp = self._stub.SetActiveUser(req._getGRPC())
+        return resp == google_dot_protobuf_dot_empty__pb2.Empty()
 
-
-    # Not implemented: flushIndex
+    def flushIndex(self, cleanupPercentage: float, synced: bool) -> datatypesv2.FlushIndexResponse:
+        req = datatypesv2.FlushIndexRequest(cleanupPercentage, synced)
+        resp = self._stub.FlushIndex(req._getGRPC())
+        return dataconverter.convertResponse(resp)
 
     def compactIndex(self):
         """Starts index compaction
         """
-        self._stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
+        resp = self._stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
+        return resp == google_dot_protobuf_dot_empty__pb2.Empty()
 
     def health(self):
         """Retrieves health response of immudb
@@ -504,19 +541,22 @@ class ImmudbClient:
         return verifiedtxbyid.call(self._stub, self._rs, tx, self._vk)
 
     # Not implemented: txByIDWithSpec
-    defaultEntriesSpec = datatypesv2.EntriesSpec(
-        kvEntriesSpec=datatypesv2.EntryTypeSpec(action = datatypesv2.EntryTypeAction.EXCLUDE),
-        zEntriesSpec=datatypesv2.EntryTypeSpec(action = datatypesv2.EntryTypeAction.ONLY_DIGEST),
-        sqlEntriesSpec=datatypesv2.EntryTypeSpec(action = datatypesv2.EntryTypeAction.ONLY_DIGEST)
-    )
 
-    def txScan(self, initialTx: int, limit: int = 1000, desc: bool = False, entriesSpec: datatypesv2.EntriesSpec = defaultEntriesSpec, sinceTx: int = 0, noWait: bool = False) -> datatypesv2.TxList:
+    def txScan(self, initialTx: int, limit: int = 999, desc: bool = False, entriesSpec: datatypesv2.EntriesSpec = None, sinceTx: int = 0, noWait: bool = False) -> datatypesv2.TxList:
         req = datatypesv2.TxScanRequest(initialTx, limit, desc, entriesSpec, sinceTx, noWait)
-        resp = self._stub.TxScan(req.getGRPC())
+        print(req._getGRPC())
+        resp = self._stub.TxScan(req._getGRPC())
         return dataconverter.convertResponse(resp)
 
-    # Not implemented: count
-    # Not implemented: countAll
+    def serverInfo(self) -> datatypesv2.ServerInfoResponse:
+        req = datatypesv2.ServerInfoRequest()
+        resp = self._stub.ServerInfo(req._getGRPC())
+        return dataconverter.convertResponse(resp)
+
+    def databaseHealth(self) -> datatypesv2.DatabaseHealthResponse:
+        req = google_dot_protobuf_dot_empty__pb2.Empty()
+        resp = self._stub.DatabaseHealth(req)
+        return dataconverter.convertResponse(resp)
 
     def setAll(self, kv: dict):
         return batchSet.call(self._stub, self._rs, kv)
@@ -543,6 +583,26 @@ class ImmudbClient:
     # Not implemented: dump
 
     # Not implemented: stream[.*]
+
+    def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Generator[Union[KeyHeader, ValueChunk], None, None]:
+        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        resp = self._stub.streamGet(req._getGRPC())
+        reader = StreamReader(resp)
+        for it in reader.chunks():
+            yield it
+
+    def streamGetFull(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> FullKeyValue:
+        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        resp = self._stub.streamGet(req._getGRPC())
+        reader = StreamReader(resp)
+        key = None
+        value = b''
+        chunks = reader.chunks()
+        key = next(chunks).key
+        for it in chunks:
+            value += it.chunk
+        return FullKeyValue(key, value)
+
 
     # Not implemented: exportTx
     # Not implemented: replicateTx

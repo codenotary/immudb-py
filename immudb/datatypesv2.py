@@ -17,7 +17,7 @@ from google.protobuf.struct_pb2 import NullValue
 import immudb.grpc.schema_pb2 as schema
 
 class GRPCTransformable:
-    def getGRPC(self):
+    def _getGRPC(self):
         transformed = self._transformDict(self.__dict__)
         schemaFrom = schema.__dict__.get(self.__class__.__name__, None)
         if(schemaFrom):
@@ -33,11 +33,11 @@ class GRPCTransformable:
         for key in dictToTransform:
             currentValue = dictToTransform[key]
             if(isinstance(currentValue, GRPCTransformable)):
-                dictToTransform[key] = currentValue.getGRPC()
+                dictToTransform[key] = currentValue._getGRPC()
             elif(isinstance(currentValue, list)):
                 for index in range(0, len(currentValue)):
                     if(isinstance(currentValue[index], GRPCTransformable)):
-                        currentValue[index] = currentValue[index].getGRPC()
+                        currentValue[index] = currentValue[index]._getGRPC()
             elif(isinstance(currentValue, Enum)):
                 dictToTransform[key] = currentValue.value
         return dictToTransform
@@ -47,70 +47,70 @@ class GRPCTransformable:
 
 @dataclass
 class Key(GRPCTransformable):
-    key: bytes
+    key: bytes = None
 
 @dataclass
 class Permission(GRPCTransformable):
-    database: str
-    permission: int
+    database: str = None
+    permission: int = None
 
 @dataclass
 class User(GRPCTransformable):
-    user: bytes
-    permissions: List[Permission]
-    createdby: str
-    createdat: str
-    active: bool
+    user: bytes = None
+    permissions: List[Permission] = None
+    createdby: str = None
+    createdat: str = None
+    active: bool = None
 
 @dataclass
 class UserList(GRPCTransformable):
-    users: List[User]
+    users: List[User] = None
 
 @dataclass
 class CreateUserRequest(GRPCTransformable):
-    user: bytes
-    password: bytes
-    permission: int
-    database: str
+    user: bytes = None
+    password: bytes = None
+    permission: int = None
+    database: str = None
 
 @dataclass
 class UserRequest(GRPCTransformable):
-    user: bytes
+    user: bytes = None
 
 @dataclass
 class ChangePasswordRequest(GRPCTransformable):
-    user: bytes
-    oldPassword: bytes
-    newPassword: bytes
+    user: bytes = None
+    oldPassword: bytes = None
+    newPassword: bytes = None
 
 @dataclass
 class LoginRequest(GRPCTransformable):
-    user: bytes
-    password: bytes
+    user: bytes = None
+    password: bytes = None
 
 @dataclass
 class LoginResponse(GRPCTransformable):
-    token: str
-    warning: bytes
+    token: str = None
+    warning: bytes = None
 
 @dataclass
 class AuthConfig(GRPCTransformable):
-    kind: int
+    kind: int = None
 
 @dataclass
 class MTLSConfig(GRPCTransformable):
-    enabled: bool
+    enabled: bool = None
 
 @dataclass
 class OpenSessionRequest(GRPCTransformable):
-    username: bytes
-    password: bytes
-    databaseName: str
+    username: bytes = None
+    password: bytes = None
+    databaseName: str = None
 
 @dataclass
 class OpenSessionResponse(GRPCTransformable):
-    sessionID: str
-    serverUUID: str
+    sessionID: str = None
+    serverUUID: str = None
 
 # ONE OF
 @dataclass
@@ -121,39 +121,39 @@ class Precondition(GRPCTransformable):
 
 @dataclass
 class KeyMustExistPrecondition(GRPCTransformable):
-    key: bytes
+    key: bytes = None
 
 @dataclass
 class KeyMustNotExistPrecondition(GRPCTransformable):
-    key: bytes
+    key: bytes = None
     
 class KeyNotModifiedAfterTXPrecondition(GRPCTransformable):
-    key: bytes
-    txID: int
+    key: bytes = None
+    txID: int = None
 
 @dataclass
 class KeyValue(GRPCTransformable):
-    key: bytes
-    value: bytes
-    metadata: KVMetadata
+    key: bytes = None
+    value: bytes = None
+    metadata: KVMetadata = None
 
 @dataclass
 class Entry(GRPCTransformable):
-    tx: int
-    key: bytes
-    value: bytes
-    referencedBy: Reference
-    metadata: KVMetadata
-    expired: bool
-    revision: int
+    tx: int = None
+    key: bytes = None
+    value: bytes = None
+    referencedBy: Reference = None
+    metadata: KVMetadata = None
+    expired: bool = None
+    revision: int = None
 
 @dataclass
 class Reference(GRPCTransformable):
-    tx: int
-    key: bytes
-    atTx: int
-    metadata: KVMetadata
-    revision: int
+    tx: int = None
+    key: bytes = None
+    atTx: int = None
+    metadata: KVMetadata = None
+    revision: int = None
 
 # ONE OF
 @dataclass
@@ -164,51 +164,51 @@ class Op(GRPCTransformable):
 
 @dataclass
 class ExecAllRequest(GRPCTransformable):
-    Operations: List[Op]
-    noWait: bool
-    preconditions: List[Precondition]
+    Operations: List[Op] = None
+    noWait: bool = None
+    preconditions: List[Precondition] = None
 
 @dataclass
 class Entries(GRPCTransformable):
-    entries: List[Entry]
+    entries: List[Entry] = None
 
 @dataclass
 class ZEntry(GRPCTransformable):
-    set: bytes
-    key: bytes
-    entry: Entry
-    score: float
-    atTx: int
+    set: bytes = None
+    key: bytes = None
+    entry: Entry = None
+    score: float = None
+    atTx: int = None
 
 @dataclass
 class ZEntries(GRPCTransformable):
-    entries: ZEntry
+    entries: ZEntry = None
 
 @dataclass
 class ScanRequest(GRPCTransformable):
-    seekKey: bytes
-    endKey: bytes
-    prefix: bytes
-    desc: bool
-    limit: int
-    sinceTx: int
-    noWait: bool
-    inclusiveSeek: bool
-    inclusiveEnd: bool
-    offset: int
+    seekKey: bytesv
+    endKey: bytes = None
+    prefix: bytes = None
+    desc: bool = None
+    limit: int = None
+    sinceTx: int = None
+    noWait: bool = None
+    inclusiveSeek: bool = None
+    inclusiveEnd: bool = None
+    offset: int = None
 
 @dataclass
 class KeyPrefix(GRPCTransformable):
-    prefix: bytes
+    prefix: bytes = None
 
 @dataclass
 class EntryCount(GRPCTransformable):
-    count: int
+    count: int = None
 
 @dataclass
 class Signature(GRPCTransformable):
-    publicKey: bytes
-    signature: bytes
+    publicKey: bytes = None
+    signature: bytes = None
 
 @dataclass
 class TxHeader(GRPCTransformable):
@@ -229,14 +229,14 @@ class TxMetadata(GRPCTransformable):
 
 @dataclass
 class LinearProof(GRPCTransformable):
-    sourceTxId: int
-    TargetTxId: int
-    terms: List[bytes]
+    sourceTxId: int = None
+    TargetTxId: int = None
+    terms: List[bytes] = None
 
 @dataclass
 class DualProof(GRPCTransformable):
-    sourceTxHeader: TxHeader
-    targetTxHeader: TxHeader
+    sourceTxHeader: TxHeader = None
+    targetTxHeader: TxHeader = None
     inclusionProof: List[bytes] = None
     consistencyProof: List[bytes] = None
     targetBlTxAlh: bytes = None
@@ -245,34 +245,34 @@ class DualProof(GRPCTransformable):
 
 @dataclass
 class Tx(GRPCTransformable):
-    header: TxHeader
+    header: TxHeader = None
     entries: List[TxEntry] = None
     kvEntries:  List[Entry] = None
     zEntries:  List[ZEntry] = None
 
 @dataclass
 class TxEntry(GRPCTransformable):
-    key: bytes
-    hValue: bytes
-    vLen: int
-    metadata: KVMetadata
-    value: bytes
+    key: bytes = None
+    hValue: bytes = None
+    vLen: int = None
+    metadata: KVMetadata = None
+    value: bytes = None
 
 @dataclass
 class KVMetadata(GRPCTransformable):
-    deleted: bool
-    expiration: Expiration
-    nonIndexable: bool
+    deleted: bool = None
+    expiration: Expiration = None
+    nonIndexable: bool = None
 
 @dataclass
 class Expiration(GRPCTransformable):
-    expiresAt: int
+    expiresAt: int = None
 
 @dataclass
 class VerifiableTx(GRPCTransformable):
-    tx: Tx
-    dualProof: DualProof
-    signature: Signature
+    tx: Tx = None
+    dualProof: DualProof = None
+    signature: Signature = None
 
 @dataclass
 class VerifiableEntry(GRPCTransformable):
@@ -282,44 +282,44 @@ class VerifiableEntry(GRPCTransformable):
 
 @dataclass
 class InclusionProof(GRPCTransformable):
-    leaf: int
-    width: int
-    terms: List[bytes]
+    leaf: int = None
+    width: int = None
+    terms: List[bytes] = None
 
 @dataclass
 class SetRequest(GRPCTransformable):
-    KVs: List[KeyValue]
-    noWait: bool
-    preconditions: List[Precondition]
+    KVs: List[KeyValue] = None
+    noWait: bool = None
+    preconditions: List[Precondition] = None
 
 @dataclass
 class KeyRequest(GRPCTransformable):
-    key: bytes
-    atTx: int
-    sinceTx: int
-    noWait: bool
-    atRevision: int
+    key: bytes = None
+    atTx: int = None
+    sinceTx: int = None
+    noWait: bool = None
+    atRevision: int = None
 
 @dataclass
 class KeyListRequest(GRPCTransformable):
-    keys: List[bytes]
-    sinceTx: int
+    keys: List[bytes] = None
+    sinceTx: int = None
 
 @dataclass
 class DeleteKeysRequest(GRPCTransformable):
-    keys: List[bytes]
-    sinceTx: int
-    noWait: bool
+    keys: List[bytes] = None
+    sinceTx: int = None
+    noWait: bool = None
 
 @dataclass
 class VerifiableSetRequest(GRPCTransformable):
-    setRequest: SetRequest
-    proveSinceTx: int
+    setRequest: SetRequest = None
+    proveSinceTx: int = None
 
 @dataclass
 class VerifiableGetRequest(GRPCTransformable):
-    keyRequest: KeyRequest
-    proveSinceTx: int
+    keyRequest: KeyRequest = None
+    proveSinceTx: int = None
 
 @dataclass
 class ServerInfoRequest(GRPCTransformable):
@@ -327,88 +327,88 @@ class ServerInfoRequest(GRPCTransformable):
 
 @dataclass
 class ServerInfoResponse(GRPCTransformable):
-    version: str
+    version: str = None
 
 @dataclass
 class HealthResponse(GRPCTransformable):
-    status: bool
-    version: str
+    status: bool = None
+    version: str = None
 
 @dataclass
 class DatabaseHealthResponse(GRPCTransformable):
-    pendingRequests: int
-    lastRequestCompletedAt: int
+    pendingRequests: int = None
+    lastRequestCompletedAt: int = None
 
 @dataclass
 class ImmutableState(GRPCTransformable):
-    db: str
-    txId: int
-    txHash: bytes
-    signature: Signature
+    db: str = None
+    txId: int = None
+    txHash: bytes = None
+    signature: Signature = None
 
 @dataclass
 class ReferenceRequest(GRPCTransformable):
-    key: bytes
-    referencedKey: bytes
-    atTx: int
-    boundRef: bool
-    noWait: bool
-    preconditions: List[Precondition]
+    key: bytes = None
+    referencedKey: bytes = None
+    atTx: int = None
+    boundRef: bool = None
+    noWait: bool = None
+    preconditions: List[Precondition] = None
 
 @dataclass
 class VerifiableReferenceRequest(GRPCTransformable):
-    referenceRequest: ReferenceRequest
-    proveSinceTx: int
+    referenceRequest: ReferenceRequest = None
+    proveSinceTx: int = None
 
 @dataclass
 class ZAddRequest(GRPCTransformable):
-    set: bytes
-    score: float
-    key: bytes
-    atTx: int
-    boundRef: bool
-    noWait: bool
+    set: bytes = None
+    score: float = None
+    key: bytes = None
+    atTx: int = None
+    boundRef: bool = None
+    noWait: bool = None
 
 @dataclass
 class Score(GRPCTransformable):
-    score: float
+    score: float = None
 
 @dataclass
 class ZScanRequest(GRPCTransformable):
-    set: bytes
-    seekKey: bytes
-    seekScore: float
-    seekAtTx: int
-    inclusiveSeek: bool
-    limit: int
-    desc: bool
-    minScore: Score
-    maxScore: Score
-    sinceTx: int
-    noWait: bool
-    offset: int
+    set: bytes = None
+    seekKey: bytes = None
+    seekScore: float = None
+    seekAtTx: int = None
+    inclusiveSeek: bool = None
+    limit: int = None
+    desc: bool = None
+    minScore: Score = None
+    maxScore: Score = None
+    sinceTx: int = None
+    noWait: bool = None
+    offset: int = None
 
 @dataclass
 class HistoryRequest(GRPCTransformable):
-    key: bytes
-    offset: int
-    limit: int
-    desc: bool
-    sinceTx: int
+    key: bytes = None
+    offset: int = None
+    limit: int = None
+    desc: bool = None
+    sinceTx: int = None
 
 
 @dataclass
 class VerifiableZAddRequest(GRPCTransformable):
-    zAddRequest: ZAddRequest
-    proveSinceTx: int
+    zAddRequest: ZAddRequest = None
+    proveSinceTx: int = None
 
 @dataclass
 class TxRequest(GRPCTransformable):
-    tx: int
-    entriesSpec: EntriesSpec
-    sinceTx: int
-    noWait: bool
-    keepReferencesUnresolved: bool
+    tx: int = None
+    entriesSpec: EntriesSpec = None
+    sinceTx: int = None
+    noWait: bool = None
+    keepReferencesUnresolved: bool = None
 
 @dataclass
 class EntriesSpec(GRPCTransformable):
@@ -419,7 +419,7 @@ class EntriesSpec(GRPCTransformable):
 
 @dataclass
 class EntryTypeSpec(GRPCTransformable):
-    action: EntryTypeAction
+    action: EntryTypeAction = None
 
 class EntryTypeAction(Enum):
     EXCLUDE = 0
@@ -429,12 +429,12 @@ class EntryTypeAction(Enum):
 
 @dataclass
 class VerifiableTxRequest(GRPCTransformable):
-    tx: int
-    proveSinceTx: int
-    entriesSpec: EntriesSpec
-    sinceTx: int
-    noWait: bool
-    keepReferencesUnresolved: bool
+    tx: int = None
+    proveSinceTx: int = None
+    entriesSpec: EntriesSpec = None
+    sinceTx: int = None
+    noWait: bool = None
+    keepReferencesUnresolved: bool = None
 
 @dataclass
 class TxScanRequest(GRPCTransformable):
@@ -447,53 +447,53 @@ class TxScanRequest(GRPCTransformable):
 
 @dataclass
 class TxList(GRPCTransformable):
-    txs: List[Tx]
+    txs: List[Tx] = None
 
 @dataclass
 class ExportTxRequest(GRPCTransformable):
-    tx: int 
+    tx: int  = None
 
 @dataclass
 class Database(GRPCTransformable):
-    databaseName: str
+    databaseName: str = None
 
 @dataclass
 class DatabaseSettings(GRPCTransformable):
-    databaseName: str
-    replica: bool 
-    masterDatabase: str
-    masterAddress: str
-    masterPort: int 
-    followerUsername: str 
-    followerPassword: str 
-    fileSize: int
-    maxKeyLen: int 
-    maxValueLen: int 
-    maxTxEntries: int 
-    excludeCommitTime: bool 
+    databaseName: str = None
+    replica: bool  = None
+    masterDatabase: str = None
+    masterAddress: str = None
+    masterPort: int  = None
+    followerUsername: str  = None
+    followerPassword: str  = None
+    fileSize: int = None
+    maxKeyLen: int  = None
+    maxValueLen: int  = None
+    maxTxEntries: int  = None
+    excludeCommitTime: bool  = None
 
 @dataclass
 class CreateDatabaseRequest(GRPCTransformable):
-    name: str
-    settings: DatabaseNullableSettings
-    ifNotExists: bool
+    name: str = None
+    settings: DatabaseNullableSettings = None
+    ifNotExists: bool = None
 
 
 @dataclass
 class CreateDatabaseResponse(GRPCTransformable):
-    name: str
-    settings: DatabaseNullableSettings
-    alreadyExisted: bool
+    name: str = None
+    settings: DatabaseNullableSettings = None
+    alreadyExisted: bool = None
 
 @dataclass
 class UpdateDatabaseRequest(GRPCTransformable):
-    database: str
-    settings: DatabaseNullableSettings
+    database: str = None
+    settings: DatabaseNullableSettings = None
 
 @dataclass
 class UpdateDatabaseResponse(GRPCTransformable):
-    database: str
-    settings: DatabaseNullableSettings
+    database: str = None
+    settings: DatabaseNullableSettings = None
 
 
 @dataclass
@@ -502,141 +502,159 @@ class DatabaseSettingsRequest(GRPCTransformable):
 
 @dataclass
 class DatabaseSettingsResponse(GRPCTransformable):
-    database: str
-    settings: DatabaseNullableSettings
+    database: str = None
+    settings: DatabaseNullableSettings = None
 
 @dataclass
 class NullableUint32(GRPCTransformable):
-    value: int
+    value: int = None
+
+    def _getGRPC(self):
+        return schema.NullableUint32(value = self.value)
 
 @dataclass
 class NullableUint64(GRPCTransformable):
-    value: int
+    value: int = None
+
+    def _getGRPC(self):
+        return schema.NullableUint64(value = self.value)
 
 @dataclass
 class NullableFloat(GRPCTransformable):
-    value: float
+    value: float = None
+    
+    def _getGRPC(self):
+        return schema.NullableFloat(value = self.value)
 
 @dataclass
 class NullableBool(GRPCTransformable):
-    value: bool
+    value: bool = None
+
+    def _getGRPC(self):
+        return schema.NullableBool(value = self.value)
 
 @dataclass
 class NullableString(GRPCTransformable):
-    value: str
+    value: str = None
+
+    def _getGRPC(self):
+        return schema.NullableString(value = self.value)
 
 @dataclass
 class NullableMilliseconds(GRPCTransformable):
-    value: int
+    value: int = None
+    
+    def _getGRPC(self):
+        return schema.NullableMilliseconds(value = self.value)
 
 @dataclass
 class DatabaseNullableSettings(GRPCTransformable):
-    replicationSettings:  ReplicationNullableSettings 
-    fileSize:  NullableUint32 
-    maxKeyLen:  NullableUint32 
-    maxValueLen:  NullableUint32 
-    maxTxEntries:  NullableUint32 
-    excludeCommitTime:  NullableBool 
-    maxConcurrency:  NullableUint32 
-    maxIOConcurrency:  NullableUint32 
-    txLogCacheSize:  NullableUint32 
-    vLogMaxOpenedFiles:  NullableUint32 
-    txLogMaxOpenedFiles:  NullableUint32 
-    commitLogMaxOpenedFiles:  NullableUint32 
-    indexSettings:  IndexNullableSettings 
-    writeTxHeaderVersion:  NullableUint32 
-    autoload:  NullableBool 
-    readTxPoolSize:  NullableUint32 
-    syncFrequency:  NullableMilliseconds 
-    writeBufferSize:  NullableUint32 
-    ahtSettings:  AHTNullableSettings 
+    replicationSettings:  ReplicationNullableSettings  = None
+    fileSize:  NullableUint32  = None
+    maxKeyLen:  NullableUint32  = None
+    maxValueLen:  NullableUint32  = None
+    maxTxEntries:  NullableUint32  = None
+    excludeCommitTime:  NullableBool  = None
+    maxConcurrency:  NullableUint32  = None
+    maxIOConcurrency:  NullableUint32  = None
+    txLogCacheSize:  NullableUint32  = None
+    vLogMaxOpenedFiles:  NullableUint32  = None
+    txLogMaxOpenedFiles:  NullableUint32  = None
+    commitLogMaxOpenedFiles:  NullableUint32  = None
+    indexSettings:  IndexNullableSettings  = None
+    writeTxHeaderVersion:  NullableUint32  = None
+    autoload:  NullableBool  = None
+    readTxPoolSize:  NullableUint32  = None
+    syncFrequency:  NullableMilliseconds  = None
+    writeBufferSize:  NullableUint32  = None
+    ahtSettings:  AHTNullableSettings  = None
 
 @dataclass
 class ReplicationNullableSettings(GRPCTransformable):
-    replica:  NullableBool 
-    masterDatabase:  NullableString 
-    masterAddress:  NullableString 
-    masterPort:  NullableUint32 
-    followerUsername:  NullableString 
-    followerPassword:  NullableString
+    replica:  NullableBool  = None
+    masterDatabase:  NullableString  = None
+    masterAddress:  NullableString  = None
+    masterPort:  NullableUint32  = None
+    followerUsername:  NullableString  = None
+    followerPassword:  NullableString = None
     
 
 @dataclass
 class IndexNullableSettings(GRPCTransformable):
-    flushThreshold:  NullableUint32 
-    syncThreshold:  NullableUint32 
-    cacheSize:  NullableUint32 
-    maxNodeSize:  NullableUint32 
-    maxActiveSnapshots:  NullableUint32 
-    renewSnapRootAfter:  NullableUint64 
-    compactionThld:  NullableUint32 
-    delayDuringCompaction:  NullableUint32 
-    nodesLogMaxOpenedFiles:  NullableUint32 
-    historyLogMaxOpenedFiles:  NullableUint32 
-    commitLogMaxOpenedFiles:  NullableUint32 
-    flushBufferSize:  NullableUint32 
-    cleanupPercentage:  NullableFloat
+    flushThreshold:  NullableUint32  = None
+    syncThreshold:  NullableUint32  = None
+    cacheSize:  NullableUint32  = None
+    maxNodeSize:  NullableUint32  = None
+    maxActiveSnapshots:  NullableUint32  = None
+    renewSnapRootAfter:  NullableUint64 = None 
+    compactionThld:  NullableUint32  = None
+    delayDuringCompaction:  NullableUint32  = None
+    nodesLogMaxOpenedFiles:  NullableUint32  = None
+    historyLogMaxOpenedFiles:  NullableUint32  = None
+    commitLogMaxOpenedFiles:  NullableUint32  = None
+    flushBufferSize:  NullableUint32  = None
+    cleanupPercentage:  NullableFloat = None
 
 @dataclass
 class AHTNullableSettings(GRPCTransformable):
-    syncThreshold: NullableUint32
-    writeBufferSize: NullableUint32
+    syncThreshold: NullableUint32 = None
+    writeBufferSize: NullableUint32 = None
 
 @dataclass
 class LoadDatabaseRequest(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class LoadDatabaseResponse(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class UnloadDatabaseRequest(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class UnloadDatabaseResponse(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class DeleteDatabaseRequest(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class DeleteDatabaseResponse(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class FlushIndexRequest(GRPCTransformable):
-    cleanupPercentage: float
-    synced: bool
+    cleanupPercentage: float = None
+    synced: bool = None
 
 @dataclass
 class FlushIndexResponse(GRPCTransformable):
-    database: str
+    database: str = None
 
 @dataclass
 class Table(GRPCTransformable):
-    tableName: str
+    tableName: str = None
 
 @dataclass
 class SQLGetRequest(GRPCTransformable):
-    table: str
-    pkValues: List[SQLValue] 
-    atTx: int 
-    sinceTx: int
+    table: str = None
+    pkValues: List[SQLValue]  = None
+    atTx: int = None 
+    sinceTx: int = None
 
 @dataclass
 class VerifiableSQLGetRequest(GRPCTransformable):
-    sqlGetRequest: SQLGetRequest
-    proveSinceTx: int
+    sqlGetRequest: SQLGetRequest = None
+    proveSinceTx: int = None
 
 @dataclass
 class SQLEntry(GRPCTransformable):
-    tx: int
-    key: bytes
-    value: bytes
-    metadata: KVMetadata
+    tx: int = None
+    key: bytes = None
+    value: bytes = None
+    metadata: KVMetadata = None
 
 @dataclass
 class VerifiableSQLEntry(GRPCTransformable):
@@ -653,7 +671,7 @@ class VerifiableSQLEntry(GRPCTransformable):
 
 @dataclass
 class UseDatabaseReply(GRPCTransformable):
-    token: str
+    token: str = None
 
 class PermissionAction(Enum):
     GRANT = 0
@@ -661,19 +679,19 @@ class PermissionAction(Enum):
 
 @dataclass
 class ChangePermissionRequest(GRPCTransformable):
-    action: PermissionAction
-    username: str
-    database: str
-    permission: int
+    action: PermissionAction = None
+    username: str = None
+    database: str = None
+    permission: int = None
 
 @dataclass
 class SetActiveUserRequest(GRPCTransformable):
-    active: bool
-    username: str
+    active: bool = None
+    username: str = None
 
 @dataclass
 class DatabaseListResponse(GRPCTransformable):
-    databases: List[Database]
+    databases: List[Database] = None
 
 @dataclass
 class DatabaseListRequestV2(GRPCTransformable):
@@ -681,67 +699,67 @@ class DatabaseListRequestV2(GRPCTransformable):
 
 @dataclass
 class DatabaseListResponseV2(GRPCTransformable):
-    databases: List[DatabaseWithSettings]
+    databases: List[DatabaseWithSettings] = None
 
 @dataclass
 class DatabaseWithSettings(GRPCTransformable):
-    name: str
-    setting: DatabaseNullableSettings
-    loaded: bool
+    name: str = None
+    settings: DatabaseNullableSettings = None
+    loaded: bool = None
 
 @dataclass
 class Chunk(GRPCTransformable):
-    content: bytes
+    content: bytes = None
 
 @dataclass
 class UseSnapshotRequest(GRPCTransformable):
-    sinceTx: int
-    asBeforeTx: int
+    sinceTx: int = None
+    asBeforeTx: int = None
 
 @dataclass
 class SQLExecRequest(GRPCTransformable):
-    sql: str
-    params: List[NamedParam]
-    noWait: bool
+    sql: str = None
+    params: List[NamedParam] = None
+    noWait: bool = None
 
 @dataclass
 class SQLQueryRequest(GRPCTransformable):
-    sql: str
-    params: List[NamedParam]
-    reuseSnapshot: int
+    sql: str = None
+    params: List[NamedParam] = None
+    reuseSnapshot: int = None
 
 @dataclass
 class NamedParam(GRPCTransformable):
-    name: str
-    value: SQLValue
+    name: str = None
+    value: SQLValue = None
 
 @dataclass
 class SQLExecResult(GRPCTransformable):
-    txs: List[CommittedSQLTx]
-    ongoingTx: bool
+    txs: List[CommittedSQLTx] = None
+    ongoingTx: bool = None
 
 @dataclass
 class CommittedSQLTx(GRPCTransformable):
-    header: TxHeader
-    updatedRows: int
-    lastInsertedPKs: Dict[str, SQLValue]
-    firstInsertedPKs: Dict[str, SQLValue]
+    header: TxHeader = None
+    updatedRows: int = None
+    lastInsertedPKs: Dict[str, SQLValue] = None
+    firstInsertedPKs: Dict[str, SQLValue] = None
 
 
 @dataclass
 class SQLQueryResult(GRPCTransformable):
-    columns: List[Column]
-    rows: List[Row]
+    columns: List[Column] = None
+    rows: List[Row] = None
 
 @dataclass
 class Column(GRPCTransformable):
-    name: str
-    type: str
+    name: str = None
+    type: str = None
 
 @dataclass
 class Row(GRPCTransformable):
-    columns: List[str]
-    values: List[SQLValue]
+    columns: List[str] = None
+    values: List[SQLValue] = None
 
 # ONE OF
 @dataclass
@@ -761,22 +779,22 @@ class TxMode(Enum):
 
 @dataclass
 class NewTxRequest(GRPCTransformable):
-    mode: TxMode
+    mode: TxMode = None
 
 
 @dataclass
 class NewTxResponse(GRPCTransformable):
-    transactionID : str
+    transactionID : str = None
 
 @dataclass
 class ErrorInfo(GRPCTransformable):
-    code: str
-    cause: str
+    code: str = None
+    cause: str = None
 
 @dataclass
 class DebugInfo(GRPCTransformable):
-    stack: str
+    stack: str = None
 
 @dataclass
 class RetryInfo(GRPCTransformable):
-    retry_delay: int
+    retry_delay: int = None

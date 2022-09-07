@@ -8,7 +8,11 @@ def convertRequest(fromDataClass: datatypesv2.GRPCTransformable):
     
 
 def convertResponse(fromResponse):
-       
+    if fromResponse.__class__.__name__ == "RepeatedCompositeContainer":
+        all = []
+        for item in fromResponse:
+            all.append(convertResponse(item))
+        return all
     schemaFrom = datatypesv2.__dict__.get(fromResponse.__class__.__name__, None)
     if schemaFrom:
         construct = dict()
