@@ -48,6 +48,7 @@ class ImmudbClient:
             rs (RootService, optional): object that implements RootService - to be allow to verify requests. Defaults to None.
             publicKeyFile (str, optional): path to the public key that would be used to authenticate requests with. Defaults to None.
             timeout (int, optional): global timeout for GRPC requests, if None - it would hang until server respond. Defaults to None.
+            max_grpc_message_length (int, optional): max size for message from the server. If None - it would set defaults (4mb).
         """
         if immudUrl is None:
             immudUrl = "localhost:3322"
@@ -55,7 +56,6 @@ class ImmudbClient:
         options = []
         if max_grpc_message_length:
             options = [('grpc.max_receive_message_length', max_grpc_message_length)]
-            print(options)
             self.channel = grpc.insecure_channel(immudUrl, options = options)
         else:
             self.channel = grpc.insecure_channel(immudUrl)
@@ -335,15 +335,6 @@ class ImmudbClient:
         """
         return changePermission.call(self._stub, self._rs, action, user, database, permission)
 
-    # Not implemented: updateAuthConfig
-    # Not implemented: updateMTLSConfig
-
-    # Not implemented: with[.*]
-
-    # Not implemented: getServiceClient
-    # Not implemented: getOptions
-    # Not implemented: setupDialOptions
-
     def databaseList(self):
         """Returns database list
 
@@ -352,8 +343,6 @@ class ImmudbClient:
         """
         dbs = databaseList.call(self._stub, self._rs, None)
         return [x.databaseName for x in dbs.dblist.databases]
-
-    # Not implemented: databaseListV2
 
     def createDatabase(self, dbName: bytes):
         """Creates database
@@ -395,7 +384,6 @@ class ImmudbClient:
         resp = self._stub.UpdateDatabaseV2(request._getGRPC())
         return dataconverter.convertResponse(resp)
 
-
     def useDatabase(self, dbName: bytes):
         """Switches database
 
@@ -410,7 +398,6 @@ class ImmudbClient:
         self._rs.init(dbName, self._stub)
         return resp
 
-    # Not implemented: getDatabaseSettings
 
     def getDatabaseSettingsV2(self) -> datatypesv2.DatabaseSettingsResponse:
         req = datatypesv2.DatabaseSettingsRequest()
@@ -521,9 +508,6 @@ class ImmudbClient:
     def verifiedZAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0):
         return verifiedzadd.call(self._stub, self._rs, zset, score, key, atTx, self._vk)
 
-    # Not implemented: zAddAt
-    # Not implemented: verifiedZAddAt
-
     def scan(self, key: bytes, prefix: bytes, desc: bool, limit: int, sinceTx: int = None):
         return scan.call(self._stub, self._rs, key, prefix, desc, limit, sinceTx)
 
@@ -602,6 +586,10 @@ class ImmudbClient:
         for it in chunks:
             value += it.chunk
         return FullKeyValue(key, value)
+
+    def streamSet(self, generator) -> datatypesv2.TxHeader:
+        resp = self._stub.streamSet(generator)
+        return dataconverter.convertResponse(resp)
 
 
     # Not implemented: exportTx

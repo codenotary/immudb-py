@@ -7,6 +7,17 @@ class KeyHeader:
     key: bytes
     length: int
 
+    def getInBytes(self):
+        return self.length.to_bytes(8, 'big') + self.key
+
+
+@dataclass
+class ValueChunkHeader:
+    chunk: bytes
+    length: int
+    def getInBytes(self):
+        return self.length.to_bytes(8, 'big') + self.chunk
+
 @dataclass
 class ValueChunk:
     chunk: bytes
@@ -16,6 +27,7 @@ class ValueChunk:
 class FullKeyValue:
     key: bytes
     value: bytes
+
 
 class StreamReader:
     def __init__(self, stream):
