@@ -35,7 +35,7 @@ import immudb.dataconverter as dataconverter
 
 import datetime
 
-from immudb.streamsutils import FullKeyValue, KeyHeader, StreamReader, ValueChunk
+from immudb.streamsutils import FullKeyValue, KeyHeader, StreamReader, ValueChunk, ValueChunkHeader
 
 
 class ImmudbClient:
@@ -589,6 +589,20 @@ class ImmudbClient:
 
     def streamSet(self, generator) -> datatypesv2.TxHeader:
         resp = self._stub.streamSet(generator)
+        return dataconverter.convertResponse(resp)
+
+    def _make_set_stream(self, buffer, key: bytes, length: int, chunkSize: int = 1024):
+        yield Chunk(content = KeyHeader(key = key, length=len(key)).getInBytes())
+        firstChunk = buffer.read(chunkSize)
+        firstChunk = ValueChunkHeader(chunk = firstChunk, length = length).getInBytes()
+        yield Chunk(content = firstChunk)
+        chunk = buffer.read(chunkSize)
+        while chunk:
+            yield Chunk(content = chunk)
+            chunk = buffer.read(chunkSize)
+
+    def streamSetFromBuffer(self, buffer, key: bytes, valueLength: int, chunkSize: int = 1024) -> datatypesv2.TxHeader:
+        resp = self._stub.streamSet(self._make_set_stream(buffer, key, valueLength, chunkSize))
         return dataconverter.convertResponse(resp)
 
 

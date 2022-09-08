@@ -5,6 +5,8 @@ import pytest
 from immudb.grpc.schema_pb2 import Chunk
 from immudb.streamsutils import KeyHeader, ValueChunkHeader
 
+import tempfile
+
 def test_stream_get(client: ImmudbClient):
     key = ('a' * 512).encode('utf-8')
     client.set(key, (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8"))
@@ -46,6 +48,14 @@ def fake_stream():
 
 def test_stream_set(client: ImmudbClient):
     resp = client.streamSet(fake_stream())
+    assert resp.id > 0
+    assert resp.ts > 0
+
+    assert client.get(b'test').value == ('test'*10240).encode("utf-8")
+
+def test_stream_set_from_buffer(client: ImmudbClient):
+    ref = BytesIO(('test'*10240).encode("utf-8"))
+    resp = client.streamSetFromBuffer(ref, b'test123123', 10240 * 4)
     assert resp.id > 0
     assert resp.ts > 0
 
