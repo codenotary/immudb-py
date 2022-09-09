@@ -129,7 +129,7 @@ def determineTestId(val):
 def test_stream_get_multiple_cases(client: ImmudbClient, key: bytes, value: bytes, bufferReadLength: int):
     client.streamSet(key, BytesIO(value), len(value))
     keyFrom, buffer = client.streamGet(key)
-    assert keyFrom.key == key
+    assert keyFrom == key
     assert len(buffer) == len(value)
     assert buffer.size == len(value)
     readed = buffer.read(bufferReadLength)
