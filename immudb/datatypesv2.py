@@ -12,7 +12,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, IntEnum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from google.protobuf.struct_pb2 import NullValue
 import immudb.grpc.schema_pb2 as schema
 
@@ -186,7 +186,7 @@ class ZEntries(GRPCTransformable):
 
 @dataclass
 class ScanRequest(GRPCTransformable):
-    seekKey: bytesv
+    seekKey: bytes
     endKey: bytes = None
     prefix: bytes = None
     desc: bool = None
@@ -568,6 +568,28 @@ class DatabaseNullableSettings(GRPCTransformable):
     syncFrequency:  NullableMilliseconds  = None
     writeBufferSize:  NullableUint32  = None
     ahtSettings:  AHTNullableSettings  = None
+    
+# @dataclass
+# class DatabaseNullableSettings(GRPCTransformable):
+#     replicationSettings:  ReplicationNullableSettings  = None
+#     fileSize:  NullableUint32  = None
+#     maxKeyLen:  NullableUint32  = None
+#     maxValueLen:  NullableUint32  = None
+#     maxTxEntries:  Optional[int]  = None
+#     excludeCommitTime:  NullableBool  = None
+#     maxConcurrency:  NullableUint32  = None
+#     maxIOConcurrency:  NullableUint32  = None
+#     txLogCacheSize:  NullableUint32  = None
+#     vLogMaxOpenedFiles:  NullableUint32  = None
+#     txLogMaxOpenedFiles:  NullableUint32  = None
+#     commitLogMaxOpenedFiles:  NullableUint32  = None
+#     indexSettings:  IndexNullableSettings  = None
+#     writeTxHeaderVersion:  NullableUint32  = None
+#     autoload:  NullableBool  = None
+#     readTxPoolSize:  NullableUint32  = None
+#     syncFrequency:  NullableMilliseconds  = None
+#     writeBufferSize:  NullableUint32  = None
+#     ahtSettings:  AHTNullableSettings  = None
 
 @dataclass
 class ReplicationNullableSettings(GRPCTransformable):

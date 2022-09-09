@@ -10,7 +10,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Generator, List, Union
+from io import BytesIO
+from typing import Generator, List, Tuple, Union
+from arrow import now
 import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
@@ -35,7 +37,7 @@ import immudb.dataconverter as dataconverter
 
 import datetime
 
-from immudb.streamsutils import FullKeyValue, KeyHeader, StreamReader, ValueChunk, ValueChunkHeader
+from immudb.streamsutils import FullKeyValue, KeyHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader
 
 
 class ImmudbClient:
@@ -528,7 +530,6 @@ class ImmudbClient:
 
     def txScan(self, initialTx: int, limit: int = 999, desc: bool = False, entriesSpec: datatypesv2.EntriesSpec = None, sinceTx: int = 0, noWait: bool = False) -> datatypesv2.TxList:
         req = datatypesv2.TxScanRequest(initialTx, limit, desc, entriesSpec, sinceTx, noWait)
-        print(req._getGRPC())
         resp = self._stub.TxScan(req._getGRPC())
         return dataconverter.convertResponse(resp)
 
@@ -566,16 +567,24 @@ class ImmudbClient:
 
     # Not implemented: dump
 
-    # Not implemented: stream[.*]
 
-    def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Generator[Union[KeyHeader, ValueChunk], None, None]:
+    def _rawStreamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Generator[Union[KeyHeader, ValueChunk], None, None]:
         req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         for it in reader.chunks():
             yield it
 
-    def streamGetFull(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> FullKeyValue:
+    def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Tuple[KeyHeader, BufferedStreamReader]:
+        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        resp = self._stub.streamGet(req._getGRPC())
+        reader = StreamReader(resp)
+        chunks = reader.chunks()
+        keyHeader = next(chunks)
+        valueHeader = next(chunks)
+        return keyHeader, BufferedStreamReader(chunks, valueHeader, resp)
+
+    def streamGetFull(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> datatypesv2.KeyValue:
         req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
@@ -585,13 +594,22 @@ class ImmudbClient:
         key = next(chunks).key
         for it in chunks:
             value += it.chunk
-        return FullKeyValue(key, value)
+        return datatypesv2.KeyValue(key, value)
 
-    def streamSet(self, generator) -> datatypesv2.TxHeader:
-        resp = self._stub.streamSet(generator)
-        return dataconverter.convertResponse(resp)
+    # def streamVerifiableGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None, proveSinceTx: int = None):
+    #     req = datatypesv2.VerifiableGetRequest(keyRequest = datatypesv2.KeyRequest(
+    #         key = key,
+    #         atTx=atTx,
+    #         sinceTx=sinceTx,
+    #         noWait = noWait,
+    #         atRevision=atRevision
+    #     ), proveSinceTx=proveSinceTx)
+    #     resp = self._stub.streamVerifiableGet(req._getGRPC())
+    #     # reader = StreamReader(resp)
+    #     for it in resp:
+    #         yield it
 
-    def _make_set_stream(self, buffer, key: bytes, length: int, chunkSize: int = 1024):
+    def _make_set_stream(self, buffer, key: bytes, length: int, chunkSize: int = 65536):
         yield Chunk(content = KeyHeader(key = key, length=len(key)).getInBytes())
         firstChunk = buffer.read(chunkSize)
         firstChunk = ValueChunkHeader(chunk = firstChunk, length = length).getInBytes()
@@ -601,9 +619,52 @@ class ImmudbClient:
             yield Chunk(content = chunk)
             chunk = buffer.read(chunkSize)
 
-    def streamSetFromBuffer(self, buffer, key: bytes, valueLength: int, chunkSize: int = 1024) -> datatypesv2.TxHeader:
-        resp = self._stub.streamSet(self._make_set_stream(buffer, key, valueLength, chunkSize))
+    def streamScan(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[datatypesv2.KeyValue, None, None]:
+        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix = prefix, desc = desc, limit = limit, sinceTx= sinceTx, noWait=noWait, inclusiveSeek=None, inclusiveEnd=None, offset=None)
+        resp = self._stub.streamScan(req._getGRPC())
+        key = None
+        value = None
+        for chunk in StreamReader(resp).chunks():
+            if isinstance(chunk, KeyHeader):
+                if key != None:
+                    yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
+                key = chunk.key
+                value = b''
+            else:
+                value += chunk.chunk
+
+        if key != None and value != None: # situation when generator consumes all, so it didn't yield first value
+            yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
+
+    def streamScanBuffered(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[Tuple[bytes, BufferedStreamReader], None, None]:
+        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix = prefix, desc = desc, limit = limit, sinceTx= sinceTx, noWait=noWait, inclusiveSeek=inclusiveSeek, inclusiveEnd=inclusiveEnd, offset=offset)
+        resp = self._stub.streamScan(req._getGRPC())
+        key = None
+        valueHeader = None
+
+        streamReader = StreamReader(resp)
+        chunks = streamReader.chunks()
+        chunk = next(chunks)
+        while chunk != None:
+            if isinstance(chunk, KeyHeader):
+                key = chunk.key
+                valueHeader = next(chunks)
+                yield key, BufferedStreamReader(chunks, valueHeader, resp)
+            chunk = next(chunks, None)
+
+
+
+    def _rawStreamSet(self, generator: Generator[Union[KeyHeader, ValueChunkHeader, ValueChunk], None, None]) -> datatypesv2.TxHeader:
+        resp = self._stub.streamSet(generator)
         return dataconverter.convertResponse(resp)
+
+    def streamSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
+        resp = self._rawStreamSet(self._make_set_stream(buffer, key, bufferLength, chunkSize))
+        return resp
+
+    def streamSetFullValue(self, key: bytes, value: bytes, chunkSize: int = 65536) -> datatypesv2.TxHeader:
+        resp = self._rawStreamSet(self._make_set_stream(BytesIO(value), key, len(value), chunkSize))
+        return resp
 
 
     # Not implemented: exportTx
