@@ -1,40 +1,420 @@
 from io import BytesIO
+import uuid
 from grpc import RpcError
-from immudb import ImmudbClient
+from immudb import ImmudbClient, datatypesv2
 import pytest
 from immudb.grpc.schema_pb2 import Chunk
 from immudb.streamsutils import KeyHeader, ValueChunkHeader
-
+import random
+import string
 import tempfile
 
-def test_stream_get(client: ImmudbClient):
+def test_stream_get_raw(client: ImmudbClient):
     key = ('a' * 512).encode('utf-8')
     client.set(key, (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8"))
-    stream = client.streamGet(key)
+    stream = client._rawStreamGet(key)
     first = True
     fullValue = b''
+    keyHeader = next(stream)
+    assert keyHeader.key == b'a'*512
+    assert keyHeader.length == 512
     for content in stream:
-        if first:
-            first = False
-            assert type(content) == KeyHeader
-            assert content.key == key
-            assert content.length == 512
-            continue
-
         fullValue += content.chunk
     assert content.left == 0
     assert len(fullValue) == 1100000 * 2 + 11000 * 2
     assert fullValue == (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
 
+def test_stream_get(client: ImmudbClient):
+    key = ('x12' * 51).encode('utf-8')
+    client.set(key, "ba".encode("utf-8"))
+    key, buffer = client.streamGet(key)
+    readed = buffer.read(10240)
+    wholeValue = b''
+    while readed:
+        wholeValue += readed
+        readed = buffer.read(10240)
+    assert wholeValue == "ba".encode("utf-8")
+
+    key = ('x12' * 51).encode('utf-8')
+    client.set(key, b"ba"*512)
+    key, buffer = client.streamGet(key)
+    readed = buffer.read(10)
+    wholeValue = b''
+    while readed:
+        wholeValue += readed
+        readed = buffer.read(10)
+    assert len(wholeValue) == len(b"ba"*512)
+    assert wholeValue == b"ba"*512
+
+    key = ('x12' * 51).encode('utf-8')
+    value = b"one of the test that will test some random words and not generated sequence, so it theoreticaly will lead into edge detection"
+    client.set(key, value)
+    key, buffer = client.streamGet(key)
+    readed = buffer.read(1024004040)
+    wholeValue = b''
+    while readed:
+        wholeValue += readed
+        readed = buffer.read(1024004040)
+    assert len(wholeValue) == len(value)
+    assert wholeValue == value
+
+    key = ('x12' * 51).encode('utf-8')
+    value = b"one of the test that will test some random words and not generated sequence, so it theoreticaly will lead into edge detection"
+    client.set(key, value)
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom.key == key
+    readed = buffer.read(1)
+    wholeValue = b''
+    while readed:
+        wholeValue += readed
+        readed = buffer.read(1)
+    assert len(wholeValue) == len(value)
+    assert wholeValue == value
+    
+
+    key = ('a' * 512).encode('utf-8')
+    value = (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
+    client.set(key, value)
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom.key == key
+    readed = buffer.read(1223)
+    wholeValue = b''
+    while readed:
+        wholeValue += readed
+        readed = buffer.read(1223)
+    assert len(wholeValue) == len(value)
+    assert wholeValue == value
+
+def _get_test_data(key: str, value: str, bufferReadLength: int):
+    return (
+        key.encode("utf-8"),
+        value.encode("utf-8"),
+        bufferReadLength
+    )
+
+testdata = [
+    _get_test_data("1", "1", 10240123),
+    _get_test_data("1", "1", 1),
+    _get_test_data("1", "1", 2),
+    _get_test_data("asd"*128, "1", 2),
+    _get_test_data("asd"*128, "12"*128, 2),
+    _get_test_data("asd"*128, "13"*128, 1),
+    _get_test_data("asd"*128, "31"*128, 1024*64),
+    _get_test_data("1"*100, "123"*1024*1024, 1024*64),
+    _get_test_data("asd"*128, "asd"*1024*1024, 1024*64),
+    _get_test_data("asd"*128, "dsadsadsdsa"*1024*1024, 1024),
+    _get_test_data("asd"*128, "dasdad"*1024*1024, 1024*640),
+    _get_test_data("asd"*128, "dasdsdsa"*1024*1024, 1024*6400000),
+    _get_test_data("asd"*128, "1sadsads23"*1024*1024, 65528), # exact chunk size - 8 (first 8 bytes)
+    _get_test_data("x4"*128, "1sadsads23"*1024*1024, 65535), # exact chunk size - 1
+    _get_test_data("x3"*128, "12adsdsads3"*1024*1024, 65537), # exact chunk size + 1
+    _get_test_data("x2"*128, "12adsdsads3"*1024*1024, 65536), # exact chunk size 
+    _get_test_data("x2"*128, "12adsdsads3"*1024*1024, 65636), # exact chunk size + 100
+    _get_test_data("x1"*128, "b"*33554431, 1024*64), # 31MB case < 32MB, max immudb constraint 33554432
+]
+
+def determineTestId(val):
+    if isinstance(val, bytes):
+        return len(val)
+    elif isinstance(val, int):
+        return str(val)
+    else:
+        return val
+
+@pytest.mark.parametrize("key,value,bufferReadLength", testdata, ids = determineTestId)
+def test_stream_get_multiple_cases(client: ImmudbClient, key: bytes, value: bytes, bufferReadLength: int):
+    client.streamSet(key, BytesIO(value), len(value))
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom.key == key
+    assert len(buffer) == len(value)
+    assert buffer.size == len(value)
+    readed = buffer.read(bufferReadLength)
+    wholeValue = b''
+    while readed:
+        wholeValue += readed
+        readed = buffer.read(bufferReadLength)
+    assert len(wholeValue) == len(value)
+    assert wholeValue == value
+
+
+bigTestData = [
+    _get_test_data("asd"*128, "1sadsads23"*1024*1024, 65528), # exact chunk size - 8 (first 8 bytes)
+    _get_test_data("x4"*128, "1sadsads23"*1024*1024, 65535), # exact chunk size - 1
+    _get_test_data("x3"*128, "12adsdsads3"*1024*1024, 65537), # exact chunk size + 1
+    _get_test_data("x2"*128, "12adsdsads3"*1024*1024, 65536), # exact chunk size 
+    _get_test_data("x2"*128, "12adsdsads3"*1024*1024, 65636), # exact chunk size + 100
+    _get_test_data("x1"*128, "b"*33554431, 1024*64), # 31MB case < 32MB, max immudb constraint 33554432
+]
+
+@pytest.mark.parametrize("key,value,bufferReadLength", bigTestData, ids = determineTestId)
+def test_stream_close_multiple_cases(client: ImmudbClient, key: bytes, value: bytes, bufferReadLength: int):
+    client.streamSet(key, BytesIO(value), len(value))
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom.key == key
+    assert len(buffer) == len(value)
+    assert buffer.size == len(value)
+    
+    readed = buffer.read(bufferReadLength)
+    # Close during running process
+    buffer.close()
+    with pytest.raises(RpcError): # Buffer closed
+        readed = buffer.read(bufferReadLength)
+
+
+
+def determineTestId(val):
+    if isinstance(val, bytes):
+        return len(val)
+    elif isinstance(val, int):
+        return str(val)
+    else:
+        return val
+
+def _get_test_data_set(key, value, chunksize):
+    return key.encode("utf-8"), BytesIO(value.encode("utf-8")), chunksize
+
+testdata_set = [
+    _get_test_data_set("1", "1", 10240123),
+    _get_test_data_set("1", "1", 1),
+    _get_test_data_set("1", "1", 2),
+    _get_test_data_set("asd"*128, "1", 2),
+    _get_test_data_set("asd"*128, "12"*128, 2),
+    _get_test_data_set("asd"*128, "13"*128, 1),
+    _get_test_data_set("asd"*128, "31"*128, 1024*64),
+    _get_test_data_set("1"*100, "123"*1024*1024, 1024*64),
+    _get_test_data_set("asd"*128, "asd"*1024*1024, 1024*64),
+    _get_test_data_set("asd"*128, "dsadsadsdsa"*1024*1024, 1024),
+    _get_test_data_set("asd"*128, "dasdad"*1024*1024, 1024*640),
+    _get_test_data_set("asd"*128, "dasdsdsa"*1024*1024, 1024*6400000),
+    _get_test_data_set("asd"*128, "1sadsads23"*1024*1024, 65528), # exact chunk size - 8 (first 8 bytes)
+    _get_test_data_set("x4"*128, "1sadsads23"*1024*1024, 65535), # exact chunk size - 1
+    _get_test_data_set("x3"*128, "12adsdsads3"*1024*1024, 65537), # exact chunk size + 1
+    _get_test_data_set("x2"*128, "12adsdsads3"*1024*1024, 65536), # exact chunk size 
+    _get_test_data_set("x2"*128, "12adsdsads3"*1024*1024, 65636), # exact chunk size + 100
+    _get_test_data_set("x1"*128, "b"*33554431, 1024*64), # 31MB case < 32MB, max immudb constraint 33554432
+]
+
+@pytest.mark.parametrize("key,value,chunkSize", testdata_set, ids = determineTestId)
+def test_stream_set_multiple_cases(client: ImmudbClient, key: bytes, value: BytesIO, chunkSize: int):
+    txHeader = client.streamSet(key, value, value.getbuffer().nbytes, chunkSize)
+    assert txHeader.id > 0
+    assert txHeader.nentries == 1
+
+    txHeader = client.streamSetFullValue(key, value.getvalue(), chunkSize)
+    assert txHeader.id > 0
+    assert txHeader.nentries == 1
+    
+    
+        
+def test_stream_scan(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), b'test')
+    client.streamSetFullValue((keyprefix + "Y").encode("utf-8"), b'test')
+    entries = client.streamScan(prefix = keyprefix.encode("utf-8"))
+    kv = next(entries)
+    assert kv.key == (keyprefix + "X").encode("utf-8")
+    assert kv.value == b'test'
+
+    kv = next(entries)
+    assert kv.key == (keyprefix + "Y").encode("utf-8")
+    assert kv.value == b'test'
+
+    with pytest.raises(StopIteration):
+        kv = next(entries)
+
+    for kv in client.streamScan(prefix = keyprefix.encode("utf-8")):
+        assert kv.key.decode("utf-8").startswith(keyprefix)
+        assert kv.value == b'test'  
+
+def test_stream_scan_one(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), b'test')
+    entries = client.streamScan(prefix = keyprefix.encode("utf-8"))
+    kv = next(entries)
+    assert kv.key == (keyprefix + "X").encode("utf-8")
+    assert kv.value == b'test'
+
+    with pytest.raises(StopIteration):
+        kv = next(entries)
+
+    for kv in client.streamScan(prefix = keyprefix.encode("utf-8")):
+        assert kv.key.decode("utf-8").startswith(keyprefix)
+        assert kv.value == b'test'
+
+def test_stream_scan_big(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    value = b'xab' * 1024 * 1024
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), value)
+    entries = client.streamScan(prefix = keyprefix.encode("utf-8"))
+    kv = next(entries)
+    assert kv.key == (keyprefix + "X").encode("utf-8")
+    assert kv.value == value
+
+    with pytest.raises(StopIteration):
+        kv = next(entries)
+
+    for kv in client.streamScan(prefix = keyprefix.encode("utf-8")):
+        assert kv.key.decode("utf-8").startswith(keyprefix)
+        assert kv.value == value
+
+def test_stream_scan_big_multiple(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    value = b'xab' * 1024 * 1024 * 10
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), value)
+    client.streamSetFullValue((keyprefix + "Y").encode("utf-8"), value)
+    client.streamSetFullValue((keyprefix + "Z").encode("utf-8"), value)
+    client.streamSetFullValue((keyprefix + "A").encode("utf-8"), value)
+    client.streamSetFullValue((keyprefix + "B").encode("utf-8"), value)
+    entries = client.streamScan(prefix = keyprefix.encode("utf-8"))
+
+    for kv in entries:
+        assert kv.key.decode("utf-8").startswith(keyprefix)
+        assert kv.value == value
+
+    toList = list(client.streamScan(prefix = keyprefix.encode("utf-8")))
+    assert len(toList) == 5
+    assert datatypesv2.KeyValue(key = (keyprefix + "A").encode("utf-8"), value = value) in toList
+    assert datatypesv2.KeyValue(key = (keyprefix + "B").encode("utf-8"), value = value) in toList
+    assert datatypesv2.KeyValue(key = (keyprefix + "X").encode("utf-8"), value = value) in toList
+    assert datatypesv2.KeyValue(key = (keyprefix + "Y").encode("utf-8"), value = value) in toList
+    assert datatypesv2.KeyValue(key = (keyprefix + "Z").encode("utf-8"), value = value) in toList
+
+def test_stream_scan_chunked(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), b'test0')
+    client.streamSetFullValue((keyprefix + "Y").encode("utf-8"), b'test1')
+    client.streamSetFullValue((keyprefix + "Z").encode("utf-8"), b'test2')
+    client.streamSetFullValue((keyprefix + "A").encode("utf-8"), b'test3')
+    client.streamSetFullValue((keyprefix + "B").encode("utf-8"), b'test4')
+    entries = client.streamScanBuffered(prefix = keyprefix.encode("utf-8"))
+    index = 0
+    for key, buffer in entries:
+        index += 1
+        fullValue = b''
+        readed = buffer.read(512)
+        while readed:
+            fullValue += readed
+            readed = buffer.read(512)   
+        assert fullValue.decode("utf-8").startswith("test")
+        assert len(fullValue) == 5
+        assert key.decode("utf-8").startswith(keyprefix)
+    assert index == 5
+
+corner_cases_scan_chunked = [
+    (1024, 1, 1),
+    (1, 1024, 1),
+    (100, 1024*1024, 100),
+    (13, 123123, 999),
+    (3333, 55, 17),
+    (13333, None, 3),
+    (1231321, 11, 1312313),
+    (2, None, 99),
+    (13333333, 1024, 99),
+    (11, 1231, 8),
+    (3331, 1024, 99),
+    (1111, 1024, 99),
+
+]
+
+@pytest.mark.parametrize("valueSize,readSize,howMuch", corner_cases_scan_chunked, ids = determineTestId)
+def test_stream_scan_chunked_corner_cases(client: ImmudbClient, valueSize, readSize, howMuch):
+    keyprefix = str(uuid.uuid4())
+    letters = string.ascii_lowercase
+    toFound = dict()
+    found = dict()
+    for i in range(0, howMuch):
+        generated = ''.join(random.choice(letters) for i in range(valueSize)).encode("utf-8")
+        toFound[f"{keyprefix}{i}".encode("utf-8")] = generated
+        client.streamSetFullValue(f"{keyprefix}{i}".encode("utf-8"), generated)
+
+    entries = client.streamScanBuffered(prefix = keyprefix.encode("utf-8"))
+    index = 0
+    for key, buffer in entries:
+        index += 1
+        fullValue = b''
+        readed = buffer.read(readSize)
+        while readed:
+            fullValue += readed
+            readed = buffer.read(readSize)   
+        assert toFound[key] == fullValue
+        found[key] = True
+    
+    for key, value in toFound.items():
+        assert found[key] == True
+
+
+    assert index == howMuch
+
+def test_stream_scan_chunked_big(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    expectedLength = 5 * 1024 * 1024
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), b'test0' * 1024 * 1024)
+    client.streamSetFullValue((keyprefix + "Y").encode("utf-8"), b'test1' * 1024 * 1024)
+    client.streamSetFullValue((keyprefix + "Z").encode("utf-8"), b'test2' * 1024 * 1024)
+    client.streamSetFullValue((keyprefix + "A").encode("utf-8"), b'test3' * 1024 * 1024)
+    client.streamSetFullValue((keyprefix + "B").encode("utf-8"), b'test4' * 1024 * 1024)
+    entries = client.streamScanBuffered(prefix = keyprefix.encode("utf-8"))
+    index = 0
+    for key, buffer in entries:
+        index += 1
+        fullValue = b''
+        readed = buffer.read(512)
+        while readed:
+            fullValue += readed
+            readed = buffer.read(512)   
+        assert fullValue.decode("utf-8").startswith("test")
+        assert len(fullValue) == expectedLength
+        assert key.decode("utf-8").startswith(keyprefix)
+    assert index == 5
+
+def test_stream_scan_chunked_one(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), b'test0')
+    entries = client.streamScanBuffered(prefix = keyprefix.encode("utf-8"))
+    index = 0
+    for key, buffer in entries:
+        index += 1
+        assert key == (keyprefix + "X").encode("utf-8")
+        fullValue = b''
+        readed = buffer.read(512)
+        while readed:
+            fullValue += readed
+            readed = buffer.read(512)   
+        assert fullValue.decode("utf-8").startswith("test")
+        assert len(fullValue) == 5
+    assert index == 1
+
+def test_stream_redirect(client: ImmudbClient):
+    keyprefix = str(uuid.uuid4())
+    newKeyPrefix = str(uuid.uuid4())
+    client.streamSetFullValue((keyprefix + "X").encode("utf-8"), b'test0')
+    client.streamSetFullValue((keyprefix + "Y").encode("utf-8"), b'test0')
+    client.streamSetFullValue((keyprefix + "Z").encode("utf-8"), b'test0')
+    entries = client.streamScanBuffered(prefix = keyprefix.encode("utf-8"))
+    index = 0
+    for key, buffer in entries:
+        index += 1
+        toRedirect = newKeyPrefix.encode("utf-8") + str(index).encode("utf-8")
+        client.streamSet(toRedirect, buffer, buffer.size) # Simulates redirection from one stream to another 
+
+        keyFrom, bufferFrom = client.streamGet(toRedirect)
+        readed = bufferFrom.read() # Reads full value
+        assert readed == b'test0'
+
+    assert index == 3
+        
+
 def test_stream_get_full(client: ImmudbClient):
     key = ('a' * 512).encode('utf-8')
     client.set(key, (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8"))
+
     kv = client.streamGetFull(key)
+
     assert len(kv.value) == 1100000 * 2 + 11000 * 2
     assert kv.value == (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
 
-def fake_stream():
-    ref = BytesIO(('test'*10240).encode("utf-8"))
+def fake_stream(length = 10240):
+    ref = BytesIO(('test'*length).encode("utf-8"))
     yield Chunk(content = KeyHeader(key = b'test', length=4).getInBytes())
     length = ref.getbuffer().nbytes
     firstChunk = ref.read(128)
@@ -47,16 +427,9 @@ def fake_stream():
         
 
 def test_stream_set(client: ImmudbClient):
-    resp = client.streamSet(fake_stream())
+    resp = client._rawStreamSet(fake_stream())
     assert resp.id > 0
     assert resp.ts > 0
 
     assert client.get(b'test').value == ('test'*10240).encode("utf-8")
 
-def test_stream_set_from_buffer(client: ImmudbClient):
-    ref = BytesIO(('test'*10240).encode("utf-8"))
-    resp = client.streamSetFromBuffer(ref, b'test123123', 10240 * 4)
-    assert resp.id > 0
-    assert resp.ts > 0
-
-    assert client.get(b'test').value == ('test'*10240).encode("utf-8")
