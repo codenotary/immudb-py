@@ -1,3 +1,4 @@
+from datetime import datetime
 from io import BytesIO
 import uuid
 from grpc import RpcError
@@ -27,7 +28,8 @@ def test_stream_get_raw(client: ImmudbClient):
 def test_stream_get(client: ImmudbClient):
     key = ('x12' * 51).encode('utf-8')
     client.set(key, "ba".encode("utf-8"))
-    key, buffer = client.streamGet(key)
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom == key
     readed = buffer.read(10240)
     wholeValue = b''
     while readed:
@@ -37,7 +39,8 @@ def test_stream_get(client: ImmudbClient):
 
     key = ('x12' * 51).encode('utf-8')
     client.set(key, b"ba"*512)
-    key, buffer = client.streamGet(key)
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom == key
     readed = buffer.read(10)
     wholeValue = b''
     while readed:
@@ -49,7 +52,8 @@ def test_stream_get(client: ImmudbClient):
     key = ('x12' * 51).encode('utf-8')
     value = b"one of the test that will test some random words and not generated sequence, so it theoreticaly will lead into edge detection"
     client.set(key, value)
-    key, buffer = client.streamGet(key)
+    keyFrom, buffer = client.streamGet(key)
+    assert keyFrom == key
     readed = buffer.read(1024004040)
     wholeValue = b''
     while readed:
@@ -62,7 +66,7 @@ def test_stream_get(client: ImmudbClient):
     value = b"one of the test that will test some random words and not generated sequence, so it theoreticaly will lead into edge detection"
     client.set(key, value)
     keyFrom, buffer = client.streamGet(key)
-    assert keyFrom.key == key
+    assert keyFrom == key
     readed = buffer.read(1)
     wholeValue = b''
     while readed:
@@ -76,7 +80,7 @@ def test_stream_get(client: ImmudbClient):
     value = (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
     client.set(key, value)
     keyFrom, buffer = client.streamGet(key)
-    assert keyFrom.key == key
+    assert keyFrom == key
     readed = buffer.read(1223)
     wholeValue = b''
     while readed:
@@ -150,7 +154,7 @@ bigTestData = [
 def test_stream_close_multiple_cases(client: ImmudbClient, key: bytes, value: bytes, bufferReadLength: int):
     client.streamSet(key, BytesIO(value), len(value))
     keyFrom, buffer = client.streamGet(key)
-    assert keyFrom.key == key
+    assert keyFrom == key
     assert len(buffer) == len(value)
     assert buffer.size == len(value)
     
@@ -307,9 +311,9 @@ corner_cases_scan_chunked = [
     (13, 123123, 999),
     (3333, 55, 17),
     (13333, None, 3),
-    (1231321, 1111, 999),
+    (1231321, 1111, 99),
     (2, None, 99),
-    (13333333, 1024, 99),
+    (13333333, 102400, 11),
     (11, 1231, 8),
     (3331, 1024, 99),
     (1111, 1024, 99),
@@ -336,7 +340,7 @@ def test_stream_scan_chunked_corner_cases(client: ImmudbClient, valueSize, readS
         readed = buffer.read(readSize)
         while readed:
             fullValue += readed
-            readed = buffer.read(readSize)   
+            readed = buffer.read(readSize)
         assert toFound[key] == fullValue
         found[key] = True
     
@@ -413,6 +417,17 @@ def test_stream_get_full(client: ImmudbClient):
 
     assert len(kv.value) == 1100000 * 2 + 11000 * 2
     assert kv.value == (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
+
+def test_stream_read_full(client: ImmudbClient):
+    key = ('a' * 512).encode('utf-8')
+    client.set(key, (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8"))
+
+    keyFrom, buffer = client.streamGet(key)
+    value = buffer.read()
+    assert key == keyFrom
+
+    assert len(value) == 1100000 * 2 + 11000 * 2
+    assert value == (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
 
 def fake_stream(length = 10240):
     ref = BytesIO(('test'*length).encode("utf-8"))

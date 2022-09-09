@@ -574,14 +574,14 @@ class ImmudbClient:
         for it in reader.chunks():
             yield it
 
-    def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Tuple[KeyHeader, BufferedStreamReader]:
+    def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Tuple[bytes, BufferedStreamReader]:
         req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         chunks = reader.chunks()
         keyHeader = next(chunks)
         valueHeader = next(chunks)
-        return keyHeader, BufferedStreamReader(chunks, valueHeader, resp)
+        return keyHeader.key, BufferedStreamReader(chunks, valueHeader, resp)
 
     def streamGetFull(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> datatypesv2.KeyValue:
         req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
