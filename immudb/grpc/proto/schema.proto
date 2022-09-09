@@ -18,7 +18,6 @@ syntax = "proto3";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/struct.proto";
 
 package immudb.schema;
@@ -782,28 +781,6 @@ message NewTxResponse {
 }
 
 
-option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
-	info: {
-		title: "immudb REST API";
-		description: "<b>IMPORTANT</b>: All <code>get</code> and <code>safeget</code> functions return <u>base64-encoded</u> keys and values, while all <code>set</code> and <code>safeset</code> functions expect <u>base64-encoded</u> inputs."
-	};
-	security_definitions: {
-		security: {
-			key: "bearer"
-			value: {
-				type: TYPE_API_KEY
-				in: IN_HEADER
-				name: "Authorization"
-				description: "Authentication token, prefixed by Bearer: Bearer <token>"
-			}
-		}
-	}
-	security: {
-		security_requirement: {
-			key: "bearer"
-		}
-	}
-};
 
 message ErrorInfo {
 	string code = 1;
@@ -877,9 +854,6 @@ service ImmuService {
 		option (google.api.http) = {
 			post: "/login"
 			body: "*"
-		};
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {} // no security
 		};
 	};
 
@@ -992,9 +966,6 @@ service ImmuService {
 		option (google.api.http) = {
 			get: "/serverinfo"
 		};
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {} // no security
-		}; 
 	};
 
 	// DEPRECATED: Use ServerInfo
@@ -1002,26 +973,17 @@ service ImmuService {
 		option (google.api.http) = {
 			get: "/health"
 		};
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {} // no security
-		};
 	};
 
 	rpc DatabaseHealth (google.protobuf.Empty) returns (DatabaseHealthResponse){
 		option (google.api.http) = {
 			get: "/db/health"
 		};
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {} // no security
-		};
 	};
 
 	rpc CurrentState (google.protobuf.Empty) returns (ImmutableState){
 		option (google.api.http) = {
 			get: "/db/state"
-		};
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {} // no security
 		};
 	};
 

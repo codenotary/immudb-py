@@ -12,7 +12,8 @@ PROTOC_INCLUDE_PATH := 	-I${PROTO_DIR}
 ${PROTO_DIR}:
 	rm -rf ${GRPC_GATEWAY}
 	git clone https://github.com/grpc-ecosystem/grpc-gateway.git -b v1.16.0 --depth=1 ${GRPC_GATEWAY}
-	curl https://raw.githubusercontent.com/codenotary/immudb/master/pkg/api/schema/schema.proto -o ${PROTO_DIR}/schema.proto
+	# Currently we can't synchronize proto from immudb because of proto-gen-swagger dependency, manual intervention required
+	# curl https://raw.githubusercontent.com/codenotary/immudb/master/pkg/api/schema/schema.proto -o ${PROTO_DIR}/schema.proto 
 	python3 -m grpc_tools.protoc \
 		${PROTO_FILE} \
 		--proto_path=./${PROTO_DIR} \

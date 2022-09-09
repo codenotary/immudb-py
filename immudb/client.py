@@ -632,7 +632,7 @@ class ImmudbClient:
             else:
                 value += chunk.chunk
 
-        if key != None and value != None: # situation when generator consumes all, so it didn't yield first value
+        if key != None and value != None: # situation when generator consumes all at first run, so it didn't yield first value
             yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
 
     def streamScanBuffered(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[Tuple[bytes, BufferedStreamReader], None, None]:
