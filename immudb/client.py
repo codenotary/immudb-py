@@ -12,7 +12,6 @@
 
 from io import BytesIO
 from typing import Generator, List, Tuple, Union
-from arrow import now
 import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
