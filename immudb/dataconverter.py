@@ -3,7 +3,7 @@
 import immudb.datatypesv2 as datatypesv2
 
 
-def convertResponse(fromResponse, toHumanDataClass = True):
+def convertResponse(fromResponse, toHumanDataClass=True):
     """Converts response from GRPC to python dataclass
 
     Args:
@@ -18,7 +18,8 @@ def convertResponse(fromResponse, toHumanDataClass = True):
         for item in fromResponse:
             all.append(convertResponse(item))
         return all
-    schemaFrom = datatypesv2.__dict__.get(fromResponse.__class__.__name__, None)
+    schemaFrom = datatypesv2.__dict__.get(
+        fromResponse.__class__.__name__, None)
     if schemaFrom:
         construct = dict()
         for field in fromResponse.ListFields():
@@ -29,4 +30,3 @@ def convertResponse(fromResponse, toHumanDataClass = True):
             return schemaFrom(**construct)
     else:
         return fromResponse
-

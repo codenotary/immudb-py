@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 import io
 
+
 @dataclass
 class KeyHeader:
     key: bytes
@@ -15,13 +16,16 @@ class KeyHeader:
 class ValueChunkHeader:
     chunk: bytes
     length: int
+
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.chunk
+
 
 @dataclass
 class ValueChunk:
     chunk: bytes
     left: int
+
 
 @dataclass
 class FullKeyValue:
@@ -38,13 +42,13 @@ class StreamReader:
 
     def parseHeader(self, header: bytes):
         length = int.from_bytes(header[0:8], byteorder='big')
-        return KeyHeader(length = length, key = header[8:])
+        return KeyHeader(length=length, key=header[8:])
 
     def parseValueHeader(self, header: bytes):
         length = int.from_bytes(header[0:8], byteorder='big')
         self.valueLength = length
         self.left = self.valueLength - len(header[8:])
-        return ValueChunk(chunk = header[8:], left = self.left)
+        return ValueChunk(chunk=header[8:], left=self.left)
 
     def chunks(self):
         for chunk in self.streamToRead:
@@ -63,12 +67,12 @@ class StreamReader:
 
     def valueReader(self, chunk):
         self.left = self.left - len(chunk.content)
-        readed = ValueChunk(chunk = chunk.content, left = self.left)
+        readed = ValueChunk(chunk=chunk.content, left=self.left)
         if(self.left == 0):
             self.reader = self.headerReader
         return readed
 
-    
+
 class BufferedStreamReader:
     def __init__(self, chunksGenerator, valueHeader: ValueChunk, stream):
         self.chunksGenerator = chunksGenerator
@@ -81,12 +85,12 @@ class BufferedStreamReader:
 
     def __len__(self):
         return self.size
-    
+
     def _read_new_chunk(self):
         nextChunk = next(self.chunksGenerator, None)
         if(not nextChunk):
             self.currentChunk = None
-            return 
+            return
         self.currentChunk = nextChunk.chunk
         self.currentChunkOffset = 0
         self.currentChunkLength = len(self.currentChunk)
@@ -104,13 +108,13 @@ class BufferedStreamReader:
             self._read_new_chunk()
             if self.currentChunk == None:
                 self.readed = self.readed + len(bytesToReturn)
-                return bytesToReturn                
+                return bytesToReturn
             self.currentChunkOffset = length - len(bytesToReturn)
-            bytesToReturn = bytesToReturn + self.currentChunk[0:self.currentChunkOffset]
+            bytesToReturn = bytesToReturn + \
+                self.currentChunk[0:self.currentChunkOffset]
 
         self.readed = self.readed + length
         return bytesToReturn
 
     def close(self):
         self.stream.cancel()
-

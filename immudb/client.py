@@ -42,7 +42,7 @@ from immudb.streamsutils import KeyHeader, StreamReader, ValueChunk, ValueChunkH
 
 class ImmudbClient:
 
-    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length = None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length=None):
         """Immudb client
 
         Args:
@@ -57,8 +57,9 @@ class ImmudbClient:
         self.timeout = timeout
         options = []
         if max_grpc_message_length:
-            options = [('grpc.max_receive_message_length', max_grpc_message_length)]
-            self.channel = grpc.insecure_channel(immudUrl, options = options)
+            options = [('grpc.max_receive_message_length',
+                        max_grpc_message_length)]
+            self.channel = grpc.insecure_channel(immudUrl, options=options)
         else:
             self.channel = grpc.insecure_channel(immudUrl)
         self._resetStub()
@@ -79,6 +80,7 @@ class ImmudbClient:
         """
         with open(kfile) as f:
             self._vk = ecdsa.VerifyingKey.from_pem(f.read())
+
     def loadKeyFromString(self, key: str):
         """Loads public key from parameter
 
@@ -390,7 +392,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.CreateDatabaseResponseV2: Response contains information about new database
         """
-        request = datatypesv2.CreateDatabaseRequest(name = name, settings = settings, ifNotExists = ifNotExists)
+        request = datatypesv2.CreateDatabaseRequest(
+            name=name, settings=settings, ifNotExists=ifNotExists)
         resp = self._stub.CreateDatabaseV2(request._getGRPC())
         return dataconverter.convertResponse(resp)
 
@@ -471,7 +474,6 @@ class ImmudbClient:
         self._rs.init(dbName, self._stub)
         return resp
 
-
     def getDatabaseSettingsV2(self) -> datatypesv2.DatabaseSettingsResponseV2:
         """Returns current database settings
 
@@ -513,7 +515,8 @@ class ImmudbClient:
     def compactIndex(self):
         """Starts full async index compaction - Routine that creates a fresh index based on the current state, removing all intermediate data generated over time
         """
-        resp = self._stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
+        resp = self._stub.CompactIndex(
+            google_dot_protobuf_dot_empty__pb2.Empty())
         return resp == google_dot_protobuf_dot_empty__pb2.Empty()
 
     def health(self):
@@ -738,7 +741,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.TxList: Transaction list
         """
-        req = datatypesv2.TxScanRequest(initialTx, limit, desc, entriesSpec, sinceTx, noWait)
+        req = datatypesv2.TxScanRequest(
+            initialTx, limit, desc, entriesSpec, sinceTx, noWait)
         resp = self._stub.TxScan(req._getGRPC())
         return dataconverter.convertResponse(resp)
 
@@ -838,7 +842,8 @@ class ImmudbClient:
         Yields:
             Generator[Union[KeyHeader, ValueChunk], None, None]: First chunk is KeyHeader, rest are ValueChunks
         """
-        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        req = datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         for it in reader.chunks():
@@ -860,7 +865,8 @@ class ImmudbClient:
         Returns:
             Tuple[bytes, BufferedStreamReader]: First value is key, second is reader. 
         """
-        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        req = datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         chunks = reader.chunks()
@@ -881,7 +887,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.KeyValue: Key value from immudb
         """
-        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        req = datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         key = None
@@ -904,13 +911,14 @@ class ImmudbClient:
         Yields:
             Generator[Chunk, None, None]: Chunk that is cmpatible with proto
         """
-        yield Chunk(content = KeyHeader(key = key, length=len(key)).getInBytes())
+        yield Chunk(content=KeyHeader(key=key, length=len(key)).getInBytes())
         firstChunk = buffer.read(chunkSize)
-        firstChunk = ValueChunkHeader(chunk = firstChunk, length = length).getInBytes()
-        yield Chunk(content = firstChunk)
+        firstChunk = ValueChunkHeader(
+            chunk=firstChunk, length=length).getInBytes()
+        yield Chunk(content=firstChunk)
         chunk = buffer.read(chunkSize)
         while chunk:
-            yield Chunk(content = chunk)
+            yield Chunk(content=chunk)
             chunk = buffer.read(chunkSize)
 
     def streamScan(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[datatypesv2.KeyValue, None, None]:
@@ -931,21 +939,22 @@ class ImmudbClient:
         Yields:
             Generator[datatypesv2.KeyValue, None, None]: Returns generator of KeyValue
         """
-        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix = prefix, desc = desc, limit = limit, sinceTx= sinceTx, noWait=noWait, inclusiveSeek=None, inclusiveEnd=None, offset=None)
+        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix=prefix, desc=desc, limit=limit,
+                                      sinceTx=sinceTx, noWait=noWait, inclusiveSeek=None, inclusiveEnd=None, offset=None)
         resp = self._stub.streamScan(req._getGRPC())
         key = None
         value = None
         for chunk in StreamReader(resp).chunks():
             if isinstance(chunk, KeyHeader):
                 if key != None:
-                    yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
+                    yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
                 key = chunk.key
                 value = b''
             else:
                 value += chunk.chunk
 
-        if key != None and value != None: # situation when generator consumes all at first run, so it didn't yield first value
-            yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
+        if key != None and value != None:  # situation when generator consumes all at first run, so it didn't yield first value
+            yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
 
     def streamScanBuffered(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[Tuple[bytes, BufferedStreamReader], None, None]:
         """Scan method in streaming maneer. Differs from streamScan with method to read from buffer also.
@@ -969,7 +978,8 @@ class ImmudbClient:
             Generator[Tuple[bytes, BufferedStreamReader], None, None]: First value is Key, second is buffer that you can read from
         """
 
-        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix = prefix, desc = desc, limit = limit, sinceTx= sinceTx, noWait=noWait, inclusiveSeek=inclusiveSeek, inclusiveEnd=inclusiveEnd, offset=offset)
+        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix=prefix, desc=desc, limit=limit,
+                                      sinceTx=sinceTx, noWait=noWait, inclusiveSeek=inclusiveSeek, inclusiveEnd=inclusiveEnd, offset=offset)
         resp = self._stub.streamScan(req._getGRPC())
         key = None
         valueHeader = None
@@ -983,8 +993,6 @@ class ImmudbClient:
                 valueHeader = next(chunks)
                 yield key, BufferedStreamReader(chunks, valueHeader, resp)
             chunk = next(chunks, None)
-
-
 
     def _rawStreamSet(self, generator: Generator[Union[KeyHeader, ValueChunkHeader, ValueChunk], None, None]) -> datatypesv2.TxHeader:
         """Helper function that grabs generator of chunks and set into immudb
@@ -1010,7 +1018,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.TxHeader: Transaction header of just set transaction
         """
-        resp = self._rawStreamSet(self._make_set_stream(buffer, key, bufferLength, chunkSize))
+        resp = self._rawStreamSet(self._make_set_stream(
+            buffer, key, bufferLength, chunkSize))
         return resp
 
     def streamSetFullValue(self, key: bytes, value: bytes, chunkSize: int = 65536) -> datatypesv2.TxHeader:
@@ -1024,7 +1033,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.TxHeader: Transaction header
         """
-        resp = self._rawStreamSet(self._make_set_stream(BytesIO(value), key, len(value), chunkSize))
+        resp = self._rawStreamSet(self._make_set_stream(
+            BytesIO(value), key, len(value), chunkSize))
         return resp
 
     def exportTx(self, tx: int):
@@ -1141,7 +1151,6 @@ class ImmudbClient:
         return verifiedSet.call(self._stub, self._rs, key, value)
 
 # immudb-py only
-
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)

@@ -28,18 +28,22 @@ def grpcHumanizator(objectFrom, classTo):
         else:
             finalKWArgs[key] = None
     return classTo(**finalKWArgs)
+
+
 class GRPCTransformable:
     def _getGRPC(self):
         transformed = self._transformDict(self.__dict__)
         schemaFrom = schema.__dict__.get(self.__class__.__name__, None)
         if(schemaFrom):
             return schemaFrom(**transformed)
-        else: # Special case. Message could be nested inside Precondition schema
-            schemaFrom = schema.__dict__["Precondition"].__dict__.get(self.__class__.__name__, None)
+        else:  # Special case. Message could be nested inside Precondition schema
+            schemaFrom = schema.__dict__["Precondition"].__dict__.get(
+                self.__class__.__name__, None)
             if schemaFrom:
                 return schemaFrom(**transformed)
             else:
-                raise Exception("Cannot get schema for", self.__class__.__name__)
+                raise Exception("Cannot get schema for",
+                                self.__class__.__name__)
 
     def _transformDict(self, dictToTransform: Dict[str, Any]):
         for key in dictToTransform:
@@ -58,16 +62,16 @@ class GRPCTransformable:
         return self
 
 
-
-
 @dataclass
 class Key(GRPCTransformable):
     key: bytes = None
+
 
 @dataclass
 class Permission(GRPCTransformable):
     database: str = None
     permission: int = None
+
 
 @dataclass
 class User(GRPCTransformable):
@@ -77,9 +81,11 @@ class User(GRPCTransformable):
     createdat: str = None
     active: bool = None
 
+
 @dataclass
 class UserList(GRPCTransformable):
     users: List[User] = None
+
 
 @dataclass
 class CreateUserRequest(GRPCTransformable):
@@ -88,9 +94,11 @@ class CreateUserRequest(GRPCTransformable):
     permission: int = None
     database: str = None
 
+
 @dataclass
 class UserRequest(GRPCTransformable):
     user: bytes = None
+
 
 @dataclass
 class ChangePasswordRequest(GRPCTransformable):
@@ -98,23 +106,28 @@ class ChangePasswordRequest(GRPCTransformable):
     oldPassword: bytes = None
     newPassword: bytes = None
 
+
 @dataclass
 class LoginRequest(GRPCTransformable):
     user: bytes = None
     password: bytes = None
+
 
 @dataclass
 class LoginResponse(GRPCTransformable):
     token: str = None
     warning: bytes = None
 
+
 @dataclass
 class AuthConfig(GRPCTransformable):
     kind: int = None
 
+
 @dataclass
 class MTLSConfig(GRPCTransformable):
     enabled: bool = None
+
 
 @dataclass
 class OpenSessionRequest(GRPCTransformable):
@@ -122,35 +135,43 @@ class OpenSessionRequest(GRPCTransformable):
     password: bytes = None
     databaseName: str = None
 
+
 @dataclass
 class OpenSessionResponse(GRPCTransformable):
     sessionID: str = None
     serverUUID: str = None
 
 # ONE OF
+
+
 @dataclass
 class Precondition(GRPCTransformable):
     keyMustExist: Optional[KeyMustExistPrecondition] = None
     keyMustNotExist: Optional[KeyMustNotExistPrecondition] = None
     keyNotModifiedAfterTX: Optional[KeyNotModifiedAfterTXPrecondition] = None
 
+
 @dataclass
 class KeyMustExistPrecondition(GRPCTransformable):
     key: bytes = None
 
+
 @dataclass
 class KeyMustNotExistPrecondition(GRPCTransformable):
     key: bytes = None
-    
+
+
 class KeyNotModifiedAfterTXPrecondition(GRPCTransformable):
     key: bytes = None
     txID: int = None
+
 
 @dataclass
 class KeyValue(GRPCTransformable):
     key: bytes = None
     value: bytes = None
     metadata: KVMetadata = None
+
 
 @dataclass
 class Entry(GRPCTransformable):
@@ -162,6 +183,7 @@ class Entry(GRPCTransformable):
     expired: bool = None
     revision: int = None
 
+
 @dataclass
 class Reference(GRPCTransformable):
     tx: int = None
@@ -171,11 +193,14 @@ class Reference(GRPCTransformable):
     revision: int = None
 
 # ONE OF
+
+
 @dataclass
 class Op(GRPCTransformable):
     kv: Optional[KeyValue] = None
     zAdd: Optional[ZAddRequest] = None
     ref: Optional[ReferenceRequest] = None
+
 
 @dataclass
 class ExecAllRequest(GRPCTransformable):
@@ -183,9 +208,11 @@ class ExecAllRequest(GRPCTransformable):
     noWait: bool = None
     preconditions: List[Precondition] = None
 
+
 @dataclass
 class Entries(GRPCTransformable):
     entries: List[Entry] = None
+
 
 @dataclass
 class ZEntry(GRPCTransformable):
@@ -195,9 +222,11 @@ class ZEntry(GRPCTransformable):
     score: float = None
     atTx: int = None
 
+
 @dataclass
 class ZEntries(GRPCTransformable):
     entries: ZEntry = None
+
 
 @dataclass
 class ScanRequest(GRPCTransformable):
@@ -212,18 +241,22 @@ class ScanRequest(GRPCTransformable):
     inclusiveEnd: bool = None
     offset: int = None
 
+
 @dataclass
 class KeyPrefix(GRPCTransformable):
     prefix: bytes = None
+
 
 @dataclass
 class EntryCount(GRPCTransformable):
     count: int = None
 
+
 @dataclass
 class Signature(GRPCTransformable):
     publicKey: bytes = None
     signature: bytes = None
+
 
 @dataclass
 class TxHeader(GRPCTransformable):
@@ -236,17 +269,19 @@ class TxHeader(GRPCTransformable):
     blRoot: bytes = None
     version: int = None
     metadata: TxMetadata = None
-    
+
 
 @dataclass
 class TxMetadata(GRPCTransformable):
     pass
+
 
 @dataclass
 class LinearProof(GRPCTransformable):
     sourceTxId: int = None
     TargetTxId: int = None
     terms: List[bytes] = None
+
 
 @dataclass
 class DualProof(GRPCTransformable):
@@ -258,12 +293,14 @@ class DualProof(GRPCTransformable):
     lastInclusionProof: List[bytes] = None
     linearProof: LinearProof = None
 
+
 @dataclass
 class Tx(GRPCTransformable):
     header: TxHeader = None
     entries: List[TxEntry] = None
     kvEntries:  List[Entry] = None
     zEntries:  List[ZEntry] = None
+
 
 @dataclass
 class TxEntry(GRPCTransformable):
@@ -273,15 +310,18 @@ class TxEntry(GRPCTransformable):
     metadata: KVMetadata = None
     value: bytes = None
 
+
 @dataclass
 class KVMetadata(GRPCTransformable):
     deleted: bool = None
     expiration: Expiration = None
     nonIndexable: bool = None
 
+
 @dataclass
 class Expiration(GRPCTransformable):
     expiresAt: int = None
+
 
 @dataclass
 class VerifiableTx(GRPCTransformable):
@@ -289,11 +329,13 @@ class VerifiableTx(GRPCTransformable):
     dualProof: DualProof = None
     signature: Signature = None
 
+
 @dataclass
 class VerifiableEntry(GRPCTransformable):
     entry: Entry = None
     verifiableTx: VerifiableTx = None
     inclusionProof: InclusionProof = None
+
 
 @dataclass
 class InclusionProof(GRPCTransformable):
@@ -301,11 +343,13 @@ class InclusionProof(GRPCTransformable):
     width: int = None
     terms: List[bytes] = None
 
+
 @dataclass
 class SetRequest(GRPCTransformable):
     KVs: List[KeyValue] = None
     noWait: bool = None
     preconditions: List[Precondition] = None
+
 
 @dataclass
 class KeyRequest(GRPCTransformable):
@@ -315,10 +359,12 @@ class KeyRequest(GRPCTransformable):
     noWait: bool = None
     atRevision: int = None
 
+
 @dataclass
 class KeyListRequest(GRPCTransformable):
     keys: List[bytes] = None
     sinceTx: int = None
+
 
 @dataclass
 class DeleteKeysRequest(GRPCTransformable):
@@ -326,33 +372,40 @@ class DeleteKeysRequest(GRPCTransformable):
     sinceTx: int = None
     noWait: bool = None
 
+
 @dataclass
 class VerifiableSetRequest(GRPCTransformable):
     setRequest: SetRequest = None
     proveSinceTx: int = None
+
 
 @dataclass
 class VerifiableGetRequest(GRPCTransformable):
     keyRequest: KeyRequest = None
     proveSinceTx: int = None
 
+
 @dataclass
 class ServerInfoRequest(GRPCTransformable):
     pass
 
+
 @dataclass
 class ServerInfoResponse(GRPCTransformable):
     version: str = None
+
 
 @dataclass
 class HealthResponse(GRPCTransformable):
     status: bool = None
     version: str = None
 
+
 @dataclass
 class DatabaseHealthResponse(GRPCTransformable):
     pendingRequests: int = None
     lastRequestCompletedAt: int = None
+
 
 @dataclass
 class ImmutableState(GRPCTransformable):
@@ -360,6 +413,7 @@ class ImmutableState(GRPCTransformable):
     txId: int = None
     txHash: bytes = None
     signature: Signature = None
+
 
 @dataclass
 class ReferenceRequest(GRPCTransformable):
@@ -370,10 +424,12 @@ class ReferenceRequest(GRPCTransformable):
     noWait: bool = None
     preconditions: List[Precondition] = None
 
+
 @dataclass
 class VerifiableReferenceRequest(GRPCTransformable):
     referenceRequest: ReferenceRequest = None
     proveSinceTx: int = None
+
 
 @dataclass
 class ZAddRequest(GRPCTransformable):
@@ -384,9 +440,11 @@ class ZAddRequest(GRPCTransformable):
     boundRef: bool = None
     noWait: bool = None
 
+
 @dataclass
 class Score(GRPCTransformable):
     score: float = None
+
 
 @dataclass
 class ZScanRequest(GRPCTransformable):
@@ -403,6 +461,7 @@ class ZScanRequest(GRPCTransformable):
     noWait: bool = None
     offset: int = None
 
+
 @dataclass
 class HistoryRequest(GRPCTransformable):
     key: bytes = None
@@ -417,6 +476,7 @@ class VerifiableZAddRequest(GRPCTransformable):
     zAddRequest: ZAddRequest = None
     proveSinceTx: int = None
 
+
 @dataclass
 class TxRequest(GRPCTransformable):
     tx: int = None
@@ -424,6 +484,7 @@ class TxRequest(GRPCTransformable):
     sinceTx: int = None
     noWait: bool = None
     keepReferencesUnresolved: bool = None
+
 
 @dataclass
 class EntriesSpec(GRPCTransformable):
@@ -436,11 +497,13 @@ class EntriesSpec(GRPCTransformable):
 class EntryTypeSpec(GRPCTransformable):
     action: EntryTypeAction = None
 
+
 class EntryTypeAction(Enum):
     EXCLUDE = 0
     ONLY_DIGEST = 1
     RAW_VALUE = 2
     RESOLVE = 3
+
 
 @dataclass
 class VerifiableTxRequest(GRPCTransformable):
@@ -451,6 +514,7 @@ class VerifiableTxRequest(GRPCTransformable):
     noWait: bool = None
     keepReferencesUnresolved: bool = None
 
+
 @dataclass
 class TxScanRequest(GRPCTransformable):
     initialTx: int = None
@@ -460,32 +524,37 @@ class TxScanRequest(GRPCTransformable):
     sinceTx: int = None
     noWait: bool = None
 
+
 @dataclass
 class TxList(GRPCTransformable):
     txs: List[Tx] = None
 
+
 @dataclass
 class ExportTxRequest(GRPCTransformable):
-    tx: int  = None
+    tx: int = None
+
 
 @dataclass
 class Database(GRPCTransformable):
     databaseName: str = None
 
+
 @dataclass
 class DatabaseSettings(GRPCTransformable):
     databaseName: str = None
-    replica: bool  = None
+    replica: bool = None
     masterDatabase: str = None
     masterAddress: str = None
-    masterPort: int  = None
-    followerUsername: str  = None
-    followerPassword: str  = None
+    masterPort: int = None
+    followerUsername: str = None
+    followerPassword: str = None
     fileSize: int = None
-    maxKeyLen: int  = None
-    maxValueLen: int  = None
-    maxTxEntries: int  = None
-    excludeCommitTime: bool  = None
+    maxKeyLen: int = None
+    maxValueLen: int = None
+    maxTxEntries: int = None
+    excludeCommitTime: bool = None
+
 
 @dataclass
 class CreateDatabaseRequest(GRPCTransformable):
@@ -503,6 +572,7 @@ class CreateDatabaseResponse(GRPCTransformable):
     def _getHumanDataClass(self):
         return grpcHumanizator(self, CreateDatabaseResponseV2)
 
+
 @dataclass
 class CreateDatabaseResponseV2(GRPCTransformable):
     name: str = None
@@ -515,6 +585,7 @@ class UpdateDatabaseRequest(GRPCTransformable):
     database: str = None
     settings: Union[DatabaseNullableSettings, DatabaseSettingsV2] = None
 
+
 @dataclass
 class UpdateDatabaseResponse(GRPCTransformable):
     database: str = None
@@ -523,26 +594,32 @@ class UpdateDatabaseResponse(GRPCTransformable):
     def _getHumanDataClass(self):
         return grpcHumanizator(self, UpdateDatabaseResponseV2)
 
+
 @dataclass
 class UpdateDatabaseResponseV2(GRPCTransformable):
     database: str = None
     settings: DatabaseSettingsV2 = None
 
+
 @dataclass
 class DatabaseSettingsRequest(GRPCTransformable):
     pass
+
 
 @dataclass
 class DatabaseSettingsResponse(GRPCTransformable):
     database: str = None
     settings: DatabaseNullableSettings = None
+
     def _getHumanDataClass(self):
         return grpcHumanizator(self, DatabaseSettingsResponseV2)
-        
+
+
 @dataclass
 class DatabaseSettingsResponseV2(GRPCTransformable):
     database: str = None
     settings: DatabaseSettingsV2 = None
+
 
 @dataclass
 class NullableUint32(GRPCTransformable):
@@ -552,10 +629,11 @@ class NullableUint32(GRPCTransformable):
         if self.value == None:
             return None
         else:
-            return schema.NullableUint32(value = self.value)
+            return schema.NullableUint32(value=self.value)
 
     def _getHumanDataClass(self):
         return self.value
+
 
 @dataclass
 class NullableUint64(GRPCTransformable):
@@ -565,23 +643,25 @@ class NullableUint64(GRPCTransformable):
         if self.value == None:
             return None
         else:
-            return schema.NullableUint64(value = self.value)
+            return schema.NullableUint64(value=self.value)
 
     def _getHumanDataClass(self):
         return self.value
+
 
 @dataclass
 class NullableFloat(GRPCTransformable):
     value: float = None
-    
+
     def _getGRPC(self):
         if self.value == None:
             return None
         else:
-            return schema.NullableFloat(value = self.value)
+            return schema.NullableFloat(value=self.value)
 
     def _getHumanDataClass(self):
         return self.value
+
 
 @dataclass
 class NullableBool(GRPCTransformable):
@@ -592,12 +672,13 @@ class NullableBool(GRPCTransformable):
         if self.value == None:
             return None
         else:
-            return schema.NullableBool(value = self.value)
+            return schema.NullableBool(value=self.value)
 
     def _getHumanDataClass(self):
         if self.value == None:
             return False
         return self.value
+
 
 @dataclass
 class NullableString(GRPCTransformable):
@@ -607,103 +688,112 @@ class NullableString(GRPCTransformable):
         if self.value == None:
             return None
         else:
-            return schema.NullableString(value = self.value)
+            return schema.NullableString(value=self.value)
 
     def _getHumanDataClass(self):
         return self.value
+
 
 @dataclass
 class NullableMilliseconds(GRPCTransformable):
     value: int = None
-    
+
     def _getGRPC(self):
         if self.value == None:
             return None
         else:
-            return schema.NullableMilliseconds(value = self.value)
+            return schema.NullableMilliseconds(value=self.value)
 
     def _getHumanDataClass(self):
         return self.value
 
+
 @dataclass
 class DatabaseNullableSettings(GRPCTransformable):
-    replicationSettings:  ReplicationNullableSettings  = None
-    fileSize:  NullableUint32  = None
-    maxKeyLen:  NullableUint32  = None
-    maxValueLen:  NullableUint32  = None
-    maxTxEntries:  NullableUint32  = None
-    excludeCommitTime:  NullableBool  = None
-    maxConcurrency:  NullableUint32  = None
-    maxIOConcurrency:  NullableUint32  = None
-    txLogCacheSize:  NullableUint32  = None
-    vLogMaxOpenedFiles:  NullableUint32  = None
-    txLogMaxOpenedFiles:  NullableUint32  = None
-    commitLogMaxOpenedFiles:  NullableUint32  = None
-    indexSettings:  IndexNullableSettings  = None
-    writeTxHeaderVersion:  NullableUint32  = None
-    autoload:  NullableBool  = None
-    readTxPoolSize:  NullableUint32  = None
-    syncFrequency:  NullableMilliseconds  = None
-    writeBufferSize:  NullableUint32  = None
-    ahtSettings:  AHTNullableSettings  = None
+    replicationSettings:  ReplicationNullableSettings = None
+    fileSize:  NullableUint32 = None
+    maxKeyLen:  NullableUint32 = None
+    maxValueLen:  NullableUint32 = None
+    maxTxEntries:  NullableUint32 = None
+    excludeCommitTime:  NullableBool = None
+    maxConcurrency:  NullableUint32 = None
+    maxIOConcurrency:  NullableUint32 = None
+    txLogCacheSize:  NullableUint32 = None
+    vLogMaxOpenedFiles:  NullableUint32 = None
+    txLogMaxOpenedFiles:  NullableUint32 = None
+    commitLogMaxOpenedFiles:  NullableUint32 = None
+    indexSettings:  IndexNullableSettings = None
+    writeTxHeaderVersion:  NullableUint32 = None
+    autoload:  NullableBool = None
+    readTxPoolSize:  NullableUint32 = None
+    syncFrequency:  NullableMilliseconds = None
+    writeBufferSize:  NullableUint32 = None
+    ahtSettings:  AHTNullableSettings = None
 
     def _getHumanDataClass(self):
         return grpcHumanizator(self, DatabaseSettingsV2)
 
 
-         
-
 @dataclass
 class ReplicationSettings(GRPCTransformable):
-    replica:  Optional[bool]  = None
-    masterDatabase:  Optional[str]  = None
-    masterAddress:  Optional[str]  = None
-    masterPort:  Optional[int]  = None
-    followerUsername:  Optional[str]  = None
+    replica:  Optional[bool] = None
+    masterDatabase:  Optional[str] = None
+    masterAddress:  Optional[str] = None
+    masterPort:  Optional[int] = None
+    followerUsername:  Optional[str] = None
     followerPassword:  Optional[str] = None
+
     def _getGRPC(self):
         return schema.ReplicationNullableSettings(
-            replica = NullableBool(self.replica)._getGRPC(),
-            masterDatabase = NullableString(self.masterDatabase)._getGRPC(),
-            masterAddress = NullableString(self.masterAddress)._getGRPC(),
-            masterPort = NullableUint32(self.masterPort)._getGRPC(),
-            followerUsername = NullableString(self.followerUsername)._getGRPC(),
-            followerPassword = NullableString(self.followerPassword)._getGRPC()
+            replica=NullableBool(self.replica)._getGRPC(),
+            masterDatabase=NullableString(self.masterDatabase)._getGRPC(),
+            masterAddress=NullableString(self.masterAddress)._getGRPC(),
+            masterPort=NullableUint32(self.masterPort)._getGRPC(),
+            followerUsername=NullableString(self.followerUsername)._getGRPC(),
+            followerPassword=NullableString(self.followerPassword)._getGRPC()
         )
 
 
 @dataclass
 class IndexSettings(GRPCTransformable):
-    flushThreshold:  Optional[int]  = None
-    syncThreshold:  Optional[int]  = None
-    cacheSize:  Optional[int]  = None
-    maxNodeSize:  Optional[int]  = None
-    maxActiveSnapshots:  Optional[int]  = None
-    renewSnapRootAfter:  Optional[int] = None 
-    compactionThld:  Optional[int]  = None
-    delayDuringCompaction:  Optional[int]  = None
-    nodesLogMaxOpenedFiles:  Optional[int]  = None
-    historyLogMaxOpenedFiles:  Optional[int]  = None
-    commitLogMaxOpenedFiles:  Optional[int]  = None
-    flushBufferSize:  Optional[int]  = None
+    flushThreshold:  Optional[int] = None
+    syncThreshold:  Optional[int] = None
+    cacheSize:  Optional[int] = None
+    maxNodeSize:  Optional[int] = None
+    maxActiveSnapshots:  Optional[int] = None
+    renewSnapRootAfter:  Optional[int] = None
+    compactionThld:  Optional[int] = None
+    delayDuringCompaction:  Optional[int] = None
+    nodesLogMaxOpenedFiles:  Optional[int] = None
+    historyLogMaxOpenedFiles:  Optional[int] = None
+    commitLogMaxOpenedFiles:  Optional[int] = None
+    flushBufferSize:  Optional[int] = None
     cleanupPercentage:  Optional[float] = None
 
     def _getGRPC(self):
         return schema.IndexNullableSettings(
-            flushThreshold = NullableUint32(self.flushThreshold)._getGRPC(),
-            syncThreshold = NullableUint32(self.syncThreshold)._getGRPC(),
-            cacheSize = NullableUint32(self.cacheSize)._getGRPC(),
-            maxNodeSize = NullableUint32(self.maxNodeSize)._getGRPC(),
-            maxActiveSnapshots = NullableUint32(self.maxActiveSnapshots)._getGRPC(),
-            renewSnapRootAfter = NullableUint64(self.renewSnapRootAfter)._getGRPC(),
-            compactionThld = NullableUint32(self.compactionThld)._getGRPC(),
-            delayDuringCompaction = NullableUint32(self.delayDuringCompaction)._getGRPC(),
-            nodesLogMaxOpenedFiles = NullableUint32(self.nodesLogMaxOpenedFiles)._getGRPC(),
-            historyLogMaxOpenedFiles = NullableUint32(self.historyLogMaxOpenedFiles)._getGRPC(),
-            commitLogMaxOpenedFiles = NullableUint32(self.commitLogMaxOpenedFiles)._getGRPC(),
-            flushBufferSize = NullableUint32(self.flushBufferSize)._getGRPC(),
-            cleanupPercentage = NullableFloat(self.cleanupPercentage)._getGRPC()
+            flushThreshold=NullableUint32(self.flushThreshold)._getGRPC(),
+            syncThreshold=NullableUint32(self.syncThreshold)._getGRPC(),
+            cacheSize=NullableUint32(self.cacheSize)._getGRPC(),
+            maxNodeSize=NullableUint32(self.maxNodeSize)._getGRPC(),
+            maxActiveSnapshots=NullableUint32(
+                self.maxActiveSnapshots)._getGRPC(),
+            renewSnapRootAfter=NullableUint64(
+                self.renewSnapRootAfter)._getGRPC(),
+            compactionThld=NullableUint32(self.compactionThld)._getGRPC(),
+            delayDuringCompaction=NullableUint32(
+                self.delayDuringCompaction)._getGRPC(),
+            nodesLogMaxOpenedFiles=NullableUint32(
+                self.nodesLogMaxOpenedFiles)._getGRPC(),
+            historyLogMaxOpenedFiles=NullableUint32(
+                self.historyLogMaxOpenedFiles)._getGRPC(),
+            commitLogMaxOpenedFiles=NullableUint32(
+                self.commitLogMaxOpenedFiles)._getGRPC(),
+            flushBufferSize=NullableUint32(self.flushBufferSize)._getGRPC(),
+            cleanupPercentage=NullableFloat(self.cleanupPercentage)._getGRPC()
         )
+
+
 @dataclass
 class AHTSettings(GRPCTransformable):
     syncThreshold: Optional[int] = None
@@ -711,31 +801,33 @@ class AHTSettings(GRPCTransformable):
 
     def _getGRPC(self):
         return schema.AHTNullableSettings(
-            syncThreshold = NullableUint32(self.syncThreshold)._getGRPC(),
-            writeBufferSize = NullableUint32(self.writeBufferSize)._getGRPC()
+            syncThreshold=NullableUint32(self.syncThreshold)._getGRPC(),
+            writeBufferSize=NullableUint32(self.writeBufferSize)._getGRPC()
         )
+
 
 @dataclass
 class DatabaseSettingsV2(GRPCTransformable):
-    replicationSettings:  ReplicationSettings  = None
-    fileSize:  Optional[int]  = None
-    maxKeyLen:  Optional[int]  = None
-    maxValueLen:  Optional[int]  = None
-    maxTxEntries:  Optional[int]  = None
-    excludeCommitTime:  Optional[bool]  = None
-    maxConcurrency:  Optional[int]  = None
-    maxIOConcurrency:  Optional[int]  = None
-    txLogCacheSize:  Optional[int]  = None
-    vLogMaxOpenedFiles:  Optional[int]  = None
-    txLogMaxOpenedFiles:  Optional[int]  = None
-    commitLogMaxOpenedFiles:  Optional[int]  = None
-    indexSettings:  IndexSettings  = None
-    writeTxHeaderVersion:  Optional[int]  = None
-    autoload:  Optional[bool]  = None
-    readTxPoolSize:  Optional[int]  = None
-    syncFrequency:  NullableMilliseconds  = None
-    writeBufferSize:  Optional[int]  = None
-    ahtSettings:  AHTSettings  = None
+    replicationSettings:  ReplicationSettings = None
+    fileSize:  Optional[int] = None
+    maxKeyLen:  Optional[int] = None
+    maxValueLen:  Optional[int] = None
+    maxTxEntries:  Optional[int] = None
+    excludeCommitTime:  Optional[bool] = None
+    maxConcurrency:  Optional[int] = None
+    maxIOConcurrency:  Optional[int] = None
+    txLogCacheSize:  Optional[int] = None
+    vLogMaxOpenedFiles:  Optional[int] = None
+    txLogMaxOpenedFiles:  Optional[int] = None
+    commitLogMaxOpenedFiles:  Optional[int] = None
+    indexSettings:  IndexSettings = None
+    writeTxHeaderVersion:  Optional[int] = None
+    autoload:  Optional[bool] = None
+    readTxPoolSize:  Optional[int] = None
+    syncFrequency:  NullableMilliseconds = None
+    writeBufferSize:  Optional[int] = None
+    ahtSettings:  AHTSettings = None
+
     def _getGRPC(self):
         indexSettings = None
         if self.indexSettings != None:
@@ -748,58 +840,64 @@ class DatabaseSettingsV2(GRPCTransformable):
             ahtSettings = self.ahtSettings._getGRPC()
 
         return schema.DatabaseNullableSettings(
-            replicationSettings = replicationSettings,
-            fileSize = NullableUint32(self.fileSize)._getGRPC(),
-            maxKeyLen = NullableUint32(self.maxKeyLen)._getGRPC() ,
-            maxValueLen = NullableUint32(self.maxValueLen)._getGRPC() ,
-            maxTxEntries = NullableUint32(self.maxTxEntries)._getGRPC() ,
-            excludeCommitTime = NullableBool(self.excludeCommitTime)._getGRPC() ,
-            maxConcurrency = NullableUint32(self.maxConcurrency)._getGRPC() ,
-            maxIOConcurrency = NullableUint32(self.maxIOConcurrency)._getGRPC() ,
-            txLogCacheSize = NullableUint32(self.txLogCacheSize)._getGRPC() ,
-            vLogMaxOpenedFiles = NullableUint32(self.vLogMaxOpenedFiles)._getGRPC() ,
-            txLogMaxOpenedFiles = NullableUint32(self.txLogMaxOpenedFiles)._getGRPC() ,
-            commitLogMaxOpenedFiles = NullableUint32(self.commitLogMaxOpenedFiles)._getGRPC() ,
-            indexSettings = indexSettings,
-            writeTxHeaderVersion = NullableUint32(self.writeTxHeaderVersion)._getGRPC(),
-            autoload = NullableBool(self.autoload)._getGRPC(),
-            readTxPoolSize = NullableUint32(self.readTxPoolSize)._getGRPC(),
-            syncFrequency = NullableMilliseconds(self.syncFrequency)._getGRPC(),
-            writeBufferSize = NullableUint32(self.writeBufferSize)._getGRPC(),
-            ahtSettings = ahtSettings  
+            replicationSettings=replicationSettings,
+            fileSize=NullableUint32(self.fileSize)._getGRPC(),
+            maxKeyLen=NullableUint32(self.maxKeyLen)._getGRPC(),
+            maxValueLen=NullableUint32(self.maxValueLen)._getGRPC(),
+            maxTxEntries=NullableUint32(self.maxTxEntries)._getGRPC(),
+            excludeCommitTime=NullableBool(self.excludeCommitTime)._getGRPC(),
+            maxConcurrency=NullableUint32(self.maxConcurrency)._getGRPC(),
+            maxIOConcurrency=NullableUint32(self.maxIOConcurrency)._getGRPC(),
+            txLogCacheSize=NullableUint32(self.txLogCacheSize)._getGRPC(),
+            vLogMaxOpenedFiles=NullableUint32(
+                self.vLogMaxOpenedFiles)._getGRPC(),
+            txLogMaxOpenedFiles=NullableUint32(
+                self.txLogMaxOpenedFiles)._getGRPC(),
+            commitLogMaxOpenedFiles=NullableUint32(
+                self.commitLogMaxOpenedFiles)._getGRPC(),
+            indexSettings=indexSettings,
+            writeTxHeaderVersion=NullableUint32(
+                self.writeTxHeaderVersion)._getGRPC(),
+            autoload=NullableBool(self.autoload)._getGRPC(),
+            readTxPoolSize=NullableUint32(self.readTxPoolSize)._getGRPC(),
+            syncFrequency=NullableMilliseconds(self.syncFrequency)._getGRPC(),
+            writeBufferSize=NullableUint32(self.writeBufferSize)._getGRPC(),
+            ahtSettings=ahtSettings
         )
+
 
 @dataclass
 class ReplicationNullableSettings(GRPCTransformable):
-    replica:  NullableBool  = None
-    masterDatabase:  NullableString  = None
-    masterAddress:  NullableString  = None
-    masterPort:  NullableUint32  = None
-    followerUsername:  NullableString  = None
+    replica:  NullableBool = None
+    masterDatabase:  NullableString = None
+    masterAddress:  NullableString = None
+    masterPort:  NullableUint32 = None
+    followerUsername:  NullableString = None
     followerPassword:  NullableString = None
 
     def _getHumanDataClass(self):
         return grpcHumanizator(self, ReplicationSettings)
-    
+
 
 @dataclass
 class IndexNullableSettings(GRPCTransformable):
-    flushThreshold:  NullableUint32  = None
-    syncThreshold:  NullableUint32  = None
-    cacheSize:  NullableUint32  = None
-    maxNodeSize:  NullableUint32  = None
-    maxActiveSnapshots:  NullableUint32  = None
-    renewSnapRootAfter:  NullableUint64 = None 
-    compactionThld:  NullableUint32  = None
-    delayDuringCompaction:  NullableUint32  = None
-    nodesLogMaxOpenedFiles:  NullableUint32  = None
-    historyLogMaxOpenedFiles:  NullableUint32  = None
-    commitLogMaxOpenedFiles:  NullableUint32  = None
-    flushBufferSize:  NullableUint32  = None
+    flushThreshold:  NullableUint32 = None
+    syncThreshold:  NullableUint32 = None
+    cacheSize:  NullableUint32 = None
+    maxNodeSize:  NullableUint32 = None
+    maxActiveSnapshots:  NullableUint32 = None
+    renewSnapRootAfter:  NullableUint64 = None
+    compactionThld:  NullableUint32 = None
+    delayDuringCompaction:  NullableUint32 = None
+    nodesLogMaxOpenedFiles:  NullableUint32 = None
+    historyLogMaxOpenedFiles:  NullableUint32 = None
+    commitLogMaxOpenedFiles:  NullableUint32 = None
+    flushBufferSize:  NullableUint32 = None
     cleanupPercentage:  NullableFloat = None
 
     def _getHumanDataClass(self):
         return grpcHumanizator(self, IndexSettings)
+
 
 @dataclass
 class AHTNullableSettings(GRPCTransformable):
@@ -809,54 +907,66 @@ class AHTNullableSettings(GRPCTransformable):
     def _getHumanDataClass(self):
         return grpcHumanizator(self, AHTSettings)
 
+
 @dataclass
 class LoadDatabaseRequest(GRPCTransformable):
     database: str = None
+
 
 @dataclass
 class LoadDatabaseResponse(GRPCTransformable):
     database: str = None
 
+
 @dataclass
 class UnloadDatabaseRequest(GRPCTransformable):
     database: str = None
+
 
 @dataclass
 class UnloadDatabaseResponse(GRPCTransformable):
     database: str = None
 
+
 @dataclass
 class DeleteDatabaseRequest(GRPCTransformable):
     database: str = None
 
+
 @dataclass
 class DeleteDatabaseResponse(GRPCTransformable):
     database: str = None
+
 
 @dataclass
 class FlushIndexRequest(GRPCTransformable):
     cleanupPercentage: float = None
     synced: bool = None
 
+
 @dataclass
 class FlushIndexResponse(GRPCTransformable):
     database: str = None
+
 
 @dataclass
 class Table(GRPCTransformable):
     tableName: str = None
 
+
 @dataclass
 class SQLGetRequest(GRPCTransformable):
     table: str = None
-    pkValues: List[SQLValue]  = None
-    atTx: int = None 
+    pkValues: List[SQLValue] = None
+    atTx: int = None
     sinceTx: int = None
+
 
 @dataclass
 class VerifiableSQLGetRequest(GRPCTransformable):
     sqlGetRequest: SQLGetRequest = None
     proveSinceTx: int = None
+
 
 @dataclass
 class SQLEntry(GRPCTransformable):
@@ -864,6 +974,7 @@ class SQLEntry(GRPCTransformable):
     key: bytes = None
     value: bytes = None
     metadata: KVMetadata = None
+
 
 @dataclass
 class VerifiableSQLEntry(GRPCTransformable):
@@ -878,13 +989,16 @@ class VerifiableSQLEntry(GRPCTransformable):
     ColTypesById: Dict[int, str] = None
     ColLenById: Dict[int, int] = None
 
+
 @dataclass
 class UseDatabaseReply(GRPCTransformable):
     token: str = None
 
+
 class PermissionAction(Enum):
     GRANT = 0
     REVOK = 1
+
 
 @dataclass
 class ChangePermissionRequest(GRPCTransformable):
@@ -893,25 +1007,30 @@ class ChangePermissionRequest(GRPCTransformable):
     database: str = None
     permission: int = None
 
+
 @dataclass
 class SetActiveUserRequest(GRPCTransformable):
     active: bool = None
     username: str = None
 
+
 @dataclass
 class DatabaseListResponse(GRPCTransformable):
     databases: List[Database] = None
 
+
 @dataclass
 class DatabaseListRequestV2(GRPCTransformable):
     pass
+
 
 @dataclass
 class DatabaseListResponseV2(GRPCTransformable):
     databases: List[Union[DatabaseWithSettings, DatabaseWithSettingsV2]] = None
 
     def _getHumanDataClass(self):
-        return DatabaseListResponseV2(databases = [toConvert._getHumanDataClass() for toConvert in self.databases])
+        return DatabaseListResponseV2(databases=[toConvert._getHumanDataClass() for toConvert in self.databases])
+
 
 @dataclass
 class DatabaseWithSettings(GRPCTransformable):
@@ -921,20 +1040,25 @@ class DatabaseWithSettings(GRPCTransformable):
 
     def _getHumanDataClass(self):
         return grpcHumanizator(self, DatabaseWithSettingsV2)
+
+
 @dataclass
 class DatabaseWithSettingsV2(GRPCTransformable):
     name: str = None
     settings: DatabaseSettingsV2 = None
     loaded: bool = None
 
+
 @dataclass
 class Chunk(GRPCTransformable):
     content: bytes = None
+
 
 @dataclass
 class UseSnapshotRequest(GRPCTransformable):
     sinceTx: int = None
     asBeforeTx: int = None
+
 
 @dataclass
 class SQLExecRequest(GRPCTransformable):
@@ -942,21 +1066,25 @@ class SQLExecRequest(GRPCTransformable):
     params: List[NamedParam] = None
     noWait: bool = None
 
+
 @dataclass
 class SQLQueryRequest(GRPCTransformable):
     sql: str = None
     params: List[NamedParam] = None
     reuseSnapshot: int = None
 
+
 @dataclass
 class NamedParam(GRPCTransformable):
     name: str = None
     value: SQLValue = None
 
+
 @dataclass
 class SQLExecResult(GRPCTransformable):
     txs: List[CommittedSQLTx] = None
     ongoingTx: bool = None
+
 
 @dataclass
 class CommittedSQLTx(GRPCTransformable):
@@ -971,10 +1099,12 @@ class SQLQueryResult(GRPCTransformable):
     columns: List[Column] = None
     rows: List[Row] = None
 
+
 @dataclass
 class Column(GRPCTransformable):
     name: str = None
     type: str = None
+
 
 @dataclass
 class Row(GRPCTransformable):
@@ -982,6 +1112,8 @@ class Row(GRPCTransformable):
     values: List[SQLValue] = None
 
 # ONE OF
+
+
 @dataclass
 class SQLValue(GRPCTransformable):
     null: Optional[NullValue] = None
@@ -997,6 +1129,7 @@ class TxMode(Enum):
     WriteOnly = 1
     ReadWrite = 2
 
+
 @dataclass
 class NewTxRequest(GRPCTransformable):
     mode: TxMode = None
@@ -1004,16 +1137,19 @@ class NewTxRequest(GRPCTransformable):
 
 @dataclass
 class NewTxResponse(GRPCTransformable):
-    transactionID : str = None
+    transactionID: str = None
+
 
 @dataclass
 class ErrorInfo(GRPCTransformable):
     code: str = None
     cause: str = None
 
+
 @dataclass
 class DebugInfo(GRPCTransformable):
     stack: str = None
+
 
 @dataclass
 class RetryInfo(GRPCTransformable):
