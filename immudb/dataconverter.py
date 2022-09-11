@@ -3,11 +3,16 @@
 import immudb.datatypesv2 as datatypesv2
 
 
-def convertRequest(fromDataClass: datatypesv2.GRPCTransformable):
-    return fromDataClass.getGRPC()
-    
+def convertResponse(fromResponse, toHumanDataClass = True):
+    """Converts response from GRPC to python dataclass
 
-def convertResponse(fromResponse):
+    Args:
+        fromResponse (GRPCResponse): GRPC response from immudb
+        toHumanDataClass (bool, optional): decides if final product should be converted to 'human' dataclass (final product have to override _getHumanDataClass method). Defaults to True.
+
+    Returns:
+        DataClass: corresponding dataclass type
+    """
     if fromResponse.__class__.__name__ == "RepeatedCompositeContainer":
         all = []
         for item in fromResponse:
@@ -17,8 +22,11 @@ def convertResponse(fromResponse):
     if schemaFrom:
         construct = dict()
         for field in fromResponse.ListFields():
-            construct[field[0].name] = convertResponse(field[1])
-        return schemaFrom(**construct)
+            construct[field[0].name] = convertResponse(field[1], False)
+        if toHumanDataClass:
+            return schemaFrom(**construct)._getHumanDataClass()
+        else:
+            return schemaFrom(**construct)
     else:
         return fromResponse
 
