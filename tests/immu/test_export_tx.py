@@ -2,8 +2,13 @@ import uuid
 from immudb import ImmudbClient, datatypesv2
 import uuid
 import time
+from tests.immuTestClient import ImmuTestClient
+import pytest
 
-def test_export_tx_replicate_tx(client: ImmudbClient):
+def test_export_tx_replicate_tx(wrappedClient: ImmudbClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     newuuid1 = str(uuid.uuid4()).replace("-", "")
     client.createDatabaseV2(newuuid1, settings = datatypesv2.DatabaseSettingsV2(
     ), ifNotExists=False)

@@ -1,6 +1,11 @@
+import pytest
 from immudb import ImmudbClient
 from immudb.datatypesv2 import EntriesSpec, EntryTypeAction, EntryTypeSpec
-def test_tx_scan(client: ImmudbClient):
+from tests.immuTestClient import ImmuTestClient
+def test_tx_scan(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     response1 = client.set(b"x", b"y")
     response2 = client.set(b"x1", b"y")
     response3 = client.set(b"x2", b"y")
