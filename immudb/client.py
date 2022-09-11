@@ -1101,7 +1101,15 @@ class ImmudbClient:
         """
         return listtables.call(self._stub, self._rs)
 
-    def describeTable(self, table):
+    def describeTable(self, table) -> List[datatypes.ColumnDescription]:
+        """Describes table provided by argument
+
+        Args:
+            table (str): Table to describe
+
+        Returns:
+            List[datatypes.ColumnDescription]: Column descriptions
+        """
         return sqldescribe.call(self._stub, self._rs, table)
 
     def databaseCreate(self, dbName: bytes):
@@ -1131,7 +1139,6 @@ class ImmudbClient:
                       stacklevel=2
                       )
         return verifiedSet.call(self._stub, self._rs, key, value)
-
 
 # immudb-py only
 
