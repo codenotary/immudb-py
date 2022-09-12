@@ -11,8 +11,7 @@
 # limitations under the License.
 from __future__ import annotations
 from dataclasses import dataclass
-from enum import Enum, IntEnum
-from this import d
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from google.protobuf.struct_pb2 import NullValue
 import immudb.grpc.schema_pb2 as schema
