@@ -52,7 +52,7 @@ class GRPCTransformable:
                 dictToTransform[key] = currentValue._getGRPC()
             elif (isinstance(currentValue, list)):
                 for index in range(0, len(currentValue)):
-                    if(isinstance(currentValue[index], GRPCTransformable)):
+                    if (isinstance(currentValue[index], GRPCTransformable)):
                         currentValue[index] = currentValue[index]._getGRPC()
             elif (isinstance(currentValue, Enum)):
                 dictToTransform[key] = currentValue.value
