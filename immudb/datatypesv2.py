@@ -21,9 +21,9 @@ import immudb.grpc.schema_pb2 as schema
 def grpcHumanizator(objectFrom, classTo):
     finalKWArgs = dict()
     for key in objectFrom.__dict__.keys():
-        if(objectFrom.__dict__[key] != None and isinstance(objectFrom.__dict__[key], GRPCTransformable)):
+        if (objectFrom.__dict__[key] != None and isinstance(objectFrom.__dict__[key], GRPCTransformable)):
             finalKWArgs[key] = objectFrom.__dict__[key]._getHumanDataClass()
-        elif(objectFrom.__dict__[key] != None):
+        elif (objectFrom.__dict__[key] != None):
             finalKWArgs[key] = objectFrom.__dict__[key]
         else:
             finalKWArgs[key] = None
@@ -34,7 +34,7 @@ class GRPCTransformable:
     def _getGRPC(self):
         transformed = self._transformDict(self.__dict__)
         schemaFrom = schema.__dict__.get(self.__class__.__name__, None)
-        if(schemaFrom):
+        if (schemaFrom):
             return schemaFrom(**transformed)
         else:  # Special case. Message could be nested inside Precondition schema
             schemaFrom = schema.__dict__["Precondition"].__dict__.get(
@@ -48,13 +48,13 @@ class GRPCTransformable:
     def _transformDict(self, dictToTransform: Dict[str, Any]):
         for key in dictToTransform:
             currentValue = dictToTransform[key]
-            if(isinstance(currentValue, GRPCTransformable)):
+            if (isinstance(currentValue, GRPCTransformable)):
                 dictToTransform[key] = currentValue._getGRPC()
-            elif(isinstance(currentValue, list)):
+            elif (isinstance(currentValue, list)):
                 for index in range(0, len(currentValue)):
                     if(isinstance(currentValue[index], GRPCTransformable)):
                         currentValue[index] = currentValue[index]._getGRPC()
-            elif(isinstance(currentValue, Enum)):
+            elif (isinstance(currentValue, Enum)):
                 dictToTransform[key] = currentValue.value
         return dictToTransform
 
