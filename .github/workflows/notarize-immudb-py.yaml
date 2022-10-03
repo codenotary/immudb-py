@@ -1,32 +1,77 @@
 name: Notarize immudb-py
 
 on:
-  push:
+  pull_request:
     branches:
-      - master
+      - main
+      - develop
+    types:
+      - closed
 
 jobs:
-  notarize:
-    name: Notarize immudb-py directory and repository
+  checkout-repository:
+    name: Checkout repository
+    if: github.event.pull_request.merged == true
     runs-on: [self-hosted, linux]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Notarize immudb-py repository with latest cas
-        uses: codenotary/cas-notarize-asset-github-action@main
+  notarize-with-cas:
+    name: Notarize repository with cas
+    runs-on: [self-hosted, linux]
+    needs: checkout-repository
+    steps:
+      - name: Get latest released cas version
+        id: cas-version
+        run: >
+          echo "::set-output name=latest::$(
+          curl -s -H 'Accept: application/vnd.github+json'
+          -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'
+          https://api.github.com/repos/codenotary/cas/releases/latest | jq -r '.name'
+          )"
+
+      - name: Cache cas binary
+        id: cache-cas
+        uses: actions/cache@v3
         with:
-          asset: git://./
-          cas_api_key: ${{ secrets.CAS_API_KEY_ATTEST }}
+          path: cas
+          key: cas-${{ steps.cas-version.outputs.latest }}
+
+      - name: Download cas
+        if: steps.cache-cas.outputs.cache-hit != 'true'
+        run: |
+          curl -s -o cas -L https://github.com/codenotary/cas/releases/download/${{ steps.cas-version.outputs.latest }}/cas-${{ steps.cas-version.outputs.latest }}-linux-amd64-static
+          chmod +x cas
+
+      # Notarize only repository as cas cannot notarize all files recursively
+      - name: Notarize git repository with cas
+        run: ./cas n git://$GITHUB_WORKSPACE --api-key ${{ secrets.CAS_API_KEY_ATTEST }} --host=cas.codenotary.com
+
+  notarize-with-vcn:
+    name: Notarize repository with vcn
+    runs-on: [self-hosted, linux]
+    needs: checkout-repository
+    steps:
+      - name: Cache vcn binary
+        id: cache-vcn
+        uses: actions/cache@v3
+        with:
+          path: vcn
+          key: vcn-${{ steps.vcn-version.outputs.latest }}
 
       - name: Download vcn
-        uses: codenotary/vcn-github-action@v2
-        with:
-            standard_usage: false
+        if: steps.cache-vcn.outputs.cache-hit != 'true'
+        run: |
+          curl -s -o vcn -L https://vcn-releases.codenotary.com/vcn-latest-linux-amd64-static
+          chmod +x vcn
 
-      - name: Notarize immudb-py directory and dependencies with latest vcn
-        run: ./vcn n ./ --bom --lc-host ${{ secrets.CI_TEST_HOST }} --lc-api-key ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
+      - name: Notarize git repository with vcn
+        run: >
+          ./vcn n git://$GITHUB_WORKSPACE --bom --lc-host ${{ secrets.CI_TEST_HOST }}
+          --lc-api-key ${{secrets.CICD_LEDGER1_ACTION_KEY}}
 
-      - name: Notarize immudb-py repository and dependencies with latest vcn
-        run: ./vcn n git://./ --bom --lc-host ${{ secrets.CI_TEST_HOST }} --lc-api-key ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
+      - name: Notarize all files in git repository with latest vcn
+        run: >
+          ./vcn n wildcard://$GITHUB_WORKSPACE/"*" -r --lc-host ${{ secrets.CI_TEST_HOST }}
+          --lc-api-key ${{secrets.CICD_LEDGER1_ACTION_KEY}}
