@@ -31,15 +31,7 @@ jobs:
           https://api.github.com/repos/codenotary/cas/releases/latest | jq -r '.name'
           )"
 
-      - name: Cache cas binary
-        id: cache-cas
-        uses: actions/cache@v3
-        with:
-          path: cas
-          key: cas-${{ steps.cas-version.outputs.latest }}
-
       - name: Download cas
-        if: steps.cache-cas.outputs.cache-hit != 'true'
         run: |
           curl -s -o cas -L https://github.com/codenotary/cas/releases/download/${{ steps.cas-version.outputs.latest }}/cas-${{ steps.cas-version.outputs.latest }}-linux-amd64-static
           chmod +x cas
@@ -53,15 +45,7 @@ jobs:
     runs-on: [self-hosted, linux]
     needs: checkout-repository
     steps:
-      - name: Cache vcn binary
-        id: cache-vcn
-        uses: actions/cache@v3
-        with:
-          path: vcn
-          key: vcn-${{ steps.vcn-version.outputs.latest }}
-
       - name: Download vcn
-        if: steps.cache-vcn.outputs.cache-hit != 'true'
         run: |
           curl -s -o vcn -L https://vcn-releases.codenotary.com/vcn-latest-linux-amd64-static
           chmod +x vcn
