@@ -9,53 +9,10 @@ on:
       - closed
 
 jobs:
-  checkout-repository:
-    name: Checkout repository
-    if: github.event.pull_request.merged == true
-    runs-on: [self-hosted, linux]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-  notarize-with-cas:
-    name: Notarize repository with cas
-    runs-on: [self-hosted, linux]
-    needs: checkout-repository
-    steps:
-      - name: Get latest released cas version
-        id: cas-version
-        run: >
-          echo "::set-output name=latest::$(
-          curl -s -H 'Accept: application/vnd.github+json'
-          -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'
-          https://api.github.com/repos/codenotary/cas/releases/latest | jq -r '.name'
-          )"
-
-      - name: Download cas
-        run: |
-          curl -s -o cas -L https://github.com/codenotary/cas/releases/download/${{ steps.cas-version.outputs.latest }}/cas-${{ steps.cas-version.outputs.latest }}-linux-amd64-static
-          chmod +x cas
-
-      # Notarize only repository as cas cannot notarize all files recursively
-      - name: Notarize git repository with cas
-        run: ./cas n git://$GITHUB_WORKSPACE --api-key ${{ secrets.CAS_API_KEY_ATTEST }} --host=cas.codenotary.com
-
-  notarize-with-vcn:
-    name: Notarize repository with vcn
-    runs-on: [self-hosted, linux]
-    needs: checkout-repository
-    steps:
-      - name: Download vcn
-        run: |
-          curl -s -o vcn -L https://vcn-releases.codenotary.com/vcn-latest-linux-amd64-static
-          chmod +x vcn
-
-      - name: Notarize git repository with vcn
-        run: >
-          ./vcn n git://$GITHUB_WORKSPACE --bom --lc-host ${{ secrets.CI_TEST_HOST }}
-          --lc-api-key ${{secrets.CICD_LEDGER1_ACTION_KEY}}
-
-      - name: Notarize all files in git repository with latest vcn
-        run: >
-          ./vcn n wildcard://$GITHUB_WORKSPACE/"*" -r --lc-host ${{ secrets.CI_TEST_HOST }}
-          --lc-api-key ${{secrets.CICD_LEDGER1_ACTION_KEY}}
+  notarize-repository:
+    name: Notarize cas repository with cas and vcn
+    uses: codenotary/notarize-with-cas-and-vcn/.github/workflows/notarize-with-cas-and-vcn.yml@main
+    secrets:
+      cas-api-key: ${{ secrets.CAS_API_KEY_ATTEST }}
+      vcn-api-key: ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
+      vcn-host: ${{ secrets.CI_TEST_HOST }}
