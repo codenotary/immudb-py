@@ -1,32 +1,18 @@
 name: Notarize immudb-py
 
 on:
-  push:
+  pull_request:
     branches:
-      - master
+      - main
+      - develop
+    types:
+      - closed
 
 jobs:
-  notarize:
-    name: Notarize immudb-py directory and repository
-    runs-on: [self-hosted, linux]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Notarize immudb-py repository with latest cas
-        uses: codenotary/cas-notarize-asset-github-action@main
-        with:
-          asset: git://./
-          cas_api_key: ${{ secrets.CAS_API_KEY_ATTEST }}
-
-      - name: Download vcn
-        uses: codenotary/vcn-github-action@v2
-        with:
-            standard_usage: false
-
-      - name: Notarize immudb-py directory and dependencies with latest vcn
-        run: ./vcn n ./ --bom --lc-host ${{ secrets.CI_TEST_HOST }} --lc-api-key ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
-
-      - name: Notarize immudb-py repository and dependencies with latest vcn
-        run: ./vcn n git://./ --bom --lc-host ${{ secrets.CI_TEST_HOST }} --lc-api-key ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
+  notarize-repository:
+    name: Notarize immudb-py repository with cas and vcn
+    uses: codenotary/notarize-with-cas-and-vcn/.github/workflows/notarize-with-cas-and-vcn.yml@main
+    secrets:
+      cas-api-key: ${{ secrets.CAS_API_KEY_ATTEST }}
+      vcn-api-key: ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
+      vcn-host: ${{ secrets.CI_TEST_HOST }}
