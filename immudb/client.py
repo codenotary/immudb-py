@@ -91,7 +91,7 @@ class ImmudbClient:
         """Loads public key from parameter
 
         Args:
-            key (str): key 
+            key (str): key
         """
         self._vk = ecdsa.VerifyingKey.from_pem(key)
 
@@ -479,7 +479,7 @@ class ImmudbClient:
         """Updates database with provided argument
 
         Args:
-            database (str): Name of database    
+            database (str): Name of database
             settings (datatypesv2.DatabaseSettingsV2): Settings of database
 
         Returns:
@@ -550,7 +550,17 @@ class ImmudbClient:
         return dataconverter.convertResponse(resp)
 
     def compactIndex(self):
-        """Starts full async index compaction - Routine that creates a fresh index based on the current state, removing all intermediate data generated over time
+        """Start full async index compaction.
+
+        This creates a fresh index representing the current state of
+        the database, removing the intermediate index data generated over
+        time that is no longer needed to represent the current state.
+
+        The :meth:`ImmudbClient.flushIndex()` method (with a `cleanupPercentage`)
+        argument specified) should be preferred over this method for compacting
+        the index. You should only call this method if there's little to no activity
+        on the database, or the performance of the database may be degraded
+        significantly while the compaction is in progress.
         """
         resp = self._stub.CompactIndex(
             google_dot_protobuf_dot_empty__pb2.Empty())
@@ -678,13 +688,20 @@ class ImmudbClient:
         return verifiedGet.call(self._stub, self._rs, key, atTx, self._vk)
 
     def history(self, key: bytes, offset: int, limit: int, sortorder: bool) -> List[datatypes.historyResponseItem]:
-        """Returns history of key
+        """Returns history of values for a given key.
 
         Args:
-            key (bytes): Key to retrieve
+            key (bytes): Key of value to retrieve.
             offset (int): Offset of history
             limit (int): Limit of history entries
-            sortorder (bool): Sort order of history
+            sortorder (bool, optional, deprecated): A boolean value that specifies if the history
+                should be returned in descending order.
+
+                If ``True``, the history will be returned in descending order,
+                with the most recent value in the history being the first item in the list.
+
+                If ``False``, the list will be sorted in ascending order,
+                with the most recent value in the history being the last item in the list.
 
         Returns:
             List[datatypes.historyResponseItem]: List of history response items
@@ -692,16 +709,17 @@ class ImmudbClient:
         return history.call(self._stub, self._rs, key, offset, limit, sortorder)
 
     def zAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0) -> datatypes.SetResponse:
-        """Adds score (secondary index) for a specified key and collection
+        """Adds score (secondary index) for a specified key and collection.
 
         Args:
             zset (bytes): collection name
             score (float): score
             key (bytes): key name
-            atTx (int, optional): transaction id to bound score to. Defaults to 0 - current transaction
+            atTx (int, optional): Transaction id to bound score to. Defaults to 0,
+                indicating the most recent version should be used.
 
         Returns:
-            datatypes.SetResponse: Set response contains transaction id 
+            datatypes.SetResponse: Set response contains transaction id
         """
         return zadd.call(self._stub, self._rs, zset, score, key, atTx)
 
@@ -713,10 +731,11 @@ class ImmudbClient:
             zset (bytes): collection name
             score (float): score
             key (bytes): key name
-            atTx (int, optional): transaction id to bound score to. Defaults to 0 - current transaction
+            atTx (int, optional): transaction id to bound score to. Defaults to 0,
+                indicating the most recent version should be used.
 
         Returns:
-            datatypes.SetResponse: Set response contains transaction id 
+            datatypes.SetResponse: Set response contains transaction id
         """
         return verifiedzadd.call(self._stub, self._rs, zset, score, key, atTx, self._vk)
 
@@ -788,7 +807,8 @@ class ImmudbClient:
         Args:
             initialTx (int): initial transaction id
             limit (int, optional): Limit resulsts. Defaults to 999.
-            desc (bool, optional): Descending or ascending. Defaults to False.
+            desc (bool, optional): If `True`, use descending scan order.
+                Defaults to `False`, which uses ascending scan order.
             entriesSpec (datatypesv2.EntriesSpec, optional): Specified what should be contained in scan. Defaults to None.
             sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
             noWait (bool, optional): Doesn't wait for the index to be fully generated. Defaults to None.
@@ -828,7 +848,7 @@ class ImmudbClient:
             kv (Dict[bytes, bytes]): dictionary of keys and values
 
         Returns:
-            datatypes.SetResponse: Set response contains transaction id 
+            datatypes.SetResponse: Set response contains transaction id
         """
         return batchSet.call(self._stub, self._rs, kv)
 
@@ -836,7 +856,7 @@ class ImmudbClient:
         """Returns values for specified keys
 
         Args:
-            keys (List[bytes]): Keys list 
+            keys (List[bytes]): Keys list
 
         Returns:
             Dict[bytes, bytes]: Dictionary of key : value pairs
@@ -905,7 +925,7 @@ class ImmudbClient:
             yield it
 
     def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Tuple[bytes, BufferedStreamReader]:
-        """Streaming method to get buffered value. 
+        """Streaming method to get buffered value.
         You can read from this value by read() method
         read() will read everything
         read(256) will read 256 bytes
@@ -918,7 +938,7 @@ class ImmudbClient:
             atRevision (int, optional): Returns value of key at specified revision. -1 to get relative revision. Defaults to None.
 
         Returns:
-            Tuple[bytes, BufferedStreamReader]: First value is key, second is reader. 
+            Tuple[bytes, BufferedStreamReader]: First value is key, second is reader.
         """
         req = datatypesv2.KeyRequest(
             key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
@@ -1062,7 +1082,7 @@ class ImmudbClient:
         return dataconverter.convertResponse(resp)
 
     def streamSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
-        """Sets key into value with streaming method. 
+        """Sets key into value with streaming method.
 
         Args:
             key (bytes): Key
