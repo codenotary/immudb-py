@@ -235,20 +235,28 @@ class ImmudbClient:
         self._stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())
 
     def openManagedSession(self, username, password, database=b"defaultdb", keepAliveInterval=60):
-        """Opens managed session and returns ManagedSession object within you can manage SQL transactions
+        """Opens a session managed by immudb.
+
+        When a ManagedSession is used, the client will automatically
+        send keepalive packets to the server. If you are managing
+        your application's threading yourself and want control over
+        how keepalive packets are sent, consider the method
+        :meth:`ImmudbClient.openSession()` instead.
 
 
-        example of usage:
-        with client.openManagedSession(username, password) as session:
-            session.newTx()
+        Examples:
+            with client.openManagedSession(username, password) as session:
+                session.newTx()
 
         Check handler/transaction.py
 
         Args:
             username (str): username
             password (str): password for user
-            database (bytes, optional): name of database. Defaults to b"defaultdb".
-            keepAliveInterval (int, optional): specifies how often keep alive packet should be sent. Defaults to 60.
+            database (bytes, optional): database to establish session with.
+                Defaults to ``b"defaultdb"``.
+            keepAliveInterval (int, optional): specifies how often keepalive
+            packets should be sent, in seconds. Defaults to ``60s``.
 
         Returns:
             ManagedSession: managed Session object
@@ -282,13 +290,20 @@ class ImmudbClient:
         return ManagedSession(keepAliveInterval)
 
     def openSession(self, username, password, database=b"defaultdb"):
-        """Opens unmanaged session. Unmanaged means that you have to send keep alive packets yourself.
-        Managed session does it for you
+        """Opens unmanaged Session object.
+
+        When a Session is unmanaged, it is the user's responsibility
+        to send keepalive packets. You should use an unmanaged session
+        when you are also managing your application's threading yourself.
+
+        To have the client manage the session and send keepalive packets
+        for you, use openManagedSession instead.
 
         Args:
             username (str): username
             password (str): password
-            database (bytes, optional): database name to switch to. Defaults to b"defaultdb".
+            database (bytes, optional): database name to switch to.
+                Defaults to ``b"defaultdb"``.
 
         Returns:
             Tx: Tx object (handlers/transaction.py)
