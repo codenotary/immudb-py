@@ -297,12 +297,12 @@ class ImmudbClient:
         when you are also managing your application's threading yourself.
 
         To have the client manage the session and send keepalive packets
-        for you, use openManagedSession instead.
+        for you, use :meth:`ImmudbClient.openManagedSession()` instead.
 
         Args:
             username (str): username
             password (str): password
-            database (bytes, optional): database name to switch to.
+            database (bytes, optional): database to establish session with.
                 Defaults to ``b"defaultdb"``.
 
         Returns:
@@ -346,10 +346,18 @@ class ImmudbClient:
         return createUser.call(self._stub, self._rs, request)
 
     def listUsers(self):
-        """Returns all users on database
+        """Returns all database users.
 
         Returns:
-            ListUserResponse: List containing all users
+            ListUserResponse: List containing all database users.
+
+            If this method is called by an authenticated Superadmin user,
+            the ListUserResponse object will contain all known users.
+
+            If this method is called by an authenticated Admin users,
+            the response will contain the list of users for the
+            current database.
+
         """
         return listUsers.call(self._stub)
 
@@ -408,7 +416,7 @@ class ImmudbClient:
         Args:
             name (str): Name of database
             settings (datatypesv2.DatabaseSettingsV2): Settings of database
-            ifNotExists (bool): would only create database if it not exist
+            ifNotExists (bool): only create a database if it does not exist yet.
 
         Returns:
             datatypesv2.CreateDatabaseResponseV2: Response contains information about new database
@@ -520,11 +528,19 @@ class ImmudbClient:
         return resp == google_dot_protobuf_dot_empty__pb2.Empty()
 
     def flushIndex(self, cleanupPercentage: float, synced: bool) -> datatypesv2.FlushIndexResponse:
-        """Routine that creates a fresh index based on the current state, removing all intermediate data generated over time
+        """Request a flush of the internal to disk, with the option to cleanup the index.
+
+        This routine requests that the internal B-tree index be flushed from
+        memory to disk, optionally followed by a cleanup of intermediate index data.
 
         Args:
-            cleanupPercentage (float): Indicates how much space will be scanned for unreferenced data. Even though this operation blocks transaction processing, choosing a small percentage e.g. 0.1 may not significantly hinder normal operations while reducing used storage space.
-            synced (bool): If true, fsync after writing data to avoid index regeneration in the case of an unexpected crash
+            cleanupPercentage (float): Indicates the percentage of the
+                storage space that will be scanned for unreference data. Although
+                this operation blocks transaction processing, choosing a small
+                value (e.g. ``0.1``) may not significantly hinder normal operations,
+                and will reduce used storage space.
+            synced (bool): If `True`, ``fsync`` will be called after writing data
+                to avoid index regeneration in the event of an unexpected crash.
 
         Returns:
             datatypesv2.FlushIndexResponse: Contains database name
@@ -549,10 +565,10 @@ class ImmudbClient:
         return health.call(self._stub, self._rs)
 
     def currentState(self) -> State:
-        """Return current state of immudb (proof)
+        """Return current state (proof) of current database.
 
         Returns:
-            State: state of immudb
+            State: State of current database, proving integrity of its data.
         """
         return currentRoot.call(self._stub, self._rs, None)
 
@@ -596,35 +612,52 @@ class ImmudbClient:
         return setValue.call(self._stub, self._rs, key, value, metadata)
 
     def get(self, key: bytes, atRevision: int = None) -> datatypes.GetResponse:
-        """Gets value for key
+        """Get value for key.
 
         Args:
-            key (bytes): key
-            atRevision (int, optional): gets value at revision specified by this argument. It could be relative (-1, -2), or fixed (32). Defaults to None.
+            key (bytes): Key of value to retrieve.
+            atRevision (int, optional):
+                Specify the revision from which the value should be retrieved.
+                A negative integer value (e.g. ``-2``) specifies a revision relative
+                to the current revision. A positive integer value (e.g. ``32``) should
+                be used to represent a fixed revision number. If not specified, the
+                most recent value will be returned.
 
         Returns:
-            GetResponse: contains tx, value, key and revision
+            GetResponse: Contains `tx`, `value`, `key` and `revision` information.
         """
         return get.call(self._stub, self._rs, key, atRevision=atRevision)
 
     def verifiedGet(self, key: bytes, atRevision: int = None) -> datatypes.SafeGetResponse:
-        """Get value for key and compares with saved state
+        """Get value for key and verify it against saved state.
 
         Args:
-            key (bytes): Key to retrieve
-            atRevision (int, optional): Retrieve key at desired revision. -1, -2... -n to get relative revision. Defaults to None.
+            key (bytes): Key of value to retrieve.
+            atRevision (int, optional):
+                Specify the revision from which the value should be retrieved.
+                A negative integer value (e.g. ``-2``) specifies a revision relative
+                to the current revision. A positive integer value (e.g. ``32``) should
+                be used to represent a fixed revision number. If not specified, the
+                most recent value will be returned.
 
         Returns:
-            datatypes.SafeGetResponse: object that contains informations about transaction and verified state
+            SafeGetResponse: Contains information about the transaction
+                and the verified state.
         """
         return verifiedGet.call(self._stub, self._rs, key, verifying_key=self._vk, atRevision=atRevision)
 
     def verifiedGetSince(self, key: bytes, sinceTx: int) -> datatypes.SafeGetResponse:
-        """Get value for key since tx (immudb will wait that the transaction specified by sinceTx is processed)
+        """Get value for key since a given transaction (and wait if that transaction is not yet indexed).
+
+        This method retrieves the value for a given key, as of a given transaction
+        number in the database. If the transaction specified by ``sinceTx`` has not
+        yet been indexed by immudb, this method will block until it has been indexed.
 
         Args:
-            key (bytes): Key to retrieve
-            sinceTx (int): transaction id (immudb will wait that the transaction specified by sinceTx is processed)
+            key (bytes): Key of value to retrieve.
+            sinceTx (int): Identifier of the earliest transaction from which the
+                key's value should be retrieved. If the specified transaction has
+                not been indexed by immudb, this method will block until it has.
 
         Returns:
             datatypes.SafeGetResponse: object that contains informations about transaction and verified state
@@ -632,11 +665,12 @@ class ImmudbClient:
         return verifiedGet.call(self._stub, self._rs, key, sinceTx=sinceTx, verifying_key=self._vk)
 
     def verifiedGetAt(self, key: bytes, atTx: int) -> datatypes.SafeGetResponse:
-        """Get value at specified transaction
+        """Get value for key at a given transaction point.
 
         Args:
-            key (bytes): key to retrieve
-            atTx (int): at transaction point
+            key (bytes): Key of value to retrieve.
+            atTx (int): Identifier of the transaction at which point the key's
+                value should be retrieved.
 
         Returns:
             datatypes.SafeGetResponse: object that contains informations about transaction and verified state
