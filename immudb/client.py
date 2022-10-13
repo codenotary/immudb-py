@@ -43,14 +43,20 @@ from immudb.streamsutils import KeyHeader, StreamReader, ValueChunk, ValueChunkH
 class ImmudbClient:
 
     def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length=None):
-        """Immudb client
+        """immudb Client
 
         Args:
-            immudbUrl (str, optional): url in format host:port, ex. localhost:3322 pointing to your immudb instance. Defaults to None.
-            rs (RootService, optional): object that implements RootService - to be allow to verify requests. Defaults to None.
-            publicKeyFile (str, optional): path to the public key that would be used to authenticate requests with. Defaults to None.
-            timeout (int, optional): global timeout for GRPC requests, if None - it would hang until server respond. Defaults to None.
-            max_grpc_message_length (int, optional): max size for message from the server. If None - it would set defaults (4mb).
+            immudbUrl (str, optional): url in format ``host:port``
+                (e.g. ``localhost:3322``) of your immudb instance.
+                Defaults to ``localhost:3322`` when no value is set.
+            rs (RootService, optional): object that implements RootService,
+                allowing requests to be verified. Optional.
+            publicKeyFile (str, optional): path of the public key to use
+                for authenticating requests. Optional.
+            timeout (int, optional): global timeout for GRPC requests. Requests
+                will hang until the server responds if no timeout is set.
+            max_grpc_message_length (int, optional): maximum size of message the
+                server should send. The default (4Mb) is used is no value is set.
         """
         if immudUrl is None:
             immudUrl = "localhost:3322"
