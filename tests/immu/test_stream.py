@@ -449,3 +449,95 @@ def test_stream_set(client: ImmudbClient):
 
     assert client.get(b'test').value == ('test'*10240).encode("utf-8")
 
+
+def test_stream_history(client: ImmudbClient):
+    key = str(uuid.uuid4()).encode("utf-8")
+    client.set(key, b'1')
+    client.set(key, b'2')
+    client.set(key, b'3')
+    resp = client.streamHistory(key = key)
+    value = next(resp)
+    assert value.key == key
+    assert value.value == b'1'
+    value = next(resp)
+    assert value.key == key
+    assert value.value == b'2'
+    value = next(resp)
+    assert value.key == key
+    assert value.value == b'3'
+    with pytest.raises(StopIteration):
+        value = next(resp)
+
+def test_stream_history_buffered(client: ImmudbClient):
+    key = str(uuid.uuid4()).encode("utf-8")
+    client.set(key, b'1'* 300)
+    client.set(key, b'2'* 300)
+    client.set(key, b'3'* 300)
+    resp = client.streamHistoryBuffered(key)
+    index = 1
+    for keyNow, bufferedReader in resp:
+        assert keyNow == key
+        assert bufferedReader.read(256) == str(index).encode("utf-8") * 256 # First 256
+        assert bufferedReader.read(256) == str(index).encode("utf-8") * 44 # Last 44 
+        index += 1
+
+
+def test_stream_zscan(client: ImmudbClient):
+    key = str(uuid.uuid4()).encode("utf-8")
+    key2 = str(uuid.uuid4()).encode("utf-8")
+    key3 = str(uuid.uuid4()).encode("utf-8")
+    key4 = str(uuid.uuid4()).encode("utf-8")
+    set = b'set' + str(uuid.uuid4()).encode("utf-8")
+    client.set(key, b'b'*356)
+    client.set(key2, b'b'*356)
+    client.set(key3, b'b'*356)
+    client.set(key4, b'b'*356)
+    client.zAdd(set, 4.0, key)
+    client.zAdd(set, 3.0, key2)
+    client.zAdd(set, 5.0, key3)
+    client.zAdd(set, 6.0, key4)
+    resp = client.streamZScan(set = set, limit = 2, minScore=3.5)
+    index = 0
+    toFind = 4.0
+    lastFind = None
+    for item in resp:
+        assert item.score == toFind
+        assert item.value == b'b' * 356
+        assert len(item.key) == 36
+        toFind += 1
+        index += 1
+        lastFind = item.score
+
+    assert lastFind == 5.0 # limit = 2, minScore = 3.5
+
+    assert index == 2
+
+
+def test_stream_zscan_buffered(client: ImmudbClient):
+    key = str(uuid.uuid4()).encode("utf-8")
+    key2 = str(uuid.uuid4()).encode("utf-8")
+    key3 = str(uuid.uuid4()).encode("utf-8")
+    key4 = str(uuid.uuid4()).encode("utf-8")
+    set = b'set' + str(uuid.uuid4()).encode("utf-8")
+    client.set(key, b'b'*356)
+    client.set(key2, b'b'*356)
+    client.set(key3, b'b'*356)
+    client.set(key4, b'b'*356)
+    client.zAdd(set, 4.0, key)
+    client.zAdd(set, 3.0, key2)
+    client.zAdd(set, 5.0, key3)
+    client.zAdd(set, 6.0, key4)
+    resp = client.streamZScanBuffered(set = set, limit = 2, minScore=3.5)
+    index = 0
+    toFind = 4.0
+    lastFind = None
+    for item, reader in resp:
+        assert item.score == toFind
+        assert reader.read() == b'b' * 356
+        assert len(item.key) == 36
+        toFind += 1
+        index += 1
+        lastFind = item.score
+
+    assert index == 2
+    assert lastFind == 5.0 # limit = 2, minScore = 3.5

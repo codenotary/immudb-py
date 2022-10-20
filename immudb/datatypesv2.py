@@ -221,6 +221,13 @@ class ZEntry(GRPCTransformable):
     score: float = None
     atTx: int = None
 
+@dataclass
+class ZScanEntry():
+    set: bytes = None
+    key: bytes = None
+    value: bytes = None
+    score: float = None
+    atTx: int = None
 
 @dataclass
 class ZEntries(GRPCTransformable):

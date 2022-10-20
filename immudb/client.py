@@ -37,7 +37,7 @@ import immudb.dataconverter as dataconverter
 
 import datetime
 
-from immudb.streamsutils import KeyHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader
+from immudb.streamsutils import AtTXHeader, KeyHeader, ScoreHeader, SetHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader, ZScanStreamReader
 
 
 class ImmudbClient:
@@ -952,9 +952,10 @@ class ImmudbClient:
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         chunks = reader.chunks()
-        keyHeader = next(chunks)
-        valueHeader = next(chunks)
-        return keyHeader.key, BufferedStreamReader(chunks, valueHeader, resp)
+        keyHeader = next(chunks, None)
+        if keyHeader != None:
+            valueHeader = next(chunks)
+            return keyHeader.key, BufferedStreamReader(chunks, valueHeader, resp)
 
     def streamGetFull(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> datatypesv2.KeyValue:
         """Streaming method to get full value
@@ -976,10 +977,46 @@ class ImmudbClient:
         key = None
         value = b''
         chunks = reader.chunks()
-        key = next(chunks).key
-        for it in chunks:
-            value += it.chunk
-        return datatypesv2.KeyValue(key, value)
+        chunk = next(chunks, None)
+        if chunk != None:
+            key = chunk.key
+            for it in chunks:
+                value += it.chunk
+            return datatypesv2.KeyValue(key, value)
+
+
+    def streamHistory(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):
+        request = datatypesv2.HistoryRequest(key = key, offset = offset, limit = limit, desc = desc, sinceTx = sinceTx)
+        resp = self._stub.streamHistory(request._getGRPC())
+        key = None
+        value = None
+        for chunk in StreamReader(resp).chunks():
+            if isinstance(chunk, KeyHeader):
+                if key != None:
+                    yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
+                key = chunk.key
+                value = b''
+            else:
+                value += chunk.chunk
+
+        if key != None and value != None:  # situation when generator consumes all at first run, so it didn't yield first value
+            yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
+
+    def streamHistoryBuffered(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):
+        request = datatypesv2.HistoryRequest(key = key, offset = offset, limit = limit, desc = desc, sinceTx = sinceTx)
+        resp = self._stub.streamHistory(request._getGRPC())
+        key = None
+        valueHeader = None
+
+        streamReader = StreamReader(resp)
+        chunks = streamReader.chunks()
+        chunk = next(chunks, None)
+        while chunk != None:
+            if isinstance(chunk, KeyHeader):
+                key = chunk.key
+                valueHeader = next(chunks)
+                yield key, BufferedStreamReader(chunks, valueHeader, resp)
+            chunk = next(chunks, None)
 
     def _make_set_stream(self, buffer, key: bytes, length: int, chunkSize: int = 65536):
         """Helper function that creates generator from buffer
@@ -1002,6 +1039,90 @@ class ImmudbClient:
         while chunk:
             yield Chunk(content=chunk)
             chunk = buffer.read(chunkSize)
+
+    def streamZScanBuffered(self, set: bytes = None, seekKey: bytes = None, 
+        seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None, 
+        desc: bool = None, minScore: float = None,maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None ) -> Generator[datatypesv2.ZScanEntry, None, None]:
+        minScoreObject = None
+        maxScoreObject = None
+        if minScore != None:
+            minScoreObject = datatypesv2.Score(minScore)
+        if maxScore != None:
+            maxScoreObject = datatypesv2.Score(maxScore)
+        req = datatypesv2.ZScanRequest(set = set, seekKey= seekKey, seekScore=seekScore, seekAtTx=seekAtTx, inclusiveSeek=inclusiveSeek, limit = limit, desc = desc, minScore=minScoreObject, maxScore=maxScoreObject, sinceTx=sinceTx, noWait=noWait, offset=offset)
+        resp = self._stub.streamZScan(req._getGRPC())
+
+        set = None
+        key = None
+        score = None
+        atTx = None
+
+        chunks = ZScanStreamReader(resp).chunks()
+        chunk = next(chunks, None)
+        while chunk != None:
+            if isinstance(chunk, SetHeader):
+                set = chunk.set
+                atTx = None
+                score = None
+                key = None
+
+            elif isinstance(chunk, KeyHeader):
+                key = chunk.key
+
+            elif isinstance(chunk, ScoreHeader):
+                score = chunk.score
+
+            elif isinstance(chunk, AtTXHeader):
+                atTx = chunk.seenAtTx
+
+            else:
+                yield datatypesv2.ZScanEntry(set = set, key = key, score = score, atTx = atTx), BufferedStreamReader(chunks, chunk, resp)
+                
+
+                
+            chunk = next(chunks, None)
+
+    def streamZScan(self, set: bytes = None, seekKey: bytes = None, 
+        seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None, 
+        desc: bool = None, minScore: float = None,maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None ) -> Generator[datatypesv2.ZScanEntry, None, None]:
+        minScoreObject = None
+        maxScoreObject = None
+        if minScore != None:
+            minScoreObject = datatypesv2.Score(minScore)
+        if maxScore != None:
+            maxScoreObject = datatypesv2.Score(maxScore)
+        req = datatypesv2.ZScanRequest(set = set, seekKey= seekKey, seekScore=seekScore, seekAtTx=seekAtTx, inclusiveSeek=inclusiveSeek, limit = limit, desc = desc, minScore=minScoreObject, maxScore=maxScoreObject, sinceTx=sinceTx, noWait=noWait, offset=offset)
+        resp = self._stub.streamZScan(req._getGRPC())
+
+        set = None
+        key = None
+        score = None
+        atTx = None
+        value = None
+        for chunk in ZScanStreamReader(resp).chunks():
+            if isinstance(chunk, SetHeader):
+                if set != None:
+                    yield datatypesv2.ZScanEntry(set = set, key=key, value = value, score = score, atTx = atTx)
+                set = chunk.set
+                value = b''
+                atTx = None
+                score = None
+                key = None
+
+            elif isinstance(chunk, KeyHeader):
+                key = chunk.key
+
+            elif isinstance(chunk, ScoreHeader):
+                score = chunk.score
+
+            elif isinstance(chunk, AtTXHeader):
+                atTx = chunk.seenAtTx
+
+            else:
+                value += chunk.chunk
+
+        if key != None and value != None:  # situation when generator consumes all at first run, so it didn't yield first value
+            yield datatypesv2.ZScanEntry(set = set, key=key, value = value, score = score, atTx = atTx)
 
     def streamScan(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[datatypesv2.KeyValue, None, None]:
         """Scan method in streaming maneer
@@ -1068,7 +1189,7 @@ class ImmudbClient:
 
         streamReader = StreamReader(resp)
         chunks = streamReader.chunks()
-        chunk = next(chunks)
+        chunk = next(chunks, None)
         while chunk != None:
             if isinstance(chunk, KeyHeader):
                 key = chunk.key

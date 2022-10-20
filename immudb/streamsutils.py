@@ -1,5 +1,7 @@
 
 from dataclasses import dataclass
+import struct
+from this import s
 
 
 @dataclass
@@ -10,6 +12,22 @@ class KeyHeader:
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.key
 
+
+@dataclass
+class SetHeader:
+    set: bytes
+    length: int
+
+    def getInBytes(self):
+        return self.length.to_bytes(8, 'big') + self.set
+
+@dataclass
+class ScoreHeader:
+    score: float
+
+@dataclass
+class AtTXHeader:
+    seenAtTx: int
 
 @dataclass
 class ValueChunkHeader:
@@ -71,6 +89,74 @@ class StreamReader:
             self.reader = self.headerReader
         return readed
 
+
+class ZScanStreamReader:
+    def __init__(self, stream):
+        self.streamToRead = stream
+        self.reader = self.setHeaderReader
+        self.valueLength = -1
+        self.left = -1
+
+    def parseHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        return KeyHeader(length=length, key=header[8:])
+
+    def parseSetHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        return SetHeader(length=length, set=header[8:])
+
+    def parseValueHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        self.valueLength = length
+        self.left = self.valueLength - len(header[8:])
+        return ValueChunk(chunk=header[8:], left=self.left)
+
+    def parseScoreValueHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        loadedScore = struct.unpack('>d', header[8: 8 + length])[0]
+        return ScoreHeader(score = loadedScore)
+
+
+    def parseAtTXHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        atTx = int.from_bytes(header[8:8 + length], byteorder='big')
+        return AtTXHeader(seenAtTx = atTx)
+
+    def chunks(self):
+        for chunk in self.streamToRead:
+            yield self.reader(chunk)
+
+    def headerReader(self, chunk):
+        self.reader = self.scoreValueHeaderReader
+        return self.parseHeader(chunk.content)
+
+    def setHeaderReader(self, chunk):
+        self.reader = self.headerReader
+        return self.parseSetHeader(chunk.content)
+
+    def scoreValueHeaderReader(self, chunk):
+        self.reader = self.atTXHeaderReader
+        readed = self.parseScoreValueHeader(chunk.content)
+        return readed
+
+    def atTXHeaderReader(self, chunk):
+        self.reader = self.valueHeaderReader
+        readed = self.parseAtTXHeader(chunk.content)
+        return readed
+
+    def valueHeaderReader(self, chunk):
+        self.reader = self.valueReader
+        readed = self.parseValueHeader(chunk.content)
+        if (self.left == 0):
+            self.reader = self.setHeaderReader
+        return readed
+
+    def valueReader(self, chunk):
+        self.left = self.left - len(chunk.content)
+        readed = ValueChunk(chunk=chunk.content, left=self.left)
+        if (self.left == 0):
+            self.reader = self.setHeaderReader
+        return readed
 
 class BufferedStreamReader:
     def __init__(self, chunksGenerator, valueHeader: ValueChunk, stream):
