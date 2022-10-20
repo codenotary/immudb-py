@@ -10,14 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pyrsistent import b
 from immudb.embedded import store
 from immudb.grpc import schema_pb2
 from immudb.grpc import schema_pb2_grpc
 from immudb.rootService import RootService, State
-from immudb import datatypes
 from immudb.exceptions import ErrCorruptedData
-import immudb.database as database
 import immudb.schema as schema
 from typing import List
 from immudb import datatypesv2
