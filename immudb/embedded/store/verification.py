@@ -140,8 +140,8 @@ def leafFor(d: bytes) -> bytes:
     b = LEAF_PREFIX+d
     return hashlib.sha256(b).digest()
 
+
 def sqlMapKey(prefix: bytes, mappingPrefix: str, encValues: List[bytes]):
-       
 
     mkey = b''
 
@@ -149,9 +149,9 @@ def sqlMapKey(prefix: bytes, mappingPrefix: str, encValues: List[bytes]):
 
     mkey += prefix
     off += len(prefix)
-    
+
     mkey += mappingPrefix.encode("utf-8")
-    
+
     off += len(mappingPrefix)
 
     for ev in encValues:
@@ -160,35 +160,35 @@ def sqlMapKey(prefix: bytes, mappingPrefix: str, encValues: List[bytes]):
 
     return mkey
 
+
 def encodeID(id: int):
     encId = b''
-    encId +=  int.to_bytes(id, 4, "big")
+    encId += int.to_bytes(id, 4, "big")
     return encId
 
+
 def encodeAsKey(val, colType, maxLen):
-    maxKeyLen = 256 # pkg/client/sql.go
+    maxKeyLen = 256  # pkg/client/sql.go
     KeyValPrefixNotNull = b'\x80'
 
     if maxLen <= 0:
         raise ErrInvalidValue()
-    
+
     if maxLen > maxKeyLen:
         raise ErrMaxKeyLengthExceeded()
-    
 
     if val == None:
         return KeyValPrefixNotNull
-    
+
     if isinstance(colType, datatypesv2.PrimaryKeyNullValue):
         strVal = str(val)
         if len(strVal) > maxLen:
             raise ErrMaxLengthExceeded()
-            
 
         encv = b''
         encv[0] = KeyValPrefixNotNull
         encv += strVal.encode("utf-8")
-        encv +=  int.to_bytes(len(strVal), 4, "big")
+        encv += int.to_bytes(len(strVal), 4, "big")
 
         return encv
     elif isinstance(colType, datatypesv2.PrimaryKeyIntValue):
@@ -199,14 +199,14 @@ def encodeAsKey(val, colType, maxLen):
 
         encv = bytearray()
         encv += KeyValPrefixNotNull
-        encv +=  int.to_bytes(intVal, 8, "big")
+        encv += int.to_bytes(intVal, 8, "big")
         encv[1] = ord(encv[1:2]) ^ ord(b'\x80')
         return bytes(encv)
     elif isinstance(colType, datatypesv2.PrimaryKeyVarCharValue):
 
         encv = bytearray()
         encv += KeyValPrefixNotNull
-        encv +=  str(val).encode("utf-8")
+        encv += str(val).encode("utf-8")
         encv += b'\x00' * (maxLen - len(val))
         encv += int.to_bytes(len(val), 4, "big")
         return bytes(encv)
@@ -223,7 +223,7 @@ def encodeAsKey(val, colType, maxLen):
 
         encv = bytearray()
         encv += KeyValPrefixNotNull
-        encv +=  val
+        encv += val
         encv += b'\x00' * (maxLen - len(val))
         encv += int.to_bytes(len(val), 4, "big")
         return bytes(encv)
@@ -232,10 +232,11 @@ def encodeAsKey(val, colType, maxLen):
             raise ErrCorruptedData()
 
         parsed = datetime.datetime.fromtimestamp(val / 1e6)
-        intVal = round(int(parsed.timestamp() * 1e9), -3) # UnixNano from GO not compatible with python, need to round last int
+        # UnixNano from GO not compatible with python, need to round last int
+        intVal = round(int(parsed.timestamp() * 1e9), -3)
 
         encv = bytearray()
         encv += KeyValPrefixNotNull
-        encv +=  int.to_bytes(intVal, 8, "big")
+        encv += int.to_bytes(intVal, 8, "big")
         encv[1] = ord(encv[1:2]) ^ ord(b'\x80')
         return bytes(encv)

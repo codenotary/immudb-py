@@ -221,6 +221,7 @@ class ZEntry(GRPCTransformable):
     score: float = None
     atTx: int = None
 
+
 @dataclass
 class ZScanEntry():
     set: bytes = None
@@ -228,6 +229,7 @@ class ZScanEntry():
     value: bytes = None
     score: float = None
     atTx: int = None
+
 
 @dataclass
 class ZEntries(GRPCTransformable):
@@ -1130,43 +1132,56 @@ class SQLValue(GRPCTransformable):
     bs: Optional[bytes] = None
     ts: Optional[int] = None
 
+
 @dataclass
 class PrimaryKey:
     pass
+
+
 @dataclass
 class PrimaryKeyNullValue(GRPCTransformable, PrimaryKey):
     def _getGRPC(self):
-        return schema.SQLValue(null = None)
+        return schema.SQLValue(null=None)
+
 
 @dataclass
 class PrimaryKeyIntValue(GRPCTransformable, PrimaryKey):
     value: int
+
     def _getGRPC(self):
-        return schema.SQLValue(n = self.value)
+        return schema.SQLValue(n=self.value)
+
 
 @dataclass
 class PrimaryKeyVarCharValue(GRPCTransformable, PrimaryKey):
     value: str
+
     def _getGRPC(self):
-        return schema.SQLValue(s = self.value)
+        return schema.SQLValue(s=self.value)
+
 
 @dataclass
 class PrimaryKeyBoolValue(GRPCTransformable, PrimaryKey):
     value: bool
+
     def _getGRPC(self):
-        return schema.SQLValue(b = self.value)
+        return schema.SQLValue(b=self.value)
+
 
 @dataclass
 class PrimaryKeyBlobValue(GRPCTransformable, PrimaryKey):
     value: bytes
+
     def _getGRPC(self):
-        return schema.SQLValue(bs = self.value)
+        return schema.SQLValue(bs=self.value)
+
 
 @dataclass
 class PrimaryKeyTsValue(GRPCTransformable, PrimaryKey):
     value: int
+
     def _getGRPC(self):
-        return schema.SQLValue(ts = self.value)
+        return schema.SQLValue(ts=self.value)
 
 
 class TxMode(Enum):

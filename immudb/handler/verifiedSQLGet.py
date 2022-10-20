@@ -20,17 +20,18 @@ from typing import List
 from immudb import datatypesv2
 from immudb.dataconverter import convertResponse
 
+
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table: str, primaryKeys: List[datatypesv2.PrimaryKey], atTx: int, sinceTx: int, verifying_key=None):
     state = rs.get()
     pkValues = [pk._getGRPC() for pk in primaryKeys]
     req = schema_pb2.VerifiableSQLGetRequest(
-        sqlGetRequest = schema_pb2.SQLGetRequest(
-            table = table,
-            pkValues = pkValues,
-            atTx = atTx, 
-            sinceTx = sinceTx
+        sqlGetRequest=schema_pb2.SQLGetRequest(
+            table=table,
+            pkValues=pkValues,
+            atTx=atTx,
+            sinceTx=sinceTx
         ),
-        proveSinceTx = state.txId
+        proveSinceTx=state.txId
     )
     ventry = service.VerifiableSQLGet(req)
     entrySpecDigest = store.EntrySpecDigestFor(
@@ -52,10 +53,11 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table: str, 
         valbuf += pkEncval
 
     pkKey = store.sqlMapKey(b'\x02', 'R.', [
-        store.encodeID(dbID), store.encodeID(tableID), store.encodeID(0), valbuf
+        store.encodeID(dbID), store.encodeID(
+            tableID), store.encodeID(0), valbuf
     ])
     vTx = ventry.sqlEntry.tx
-    e = store.EntrySpec(key = pkKey, value=ventry.sqlEntry.value, md = None)
+    e = store.EntrySpec(key=pkKey, value=ventry.sqlEntry.value, md=None)
 
     if state.txId <= vTx:
         eh = schema.DigestFromProto(
@@ -110,9 +112,11 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table: str, 
     for key in ventry.ColLenById:
         ColLenById[key] = ventry.ColLenById[key]
     return datatypesv2.VerifiableSQLEntry(
-        sqlEntry=datatypesv2.SQLEntry(tx = ventry.sqlEntry.tx, key = ventry.sqlEntry.key, value = ventry.sqlEntry.value),
+        sqlEntry=datatypesv2.SQLEntry(
+            tx=ventry.sqlEntry.tx, key=ventry.sqlEntry.key, value=ventry.sqlEntry.value),
         verifiableTx=convertResponse(ventry.verifiableTx),
-        inclusionProof=datatypesv2.InclusionProof(leaf = inclusionProof.leaf, width = inclusionProof.width, terms = inclusionProof.terms),
+        inclusionProof=datatypesv2.InclusionProof(
+            leaf=inclusionProof.leaf, width=inclusionProof.width, terms=inclusionProof.terms),
         DatabaseId=dbID,
         TableId=tableID,
         PKIDs=simpleList,

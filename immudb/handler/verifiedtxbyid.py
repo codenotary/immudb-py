@@ -19,6 +19,7 @@ from immudb import exceptions
 from immudb.embedded import store
 import immudb.schema as schema
 
+
 def verify(vtx, state, verifying_key, rs):
     dualProof = schema.DualProofFromProto(vtx.dualProof)
     if state.txId <= vtx.tx.header.id:
@@ -54,7 +55,6 @@ def verify(vtx, state, verifying_key, rs):
     for t in vtx.tx.entries:
         ret.append(t.key[1:])
     return ret
-
 
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, verifying_key=None):

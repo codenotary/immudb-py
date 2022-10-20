@@ -987,10 +987,11 @@ class ImmudbClient:
                 value += it.chunk
             return datatypesv2.KeyValue(key, value)
 
-    def streamVerifiedGet(self,key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
+    def streamVerifiedGet(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
         state = self._rs.get()
         proveSinceTx = state.txId
-        req = datatypesv2.VerifiableGetRequest(keyRequest = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision), proveSinceTx=proveSinceTx)
+        req = datatypesv2.VerifiableGetRequest(keyRequest=datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision), proveSinceTx=proveSinceTx)
         resp = self._stub.streamVerifiableGet(req._getGRPC())
         reader = VerifiedGetStreamReader(resp)
         chunks = reader.chunks()
@@ -1001,7 +1002,8 @@ class ImmudbClient:
             inclusionProof = next(chunks)
             for chunk in chunks:
                 value += chunk.chunk
-            verified = verifyTransaction(verifiableTx, state, self._vk, self._rs)
+            verified = verifyTransaction(
+                verifiableTx, state, self._vk, self._rs)
             if(len(verified) == 0):
                 raise ErrCorruptedData
             return datatypes.SafeGetResponse(
@@ -1017,7 +1019,8 @@ class ImmudbClient:
     def streamVerifiedGetBuffered(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
         state = self._rs.get()
         proveSinceTx = state.txId
-        req = datatypesv2.VerifiableGetRequest(keyRequest = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision), proveSinceTx=proveSinceTx)
+        req = datatypesv2.VerifiableGetRequest(keyRequest=datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision), proveSinceTx=proveSinceTx)
         resp = self._stub.streamVerifiableGet(req._getGRPC())
         reader = VerifiedGetStreamReader(resp)
         chunks = reader.chunks()
@@ -1025,10 +1028,11 @@ class ImmudbClient:
         if key != None:
             verifiableTx = next(chunks)
             inclusionProof = next(chunks)
-            verified = verifyTransaction(verifiableTx, state, self._vk, self._rs)
+            verified = verifyTransaction(
+                verifiableTx, state, self._vk, self._rs)
             if(len(verified) == 0):
                 raise ErrCorruptedData
-            toRet =  datatypes.SafeGetResponse(
+            toRet = datatypes.SafeGetResponse(
                 id=verifiableTx.tx.header.id,
                 key=key.key,
                 value=None,
@@ -1040,12 +1044,9 @@ class ImmudbClient:
             valueHeader = next(chunks)
             return toRet, BufferedStreamReader(chunks, valueHeader, resp)
 
-        
-
-
-
     def streamHistory(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):
-        request = datatypesv2.HistoryRequest(key = key, offset = offset, limit = limit, desc = desc, sinceTx = sinceTx)
+        request = datatypesv2.HistoryRequest(
+            key=key, offset=offset, limit=limit, desc=desc, sinceTx=sinceTx)
         resp = self._stub.streamHistory(request._getGRPC())
         key = None
         value = None
@@ -1062,7 +1063,8 @@ class ImmudbClient:
             yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
 
     def streamHistoryBuffered(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):
-        request = datatypesv2.HistoryRequest(key = key, offset = offset, limit = limit, desc = desc, sinceTx = sinceTx)
+        request = datatypesv2.HistoryRequest(
+            key=key, offset=offset, limit=limit, desc=desc, sinceTx=sinceTx)
         resp = self._stub.streamHistory(request._getGRPC())
         key = None
         valueHeader = None
@@ -1099,7 +1101,6 @@ class ImmudbClient:
             yield Chunk(content=chunk)
             chunk = buffer.read(chunkSize)
 
-        
     def _make_verifiable_set_stream(self, buffer, key: bytes, length: int, provenSinceTx: int = None, chunkSize: int = 65536):
         header = ProvenSinceHeader(provenSinceTx)
         yield Chunk(content=header.getInBytes())
@@ -1113,16 +1114,17 @@ class ImmudbClient:
             yield Chunk(content=chunk)
             chunk = buffer.read(chunkSize)
 
-    def streamZScanBuffered(self, set: bytes = None, seekKey: bytes = None, 
-        seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None, 
-        desc: bool = None, minScore: float = None,maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None ) -> Generator[datatypesv2.ZScanEntry, None, None]:
+    def streamZScanBuffered(self, set: bytes = None, seekKey: bytes = None,
+                            seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None,
+                            desc: bool = None, minScore: float = None, maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None) -> Generator[datatypesv2.ZScanEntry, None, None]:
         minScoreObject = None
         maxScoreObject = None
         if minScore != None:
             minScoreObject = datatypesv2.Score(minScore)
         if maxScore != None:
             maxScoreObject = datatypesv2.Score(maxScore)
-        req = datatypesv2.ZScanRequest(set = set, seekKey= seekKey, seekScore=seekScore, seekAtTx=seekAtTx, inclusiveSeek=inclusiveSeek, limit = limit, desc = desc, minScore=minScoreObject, maxScore=maxScoreObject, sinceTx=sinceTx, noWait=noWait, offset=offset)
+        req = datatypesv2.ZScanRequest(set=set, seekKey=seekKey, seekScore=seekScore, seekAtTx=seekAtTx, inclusiveSeek=inclusiveSeek,
+                                       limit=limit, desc=desc, minScore=minScoreObject, maxScore=maxScoreObject, sinceTx=sinceTx, noWait=noWait, offset=offset)
         resp = self._stub.streamZScan(req._getGRPC())
 
         set = None
@@ -1149,22 +1151,21 @@ class ImmudbClient:
                 atTx = chunk.seenAtTx
 
             else:
-                yield datatypesv2.ZScanEntry(set = set, key = key, score = score, atTx = atTx), BufferedStreamReader(chunks, chunk, resp)
-                
+                yield datatypesv2.ZScanEntry(set=set, key=key, score=score, atTx=atTx), BufferedStreamReader(chunks, chunk, resp)
 
-                
             chunk = next(chunks, None)
 
-    def streamZScan(self, set: bytes = None, seekKey: bytes = None, 
-        seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None, 
-        desc: bool = None, minScore: float = None,maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None ) -> Generator[datatypesv2.ZScanEntry, None, None]:
+    def streamZScan(self, set: bytes = None, seekKey: bytes = None,
+                    seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None,
+                    desc: bool = None, minScore: float = None, maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None) -> Generator[datatypesv2.ZScanEntry, None, None]:
         minScoreObject = None
         maxScoreObject = None
         if minScore != None:
             minScoreObject = datatypesv2.Score(minScore)
         if maxScore != None:
             maxScoreObject = datatypesv2.Score(maxScore)
-        req = datatypesv2.ZScanRequest(set = set, seekKey= seekKey, seekScore=seekScore, seekAtTx=seekAtTx, inclusiveSeek=inclusiveSeek, limit = limit, desc = desc, minScore=minScoreObject, maxScore=maxScoreObject, sinceTx=sinceTx, noWait=noWait, offset=offset)
+        req = datatypesv2.ZScanRequest(set=set, seekKey=seekKey, seekScore=seekScore, seekAtTx=seekAtTx, inclusiveSeek=inclusiveSeek,
+                                       limit=limit, desc=desc, minScore=minScoreObject, maxScore=maxScoreObject, sinceTx=sinceTx, noWait=noWait, offset=offset)
         resp = self._stub.streamZScan(req._getGRPC())
 
         set = None
@@ -1175,7 +1176,7 @@ class ImmudbClient:
         for chunk in ZScanStreamReader(resp).chunks():
             if isinstance(chunk, SetHeader):
                 if set != None:
-                    yield datatypesv2.ZScanEntry(set = set, key=key, value = value, score = score, atTx = atTx)
+                    yield datatypesv2.ZScanEntry(set=set, key=key, value=value, score=score, atTx=atTx)
                 set = chunk.set
                 value = b''
                 atTx = None
@@ -1195,7 +1196,7 @@ class ImmudbClient:
                 value += chunk.chunk
 
         if key != None and value != None:  # situation when generator consumes all at first run, so it didn't yield first value
-            yield datatypesv2.ZScanEntry(set = set, key=key, value = value, score = score, atTx = atTx)
+            yield datatypesv2.ZScanEntry(set=set, key=key, value=value, score=score, atTx=atTx)
 
     def streamScan(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[datatypesv2.KeyValue, None, None]:
         """Scan method in streaming maneer
@@ -1282,22 +1283,18 @@ class ImmudbClient:
         resp = self._stub.streamSet(generator)
         return dataconverter.convertResponse(resp)
 
-
-
     def _raw_verifiable_stream_set(self, generator):
         resp = self._stub.streamVerifiableSet(generator)
         return resp
 
-
-        
-    def _make_stream_exec_all_stream(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False, chunkSize = 65536):
+    def _make_stream_exec_all_stream(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False, chunkSize=65536):
         kv = 1
         zadd = 2
         for op in ops:
             if type(op) == datatypes.KeyValue:
                 concated = int.to_bytes(1, 8, 'big')
                 concated += int.to_bytes(kv, 1, 'big')
-                yield Chunk(content = concated +  KeyHeader(key=op.key, length=len(op.key)).getInBytes())
+                yield Chunk(content=concated + KeyHeader(key=op.key, length=len(op.key)).getInBytes())
                 buffer = BytesIO(op.value)
                 firstChunk = buffer.read(chunkSize)
                 firstChunk = ValueChunkHeader(
@@ -1310,7 +1307,7 @@ class ImmudbClient:
             elif type(op) == datatypes.StreamingKeyValue:
                 concated = int.to_bytes(1, 8, 'big')
                 concated += int.to_bytes(kv, 1, 'big')
-                yield Chunk(content = concated +  KeyHeader(key=op.key, length=len(op.key)).getInBytes())
+                yield Chunk(content=concated + KeyHeader(key=op.key, length=len(op.key)).getInBytes())
                 buffer = op.value
                 firstChunk = buffer.read(chunkSize)
                 firstChunk = ValueChunkHeader(
@@ -1323,7 +1320,7 @@ class ImmudbClient:
             elif type(op) == datatypes.ZAddRequest:
                 concated = int.to_bytes(1, 8, 'big')
                 concated += int.to_bytes(zadd, 1, 'big')
-                zAdd=schema_pb2.ZAddRequest(
+                zAdd = schema_pb2.ZAddRequest(
                     set=op.set,
                     score=op.score,
                     key=op.key,
@@ -1334,8 +1331,7 @@ class ImmudbClient:
                 serialized = zAdd.SerializeToString()
                 lengthOf = len(serialized)
                 lengthBytes = int.to_bytes(lengthOf, 8, 'big')
-                yield Chunk(content = concated + lengthBytes +  serialized)
-                
+                yield Chunk(content=concated + lengthBytes + serialized)
 
     def _raw_stream_exec_all(self, generator):
         resp = self._stub.streamExecAll(generator)
@@ -1343,7 +1339,6 @@ class ImmudbClient:
 
     def streamExecAll(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False) -> TxHeader:
         return self._raw_stream_exec_all(self._make_stream_exec_all_stream(ops, noWait))
-
 
     def streamVerifiedSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
         state = self._rs.get()
@@ -1511,11 +1506,12 @@ class ImmudbClient:
                       )
         return verifiedSet.call(self._stub, self._rs, key, value)
 
-    def verifiableSQLGet(self, table, primaryKeys, atTx = None, sinceTx = None): 
+    def verifiableSQLGet(self, table, primaryKeys, atTx=None, sinceTx=None):
         return verifiedSQLGet.call(self._stub, self._rs, table, primaryKeys, atTx, sinceTx, verifying_key=self._vk)
 
 
 # immudb-py only
+
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)

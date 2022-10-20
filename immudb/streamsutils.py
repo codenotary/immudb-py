@@ -17,6 +17,7 @@ class KeyHeader:
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.key
 
+
 @dataclass
 class ProvenSinceHeader:
     provenSinceTx: int
@@ -24,7 +25,8 @@ class ProvenSinceHeader:
     def getInBytes(self):
         toBytes = self.provenSinceTx.to_bytes(8, 'big')
         length2 = int.to_bytes(8, 8, 'big')
-        return length2 + toBytes 
+        return length2 + toBytes
+
 
 @dataclass
 class SetHeader:
@@ -34,13 +36,16 @@ class SetHeader:
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.set
 
+
 @dataclass
 class ScoreHeader:
     score: float
 
+
 @dataclass
 class AtTXHeader:
     seenAtTx: int
+
 
 @dataclass
 class ValueChunkHeader:
@@ -49,6 +54,7 @@ class ValueChunkHeader:
 
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.chunk
+
 
 @dataclass
 class ValueChunk:
@@ -69,7 +75,6 @@ class VerifiedGetStreamReader:
         self.valueLength = -1
         self.left = -1
 
-
     def parseVerifiableTx(self, header):
         verifiable = VerifiableTx()
         verifiable.ParseFromString(header[8:])
@@ -87,7 +92,7 @@ class VerifiedGetStreamReader:
         refkey = en.referencedBy.key
         if refkey == b'':
             refkey = None
-        return KeyHeader(length=length, key=en.key, refKey = refkey, refKeyTx=en.referencedBy.tx, tx = en.tx)
+        return KeyHeader(length=length, key=en.key, refKey=refkey, refKeyTx=en.referencedBy.tx, tx=en.tx)
 
     def parseValueHeader(self, header: bytes):
         length = int.from_bytes(header[0:8], byteorder='big')
@@ -190,13 +195,12 @@ class ZScanStreamReader:
     def parseScoreValueHeader(self, header: bytes):
         length = int.from_bytes(header[0:8], byteorder='big')
         loadedScore = struct.unpack('>d', header[8: 8 + length])[0]
-        return ScoreHeader(score = loadedScore)
-
+        return ScoreHeader(score=loadedScore)
 
     def parseAtTXHeader(self, header: bytes):
         length = int.from_bytes(header[0:8], byteorder='big')
         atTx = int.from_bytes(header[8:8 + length], byteorder='big')
-        return AtTXHeader(seenAtTx = atTx)
+        return AtTXHeader(seenAtTx=atTx)
 
     def chunks(self):
         for chunk in self.streamToRead:
@@ -233,6 +237,7 @@ class ZScanStreamReader:
         if (self.left == 0):
             self.reader = self.setHeaderReader
         return readed
+
 
 class BufferedStreamReader:
     def __init__(self, chunksGenerator, valueHeader: ValueChunk, stream):
