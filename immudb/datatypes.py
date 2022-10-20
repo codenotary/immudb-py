@@ -12,6 +12,7 @@
 
 from dataclasses import dataclass
 from enum import IntEnum
+from io import BytesIO
 from immudb.grpc.schema_pb2 import ReadOnly, WriteOnly, ReadWrite
 
 
@@ -57,6 +58,14 @@ class GetResponse:
 class KeyValue():
     key: bytes
     value: bytes
+
+
+@dataclass
+class StreamingKeyValue():
+    key: bytes
+    value: BytesIO
+    length: int
+
 
 
 @dataclass

@@ -2,7 +2,7 @@ from datetime import datetime
 from io import BytesIO
 import uuid
 from grpc import RpcError
-from immudb import ImmudbClient, datatypesv2
+from immudb import ImmudbClient, datatypes, datatypesv2
 import pytest
 from immudb.grpc.schema_pb2 import Chunk
 from immudb.streamsutils import KeyHeader, ValueChunkHeader
@@ -598,7 +598,7 @@ def test_stream_verifiable_get_buffered(client: ImmudbClient):
 
 
 def test_verifiable_stream_set(client: ImmudbClient):
-    keyToSet = str(uuid.uuid4).encode("utf-8")
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
     kk = BytesIO(b'123123')
     resp = client.streamVerifiedSet(keyToSet, kk, 6, 100)
     assert resp.id > 0
@@ -606,7 +606,7 @@ def test_verifiable_stream_set(client: ImmudbClient):
 
     assert client.get(keyToSet).value == b'123123'
 
-    keyToSet = str(uuid.uuid4).encode("utf-8")
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
     kk = BytesIO(b'123123'*1024)
     resp = client.streamVerifiedSet(keyToSet, kk, 6*1024, 100)
     assert resp.id > 0
@@ -616,16 +616,89 @@ def test_verifiable_stream_set(client: ImmudbClient):
 
 
 def test_verifiable_stream_set_fullvalue(client: ImmudbClient):
-    keyToSet = str(uuid.uuid4).encode("utf-8")
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
     resp = client.streamVerifiedSetFullValue(keyToSet, b'123123', 100)
     assert resp.id > 0
     assert resp.verified == True
 
     assert client.get(keyToSet).value == b'123123'
 
-    keyToSet = str(uuid.uuid4).encode("utf-8")
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
     resp = client.streamVerifiedSetFullValue(keyToSet, b'123123'*1024, 100)
     assert resp.id > 0
     assert resp.verified == True
 
     assert client.get(keyToSet).value == b'123123'*1024
+
+def test_stream_exec_all(client: ImmudbClient):
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
+    keyToSet2 = str(uuid.uuid4()).encode("utf-8")
+    keyToSet3 = str(uuid.uuid4()).encode("utf-8")
+    val = b'123'*80000
+    val2 = b'321'*80000
+    resp = client.streamExecAll([
+        datatypes.KeyValue(
+            key=keyToSet,
+            value=val
+        ),
+        datatypes.StreamingKeyValue(key = keyToSet2,
+            value = BytesIO(val2),
+            length = len(val)
+        )
+    ])
+    k1 = client.get(keyToSet)
+    assert k1.value == val
+    k2 = client.get(keyToSet2)
+    assert k2.value == val2
+
+def test_stream_exec_all_zadd(client: ImmudbClient):
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
+    keyToSet2 = str(uuid.uuid4()).encode("utf-8")
+    keyToSet3 = str(uuid.uuid4()).encode("utf-8")
+    val = b'123'*80000
+    val2 = b'321'*80000
+    resp = client.streamExecAll([
+        datatypes.KeyValue(
+            key=keyToSet,
+            value=val
+        ),
+        datatypes.StreamingKeyValue(key = keyToSet2,
+            value = BytesIO(val2),
+            length = len(val)
+        )
+    ])
+    k1 = client.get(keyToSet)
+    assert k1.value == val
+    k2 = client.get(keyToSet2)
+    assert k2.value == val2
+
+
+    keyToSet = str(uuid.uuid4()).encode("utf-8")
+    keyToSet2 = str(uuid.uuid4()).encode("utf-8")
+    keyToSet3 = str(uuid.uuid4()).encode("utf-8")
+
+    setToSet = b"SET" + str(uuid.uuid4()).encode("utf-8")
+
+    val = b'123'*80000
+    val2 = b'321'*80000
+    resp = client.streamExecAll([
+        datatypes.KeyValue(
+            key=keyToSet,
+            value=val
+        ),
+        datatypes.StreamingKeyValue(key = keyToSet2,
+            value = BytesIO(val2),
+            length = len(val)
+        ),
+        datatypes.ZAddRequest(set = setToSet, score = 3.0, key = keyToSet)
+    ])
+    k1 = client.get(keyToSet)
+    assert k1.value == val
+    k2 = client.get(keyToSet2)
+    assert k2.value == val2
+
+    k3 = list(client.streamZScan(setToSet))
+    assert len(k3) == 1
+    assert k3[0].score == 3.0
+    assert k3[0].value == val
+    assert k3[0].key == keyToSet

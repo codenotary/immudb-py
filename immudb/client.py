@@ -18,7 +18,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from immudb import grpcutils
 from immudb import datatypes
 from immudb.exceptions import ErrCorruptedData
-from immudb.grpc.schema_pb2 import Chunk, TxHeader
+from immudb.grpc.schema_pb2 import Chunk, TxHeader, ZAddRequest
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
@@ -764,9 +764,9 @@ class ImmudbClient:
         """
         return scan.call(self._stub, self._rs, key, prefix, desc, limit, sinceTx)
 
-    def zScan(self, zset: bytes, seekKey: bytes, seekScore: float,
-              seekAtTx: int, inclusive: bool, limit: int, desc: bool, minscore: float,
-              maxscore: float, sinceTx=None, nowait=False) -> schema_pb2.ZEntries:
+    def zScan(self, zset: bytes, seekKey: bytes = None, seekScore: float = None,
+              seekAtTx: int = None, inclusive: bool = None, limit: int = None, desc: bool = None, minscore: float = None,
+              maxscore: float = None, sinceTx=None, nowait=False) -> schema_pb2.ZEntries:
         """Scan for provided parameters for secondary index. Limit for scan is fixed - 1000. You need to introduce pagination.
 
         Args:
@@ -1287,6 +1287,62 @@ class ImmudbClient:
     def _raw_verifiable_stream_set(self, generator):
         resp = self._stub.streamVerifiableSet(generator)
         return resp
+
+
+        
+    def _make_stream_exec_all_stream(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False, chunkSize = 65536):
+        kv = 1
+        zadd = 2
+        for op in ops:
+            if type(op) == datatypes.KeyValue:
+                concated = int.to_bytes(1, 8, 'big')
+                concated += int.to_bytes(kv, 1, 'big')
+                yield Chunk(content = concated +  KeyHeader(key=op.key, length=len(op.key)).getInBytes())
+                buffer = BytesIO(op.value)
+                firstChunk = buffer.read(chunkSize)
+                firstChunk = ValueChunkHeader(
+                    chunk=firstChunk, length=len(op.value)).getInBytes()
+                yield Chunk(content=firstChunk)
+                chunk = buffer.read(chunkSize)
+                while chunk:
+                    yield Chunk(content=chunk)
+                    chunk = buffer.read(chunkSize)
+            elif type(op) == datatypes.StreamingKeyValue:
+                concated = int.to_bytes(1, 8, 'big')
+                concated += int.to_bytes(kv, 1, 'big')
+                yield Chunk(content = concated +  KeyHeader(key=op.key, length=len(op.key)).getInBytes())
+                buffer = op.value
+                firstChunk = buffer.read(chunkSize)
+                firstChunk = ValueChunkHeader(
+                    chunk=firstChunk, length=op.length).getInBytes()
+                yield Chunk(content=firstChunk)
+                chunk = buffer.read(chunkSize)
+                while chunk:
+                    yield Chunk(content=chunk)
+                    chunk = buffer.read(chunkSize)
+            elif type(op) == datatypes.ZAddRequest:
+                concated = int.to_bytes(1, 8, 'big')
+                concated += int.to_bytes(zadd, 1, 'big')
+                zAdd=schema_pb2.ZAddRequest(
+                    set=op.set,
+                    score=op.score,
+                    key=op.key,
+                    atTx=op.atTx,
+                    boundRef=op.boundRef,
+                    noWait=op.noWait
+                )
+                serialized = zAdd.SerializeToString()
+                lengthOf = len(serialized)
+                lengthBytes = int.to_bytes(lengthOf, 8, 'big')
+                yield Chunk(content = concated + lengthBytes +  serialized)
+                
+
+    def _raw_stream_exec_all(self, generator):
+        resp = self._stub.streamExecAll(generator)
+        return resp
+
+    def streamExecAll(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False) -> TxHeader:
+        return self._raw_stream_exec_all(self._make_stream_exec_all_stream(ops, noWait))
 
 
     def streamVerifiedSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
