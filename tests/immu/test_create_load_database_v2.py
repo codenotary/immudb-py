@@ -3,9 +3,13 @@ from immudb import ImmudbClient
 from immudb.datatypesv2 import CreateDatabaseRequest, DatabaseNullableSettings, DatabaseSettingsV2, NullableUint32, NullableBool
 import uuid
 import pytest
+from tests.immuTestClient import ImmuTestClient
 
 
-def test_create_database_v2(client: ImmudbClient):
+def test_create_database_v2(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     name = str(uuid.uuid4()).replace('-', '')
     settings = DatabaseSettingsV2(
         maxKeyLen=32
@@ -32,7 +36,10 @@ def test_create_database_v2(client: ImmudbClient):
     with pytest.raises(RpcError):
         client.set(('x' * 32).encode("utf-8"), b'x')
 
-def test_update_database_v2(client: ImmudbClient):
+def test_update_database_v2(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     name = str(uuid.uuid4()).replace('-', '')
     settings = DatabaseNullableSettings(
         maxKeyLen=NullableUint32(32)
@@ -74,7 +81,10 @@ def test_update_database_v2(client: ImmudbClient):
 
     assert foundDb == True
 
-def test_list_databases_v2(client: ImmudbClient):
+def test_list_databases_v2(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     name = str(uuid.uuid4()).replace('-', '')
     settings = DatabaseSettingsV2(
         maxKeyLen=32
@@ -101,7 +111,10 @@ def test_list_databases_v2(client: ImmudbClient):
 
     assert foundDb == True
 
-def test_load_unload_database(client: ImmudbClient):
+def test_load_unload_database(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     name = str(uuid.uuid4()).replace('-', '')
     settings = DatabaseSettingsV2(
         maxKeyLen=32
@@ -116,7 +129,10 @@ def test_load_unload_database(client: ImmudbClient):
     assert resp.database == name
     client.useDatabase(resp.database)
 
-def test_delete_database(client: ImmudbClient):
+def test_delete_database(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     name = str(uuid.uuid4()).replace('-', '')
     settings = DatabaseSettingsV2(
         maxKeyLen=32
@@ -132,7 +148,10 @@ def test_delete_database(client: ImmudbClient):
     with pytest.raises(RpcError):
         resp = client.set(b"x", b"y")
 
-def test_get_database_settings_v2(client: ImmudbClient):
+def test_get_database_settings_v2(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     name = str(uuid.uuid4()).replace('-', '')
     settings = DatabaseSettingsV2(
         maxKeyLen=32

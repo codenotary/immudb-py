@@ -1,6 +1,12 @@
 from immudb import ImmudbClient
 import datetime
-def test_database_health(client: ImmudbClient):
+from tests.immuTestClient import ImmuTestClient
+import pytest
+
+def test_database_health(wrappedClient: ImmuTestClient):
+    client = wrappedClient.client
+    if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        pytest.skip("Immudb version too low")
     timeNow = datetime.datetime.now()
     client.login("immudb", "immudb", "defaultdb") # login into database is counted as request completed
     response1 = client.databaseHealth()

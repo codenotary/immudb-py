@@ -42,23 +42,31 @@ from immudb.streamsutils import KeyHeader, StreamReader, ValueChunk, ValueChunkH
 
 class ImmudbClient:
 
-    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length = None):
-        """Immudb client
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length=None):
+        """immudb Client
 
         Args:
-            immudbUrl (str, optional): url in format host:port, ex. localhost:3322 pointing to your immudb instance. Defaults to None.
-            rs (RootService, optional): object that implements RootService - to be allow to verify requests. Defaults to None.
-            publicKeyFile (str, optional): path to the public key that would be used to authenticate requests with. Defaults to None.
-            timeout (int, optional): global timeout for GRPC requests, if None - it would hang until server respond. Defaults to None.
-            max_grpc_message_length (int, optional): max size for message from the server. If None - it would set defaults (4mb).
+            immudbUrl (str, optional): url in format ``host:port``
+                (e.g. ``localhost:3322``) of your immudb instance.
+                Defaults to ``localhost:3322`` when no value is set.
+            rs (RootService, optional): object that implements RootService,
+                allowing requests to be verified. Optional. 
+                By default in-memory RootService instance will be created
+            publicKeyFile (str, optional): path of the public key to use
+                for authenticating requests. Optional.
+            timeout (int, optional): global timeout for GRPC requests. Requests
+                will hang until the server responds if no timeout is set.
+            max_grpc_message_length (int, optional): maximum size of message the
+                server should send. The default (4Mb) is used is no value is set.
         """
         if immudUrl is None:
             immudUrl = "localhost:3322"
         self.timeout = timeout
         options = []
         if max_grpc_message_length:
-            options = [('grpc.max_receive_message_length', max_grpc_message_length)]
-            self.channel = grpc.insecure_channel(immudUrl, options = options)
+            options = [('grpc.max_receive_message_length',
+                        max_grpc_message_length)]
+            self.channel = grpc.insecure_channel(immudUrl, options=options)
         else:
             self.channel = grpc.insecure_channel(immudUrl)
         self._resetStub()
@@ -79,11 +87,12 @@ class ImmudbClient:
         """
         with open(kfile) as f:
             self._vk = ecdsa.VerifyingKey.from_pem(f.read())
+
     def loadKeyFromString(self, key: str):
         """Loads public key from parameter
 
         Args:
-            key (str): key 
+            key (str): key
         """
         self._vk = ecdsa.VerifyingKey.from_pem(key)
 
@@ -227,20 +236,28 @@ class ImmudbClient:
         self._stub.KeepAlive(google_dot_protobuf_dot_empty__pb2.Empty())
 
     def openManagedSession(self, username, password, database=b"defaultdb", keepAliveInterval=60):
-        """Opens managed session and returns ManagedSession object within you can manage SQL transactions
+        """Opens a session managed by immudb.
+
+        When a ManagedSession is used, the client will automatically
+        send keepalive packets to the server. If you are managing
+        your application's threading yourself and want control over
+        how keepalive packets are sent, consider the method
+        :meth:`ImmudbClient.openSession()` instead.
 
 
-        example of usage:
-        with client.openManagedSession(username, password) as session:
-            session.newTx()
+        Examples:
+            with client.openManagedSession(username, password) as session:
+                session.newTx()
 
         Check handler/transaction.py
 
         Args:
             username (str): username
             password (str): password for user
-            database (bytes, optional): name of database. Defaults to b"defaultdb".
-            keepAliveInterval (int, optional): specifies how often keep alive packet should be sent. Defaults to 60.
+            database (bytes, optional): database to establish session with.
+                Defaults to ``b"defaultdb"``.
+            keepAliveInterval (int, optional): specifies how often keepalive
+                packets should be sent, in seconds. Defaults to ``60s``.
 
         Returns:
             ManagedSession: managed Session object
@@ -274,13 +291,20 @@ class ImmudbClient:
         return ManagedSession(keepAliveInterval)
 
     def openSession(self, username, password, database=b"defaultdb"):
-        """Opens unmanaged session. Unmanaged means that you have to send keep alive packets yourself.
-        Managed session does it for you
+        """Opens unmanaged Session object.
+
+        When a Session is unmanaged, it is the user's responsibility
+        to send keepalive packets. You should use an unmanaged session
+        when you are also managing your application's threading yourself.
+
+        To have the client manage the session and send keepalive packets
+        for you, use :meth:`ImmudbClient.openManagedSession()` instead.
 
         Args:
             username (str): username
             password (str): password
-            database (bytes, optional): database name to switch to. Defaults to b"defaultdb".
+            database (bytes, optional): database to establish session with.
+                Defaults to ``b"defaultdb"``.
 
         Returns:
             Tx: Tx object (handlers/transaction.py)
@@ -323,10 +347,18 @@ class ImmudbClient:
         return createUser.call(self._stub, self._rs, request)
 
     def listUsers(self):
-        """Returns all users on database
+        """Returns all database users.
 
         Returns:
-            ListUserResponse: List containing all users
+            ListUserResponse: List containing all database users.
+
+            If this method is called by an authenticated Superadmin user,
+            the ListUserResponse object will contain all known users.
+
+            If this method is called by an authenticated Admin users,
+            the response will contain the list of users for the
+            current database.
+
         """
         return listUsers.call(self._stub)
 
@@ -337,6 +369,12 @@ class ImmudbClient:
             user (str): username
             newPassword (str): new password
             oldPassword (str): old password
+
+        Comment:
+            SysAdmin can change his own password only by giving old and new password.
+            SysAdmin user can change password of any other user without old password.
+            Admin users can change password for user only created by that admin without old password.
+
 
         """
         request = schema_pb2_grpc.schema__pb2.ChangePasswordRequest(
@@ -385,12 +423,13 @@ class ImmudbClient:
         Args:
             name (str): Name of database
             settings (datatypesv2.DatabaseSettingsV2): Settings of database
-            ifNotExists (bool): would only create database if it not exist
+            ifNotExists (bool): only create a database if it does not exist yet.
 
         Returns:
             datatypesv2.CreateDatabaseResponseV2: Response contains information about new database
         """
-        request = datatypesv2.CreateDatabaseRequest(name = name, settings = settings, ifNotExists = ifNotExists)
+        request = datatypesv2.CreateDatabaseRequest(
+            name=name, settings=settings, ifNotExists=ifNotExists)
         resp = self._stub.CreateDatabaseV2(request._getGRPC())
         return dataconverter.convertResponse(resp)
 
@@ -447,7 +486,7 @@ class ImmudbClient:
         """Updates database with provided argument
 
         Args:
-            database (str): Name of database    
+            database (str): Name of database
             settings (datatypesv2.DatabaseSettingsV2): Settings of database
 
         Returns:
@@ -470,7 +509,6 @@ class ImmudbClient:
         self._stub = self._set_token_header_interceptor(resp)
         self._rs.init(dbName, self._stub)
         return resp
-
 
     def getDatabaseSettingsV2(self) -> datatypesv2.DatabaseSettingsResponseV2:
         """Returns current database settings
@@ -497,11 +535,19 @@ class ImmudbClient:
         return resp == google_dot_protobuf_dot_empty__pb2.Empty()
 
     def flushIndex(self, cleanupPercentage: float, synced: bool) -> datatypesv2.FlushIndexResponse:
-        """Routine that creates a fresh index based on the current state, removing all intermediate data generated over time
+        """Request a flush of the internal to disk, with the option to cleanup the index.
+
+        This routine requests that the internal B-tree index be flushed from
+        memory to disk, optionally followed by a cleanup of intermediate index data.
 
         Args:
-            cleanupPercentage (float): Indicates how much space will be scanned for unreferenced data. Even though this operation blocks transaction processing, choosing a small percentage e.g. 0.1 may not significantly hinder normal operations while reducing used storage space.
-            synced (bool): If true, fsync after writing data to avoid index regeneration in the case of an unexpected crash
+            cleanupPercentage (float): Indicates the percentage of the
+                storage space that will be scanned for unreference data. Although
+                this operation blocks transaction processing, choosing a small
+                value (e.g. ``0.1``) may not significantly hinder normal operations,
+                and will reduce used storage space.
+            synced (bool): If `True`, ``fsync`` will be called after writing data
+                to avoid index regeneration in the event of an unexpected crash.
 
         Returns:
             datatypesv2.FlushIndexResponse: Contains database name
@@ -511,9 +557,20 @@ class ImmudbClient:
         return dataconverter.convertResponse(resp)
 
     def compactIndex(self):
-        """Starts full async index compaction - Routine that creates a fresh index based on the current state, removing all intermediate data generated over time
+        """Start full async index compaction.
+
+        This creates a fresh index representing the current state of
+        the database, removing the intermediate index data generated over
+        time that is no longer needed to represent the current state.
+
+        The :meth:`ImmudbClient.flushIndex()` method (with a `cleanupPercentage`)
+        argument specified) should be preferred over this method for compacting
+        the index. You should only call this method if there's little to no activity
+        on the database, or the performance of the database may be degraded
+        significantly while the compaction is in progress.
         """
-        resp = self._stub.CompactIndex(google_dot_protobuf_dot_empty__pb2.Empty())
+        resp = self._stub.CompactIndex(
+            google_dot_protobuf_dot_empty__pb2.Empty())
         return resp == google_dot_protobuf_dot_empty__pb2.Empty()
 
     def health(self):
@@ -525,10 +582,10 @@ class ImmudbClient:
         return health.call(self._stub, self._rs)
 
     def currentState(self) -> State:
-        """Return current state of immudb (proof)
+        """Return current state (proof) of current database.
 
         Returns:
-            State: state of immudb
+            State: State of current database, proving integrity of its data.
         """
         return currentRoot.call(self._stub, self._rs, None)
 
@@ -572,35 +629,52 @@ class ImmudbClient:
         return setValue.call(self._stub, self._rs, key, value, metadata)
 
     def get(self, key: bytes, atRevision: int = None) -> datatypes.GetResponse:
-        """Gets value for key
+        """Get value for key.
 
         Args:
-            key (bytes): key
-            atRevision (int, optional): gets value at revision specified by this argument. It could be relative (-1, -2), or fixed (32). Defaults to None.
+            key (bytes): Key of value to retrieve.
+            atRevision (int, optional):
+                Specify the revision from which the value should be retrieved.
+                A negative integer value (e.g. ``-2``) specifies a revision relative
+                to the current revision. A positive integer value (e.g. ``32``) should
+                be used to represent a fixed revision number. If not specified, the
+                most recent value will be returned.
 
         Returns:
-            GetResponse: contains tx, value, key and revision
+            GetResponse: Contains `tx`, `value`, `key` and `revision` information.
         """
         return get.call(self._stub, self._rs, key, atRevision=atRevision)
 
     def verifiedGet(self, key: bytes, atRevision: int = None) -> datatypes.SafeGetResponse:
-        """Get value for key and compares with saved state
+        """Get value for key and verify it against saved state.
 
         Args:
-            key (bytes): Key to retrieve
-            atRevision (int, optional): Retrieve key at desired revision. -1, -2... -n to get relative revision. Defaults to None.
+            key (bytes): Key of value to retrieve.
+            atRevision (int, optional):
+                Specify the revision from which the value should be retrieved.
+                A negative integer value (e.g. ``-2``) specifies a revision relative
+                to the current revision. A positive integer value (e.g. ``32``) should
+                be used to represent a fixed revision number. If not specified, the
+                most recent value will be returned.
 
         Returns:
-            datatypes.SafeGetResponse: object that contains informations about transaction and verified state
+            SafeGetResponse: Contains information about the transaction
+                and the verified state.
         """
         return verifiedGet.call(self._stub, self._rs, key, verifying_key=self._vk, atRevision=atRevision)
 
     def verifiedGetSince(self, key: bytes, sinceTx: int) -> datatypes.SafeGetResponse:
-        """Get value for key since tx (immudb will wait that the transaction specified by sinceTx is processed)
+        """Get value for key since a given transaction (and wait if that transaction is not yet indexed).
+
+        This method retrieves the value for a given key, as of a given transaction
+        number in the database. If the transaction specified by ``sinceTx`` has not
+        yet been indexed by immudb, this method will block until it has been indexed.
 
         Args:
-            key (bytes): Key to retrieve
-            sinceTx (int): transaction id (immudb will wait that the transaction specified by sinceTx is processed)
+            key (bytes): Key of value to retrieve.
+            sinceTx (int): Identifier of the earliest transaction from which the
+                key's value should be retrieved. If the specified transaction has
+                not been indexed by immudb, this method will block until it has.
 
         Returns:
             datatypes.SafeGetResponse: object that contains informations about transaction and verified state
@@ -608,11 +682,12 @@ class ImmudbClient:
         return verifiedGet.call(self._stub, self._rs, key, sinceTx=sinceTx, verifying_key=self._vk)
 
     def verifiedGetAt(self, key: bytes, atTx: int) -> datatypes.SafeGetResponse:
-        """Get value at specified transaction
+        """Get value for key at a given transaction point.
 
         Args:
-            key (bytes): key to retrieve
-            atTx (int): at transaction point
+            key (bytes): Key of value to retrieve.
+            atTx (int): Identifier of the transaction at which point the key's
+                value should be retrieved.
 
         Returns:
             datatypes.SafeGetResponse: object that contains informations about transaction and verified state
@@ -620,13 +695,20 @@ class ImmudbClient:
         return verifiedGet.call(self._stub, self._rs, key, atTx, self._vk)
 
     def history(self, key: bytes, offset: int, limit: int, sortorder: bool) -> List[datatypes.historyResponseItem]:
-        """Returns history of key
+        """Returns history of values for a given key.
 
         Args:
-            key (bytes): Key to retrieve
+            key (bytes): Key of value to retrieve.
             offset (int): Offset of history
             limit (int): Limit of history entries
-            sortorder (bool): Sort order of history
+            sortorder (bool, optional, deprecated): A boolean value that specifies if the history
+                should be returned in descending order.
+
+                If ``True``, the history will be returned in descending order,
+                with the most recent value in the history being the first item in the list.
+
+                If ``False``, the list will be sorted in ascending order,
+                with the most recent value in the history being the last item in the list.
 
         Returns:
             List[datatypes.historyResponseItem]: List of history response items
@@ -634,16 +716,17 @@ class ImmudbClient:
         return history.call(self._stub, self._rs, key, offset, limit, sortorder)
 
     def zAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0) -> datatypes.SetResponse:
-        """Adds score (secondary index) for a specified key and collection
+        """Adds score (secondary index) for a specified key and collection.
 
         Args:
             zset (bytes): collection name
             score (float): score
             key (bytes): key name
-            atTx (int, optional): transaction id to bound score to. Defaults to 0 - current transaction
+            atTx (int, optional): Transaction id to bound score to. Defaults to 0,
+                indicating the most recent version should be used.
 
         Returns:
-            datatypes.SetResponse: Set response contains transaction id 
+            datatypes.SetResponse: Set response contains transaction id
         """
         return zadd.call(self._stub, self._rs, zset, score, key, atTx)
 
@@ -655,10 +738,11 @@ class ImmudbClient:
             zset (bytes): collection name
             score (float): score
             key (bytes): key name
-            atTx (int, optional): transaction id to bound score to. Defaults to 0 - current transaction
+            atTx (int, optional): transaction id to bound score to. Defaults to 0,
+                indicating the most recent version should be used.
 
         Returns:
-            datatypes.SetResponse: Set response contains transaction id 
+            datatypes.SetResponse: Set response contains transaction id
         """
         return verifiedzadd.call(self._stub, self._rs, zset, score, key, atTx, self._vk)
 
@@ -730,7 +814,8 @@ class ImmudbClient:
         Args:
             initialTx (int): initial transaction id
             limit (int, optional): Limit resulsts. Defaults to 999.
-            desc (bool, optional): Descending or ascending. Defaults to False.
+            desc (bool, optional): If `True`, use descending scan order.
+                Defaults to `False`, which uses ascending scan order.
             entriesSpec (datatypesv2.EntriesSpec, optional): Specified what should be contained in scan. Defaults to None.
             sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
             noWait (bool, optional): Doesn't wait for the index to be fully generated. Defaults to None.
@@ -738,7 +823,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.TxList: Transaction list
         """
-        req = datatypesv2.TxScanRequest(initialTx, limit, desc, entriesSpec, sinceTx, noWait)
+        req = datatypesv2.TxScanRequest(
+            initialTx, limit, desc, entriesSpec, sinceTx, noWait)
         resp = self._stub.TxScan(req._getGRPC())
         return dataconverter.convertResponse(resp)
 
@@ -769,7 +855,7 @@ class ImmudbClient:
             kv (Dict[bytes, bytes]): dictionary of keys and values
 
         Returns:
-            datatypes.SetResponse: Set response contains transaction id 
+            datatypes.SetResponse: Set response contains transaction id
         """
         return batchSet.call(self._stub, self._rs, kv)
 
@@ -777,7 +863,7 @@ class ImmudbClient:
         """Returns values for specified keys
 
         Args:
-            keys (List[bytes]): Keys list 
+            keys (List[bytes]): Keys list
 
         Returns:
             Dict[bytes, bytes]: Dictionary of key : value pairs
@@ -838,14 +924,15 @@ class ImmudbClient:
         Yields:
             Generator[Union[KeyHeader, ValueChunk], None, None]: First chunk is KeyHeader, rest are ValueChunks
         """
-        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        req = datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         for it in reader.chunks():
             yield it
 
     def streamGet(self, key: bytes, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Tuple[bytes, BufferedStreamReader]:
-        """Streaming method to get buffered value. 
+        """Streaming method to get buffered value.
         You can read from this value by read() method
         read() will read everything
         read(256) will read 256 bytes
@@ -858,9 +945,10 @@ class ImmudbClient:
             atRevision (int, optional): Returns value of key at specified revision. -1 to get relative revision. Defaults to None.
 
         Returns:
-            Tuple[bytes, BufferedStreamReader]: First value is key, second is reader. 
+            Tuple[bytes, BufferedStreamReader]: First value is key, second is reader.
         """
-        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        req = datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         chunks = reader.chunks()
@@ -881,7 +969,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.KeyValue: Key value from immudb
         """
-        req = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision)
+        req = datatypesv2.KeyRequest(
+            key=key, atTx=atTx, sinceTx=sinceTx, noWait=noWait, atRevision=atRevision)
         resp = self._stub.streamGet(req._getGRPC())
         reader = StreamReader(resp)
         key = None
@@ -904,13 +993,14 @@ class ImmudbClient:
         Yields:
             Generator[Chunk, None, None]: Chunk that is cmpatible with proto
         """
-        yield Chunk(content = KeyHeader(key = key, length=len(key)).getInBytes())
+        yield Chunk(content=KeyHeader(key=key, length=len(key)).getInBytes())
         firstChunk = buffer.read(chunkSize)
-        firstChunk = ValueChunkHeader(chunk = firstChunk, length = length).getInBytes()
-        yield Chunk(content = firstChunk)
+        firstChunk = ValueChunkHeader(
+            chunk=firstChunk, length=length).getInBytes()
+        yield Chunk(content=firstChunk)
         chunk = buffer.read(chunkSize)
         while chunk:
-            yield Chunk(content = chunk)
+            yield Chunk(content=chunk)
             chunk = buffer.read(chunkSize)
 
     def streamScan(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[datatypesv2.KeyValue, None, None]:
@@ -931,21 +1021,22 @@ class ImmudbClient:
         Yields:
             Generator[datatypesv2.KeyValue, None, None]: Returns generator of KeyValue
         """
-        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix = prefix, desc = desc, limit = limit, sinceTx= sinceTx, noWait=noWait, inclusiveSeek=None, inclusiveEnd=None, offset=None)
+        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix=prefix, desc=desc, limit=limit,
+                                      sinceTx=sinceTx, noWait=noWait, inclusiveSeek=None, inclusiveEnd=None, offset=None)
         resp = self._stub.streamScan(req._getGRPC())
         key = None
         value = None
         for chunk in StreamReader(resp).chunks():
             if isinstance(chunk, KeyHeader):
                 if key != None:
-                    yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
+                    yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
                 key = chunk.key
                 value = b''
             else:
                 value += chunk.chunk
 
-        if key != None and value != None: # situation when generator consumes all at first run, so it didn't yield first value
-            yield datatypesv2.KeyValue(key = key, value = value, metadata = None)
+        if key != None and value != None:  # situation when generator consumes all at first run, so it didn't yield first value
+            yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
 
     def streamScanBuffered(self, seekKey: bytes = None, endKey: bytes = None, prefix: bytes = None, desc: bool = None, limit: int = None, sinceTx: int = None, noWait: bool = None, inclusiveSeek: bool = None, inclusiveEnd: bool = None, offset: int = None) -> Generator[Tuple[bytes, BufferedStreamReader], None, None]:
         """Scan method in streaming maneer. Differs from streamScan with method to read from buffer also.
@@ -969,7 +1060,8 @@ class ImmudbClient:
             Generator[Tuple[bytes, BufferedStreamReader], None, None]: First value is Key, second is buffer that you can read from
         """
 
-        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix = prefix, desc = desc, limit = limit, sinceTx= sinceTx, noWait=noWait, inclusiveSeek=inclusiveSeek, inclusiveEnd=inclusiveEnd, offset=offset)
+        req = datatypesv2.ScanRequest(seekKey=seekKey, endKey=endKey, prefix=prefix, desc=desc, limit=limit,
+                                      sinceTx=sinceTx, noWait=noWait, inclusiveSeek=inclusiveSeek, inclusiveEnd=inclusiveEnd, offset=offset)
         resp = self._stub.streamScan(req._getGRPC())
         key = None
         valueHeader = None
@@ -984,8 +1076,6 @@ class ImmudbClient:
                 yield key, BufferedStreamReader(chunks, valueHeader, resp)
             chunk = next(chunks, None)
 
-
-
     def _rawStreamSet(self, generator: Generator[Union[KeyHeader, ValueChunkHeader, ValueChunk], None, None]) -> datatypesv2.TxHeader:
         """Helper function that grabs generator of chunks and set into immudb
 
@@ -999,7 +1089,7 @@ class ImmudbClient:
         return dataconverter.convertResponse(resp)
 
     def streamSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
-        """Sets key into value with streaming method. 
+        """Sets key into value with streaming method.
 
         Args:
             key (bytes): Key
@@ -1010,7 +1100,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.TxHeader: Transaction header of just set transaction
         """
-        resp = self._rawStreamSet(self._make_set_stream(buffer, key, bufferLength, chunkSize))
+        resp = self._rawStreamSet(self._make_set_stream(
+            buffer, key, bufferLength, chunkSize))
         return resp
 
     def streamSetFullValue(self, key: bytes, value: bytes, chunkSize: int = 65536) -> datatypesv2.TxHeader:
@@ -1024,7 +1115,8 @@ class ImmudbClient:
         Returns:
             datatypesv2.TxHeader: Transaction header
         """
-        resp = self._rawStreamSet(self._make_set_stream(BytesIO(value), key, len(value), chunkSize))
+        resp = self._rawStreamSet(self._make_set_stream(
+            BytesIO(value), key, len(value), chunkSize))
         return resp
 
     def exportTx(self, tx: int):
@@ -1145,7 +1237,6 @@ class ImmudbClient:
 
 
 # immudb-py only
-
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)
