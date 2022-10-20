@@ -550,7 +550,6 @@ def test_stream_zscan_buffered(client: ImmudbClient):
 
     assert index == 2
     assert lastFind == 5.0 # limit = 2, minScore = 3.5
-    assert True == False
 
 
 def test_stream_verifiable_get(client: ImmudbClient):
