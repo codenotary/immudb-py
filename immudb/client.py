@@ -17,6 +17,7 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 from immudb import grpcutils
 from immudb import datatypes
+from immudb.exceptions import ErrCorruptedData
 from immudb.grpc.schema_pb2 import Chunk, TxHeader
 from immudb.handler import (batchGet, batchSet, changePassword, changePermission, createUser,
                             currentRoot, createDatabase, databaseList, deleteKeys, useDatabase,
@@ -24,6 +25,8 @@ from immudb.handler import (batchGet, batchSet, changePassword, changePermission
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, health, txbyid, verifiedtxbyid, sqlexec, sqlquery,
                             listtables, execAll, transaction, verifiedSQLGet)
+
+from immudb.handler.verifiedtxbyid import verify as verifyTransaction
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -37,7 +40,7 @@ import immudb.dataconverter as dataconverter
 
 import datetime
 
-from immudb.streamsutils import AtTXHeader, KeyHeader, ScoreHeader, SetHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader, ZScanStreamReader
+from immudb.streamsutils import AtTXHeader, KeyHeader, ScoreHeader, SetHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader, VerifiedGetStreamReader, ZScanStreamReader
 
 
 class ImmudbClient:
@@ -983,6 +986,62 @@ class ImmudbClient:
             for it in chunks:
                 value += it.chunk
             return datatypesv2.KeyValue(key, value)
+
+    def streamVerifiedGet(self,key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
+        state = self._rs.get()
+        proveSinceTx = state.txId
+        req = datatypesv2.VerifiableGetRequest(keyRequest = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision), proveSinceTx=proveSinceTx)
+        resp = self._stub.streamVerifiableGet(req._getGRPC())
+        reader = VerifiedGetStreamReader(resp)
+        chunks = reader.chunks()
+        key = next(chunks, None)
+        value = b''
+        if key != None:
+            verifiableTx = next(chunks)
+            inclusionProof = next(chunks)
+            for chunk in chunks:
+                value += chunk.chunk
+            verified = verifyTransaction(verifiableTx, state, self._vk, self._rs)
+            if(len(verified) == 0):
+                raise ErrCorruptedData
+            return datatypes.SafeGetResponse(
+                id=verifiableTx.tx.header.id,
+                key=key.key,
+                value=value,
+                timestamp=verifiableTx.tx.header.ts,
+                verified=True,
+                refkey=key.refKey,
+                revision=atRevision
+            )
+
+    def streamVerifiedGetBuffered(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
+        state = self._rs.get()
+        proveSinceTx = state.txId
+        req = datatypesv2.VerifiableGetRequest(keyRequest = datatypesv2.KeyRequest(key = key, atTx = atTx, sinceTx = sinceTx, noWait = noWait, atRevision = atRevision), proveSinceTx=proveSinceTx)
+        resp = self._stub.streamVerifiableGet(req._getGRPC())
+        reader = VerifiedGetStreamReader(resp)
+        chunks = reader.chunks()
+        key = next(chunks, None)
+        if key != None:
+            verifiableTx = next(chunks)
+            inclusionProof = next(chunks)
+            verified = verifyTransaction(verifiableTx, state, self._vk, self._rs)
+            if(len(verified) == 0):
+                raise ErrCorruptedData
+            toRet =  datatypes.SafeGetResponse(
+                id=verifiableTx.tx.header.id,
+                key=key.key,
+                value=None,
+                timestamp=verifiableTx.tx.header.ts,
+                verified=True,
+                refkey=key.refKey,
+                revision=atRevision
+            )
+            valueHeader = next(chunks)
+            return toRet, BufferedStreamReader(chunks, valueHeader, resp)
+
+        
+
 
 
     def streamHistory(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):

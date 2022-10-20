@@ -20,11 +20,6 @@ from typing import List
 from immudb import datatypesv2
 from immudb.dataconverter import convertResponse
 
-
-import sys
-import time
-
-
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, table: str, primaryKeys: List[datatypesv2.PrimaryKey], atTx: int, sinceTx: int, verifying_key=None):
     state = rs.get()
     pkValues = [pk._getGRPC() for pk in primaryKeys]

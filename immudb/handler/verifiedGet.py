@@ -20,9 +20,6 @@ import immudb.database as database
 import immudb.schema as schema
 
 
-import sys
-
-
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, requestkey: bytes, atTx: int = None, verifying_key=None, sinceTx: int = None, atRevision: int = None):
     state = rs.get()
     req = schema_pb2.VerifiableGetRequest(

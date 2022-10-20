@@ -418,6 +418,13 @@ def test_stream_get_full(client: ImmudbClient):
     assert len(kv.value) == 1100000 * 2 + 11000 * 2
     assert kv.value == (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
 
+    client.setReference(key, b'superref')
+    kv = client.streamGetFull(b'superref')
+
+    assert len(kv.value) == 1100000 * 2 + 11000 * 2
+    assert kv.key == key
+    assert kv.value == (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8")
+
 def test_stream_read_full(client: ImmudbClient):
     key = ('a' * 512).encode('utf-8')
     client.set(key, (('xa' * 11000) + ('ba' * 1100000)).encode("utf-8"))
@@ -518,6 +525,7 @@ def test_stream_zscan_buffered(client: ImmudbClient):
     key2 = str(uuid.uuid4()).encode("utf-8")
     key3 = str(uuid.uuid4()).encode("utf-8")
     key4 = str(uuid.uuid4()).encode("utf-8")
+
     set = b'set' + str(uuid.uuid4()).encode("utf-8")
     client.set(key, b'b'*356)
     client.set(key2, b'b'*356)
@@ -541,3 +549,48 @@ def test_stream_zscan_buffered(client: ImmudbClient):
 
     assert index == 2
     assert lastFind == 5.0 # limit = 2, minScore = 3.5
+    assert True == False
+
+
+def test_stream_verifiable_get(client: ImmudbClient):
+    key = str(uuid.uuid4()).encode("utf-8")
+    
+    client.set(key, b'test1')
+    client.set(key, b'test2'*1024)
+    client.setReference(key, b'ref1')
+    client.setReference(key, b'ref2')
+    resp = client.streamVerifiedGet(key = b'ref2')
+    
+    assert resp.key == key
+    assert resp.verified == True
+    assert resp.value == b'test2'*1024
+    assert resp.refkey == b'ref2'
+
+    resp = client.streamVerifiedGet(key = key)
+    
+    assert resp.key == key
+    assert resp.verified == True
+    assert resp.value == b'test2'*1024
+    assert resp.refkey == None
+
+def test_stream_verifiable_get_buffered(client: ImmudbClient):
+    key = str(uuid.uuid4()).encode("utf-8")
+    
+    client.set(key, b'test1')
+    client.set(key, b'test2'*1024)
+    client.setReference(key, b'ref1')
+    client.setReference(key, b'ref2')
+    resp, value = client.streamVerifiedGetBuffered(key = b'ref2')
+    
+    assert resp.key == key
+    assert resp.verified == True
+    assert value.read() == b'test2'*1024
+    assert resp.refkey == b'ref2'
+
+
+    resp, value = client.streamVerifiedGetBuffered(key = key)
+    
+    assert resp.key == key
+    assert resp.verified == True
+    assert value.read() == b'test2'*1024
+    assert resp.refkey == None

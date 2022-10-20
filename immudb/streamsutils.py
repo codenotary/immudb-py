@@ -2,12 +2,17 @@
 from dataclasses import dataclass
 import struct
 from this import s
+from .grpc.schema_pb2 import VerifiableTx, Entry
+from .grpc.schema_pb2 import InclusionProof
 
 
 @dataclass
 class KeyHeader:
     key: bytes
     length: int
+    refKey: bytes = None
+    refKeyTx: int = None
+    tx: int = None
 
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.key
@@ -37,7 +42,6 @@ class ValueChunkHeader:
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.chunk
 
-
 @dataclass
 class ValueChunk:
     chunk: bytes
@@ -48,6 +52,70 @@ class ValueChunk:
 class FullKeyValue:
     key: bytes
     value: bytes
+
+
+class VerifiedGetStreamReader:
+    def __init__(self, stream):
+        self.streamToRead = stream
+        self.reader = self.headerReader
+        self.valueLength = -1
+        self.left = -1
+
+
+    def parseVerifiableTx(self, header):
+        verifiable = VerifiableTx()
+        verifiable.ParseFromString(header[8:])
+        return verifiable
+
+    def parseInclusionProof(self, header):
+        inclusion = InclusionProof()
+        inclusion.ParseFromString(header[8:])
+        return inclusion
+
+    def parseHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        en = Entry()
+        en.ParseFromString(header[8:])
+        refkey = en.referencedBy.key
+        if refkey == b'':
+            refkey = None
+        return KeyHeader(length=length, key=en.key, refKey = refkey, refKeyTx=en.referencedBy.tx, tx = en.tx)
+
+    def parseValueHeader(self, header: bytes):
+        length = int.from_bytes(header[0:8], byteorder='big')
+        self.valueLength = length
+        self.left = self.valueLength - len(header[8:])
+        return ValueChunk(chunk=header[8:], left=self.left)
+
+    def chunks(self):
+        for chunk in self.streamToRead:
+            yield self.reader(chunk)
+
+    def headerReader(self, chunk):
+        self.reader = self.verifiableTxReader
+        return self.parseHeader(chunk.content)
+
+    def valueHeaderReader(self, chunk):
+        self.reader = self.valueReader
+        readed = self.parseValueHeader(chunk.content)
+        if (self.left == 0):
+            self.reader = self.headerReader
+        return readed
+
+    def valueReader(self, chunk):
+        self.left = self.left - len(chunk.content)
+        readed = ValueChunk(chunk=chunk.content, left=self.left)
+        if (self.left == 0):
+            self.reader = self.headerReader
+        return readed
+
+    def verifiableTxReader(self, chunk):
+        self.reader = self.inclusionProofReader
+        return self.parseVerifiableTx(chunk.content)
+
+    def inclusionProofReader(self, chunk):
+        self.reader = self.valueHeaderReader
+        return self.parseInclusionProof(chunk.content)
 
 
 class StreamReader:
