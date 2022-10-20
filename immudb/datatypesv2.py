@@ -991,6 +991,21 @@ class SQLValue(GRPCTransformable):
     bs: Optional[bytes] = None
     ts: Optional[int] = None
 
+@dataclass
+class PrimaryKey:
+    pass
+@dataclass
+class PrimaryKeyNullValue(GRPCTransformable, PrimaryKey):
+    def _getGRPC(self):
+        return schema.SQLValue(null = None)
+
+@dataclass
+class PrimaryKeyIntValue(GRPCTransformable, PrimaryKey):
+    value: int
+    def _getGRPC(self):
+        return schema.SQLValue(n = self.value)
+
+
 
 class TxMode(Enum):
     ReadOnly = 0

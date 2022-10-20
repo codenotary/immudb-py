@@ -23,7 +23,7 @@ from immudb.handler import (batchGet, batchSet, changePassword, changePermission
                             get, listUsers, sqldescribe, verifiedGet, verifiedSet, setValue, history,
                             scan, reference, verifiedreference, zadd, verifiedzadd,
                             zscan, healthcheck, health, txbyid, verifiedtxbyid, sqlexec, sqlquery,
-                            listtables, execAll, transaction)
+                            listtables, execAll, transaction, verifiedSQLGet)
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
@@ -1139,6 +1139,10 @@ class ImmudbClient:
                       stacklevel=2
                       )
         return verifiedSet.call(self._stub, self._rs, key, value)
+
+    def verifiableSQLGet(self, table, primaryKeys, atTx = None, sinceTx = None): 
+        return verifiedSQLGet.call(self._stub, self._rs, table, primaryKeys, atTx, sinceTx, verifying_key=self._vk)
+
 
 # immudb-py only
 
