@@ -238,6 +238,4 @@ def encodeAsKey(val, colType, maxLen):
         encv += KeyValPrefixNotNull
         encv +=  int.to_bytes(intVal, 8, "big")
         encv[1] = ord(encv[1:2]) ^ ord(b'\x80')
-        for x in encv:
-            print(x, end = " ")
         return bytes(encv)

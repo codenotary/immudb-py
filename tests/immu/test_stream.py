@@ -449,6 +449,7 @@ def fake_stream(length = 10240):
         chunk = ref.read(128)
         
 
+
 def test_stream_set(client: ImmudbClient):
     resp = client._rawStreamSet(fake_stream())
     assert resp.id > 0
@@ -594,3 +595,38 @@ def test_stream_verifiable_get_buffered(client: ImmudbClient):
     assert resp.verified == True
     assert value.read() == b'test2'*1024
     assert resp.refkey == None
+
+
+
+def test_verifiable_stream_set(client: ImmudbClient):
+    keyToSet = str(uuid.uuid4).encode("utf-8")
+    kk = BytesIO(b'123123')
+    resp = client.streamVerifiedSet(keyToSet, kk, 6, 100)
+    assert resp.id > 0
+    assert resp.verified == True
+
+    assert client.get(keyToSet).value == b'123123'
+
+    keyToSet = str(uuid.uuid4).encode("utf-8")
+    kk = BytesIO(b'123123'*1024)
+    resp = client.streamVerifiedSet(keyToSet, kk, 6*1024, 100)
+    assert resp.id > 0
+    assert resp.verified == True
+
+    assert client.get(keyToSet).value == b'123123'*1024
+
+
+def test_verifiable_stream_set_fullvalue(client: ImmudbClient):
+    keyToSet = str(uuid.uuid4).encode("utf-8")
+    resp = client.streamVerifiedSetFullValue(keyToSet, b'123123', 100)
+    assert resp.id > 0
+    assert resp.verified == True
+
+    assert client.get(keyToSet).value == b'123123'
+
+    keyToSet = str(uuid.uuid4).encode("utf-8")
+    resp = client.streamVerifiedSetFullValue(keyToSet, b'123123'*1024, 100)
+    assert resp.id > 0
+    assert resp.verified == True
+
+    assert client.get(keyToSet).value == b'123123'*1024

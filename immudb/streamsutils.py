@@ -17,6 +17,14 @@ class KeyHeader:
     def getInBytes(self):
         return self.length.to_bytes(8, 'big') + self.key
 
+@dataclass
+class ProvenSinceHeader:
+    provenSinceTx: int
+
+    def getInBytes(self):
+        toBytes = self.provenSinceTx.to_bytes(8, 'big')
+        length2 = int.to_bytes(8, 8, 'big')
+        return length2 + toBytes 
 
 @dataclass
 class SetHeader:

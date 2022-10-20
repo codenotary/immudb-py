@@ -40,7 +40,7 @@ import immudb.dataconverter as dataconverter
 
 import datetime
 
-from immudb.streamsutils import AtTXHeader, KeyHeader, ScoreHeader, SetHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader, VerifiedGetStreamReader, ZScanStreamReader
+from immudb.streamsutils import AtTXHeader, KeyHeader, ProvenSinceHeader, ScoreHeader, SetHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader, VerifiedGetStreamReader, ZScanStreamReader
 
 
 class ImmudbClient:
@@ -1099,6 +1099,20 @@ class ImmudbClient:
             yield Chunk(content=chunk)
             chunk = buffer.read(chunkSize)
 
+        
+    def _make_verifiable_set_stream(self, buffer, key: bytes, length: int, provenSinceTx: int = None, chunkSize: int = 65536):
+        header = ProvenSinceHeader(provenSinceTx)
+        yield Chunk(content=header.getInBytes())
+        yield Chunk(content=KeyHeader(key=key, length=len(key)).getInBytes())
+        firstChunk = buffer.read(chunkSize)
+        firstChunk = ValueChunkHeader(
+            chunk=firstChunk, length=length).getInBytes()
+        yield Chunk(content=firstChunk)
+        chunk = buffer.read(chunkSize)
+        while chunk:
+            yield Chunk(content=chunk)
+            chunk = buffer.read(chunkSize)
+
     def streamZScanBuffered(self, set: bytes = None, seekKey: bytes = None, 
         seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None, 
         desc: bool = None, minScore: float = None,maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None ) -> Generator[datatypesv2.ZScanEntry, None, None]:
@@ -1267,6 +1281,35 @@ class ImmudbClient:
         """
         resp = self._stub.streamSet(generator)
         return dataconverter.convertResponse(resp)
+
+
+
+    def _raw_verifiable_stream_set(self, generator):
+        resp = self._stub.streamVerifiableSet(generator)
+        return resp
+
+
+    def streamVerifiedSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
+        state = self._rs.get()
+        resp = self._raw_verifiable_stream_set(self._make_verifiable_set_stream(
+            buffer, key, bufferLength, state.txId, chunkSize))
+        verified = verifyTransaction(resp, state, self._vk, self._rs)
+
+        return datatypes.SetResponse(
+            id=resp.tx.header.id,
+            verified=verified[0] == key,
+        )
+
+    def streamVerifiedSetFullValue(self, key: bytes, value: bytes, chunkSize: int = 65536) -> datatypesv2.TxHeader:
+        state = self._rs.get()
+        resp = self._raw_verifiable_stream_set(self._make_verifiable_set_stream(
+            BytesIO(value), key, len(value), state.txId, chunkSize))
+        verified = verifyTransaction(resp, state, self._vk, self._rs)
+
+        return datatypes.SetResponse(
+            id=resp.tx.header.id,
+            verified=verified[0] == key,
+        )
 
     def streamSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
         """Sets key into value with streaming method.

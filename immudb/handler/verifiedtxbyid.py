@@ -26,7 +26,6 @@ def verify(vtx, state, verifying_key, rs):
         sourcealh = schema.DigestFromProto(state.txHash)
         targetid = vtx.tx.header.id
         targetalh = dualProof.targetTxHeader.Alh()
-        print(sourceid, sourcealh, targetid, targetalh)
     else:
         sourceid = vtx.tx.header.id
         sourcealh = dualProof.sourceTxHeader.Alh()
