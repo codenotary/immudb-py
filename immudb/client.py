@@ -50,7 +50,8 @@ class ImmudbClient:
                 (e.g. ``localhost:3322``) of your immudb instance.
                 Defaults to ``localhost:3322`` when no value is set.
             rs (RootService, optional): object that implements RootService,
-                allowing requests to be verified. Optional.
+                allowing requests to be verified. Optional. 
+                By default in-memory RootService instance will be created
             publicKeyFile (str, optional): path of the public key to use
                 for authenticating requests. Optional.
             timeout (int, optional): global timeout for GRPC requests. Requests
@@ -256,7 +257,7 @@ class ImmudbClient:
             database (bytes, optional): database to establish session with.
                 Defaults to ``b"defaultdb"``.
             keepAliveInterval (int, optional): specifies how often keepalive
-            packets should be sent, in seconds. Defaults to ``60s``.
+                packets should be sent, in seconds. Defaults to ``60s``.
 
         Returns:
             ManagedSession: managed Session object
@@ -368,6 +369,12 @@ class ImmudbClient:
             user (str): username
             newPassword (str): new password
             oldPassword (str): old password
+
+        Comment:
+            SysAdmin can change his own password only by giving old and new password.
+            SysAdmin user can change password of any other user without old password.
+            Admin users can change password for user only created by that admin without old password.
+
 
         """
         request = schema_pb2_grpc.schema__pb2.ChangePasswordRequest(
