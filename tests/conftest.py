@@ -15,7 +15,8 @@ from .immuTestClient import ImmuTestClient
 
 # See .github/workflows/ci.yml for the automated tests
 
-TESTURLS = ["localhost:3322", "localhost:3333", "localhost:3344"]
+TESTURLS = ["localhost:3322", "localhost:3333", "localhost:3344", "localhost:3355"]
+# TESTURLS = ["localhost:3322"]
 
 
 @pytest.fixture(scope="module")

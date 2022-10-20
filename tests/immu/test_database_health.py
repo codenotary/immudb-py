@@ -8,7 +8,8 @@ def test_database_health(wrappedClient: ImmuTestClient):
     if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
         pytest.skip("Immudb version too low")
     timeNow = datetime.datetime.now()
-    client.login("immudb", "immudb", "defaultdb") # login into database is counted as request completed
+    client.login("immudb", "immudb", "defaultdb")
+    client.set(b"x", b"y")
     response1 = client.databaseHealth()
     assert response1.lastRequestCompletedAt > 0
     timeparsed = datetime.datetime.fromtimestamp(response1.lastRequestCompletedAt/1000)

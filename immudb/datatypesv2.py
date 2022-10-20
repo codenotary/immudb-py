@@ -987,6 +987,7 @@ class VerifiableSQLEntry(GRPCTransformable):
     ColIdsByName: Dict[str, int] = None
     ColTypesById: Dict[int, str] = None
     ColLenById: Dict[int, int] = None
+    verified: bool = False
 
 
 @dataclass
@@ -1136,6 +1137,29 @@ class PrimaryKeyIntValue(GRPCTransformable, PrimaryKey):
     def _getGRPC(self):
         return schema.SQLValue(n = self.value)
 
+@dataclass
+class PrimaryKeyVarCharValue(GRPCTransformable, PrimaryKey):
+    value: str
+    def _getGRPC(self):
+        return schema.SQLValue(s = self.value)
+
+@dataclass
+class PrimaryKeyBoolValue(GRPCTransformable, PrimaryKey):
+    value: bool
+    def _getGRPC(self):
+        return schema.SQLValue(b = self.value)
+
+@dataclass
+class PrimaryKeyBlobValue(GRPCTransformable, PrimaryKey):
+    value: bytes
+    def _getGRPC(self):
+        return schema.SQLValue(bs = self.value)
+
+@dataclass
+class PrimaryKeyTsValue(GRPCTransformable, PrimaryKey):
+    value: int
+    def _getGRPC(self):
+        return schema.SQLValue(ts = self.value)
 
 
 class TxMode(Enum):
