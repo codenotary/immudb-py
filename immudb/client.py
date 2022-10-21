@@ -1004,7 +1004,7 @@ class ImmudbClient:
                 value += chunk.chunk
             verified = verifyTransaction(
                 verifiableTx, state, self._vk, self._rs)
-            if(len(verified) == 0):
+            if (len(verified) == 0):
                 raise ErrCorruptedData
             return datatypes.SafeGetResponse(
                 id=verifiableTx.tx.header.id,
@@ -1030,7 +1030,7 @@ class ImmudbClient:
             inclusionProof = next(chunks)
             verified = verifyTransaction(
                 verifiableTx, state, self._vk, self._rs)
-            if(len(verified) == 0):
+            if (len(verified) == 0):
                 raise ErrCorruptedData
             toRet = datatypes.SafeGetResponse(
                 id=verifiableTx.tx.header.id,
@@ -1511,7 +1511,6 @@ class ImmudbClient:
 
 
 # immudb-py only
-
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)

@@ -214,7 +214,7 @@ def encodeAsKey(val, colType, maxLen):
 
         encv = bytearray()
         encv += KeyValPrefixNotNull
-        if(val == True):
+        if (val == True):
             encv += b'\x01'
         else:
             encv += b'\x00'
