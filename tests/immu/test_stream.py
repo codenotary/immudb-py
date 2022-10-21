@@ -692,6 +692,7 @@ def test_stream_exec_all_zadd(client: ImmudbClient):
         ),
         datatypes.ZAddRequest(set = setToSet, score = 3.0, key = keyToSet)
     ])
+    assert resp.id > 0
     k1 = client.get(keyToSet)
     assert k1.value == val
     k2 = client.get(keyToSet2)

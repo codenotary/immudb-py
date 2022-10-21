@@ -987,7 +987,22 @@ class ImmudbClient:
                 value += it.chunk
             return datatypesv2.KeyValue(key, value)
 
-    def streamVerifiedGet(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
+    def streamVerifiedGet(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> datatypes.SafeGetResponse:
+        """Gets a value of a key with streaming method, and verifies transaction.
+
+        Args:
+            key (bytes): Key to get
+            atTx (int, optional): Get key at transaction id. Defaults to None.
+            sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
+            noWait (bool, optional): Doesn't wait for the index to be fully generated. Defaults to None.
+            atRevision (int, optional): Returns value of key at specified revision. -1 to get relative revision. Defaults to None.
+
+        Raises:
+            ErrCorruptedData: When data is corrupted or unverifiable
+
+        Returns:
+            datatypes.SafeGetResponse: Response contains informations about verification
+        """
         state = self._rs.get()
         proveSinceTx = state.txId
         req = datatypesv2.VerifiableGetRequest(keyRequest=datatypesv2.KeyRequest(
@@ -1016,7 +1031,22 @@ class ImmudbClient:
                 revision=atRevision
             )
 
-    def streamVerifiedGetBuffered(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None):
+    def streamVerifiedGetBuffered(self, key: bytes = None, atTx: int = None, sinceTx: int = None, noWait: bool = None, atRevision: int = None) -> Tuple[datatypes.SafeGetResponse, BufferedStreamReader]:
+        """Gets a value of a key with streaming method, and verifies transaction. Value is represented as BufferedStreamReader
+
+        Args:
+            key (bytes): Key to get
+            atTx (int, optional): Get key at transaction id. Defaults to None.
+            sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
+            noWait (bool, optional): Doesn't wait for the index to be fully generated. Defaults to None.
+            atRevision (int, optional): Returns value of key at specified revision. -1 to get relative revision. Defaults to None.
+
+        Raises:
+            ErrCorruptedData: When data is corrupted or unverifiable
+
+        Returns:
+            Tuple[datatypes.SafeGetResponse, BufferedStreamReader]: First element is safe get response without value, second is a buffer that you can read from
+        """
         state = self._rs.get()
         proveSinceTx = state.txId
         req = datatypesv2.VerifiableGetRequest(keyRequest=datatypesv2.KeyRequest(
@@ -1044,7 +1074,19 @@ class ImmudbClient:
             valueHeader = next(chunks)
             return toRet, BufferedStreamReader(chunks, valueHeader, resp)
 
-    def streamHistory(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):
+    def streamHistory(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None) -> Generator[datatypesv2.KeyValue, None, None]:
+        """Streams history of key
+
+        Args:
+            key (bytes): Key to find
+            offset (int, optional): Offset to apply
+            sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
+            noWait (bool, optional): Doesn't wait for the index to be fully generated. Defaults to None.
+            desc (bool, optional): Descending or ascending order. Defaults to None.
+
+        Yields:
+            Generator[datatypesv2.KeyValue, None, None]: Generator of KeyValues
+        """
         request = datatypesv2.HistoryRequest(
             key=key, offset=offset, limit=limit, desc=desc, sinceTx=sinceTx)
         resp = self._stub.streamHistory(request._getGRPC())
@@ -1062,7 +1104,19 @@ class ImmudbClient:
         if key != None and value != None:  # situation when generator consumes all at first run, so it didn't yield first value
             yield datatypesv2.KeyValue(key=key, value=value, metadata=None)
 
-    def streamHistoryBuffered(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None):
+    def streamHistoryBuffered(self, key: bytes, offset: int = None, sinceTx: int = None, limit: int = None, desc: bool = None) -> Generator[Tuple[datatypesv2.KeyValue, BufferedStreamReader], None, None]:
+        """Streams history of key
+
+        Args:
+            key (bytes): Key to find
+            offset (int, optional): Offset to apply
+            sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
+            noWait (bool, optional): Doesn't wait for the index to be fully generated. Defaults to None.
+            desc (bool, optional): Descending or ascending order. Defaults to None.
+
+        Yields:
+            Generator[Tuple[datatypesv2.KeyValue, BufferedStreamReader], None, None]: Generator of Tuples of KeyValue and BufferedStreamReader. You can read from BufferedStreamReader with read() method
+        """
         request = datatypesv2.HistoryRequest(
             key=key, offset=offset, limit=limit, desc=desc, sinceTx=sinceTx)
         resp = self._stub.streamHistory(request._getGRPC())
@@ -1102,6 +1156,18 @@ class ImmudbClient:
             chunk = buffer.read(chunkSize)
 
     def _make_verifiable_set_stream(self, buffer, key: bytes, length: int, provenSinceTx: int = None, chunkSize: int = 65536):
+        """Helper function to create stream from provided buffer
+
+        Args:
+            buffer (io.BytesIO): Any buffer
+            key (bytes): Key to set
+            length (int): Length of buffer
+            provenSinceTx (int): Prove since this transaction id
+            chunkSize (int, optional): Chunk size. Defaults to 65536.
+
+        Yields:
+            Generator[Chunk, None, None]: Yields GRPC chunks
+        """
         header = ProvenSinceHeader(provenSinceTx)
         yield Chunk(content=header.getInBytes())
         yield Chunk(content=KeyHeader(key=key, length=len(key)).getInBytes())
@@ -1116,7 +1182,27 @@ class ImmudbClient:
 
     def streamZScanBuffered(self, set: bytes = None, seekKey: bytes = None,
                             seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None,
-                            desc: bool = None, minScore: float = None, maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None) -> Generator[datatypesv2.ZScanEntry, None, None]:
+                            desc: bool = None, minScore: float = None, maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None) -> Generator[Tuple[datatypesv2.ZScanEntry, BufferedStreamReader], None, None]:
+        """Scan for provided parameters for secondary index. Limit for scan is fixed - 1000. You need to introduce pagination.
+        This method returns buffered ZEntry values - you need to read from value yourself by read(int) method.
+
+        Args:
+            set (bytes, optional): Set name. Defaults to None.
+            seekKey (bytes, optional): Seek key to find. Defaults to None.
+            seekScore (float, optional): Seek score to find. Defaults to None.
+            seekAtTx (int, optional): TX id for the first entry. Defaults to None.
+            inclusiveSeek (bool, optional): Element specified in seek should be included. Defaults to None.
+            limit (int, optional): Maximum number of returned items. Defaults to None.
+            desc (bool, optional): Descending or ascending order. Defaults to None.
+            minScore (float, optional): Minimum score to find. Defaults to None.
+            maxScore (float, optional): Maximum score to find. Defaults to None.
+            sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
+            noWait (bool, optional): when true - scan doesn't wait for transaction at seekAtTx to be procesessed. Defaults to False.
+            offset (int, optional): Offsets current scan. Defaults to None.
+
+        Yields:
+            Generator[Tuple[datatypesv2.ZScanEntry, BufferedStreamReader]]: Returns generator of Tuple of ZScanEntry and BufferedStreamReader. You can read from BufferedStreamReader with read(int) method
+        """
         minScoreObject = None
         maxScoreObject = None
         if minScore != None:
@@ -1157,7 +1243,26 @@ class ImmudbClient:
 
     def streamZScan(self, set: bytes = None, seekKey: bytes = None,
                     seekScore: float = None, seekAtTx: int = None, inclusiveSeek: bool = None, limit: int = None,
-                    desc: bool = None, minScore: float = None, maxScore: float = None, sinceTx: int = None, noWait: bool = None, offset: int = None) -> Generator[datatypesv2.ZScanEntry, None, None]:
+                    desc: bool = None, minScore: float = None, maxScore: float = None, sinceTx: int = None, noWait: bool = False, offset: int = None) -> Generator[datatypesv2.ZScanEntry, None, None]:
+        """Scan for provided parameters for secondary index. Limit for scan is fixed - 1000. You need to introduce pagination.
+
+        Args:
+            set (bytes, optional): Set name. Defaults to None.
+            seekKey (bytes, optional): Seek key to find. Defaults to None.
+            seekScore (float, optional): Seek score to find. Defaults to None.
+            seekAtTx (int, optional): TX id for the first entry. Defaults to None.
+            inclusiveSeek (bool, optional): Element specified in seek should be included. Defaults to None.
+            limit (int, optional): Maximum number of returned items. Defaults to None.
+            desc (bool, optional): Descending or ascending order. Defaults to None.
+            minScore (float, optional): Minimum score to find. Defaults to None.
+            maxScore (float, optional): Maximum score to find. Defaults to None.
+            sinceTx (int, optional): immudb will wait for transaction provided by sinceTx. Defaults to None.
+            noWait (bool, optional): when true - scan doesn't wait for transaction at seekAtTx to be procesessed. Defaults to False.
+            offset (int, optional): Offsets current scan. Defaults to None.
+
+        Yields:
+            Generator[datatypesv2.ZScanEntry, None, None]: Returns generator of ZScanEntry
+        """
         minScoreObject = None
         maxScoreObject = None
         if minScore != None:
@@ -1271,11 +1376,11 @@ class ImmudbClient:
                 yield key, BufferedStreamReader(chunks, valueHeader, resp)
             chunk = next(chunks, None)
 
-    def _rawStreamSet(self, generator: Generator[Union[KeyHeader, ValueChunkHeader, ValueChunk], None, None]) -> datatypesv2.TxHeader:
-        """Helper function that grabs generator of chunks and set into immudb
+    def _rawStreamSet(self, generator: Generator[Chunk, None, None]) -> datatypesv2.TxHeader:
+        """Helper function that grabs generator of chunks and set into opened stream
 
         Args:
-            generator (Generator[Union[KeyHeader, ValueChunkHeader, ValueChunk], None, None]): Generator
+            generator (Generator[Chunk, None, None]): Generator
 
         Returns:
             datatypesv2.TxHeader: Transaction header
@@ -1283,11 +1388,29 @@ class ImmudbClient:
         resp = self._stub.streamSet(generator)
         return dataconverter.convertResponse(resp)
 
-    def _raw_verifiable_stream_set(self, generator):
+    def _raw_verifiable_stream_set(self, generator: Generator[Chunk, None, None]):
+        """Helper function that grabs generator of chunks and set into opened stream
+
+        Args:
+            generator (Generator[Chunk, None, None]): Generator of chunks
+
+        Returns:
+            schema_pb2.VerifiableTx: Raw VerifiableTX object 
+        """
         resp = self._stub.streamVerifiableSet(generator)
         return resp
 
-    def _make_stream_exec_all_stream(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False, chunkSize=65536):
+    def _make_stream_exec_all_stream(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False, chunkSize=65536) -> Generator[Chunk, None, None]:
+        """Helper function that converts provided list into generator of Chunks
+
+        Args:
+            ops (List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]]): List of actions to execute
+            noWait (bool, optional): When true - scan doesn't wait for the index to be fully generated. Defaults to False.
+            chunkSize (int, optional): Chunk size to set while streaming. Defaults to 65536.
+
+        Yields:
+            Generator[Chunk, None, None]: Generator of chunks
+        """
         kv = 1
         zadd = 2
         for op in ops:
@@ -1333,14 +1456,45 @@ class ImmudbClient:
                 lengthBytes = int.to_bytes(lengthOf, 8, 'big')
                 yield Chunk(content=concated + lengthBytes + serialized)
 
-    def _raw_stream_exec_all(self, generator):
-        resp = self._stub.streamExecAll(generator)
+    def _raw_stream_exec_all(self, generator: Generator[Chunk, None, None]) -> datatypesv2.TxHeader:
+        """Read everything from generator and yields into opened stream
+
+        Args:
+            generator (Generator[Chunk, None, None]): Chunk generator
+
+        Returns:
+            datatypesv2.TxHeader: TxHeader of just executed transaction
+        """
+
+        resp = dataconverter.convertResponse(
+            self._stub.streamExecAll(generator))
         return resp
 
-    def streamExecAll(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False) -> TxHeader:
+    def streamExecAll(self, ops: List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]], noWait=False) -> datatypesv2.TxHeader:
+        """Executes everything provided in ops List
+
+        Args:
+            ops (List[Union[datatypes.KeyValue, datatypes.StreamingKeyValue, datatypes.ZAddRequest, datatypes.ReferenceRequest]]): List of actions to execute
+            noWait (bool, optional): When true - scan doesn't wait for the index to be fully generated. Defaults to False.
+
+        Returns:
+            TxHeader: TxHeader of just executed transaction
+        """
         return self._raw_stream_exec_all(self._make_stream_exec_all_stream(ops, noWait))
 
-    def streamVerifiedSet(self, key: bytes, buffer, bufferLength: int, chunkSize: int = 65536) -> datatypesv2.TxHeader:
+    def streamVerifiedSet(self, key: bytes, buffer: BytesIO, bufferLength: int, chunkSize: int = 65536) -> datatypes.SetResponse:
+        """Sets key into value with streaming method and verifies with current state
+
+        Args:
+            key (bytes): Key
+            buffer (io.BytesIO): Any buffer that implements read(length: int) method
+            bufferLength (int): Buffer length (protocol needs to know it at first)
+            chunkSize (int, optional): Specifies chunk size while sending. Defaults to 65536. 
+
+        Returns:
+            datatypes.SetResponse: Response contains id of transaction and verification status.
+            Raises exception if corrupted data.
+        """
         state = self._rs.get()
         resp = self._raw_verifiable_stream_set(self._make_verifiable_set_stream(
             buffer, key, bufferLength, state.txId, chunkSize))
@@ -1351,7 +1505,18 @@ class ImmudbClient:
             verified=verified[0] == key,
         )
 
-    def streamVerifiedSetFullValue(self, key: bytes, value: bytes, chunkSize: int = 65536) -> datatypesv2.TxHeader:
+    def streamVerifiedSetFullValue(self, key: bytes, value: bytes, chunkSize: int = 65536) -> datatypes.SetResponse:
+        """Sets key into value with streaming method and verifies with current state.
+
+        Args:
+            key (bytes): Key to set
+            value (bytes): Value to set
+            chunkSize (int, optional): Specifies chunk size while sending. Defaults to 65536.
+
+        Returns:
+            datatypes.SetResponse: Response contains id of transaction and verification status.
+            Raises exception if corrupted data.
+        """
         state = self._rs.get()
         resp = self._raw_verifiable_stream_set(self._make_verifiable_set_stream(
             BytesIO(value), key, len(value), state.txId, chunkSize))
@@ -1369,7 +1534,7 @@ class ImmudbClient:
             key (bytes): Key
             buffer (io.BytesIO): Any buffer that implements read(length: int) method
             bufferLength (int): Buffer length (protocol needs to know it at first)
-            chunkSize (int, optional): Specifies chunk size while sending. Defaults to 65536. Defaults to 65536.
+            chunkSize (int, optional): Specifies chunk size while sending. Defaults to 65536. 
 
         Returns:
             datatypesv2.TxHeader: Transaction header of just set transaction
@@ -1506,11 +1671,31 @@ class ImmudbClient:
                       )
         return verifiedSet.call(self._stub, self._rs, key, value)
 
-    def verifiableSQLGet(self, table, primaryKeys, atTx=None, sinceTx=None):
+    def verifiableSQLGet(self, table: str, primaryKeys: List[datatypesv2.PrimaryKey], atTx=None, sinceTx=None) -> datatypesv2.VerifiableSQLEntry:
+        """Verifies SQL row against current state
+
+        Example:
+            client.verifiableSQLGet(
+                tabname, [datatypesv2.PrimaryKeyIntValue(1), datatypesv2.PrimaryKeyIntValue(3)]
+            )
+
+        Args:
+            table (str): Table Name
+            primaryKeys (List[datatypesv2.PrimaryKey]): List of PrimaryKeys to check
+            atTx (int): Identifier of the transaction at which point the key's
+                value should be retrieved.
+            sinceTx (int): Identifier of the earliest transaction from which the
+                key's value should be retrieved. If the specified transaction has
+                not been indexed by immudb, this method will block until it has.
+
+        Returns:
+            datatypesv2.VerifiableSQLEntry: Contains all informations about just verified SQL Entry
+        """
         return verifiedSQLGet.call(self._stub, self._rs, table, primaryKeys, atTx, sinceTx, verifying_key=self._vk)
 
 
 # immudb-py only
+
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)
