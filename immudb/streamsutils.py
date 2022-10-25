@@ -1,7 +1,6 @@
 
 from dataclasses import dataclass
 import struct
-from this import s
 from .grpc.schema_pb2 import VerifiableTx, Entry
 from .grpc.schema_pb2 import InclusionProof
 
