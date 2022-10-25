@@ -20,18 +20,7 @@ from immudb.embedded import store
 import immudb.schema as schema
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, verifying_key=None):
-    state = rs.get()
-    request = schema_pb2.VerifiableTxRequest(
-        tx=tx,
-        proveSinceTx=state.txId
-    )
-    try:
-        vtx = service.VerifiableTxById(request)
-    except Exception as e:
-        if hasattr(e, 'details') and e.details() == 'tx not found':
-            return None
-        raise e
+def verify(vtx, state, verifying_key, rs):
     dualProof = schema.DualProofFromProto(vtx.dualProof)
     if state.txId <= vtx.tx.header.id:
         sourceid = state.txId
@@ -66,3 +55,18 @@ def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, ver
     for t in vtx.tx.entries:
         ret.append(t.key[1:])
     return ret
+
+
+def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, tx: int, verifying_key=None):
+    state = rs.get()
+    request = schema_pb2.VerifiableTxRequest(
+        tx=tx,
+        proveSinceTx=state.txId
+    )
+    try:
+        vtx = service.VerifiableTxById(request)
+    except Exception as e:
+        if hasattr(e, 'details') and e.details() == 'tx not found':
+            return None
+        raise e
+    return verify(vtx, state, verifying_key, rs)

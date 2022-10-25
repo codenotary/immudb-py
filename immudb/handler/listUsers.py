@@ -23,7 +23,7 @@ class listUsersResponse:
     userlist: schema_pb2.UserList
 
 
-def call(service: schema_pb2_grpc.ImmuServiceStub, request: None):
+def call(service: schema_pb2_grpc.ImmuServiceStub):
     NoRequest = Empty()
     msg = service.ListUsers(NoRequest)
     return listUsersResponse(

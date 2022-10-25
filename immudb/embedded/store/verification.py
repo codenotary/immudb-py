@@ -10,11 +10,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from operator import xor
+from typing import List
+from immudb import datatypesv2
 from immudb.embedded import store, ahtree
 from immudb.constants import *
-from immudb.exceptions import ErrUnsupportedTxVersion
+from immudb.exceptions import ErrCorruptedData, ErrUnsupportedTxVersion, ErrMaxKeyLengthExceeded, ErrInvalidValue, ErrMaxLengthExceeded
 import hashlib
 import struct
+import datetime
 
 
 def VerifyInclusion(proof, digest: bytes, root) -> bool:
@@ -135,3 +139,104 @@ def EntrySpecDigest_v1(kv: store.EntrySpec) -> bytes:
 def leafFor(d: bytes) -> bytes:
     b = LEAF_PREFIX+d
     return hashlib.sha256(b).digest()
+
+
+def sqlMapKey(prefix: bytes, mappingPrefix: str, encValues: List[bytes]):
+
+    mkey = b''
+
+    off = 0
+
+    mkey += prefix
+    off += len(prefix)
+
+    mkey += mappingPrefix.encode("utf-8")
+
+    off += len(mappingPrefix)
+
+    for ev in encValues:
+        mkey += ev
+        off += len(ev)
+
+    return mkey
+
+
+def encodeID(id: int):
+    encId = b''
+    encId += int.to_bytes(id, 4, "big")
+    return encId
+
+
+def encodeAsKey(val, colType, maxLen):
+    maxKeyLen = 256  # pkg/client/sql.go
+    KeyValPrefixNotNull = b'\x80'
+
+    if maxLen <= 0:
+        raise ErrInvalidValue()
+
+    if maxLen > maxKeyLen:
+        raise ErrMaxKeyLengthExceeded()
+
+    if val == None:
+        return KeyValPrefixNotNull
+
+    if isinstance(colType, datatypesv2.PrimaryKeyNullValue):
+        strVal = str(val)
+        if len(strVal) > maxLen:
+            raise ErrMaxLengthExceeded()
+
+        encv = b''
+        encv[0] = KeyValPrefixNotNull
+        encv += strVal.encode("utf-8")
+        encv += int.to_bytes(len(strVal), 4, "big")
+
+        return encv
+    elif isinstance(colType, datatypesv2.PrimaryKeyIntValue):
+        if maxLen != 8:
+            raise ErrCorruptedData()
+
+        intVal = int(val)
+
+        encv = bytearray()
+        encv += KeyValPrefixNotNull
+        encv += int.to_bytes(intVal, 8, "big")
+        encv[1] = ord(encv[1:2]) ^ ord(b'\x80')
+        return bytes(encv)
+    elif isinstance(colType, datatypesv2.PrimaryKeyVarCharValue):
+
+        encv = bytearray()
+        encv += KeyValPrefixNotNull
+        encv += str(val).encode("utf-8")
+        encv += b'\x00' * (maxLen - len(val))
+        encv += int.to_bytes(len(val), 4, "big")
+        return bytes(encv)
+    elif isinstance(colType, datatypesv2.PrimaryKeyBoolValue):
+
+        encv = bytearray()
+        encv += KeyValPrefixNotNull
+        if (val == True):
+            encv += b'\x01'
+        else:
+            encv += b'\x00'
+        return bytes(encv)
+    elif isinstance(colType, datatypesv2.PrimaryKeyBlobValue):
+
+        encv = bytearray()
+        encv += KeyValPrefixNotNull
+        encv += val
+        encv += b'\x00' * (maxLen - len(val))
+        encv += int.to_bytes(len(val), 4, "big")
+        return bytes(encv)
+    elif isinstance(colType, datatypesv2.PrimaryKeyTsValue):
+        if maxLen != 8:
+            raise ErrCorruptedData()
+
+        parsed = datetime.datetime.fromtimestamp(val / 1e6)
+        # UnixNano from GO not compatible with python, need to round last int
+        intVal = round(int(parsed.timestamp() * 1e9), -3)
+
+        encv = bytearray()
+        encv += KeyValPrefixNotNull
+        encv += int.to_bytes(intVal, 8, "big")
+        encv[1] = ord(encv[1:2]) ^ ord(b'\x80')
+        return bytes(encv)

@@ -1,5 +1,5 @@
 /*
-Copyright 2021 CodeNotary, Inc. All rights reserved.
+Copyright 2022 Codenotary Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 
 syntax = "proto3";
 
+import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 
@@ -97,11 +98,11 @@ message Precondition {
 	message KeyMustExistPrecondition {
 		bytes key = 1;
 	}
-	
+
 	message KeyMustNotExistPrecondition {
 		bytes key = 1;
 	}
-	
+
 	message KeyNotModifiedAfterTXPrecondition {
 		bytes key = 1;
 		uint64 txID = 2;
@@ -170,11 +171,15 @@ message ZEntries {
 
 message ScanRequest {
 	bytes seekKey = 1;
+	bytes endKey = 7;
 	bytes prefix = 2;
 	bool desc = 3;
 	uint64 limit = 4;
 	uint64 sinceTx = 5;
 	bool  noWait = 6;
+	bool inclusiveSeek = 8;		// If set to true, results will include seekKey
+	bool inclusiveEnd = 9;		// If set to true, results will include endKey if needed
+	uint64 offset = 10;			// Specify the initial entry to be returned by excluding the initial set of entries
 }
 
 message KeyPrefix {
@@ -279,10 +284,19 @@ message SetRequest {
 
 message KeyRequest {
 	bytes key = 1;
-    uint64 atTx = 2;
+	uint64 atTx = 2; // if > 0, query for the value exactly at given transaction
+
+
+	// if 0 (and nowait=false), wait for the index to be up=to-date
 	uint64 sinceTx = 3;
+
+	// if set to true - do not wait for any indexing update considering only the currently indexed state
 	bool  noWait = 4;
+
+	// if > 0, get the nth version of the value, 1 being the first version, 2 being the second and so on
+	// if < 0, get the historical nth value of the key, -1 being the previous version, -2 being the one before and so on
 	int64 atRevision = 5;
+
 }
 
 message KeyListRequest {
@@ -304,6 +318,15 @@ message VerifiableSetRequest {
 message VerifiableGetRequest {
 	KeyRequest keyRequest = 1;
 	uint64 proveSinceTx = 2;
+}
+
+// ServerInfoRequest exists to provide extensibility for rpc ServerInfo.
+message ServerInfoRequest {}
+
+// ServerInfoResponse contains information about the server instance.
+message ServerInfoResponse {
+	// The version of the server instance.
+	string version = 1;
 }
 
 message HealthResponse {
@@ -362,11 +385,12 @@ message ZScanRequest {
 	Score maxScore = 9;
 	uint64 sinceTx = 10;
 	bool  noWait = 11;
+	uint64 offset = 12; // Specify the initial entry to be returned by excluding the initial set of entries
 }
 
 message HistoryRequest {
 	bytes key = 1;
-	uint64 offset = 2;
+	uint64 offset = 2; // Specify the initial entry to be returned by excluding the initial set of entries
 	int32 limit = 3;
 	bool desc = 4;
 	uint64 sinceTx = 5;
@@ -378,10 +402,11 @@ message VerifiableZAddRequest {
 }
 
 message TxRequest {
-	uint64      tx = 1;
-	EntriesSpec entriesSpec = 2;
-	uint64 sinceTx  = 3;
-	bool   noWait   = 4;
+	uint64      tx                = 1;
+	EntriesSpec entriesSpec       = 2;
+	uint64      sinceTx           = 3;
+	bool        noWait            = 4;
+	bool        keepReferencesUnresolved = 5;
 }
 
 message EntriesSpec {
@@ -407,6 +432,7 @@ message VerifiableTxRequest {
 	EntriesSpec entriesSpec = 3;
 	uint64 sinceTx  = 4;
 	bool   noWait   = 5;
+	bool   keepReferencesUnresolved = 6;
 }
 
 message TxScanRequest {
@@ -451,11 +477,13 @@ message DatabaseSettings {
 message CreateDatabaseRequest {
 	string name = 1;
 	DatabaseNullableSettings settings = 2;
+	bool ifNotExists = 3;
 }
 
 message CreateDatabaseResponse {
 	string name = 1;
 	DatabaseNullableSettings settings = 2;
+	bool alreadyExisted = 3;
 }
 
 message UpdateDatabaseRequest {
@@ -497,6 +525,10 @@ message NullableString {
 	string value = 1;
 }
 
+message NullableMilliseconds {
+	int64 value = 1;
+}
+
 message DatabaseNullableSettings {
 	ReplicationNullableSettings replicationSettings = 2;
 
@@ -518,8 +550,16 @@ message DatabaseNullableSettings {
 	IndexNullableSettings indexSettings = 19;
 
 	NullableUint32 writeTxHeaderVersion = 20;
-	
+
 	NullableBool autoload = 21;
+
+	NullableUint32 readTxPoolSize = 22;
+	
+	NullableMilliseconds syncFrequency = 23;
+	
+	NullableUint32 writeBufferSize = 24;
+
+	AHTNullableSettings ahtSettings = 25;
 }
 
 message ReplicationNullableSettings {
@@ -545,6 +585,11 @@ message IndexNullableSettings {
 	NullableUint32  commitLogMaxOpenedFiles = 11;
 	NullableUint32  flushBufferSize = 12;
 	NullableFloat   cleanupPercentage = 13;
+}
+
+message AHTNullableSettings {
+	NullableUint32 syncThreshold = 1;
+	NullableUint32 writeBufferSize = 2;
 }
 
 message LoadDatabaseRequest {
@@ -736,6 +781,7 @@ message NewTxResponse {
 }
 
 
+
 message ErrorInfo {
 	string code = 1;
 	string cause = 2;
@@ -751,13 +797,46 @@ message RetryInfo {
 
 // immudb gRPC & REST service
 service ImmuService {
-	rpc ListUsers (google.protobuf.Empty) returns (UserList);
-	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty);
-	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty);
-	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty);
-	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty);
-	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty); // DEPRECATED
-	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty); // DEPRECATED
+	rpc ListUsers (google.protobuf.Empty) returns (UserList){
+		option (google.api.http) = {
+			get: "/user/list"
+		};
+	};
+
+	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/user"
+			body: "*"
+		};
+	};
+
+	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/user/password/change"
+			body: "*"
+		};
+	};
+
+	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/user/changepermission"
+			body: "*"
+		};
+	}
+
+	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			post: "/user/setactiveUser"
+			body: "*"
+		};
+	};
+
+	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty){
+		option deprecated = true;
+	} // DEPRECATED
+	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty){
+		option deprecated = true;
+	} // DEPRECATED
 
 	rpc OpenSession (OpenSessionRequest) returns (OpenSessionResponse){};
 	rpc CloseSession (google.protobuf.Empty) returns (google.protobuf.Empty){};
@@ -770,51 +849,290 @@ service ImmuService {
 	rpc TxSQLExec(SQLExecRequest) returns (google.protobuf.Empty) {};
 	rpc TxSQLQuery(SQLQueryRequest) returns (SQLQueryResult) {};
 
-	rpc Login (LoginRequest) returns (LoginResponse);
-	rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty);
-	rpc Set (SetRequest) returns (TxHeader);
-	rpc VerifiableSet (VerifiableSetRequest) returns (VerifiableTx);
-	rpc Get (KeyRequest) returns (Entry);
-	rpc VerifiableGet (VerifiableGetRequest) returns (VerifiableEntry);
-	rpc Delete(DeleteKeysRequest) returns (TxHeader);
-	rpc GetAll (KeyListRequest) returns (Entries);
-	rpc ExecAll (ExecAllRequest) returns (TxHeader);
-	rpc Scan(ScanRequest) returns (Entries);
+	rpc Login (LoginRequest) returns (LoginResponse){
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/login"
+			body: "*"
+		};
+	};
+
+	rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/logout"
+			body: "*"
+		};
+	};
+
+	rpc Set (SetRequest) returns (TxHeader){
+		option (google.api.http) = {
+			post: "/db/set"
+			body: "*"
+		};
+	};
+
+	rpc VerifiableSet (VerifiableSetRequest) returns (VerifiableTx){
+		option (google.api.http) = {
+			post: "/db/verifiable/set"
+			body: "*"
+		};
+	};
+
+	rpc Get (KeyRequest) returns (Entry){
+		option (google.api.http) = {
+			get: "/db/get/{key}"
+		};
+	};
+
+	rpc VerifiableGet (VerifiableGetRequest) returns (VerifiableEntry){
+		option (google.api.http) = {
+			post: "/db/verifiable/get"
+			body: "*"
+		};
+	};
+
+	rpc Delete(DeleteKeysRequest) returns (TxHeader) {
+		option (google.api.http) = {
+			post: "/db/delete"
+			body: "*"
+		};
+	}
+
+	rpc GetAll (KeyListRequest) returns (Entries){
+		option (google.api.http) = {
+			post: "/db/getall"
+			body: "*"
+		};
+	};
+
+	rpc ExecAll (ExecAllRequest) returns (TxHeader) {
+		option (google.api.http) = {
+			post: "/db/execall"
+			body: "*"
+		};
+	};
+
+	rpc Scan(ScanRequest) returns (Entries){
+		option (google.api.http) = {
+			post: "/db/scan"
+			body: "*"
+		};
+	};
 
 	// NOT YET SUPPORTED
-	rpc Count(KeyPrefix) returns (EntryCount);
+	rpc Count(KeyPrefix) returns (EntryCount){
+		option (google.api.http) = {
+			get: "/db/count/{prefix}"
+		};
+	};
 
 	// NOT YET SUPPORTED
-	rpc CountAll(google.protobuf.Empty) returns (EntryCount);
-	rpc TxById(TxRequest) returns (Tx);
-	rpc VerifiableTxById(VerifiableTxRequest) returns (VerifiableTx);
-	rpc TxScan(TxScanRequest) returns (TxList);
-	rpc History(HistoryRequest) returns (Entries);
-	rpc Health (google.protobuf.Empty) returns (HealthResponse);
-	rpc DatabaseHealth (google.protobuf.Empty) returns (DatabaseHealthResponse);
-	rpc CurrentState (google.protobuf.Empty) returns (ImmutableState);
-	rpc SetReference (ReferenceRequest) returns (TxHeader);
-	rpc VerifiableSetReference (VerifiableReferenceRequest) returns (VerifiableTx);
-	rpc ZAdd (ZAddRequest) returns (TxHeader);
-	rpc VerifiableZAdd (VerifiableZAddRequest) returns (VerifiableTx);
-	rpc ZScan (ZScanRequest) returns (ZEntries);
+	rpc CountAll(google.protobuf.Empty) returns (EntryCount){
+		option (google.api.http) = {
+			get: "/db/countall"
+		};
+	};
 
-	// DEPRECATED: kept for backward compatibility
-	rpc CreateDatabase(Database) returns (google.protobuf.Empty);
-	rpc CreateDatabaseWith(DatabaseSettings) returns (google.protobuf.Empty);
-	rpc CreateDatabaseV2(CreateDatabaseRequest) returns (CreateDatabaseResponse);
-	rpc LoadDatabase(LoadDatabaseRequest) returns (LoadDatabaseResponse);
-	rpc UnloadDatabase(UnloadDatabaseRequest) returns (UnloadDatabaseResponse);
-	rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse);
-	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse);
-	rpc DatabaseListV2 (DatabaseListRequestV2) returns (DatabaseListResponseV2);
-	rpc UseDatabase(Database) returns (UseDatabaseReply);
-	rpc UpdateDatabase(DatabaseSettings) returns (google.protobuf.Empty);
-	rpc UpdateDatabaseV2(UpdateDatabaseRequest) returns (UpdateDatabaseResponse);
-	rpc GetDatabaseSettings(google.protobuf.Empty) returns (DatabaseSettings);
-	rpc GetDatabaseSettingsV2(DatabaseSettingsRequest) returns (DatabaseSettingsResponse);
-	rpc FlushIndex(FlushIndexRequest) returns (FlushIndexResponse);
-	rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc TxById(TxRequest) returns (Tx){
+		option (google.api.http) = {
+			get: "/db/tx/{tx}"
+		};
+	};
+
+	rpc VerifiableTxById(VerifiableTxRequest) returns (VerifiableTx){
+		option (google.api.http) = {
+			get: "/db/verifiable/tx/{tx}"
+		};
+	};
+
+	rpc TxScan(TxScanRequest) returns (TxList) {
+		option (google.api.http) = {
+			post: "/db/tx"
+			body: "*"
+		};
+	}
+
+	rpc History(HistoryRequest) returns (Entries){
+		option (google.api.http) = {
+			post: "/db/history"
+			body: "*"
+		};
+	};
+
+	// ServerInfo returns information about the server instance.
+	// ServerInfoRequest is defined for future extensions.
+	rpc ServerInfo (ServerInfoRequest) returns (ServerInfoResponse){
+		option (google.api.http) = {
+			get: "/serverinfo"
+		};
+	};
+
+	// DEPRECATED: Use ServerInfo
+	rpc Health (google.protobuf.Empty) returns (HealthResponse){
+		option (google.api.http) = {
+			get: "/health"
+		};
+	};
+
+	rpc DatabaseHealth (google.protobuf.Empty) returns (DatabaseHealthResponse){
+		option (google.api.http) = {
+			get: "/db/health"
+		};
+	};
+
+	rpc CurrentState (google.protobuf.Empty) returns (ImmutableState){
+		option (google.api.http) = {
+			get: "/db/state"
+		};
+	};
+
+	rpc SetReference (ReferenceRequest) returns (TxHeader){
+		option (google.api.http) = {
+			post: "/db/setreference"
+			body: "*"
+		};
+	};
+
+	rpc VerifiableSetReference (VerifiableReferenceRequest) returns (VerifiableTx){
+		option (google.api.http) = {
+			post: "/db/verifiable/setreference"
+			body: "*"
+		};
+	};
+
+	rpc ZAdd (ZAddRequest) returns (TxHeader){
+		option (google.api.http) = {
+			post: "/db/zadd"
+			body: "*"
+		};
+	};
+
+	rpc VerifiableZAdd (VerifiableZAddRequest) returns (VerifiableTx){
+		option (google.api.http) = {
+			post: "/db/verifiable/zadd"
+			body: "*"
+		};
+	};
+
+	rpc ZScan (ZScanRequest) returns (ZEntries){
+		option (google.api.http) = {
+			post: "/db/zscan"
+			body: "*"
+		};
+	};
+
+	// DEPRECATED: Use CreateDatabaseV2
+	rpc CreateDatabase(Database) returns (google.protobuf.Empty) {
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/db/create"
+			body: "*"
+		};
+	}
+
+	// DEPRECATED: Use CreateDatabaseV2
+	rpc CreateDatabaseWith(DatabaseSettings) returns (google.protobuf.Empty) {
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/db/createwith"
+			body: "*"
+		};
+	}
+
+	rpc CreateDatabaseV2(CreateDatabaseRequest) returns (CreateDatabaseResponse) {
+		option (google.api.http) = {
+			post: "/db/create/v2"
+			body: "*"
+		};
+	}
+
+	rpc LoadDatabase(LoadDatabaseRequest) returns (LoadDatabaseResponse) {
+		option (google.api.http) = {
+			post: "/db/load"
+			body: "*"
+		};
+	}
+
+	rpc UnloadDatabase(UnloadDatabaseRequest) returns (UnloadDatabaseResponse) {
+		option (google.api.http) = {
+			post: "/db/unload"
+			body: "*"
+		};
+	}
+
+	rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {
+		option (google.api.http) = {
+			post: "/db/delete"
+			body: "*"
+		};
+	}
+
+	// DEPRECATED: Use DatabaseListV2
+	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse){
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/db/list"
+			body: "*"
+		};
+	};
+
+	rpc DatabaseListV2 (DatabaseListRequestV2) returns (DatabaseListResponseV2){
+		option (google.api.http) = {
+			post: "/db/list/v2"
+			body: "*"
+		};
+	};
+
+	rpc UseDatabase(Database) returns (UseDatabaseReply) {
+		option (google.api.http) = {
+			get: "/db/use/{databaseName}"
+		};
+	}
+
+	// DEPRECATED: Use UpdateDatabaseV2
+	rpc UpdateDatabase(DatabaseSettings) returns (google.protobuf.Empty) {
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/db/update"
+			body: "*"
+		};
+	}
+
+	rpc UpdateDatabaseV2(UpdateDatabaseRequest) returns (UpdateDatabaseResponse) {
+		option (google.api.http) = {
+			post: "/db/update/v2"
+			body: "*"
+		};
+	}
+
+	// DEPRECATED: Use GetDatabaseSettingsV2
+	rpc GetDatabaseSettings(google.protobuf.Empty) returns (DatabaseSettings) {
+		option deprecated = true;
+		option (google.api.http) = {
+			post: "/db/settings"
+			body: "*"
+		};
+	}
+
+	rpc GetDatabaseSettingsV2(DatabaseSettingsRequest) returns (DatabaseSettingsResponse) {
+		option (google.api.http) = {
+			post: "/db/settings/v2"
+			body: "*"
+		};
+	}
+
+	rpc FlushIndex(FlushIndexRequest) returns (FlushIndexResponse) {
+		option (google.api.http) = {
+			get: "/db/flushindex"
+		};
+	}
+
+	rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			get: "/db/compactindex"
+		};
+	}
 
 	// Streams
 	rpc streamGet(KeyRequest) returns (stream Chunk) {};
@@ -830,9 +1148,37 @@ service ImmuService {
 	rpc exportTx(ExportTxRequest) returns (stream Chunk) {};
 	rpc replicateTx(stream Chunk) returns (TxHeader) {};
 
-	rpc SQLExec(SQLExecRequest) returns (SQLExecResult);
-	rpc SQLQuery(SQLQueryRequest) returns (SQLQueryResult);
-	rpc ListTables(google.protobuf.Empty) returns (SQLQueryResult);
-	rpc DescribeTable(Table) returns (SQLQueryResult);
-	rpc VerifiableSQLGet (VerifiableSQLGetRequest) returns (VerifiableSQLEntry);
+	rpc SQLExec(SQLExecRequest) returns (SQLExecResult) {
+		option (google.api.http) = {
+			post: "/db/sqlexec"
+			body: "*"
+		};
+	};
+
+	rpc SQLQuery(SQLQueryRequest) returns (SQLQueryResult) {
+		option (google.api.http) = {
+			post: "/db/sqlquery"
+			body: "*"
+		};
+	};
+
+	rpc ListTables(google.protobuf.Empty) returns (SQLQueryResult) {
+		option (google.api.http) = {
+			get: "/db/table/list"
+		};
+	};
+
+	rpc DescribeTable(Table) returns (SQLQueryResult) {
+		option (google.api.http) = {
+			post: "/db/tables"
+			body: "*"
+		};
+	};
+
+	rpc VerifiableSQLGet (VerifiableSQLGetRequest) returns (VerifiableSQLEntry){
+		option (google.api.http) = {
+			post: "/db/verifiable/sqlget"
+			body: "*"
+		};
+	};
 }

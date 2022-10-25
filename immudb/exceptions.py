@@ -49,3 +49,15 @@ class ErrMetadataUnsupported(Exception):
 
 class ErrPySDKInvalidColumnMode(Exception):
     pass
+
+
+class ErrInvalidValue(Exception):
+    pass
+
+
+class ErrMaxKeyLengthExceeded(Exception):
+    pass
+
+
+class ErrMaxLengthExceeded(Exception):
+    pass
