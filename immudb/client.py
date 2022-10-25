@@ -697,7 +697,7 @@ class ImmudbClient:
         """
         return verifiedGet.call(self._stub, self._rs, key, atTx, self._vk)
 
-    def history(self, key: bytes, offset: int, limit: int, sortorder: bool) -> List[datatypes.historyResponseItem]:
+    def history(self, key: bytes, offset: int, limit: int, sortorder: bool = None, *, recent_first: bool = None) -> List[datatypes.historyResponseItem]:
         """Returns history of values for a given key.
 
         Args:
@@ -713,10 +713,44 @@ class ImmudbClient:
                 If ``False``, the list will be sorted in ascending order,
                 with the most recent value in the history being the last item in the list.
 
+            recent_first (bool, optional): A keyword-only boolean value that specifies if the history
+                should be returned with the most recent value first (descending order).
+
+                This argument has the same effect as ``sortorder``, but this value will be
+                used only if ``sortorder`` is not specified. If ``sortorder`` is specified,
+                either as a positional or keyword argument, this value will be ignored.
+
+                If ``True``, the history will be returned with the most recent value in the
+                history being the first item in the list. If ``False``, the list will be
+                sorted with the most recent value in the history being the last item in the list.
+
         Returns:
             List[datatypes.historyResponseItem]: List of history response items
         """
-        return history.call(self._stub, self._rs, key, offset, limit, sortorder)
+        sort_recent_first = True
+
+        if sortorder is None:
+            if recent_first is None:
+                # If neither sortorder nor recent_first are specified,
+                # default to sorting recent first (descending).
+                sort_recent_first = True
+            elif type(recent_first) is bool:
+                # If sortorder is not specified, but recent_first is,
+                # and recent_first is a boolean, use it as the sort order.
+                sort_recent_first = recent_first
+            else:
+                # If sortorder is not specified and recent_first is not a boolean,
+                # throw an error.
+                raise TypeError("``recent_first`` must be a boolean value.")
+        elif type(sortorder) is bool:
+            # If sortorder is specified, and it is a boolean, use it as the sort order.
+            sort_recent_first = sortorder
+        else:
+            # If sortorder has been specified, but it is not a boolean value,
+            # throw an error.
+            raise TypeError("``sortorder`` must be a boolean value.")
+
+        return history.call(self._stub, self._rs, key, offset, limit, sort_recent_first)
 
     def zAdd(self, zset: bytes, score: float, key: bytes, atTx: int = 0) -> datatypes.SetResponse:
         """Adds score (secondary index) for a specified key and collection.
