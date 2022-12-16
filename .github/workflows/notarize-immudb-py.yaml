@@ -9,7 +9,7 @@ on:
 jobs:
   notarize-repository:
     name: Notarize immudb-py repository with cas and vcn
-    uses: codenotary/notarize-with-cas-and-vcn/.github/workflows/notarize-with-cas-and-vcn.yml@8808d22b40dbd0257dfb456c1ab5505d1020cc54
+    uses: codenotary/notarize-with-cas-and-vcn/.github/workflows/notarize-with-cas-and-vcn.yml@main
     secrets:
       cas-api-key: ${{ secrets.CAS_API_KEY_ATTEST }}
       vcn-api-key: ${{ secrets.CICD_LEDGER1_ACTION_KEY }}
