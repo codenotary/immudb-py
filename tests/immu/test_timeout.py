@@ -30,7 +30,10 @@ class TestTimeout:
     def test_simple_timeout(self, argsToBuildClient):
         url, login, password = argsToBuildClient
         client = ImmudbClient(url, timeout=1)
-        client.login(login, password)
+        try:
+            client.login(login, password)
+        except:
+            raise pytest.skip('Cannot reach immudb server')
 
         with pytest.raises(RpcError) as excinfo: 
             client = ImmudbClient(url, timeout=0.001)
