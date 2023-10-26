@@ -31,7 +31,6 @@ setup(name='immudb-py',
       keywords=['immudb', 'immutable'],
       install_requires=[
           'grpcio>=1.31.0',
-          'dataclasses>=0.6',
           'protobuf>=3.13.0,<4.0.0',
           'google-api>=0.1.12',
           'google-api-core>=1.22.1',
