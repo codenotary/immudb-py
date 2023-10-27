@@ -41,8 +41,12 @@ class TestSql:
         assert(result == [(1, "Joe")])
 
     def test_describe(self, wrappedClient: ImmuTestClient):
+        if wrappedClient.serverHigherOrEqualsToVersion("1.9.0"):
+            varchar100 = "VARCHAR(100)"
+        else:
+            varchar100 = "VARCHAR[100]"
         tbname = wrappedClient.createTestTable("id INTEGER", "name VARCHAR[100]", "PRIMARY KEY id")
-        
+
         response = wrappedClient.client.describeTable(tbname)
         assert response == [ColumnDescription(name='id', type='INTEGER', nullable=True, index='PRIMARY KEY', autoincrement=False, unique=True), ColumnDescription(
-            name='name', type='VARCHAR[100]', nullable=True, index='NO', autoincrement=False, unique=False)]
+            name='name', type=varchar100, nullable=True, index='NO', autoincrement=False, unique=False)]
