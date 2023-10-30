@@ -15,6 +15,7 @@ import random
 import time
 from tests.immuTestClient import ImmuTestClient
 import pytest
+import grpc
 
 
 def get_random_string(length):
@@ -46,6 +47,12 @@ class TestGetSet:
     def test_compact(self, wrappedClient: ImmuTestClient):
         # Snapshot compaction fixed from 1.3.1
         if(wrappedClient.serverHigherOrEqualsToVersion("1.3.0")):
-            wrappedClient.client.compactIndex()
+            try:
+                wrappedClient.client.compactIndex()
+            except grpc._channel._InactiveRpcError as e:
+                if e.details() == "tbtree: compaction threshold not yet reached":
+                    print(e)
+                else:
+                    raise e
         else:
             pytest.skip("Server version too low")

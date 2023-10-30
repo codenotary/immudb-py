@@ -46,6 +46,10 @@ class ImmuTestClient:
         health = self.client.health()
         return self.compare_version(health.version, version) > -1
 
+    def serverVersionEqual(self, version: str):
+        health = self.client.health()
+        return self.compare_version(health.version, version) == 0
+
     def executeWithTransaction(self, concatenatedParams: dict, queries: List[str], separator="\n"):
         toExecute = [self.transactionStart]
         toExecute.extend(queries)

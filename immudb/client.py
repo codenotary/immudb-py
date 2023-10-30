@@ -79,9 +79,9 @@ class ImmudbClient:
             self._rs = rs
         self._url = immudUrl
         self._vk = None
+        self._currentdb = None
         if publicKeyFile:
             self.loadKey(publicKeyFile)
-
     def loadKey(self, kfile: str):
         """Loads public key from path
 
@@ -216,6 +216,7 @@ class ImmudbClient:
         self._stub = self._set_token_header_interceptor(resp)
 
         self._rs.init("{}/{}".format(self._url, database), self._stub)
+        self._currentdb = convertedDatabase
         return login_response
 
     def logout(self):
@@ -223,6 +224,7 @@ class ImmudbClient:
         """
         self._stub.Logout(google_dot_protobuf_dot_empty__pb2.Empty())
         self._resetStub()
+        self._currentdb = None
 
     def _resetStub(self):
         self.headersInterceptors = []
@@ -511,6 +513,7 @@ class ImmudbClient:
         # modifies header token accordingly
         self._stub = self._set_token_header_interceptor(resp)
         self._rs.init(dbName, self._stub)
+        self._currentdb = dbName
         return resp
 
     def getDatabaseSettingsV2(self) -> datatypesv2.DatabaseSettingsResponseV2:
@@ -1620,7 +1623,15 @@ class ImmudbClient:
 
             ['table1', 'table2']
         """
-        return sqlquery.call(self._stub, self._rs, query, params, columnNameMode)
+        ret = sqlquery.call(self._stub, self._rs, query, params, columnNameMode)
+        if columnNameMode in [constants.COLUMN_NAME_MODE_DATABASE, constants.COLUMN_NAME_MODE_FULL]:
+            # newer DB version don't insert database name anymore, we need to
+            # process it manually
+            for i, t in enumerate(ret):
+                newkeys=[x.replace("[@DB]",self._currentdb.decode("utf-8")) for x in t.keys()]
+                k=dict(zip(newkeys,list(t.values())))
+                ret[i]=k
+        return ret
 
     def listTables(self):
         """List all tables in the current database
