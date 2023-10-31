@@ -82,6 +82,7 @@ class ImmudbClient:
         self._currentdb = None
         if publicKeyFile:
             self.loadKey(publicKeyFile)
+
     def loadKey(self, kfile: str):
         """Loads public key from path
 
@@ -1623,14 +1624,16 @@ class ImmudbClient:
 
             ['table1', 'table2']
         """
-        ret = sqlquery.call(self._stub, self._rs, query, params, columnNameMode)
+        ret = sqlquery.call(self._stub, self._rs, query,
+                            params, columnNameMode)
         if columnNameMode in [constants.COLUMN_NAME_MODE_DATABASE, constants.COLUMN_NAME_MODE_FULL]:
             # newer DB version don't insert database name anymore, we need to
             # process it manually
             for i, t in enumerate(ret):
-                newkeys=[x.replace("[@DB]",self._currentdb.decode("utf-8")) for x in t.keys()]
-                k=dict(zip(newkeys,list(t.values())))
-                ret[i]=k
+                newkeys = [
+                    x.replace("[@DB]", self._currentdb.decode("utf-8")) for x in t.keys()]
+                k = dict(zip(newkeys, list(t.values())))
+                ret[i] = k
         return ret
 
     def listTables(self):
@@ -1706,7 +1709,6 @@ class ImmudbClient:
 
 
 # immudb-py only
-
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)

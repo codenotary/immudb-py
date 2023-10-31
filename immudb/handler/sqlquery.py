@@ -62,9 +62,10 @@ def getColumnNames(resp, columnNameMode):
             if columnNameMode == constants.COLUMN_NAME_MODE_TABLE:
                 columnNames.append(".".join(parts[-2:]))
                 continue
-            print("Use of COLUMN_NAME_MODE_DATABASE and COLUMN_NAME_MODE_FULL is deprecated")
+            print(
+                "Use of COLUMN_NAME_MODE_DATABASE and COLUMN_NAME_MODE_FULL is deprecated")
             if len(parts) == 2:
-                parts.insert(0,"[@DB]")
+                parts.insert(0, "[@DB]")
             if columnNameMode == constants.COLUMN_NAME_MODE_DATABASE:
                 columnNames.append(".".join(parts))
                 continue
