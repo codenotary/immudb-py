@@ -32,6 +32,8 @@ class TestSessionTransaction:
             newTx = txInterface.newTx()
             newTx.sqlExec(f"INSERT INTO {table} (tester) VALUES(@testParam)", params = {"testParam": "123"})
             what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
+            if wrappedClient.serverVersionEqual("1.9DOM.0") and what==[]:
+                pytest.xfail("Known bug #1854")
             assert what == [{"id": 1, "tester": '123'}]
             commit = newTx.commit()
             assert commit.header.id != None
@@ -66,6 +68,8 @@ class TestSessionTransaction:
             newTx = session.newTx()
             newTx.sqlExec(f"INSERT INTO {table} (tester) VALUES(@testParam)", params = {"testParam": "123"})
             what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
+            if wrappedClient.serverVersionEqual("1.9DOM.0") and what==[]:
+                pytest.xfail("Known bug #1854")
             assert what == [{"id": 1, "tester": '123'}]
             commit = newTx.commit()
             assert commit.header.id != None
