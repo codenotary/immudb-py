@@ -21,8 +21,6 @@ import immudb.database as database
 import immudb.schema as schema
 from immudb.typeconv import MetadataToProto
 
-#import base64
-
 
 def call(service: schema_pb2_grpc.ImmuServiceStub, rs: RootService, key: bytes, value: bytes, verifying_key=None, metadata=None):
     schemaMetadata = MetadataToProto(metadata)

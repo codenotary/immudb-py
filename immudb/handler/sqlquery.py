@@ -35,7 +35,6 @@ def _call_with_executor(query, params, columnNameMode, executor):
 
     resp = executor(request)
     result = []
-
     columnNames = getColumnNames(resp, columnNameMode)
 
     for row in resp.rows:
@@ -51,14 +50,27 @@ def getColumnNames(resp, columnNameMode):
     columnNames = []
     if columnNameMode:
         for column in resp.columns:
+            # note that depending on the version parts can be
+            # '(dbname.tablename.fieldname)' *or*
+            # '(tablename.fieldname)' without dbnname.
+            # In that case we mimic the old behavior by using [@DB] as placeholder
+            # that will be replaced at higher level.
+            parts = column.name.strip("()").split(".")
             if columnNameMode == constants.COLUMN_NAME_MODE_FIELD:
-                columnNames.append(column.name.strip("()").split(".")[2])
-            elif columnNameMode == constants.COLUMN_NAME_MODE_TABLE:
-                columnNames.append(column.name.strip("()").split(".", 1)[1])
-            elif columnNameMode == constants.COLUMN_NAME_MODE_DATABASE:
-                columnNames.append(column.name.strip("()"))
-            elif columnNameMode == constants.COLUMN_NAME_MODE_FULL:
-                columnNames.append(column.name)
-            else:
-                raise ErrPySDKInvalidColumnMode
+                columnNames.append(parts[-1])
+                continue
+            if columnNameMode == constants.COLUMN_NAME_MODE_TABLE:
+                columnNames.append(".".join(parts[-2:]))
+                continue
+            print(
+                "Use of COLUMN_NAME_MODE_DATABASE and COLUMN_NAME_MODE_FULL is deprecated")
+            if len(parts) == 2:
+                parts.insert(0, "[@DB]")
+            if columnNameMode == constants.COLUMN_NAME_MODE_DATABASE:
+                columnNames.append(".".join(parts))
+                continue
+            if columnNameMode == constants.COLUMN_NAME_MODE_FULL:
+                columnNames.append("("+".".join(parts)+")")
+                continue
+            raise ErrPySDKInvalidColumnMode
     return columnNames

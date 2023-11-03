@@ -46,14 +46,17 @@ class ImmuTestClient:
         health = self.client.health()
         return self.compare_version(health.version, version) > -1
 
+    def serverVersionEqual(self, version: str):
+        health = self.client.health()
+        return self.compare_version(health.version, version) == 0
+
     def executeWithTransaction(self, concatenatedParams: dict, queries: List[str], separator="\n"):
         toExecute = [self.transactionStart]
         toExecute.extend(queries)
         toExecute.append(self.transactionEnd)
         multiLineQuery = separator.join(toExecute)
         resp = self.client.sqlExec(multiLineQuery, concatenatedParams)
-        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
-               or len(resp.UnknownFields()) > 0)
+        assert(len(resp.txs) > 0 and not resp.ongoingTx)
         return resp
 
     def _generateTableName(self):
@@ -104,8 +107,7 @@ class ImmuTestClient:
             return self.currentTx.sqlExec(preparedQuery, params)
 
         resp = self.client.sqlExec(preparedQuery, params)
-        assert((len(resp.txs) > 0 and not resp.ongoingTx and not resp.UnknownFields())
-               or len(resp.UnknownFields()) > 0)
+        assert(len(resp.txs) > 0 and not resp.ongoingTx)
         return resp
 
     def simpleSelect(self, fromWhat: str, whatToSelect: List[str], params: dict, *conditions: List[str], columnNameMode = constants.COLUMN_NAME_MODE_NONE):

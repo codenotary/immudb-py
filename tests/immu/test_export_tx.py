@@ -9,6 +9,11 @@ def test_export_tx_replicate_tx(wrappedClient: ImmudbClient):
     client = wrappedClient.client
     if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
         pytest.skip("Immudb version too low")
+    if wrappedClient.serverHigherOrEqualsToVersion("1.5.0"):
+        offset = 0
+    else:
+        offset = 1
+
     newuuid1 = str(uuid.uuid4()).replace("-", "")
     client.createDatabaseV2(newuuid1, settings = datatypesv2.DatabaseSettingsV2(
     ), ifNotExists=False)
@@ -32,7 +37,7 @@ def test_export_tx_replicate_tx(wrappedClient: ImmudbClient):
         assert txHeader.id > 0
         assert txHeader.nentries == 1
         if(index > 1): # First transaction is not db set
-            assert client.get(b'kisz123123kaaaa').value.decode("utf-8") == str(index - 1) 
+            assert client.get(b'kisz123123kaaaa').value.decode("utf-8") == str(index - offset)
         client.useDatabase(newuuid1)
     client.useDatabase(newuuid2)
     assert client.get(b'kisz123123kaaaa').value == b'5'
