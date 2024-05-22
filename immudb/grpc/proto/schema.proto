@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-	http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,308 +16,562 @@ limitations under the License.
 
 syntax = "proto3";
 
+package immudb.schema;
+
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 
-package immudb.schema;
-
 option go_package = "github.com/codenotary/immudb/pkg/api/schema";
 
 message Key {
-	bytes key = 1;
+  bytes key = 1;
 }
 
 message Permission {
-	string database = 1;
-	uint32 permission = 2;
+  // Database name
+  string database = 1;
+
+  // Permission, 1 - read permission, 2 - read+write permission, 254 - admin, 255 - sysadmin
+  uint32 permission = 2;
 }
 
 message User {
-	bytes user = 1;
-	repeated Permission permissions = 3;
-	string createdby = 4;
-	string createdat = 5;
-	bool active = 6;
+  // Username
+  bytes user = 1;
+
+  // List of permissions for the user
+  repeated Permission permissions = 3;
+
+  // Name of the creator user
+  string createdby = 4;
+
+  // Time when the user was created
+  string createdat = 5;
+
+  // Flag indicating whether the user is active or not
+  bool active = 6;
 }
 
 message UserList {
-	repeated User users = 1;
+  // List of users
+  repeated User users = 1;
 }
 
 message CreateUserRequest {
-	bytes user = 1;
-	bytes password = 2;
-	uint32 permission = 3;
-	string database = 4;
+  // Username
+  bytes user = 1;
+
+  // Login password
+  bytes password = 2;
+
+  // Permission, 1 - read permission, 2 - read+write permission, 254 - admin
+  uint32 permission = 3;
+
+  // Database name
+  string database = 4;
 }
 
 message UserRequest {
-	bytes user = 1;
+  // Username
+  bytes user = 1;
 }
 
 message ChangePasswordRequest {
-	bytes user = 1;
-	bytes oldPassword = 2;
-	bytes newPassword = 3;
+  // Username
+  bytes user = 1;
+
+  // Old password
+  bytes oldPassword = 2;
+
+  // New password
+  bytes newPassword = 3;
 }
 
 message LoginRequest {
-	bytes user = 1;
-	bytes password = 2;
+  // Username
+  bytes user = 1;
+
+  // User's password
+  bytes password = 2;
 }
 
 message LoginResponse {
-	string token = 1;
-	bytes warning = 2;
+  // Deprecated: use session-based authentication
+  string token = 1;
+
+  // Optional: additional warning message sent to the user (e.g. request to change the password)
+  bytes warning = 2;
 }
 
+// DEPRECATED
 message AuthConfig {
-	uint32 kind = 1;
+  uint32 kind = 1;
 }
 
+// DEPRECATED
 message MTLSConfig {
-	bool enabled = 1;
+  bool enabled = 1;
 }
 
 message OpenSessionRequest {
-	bytes username = 1;
-	bytes password = 2;
-	string databaseName = 3;
+  // Username
+  bytes username = 1;
+
+  // Password
+  bytes password = 2;
+
+  // Database name
+  string databaseName = 3;
 }
 
 message OpenSessionResponse {
-	string sessionID = 1;
-	string serverUUID = 2;
+  // Id of the new session
+  string sessionID = 1;
+
+  // UUID of the server
+  string serverUUID = 2;
 }
 
 ////////////////////////////////////////////////////////
 
 message Precondition {
+  // Only succeed if given key exists
+  message KeyMustExistPrecondition {
+    // key to check
+    bytes key = 1;
+  }
 
-	message KeyMustExistPrecondition {
-		bytes key = 1;
-	}
+  // Only succeed if given key does not exists
+  message KeyMustNotExistPrecondition {
+    // key to check
+    bytes key = 1;
+  }
 
-	message KeyMustNotExistPrecondition {
-		bytes key = 1;
-	}
+  // Only succeed if given key was not modified after given transaction
+  message KeyNotModifiedAfterTXPrecondition {
+    // key to check
+    bytes key = 1;
 
-	message KeyNotModifiedAfterTXPrecondition {
-		bytes key = 1;
-		uint64 txID = 2;
-	}
+    // transaction id to check against
+    uint64 txID = 2;
+  }
 
-	oneof precondition {
-		KeyMustExistPrecondition keyMustExist = 1;
-		KeyMustNotExistPrecondition keyMustNotExist = 2;
-		KeyNotModifiedAfterTXPrecondition keyNotModifiedAfterTX = 3;
-	}
+  oneof precondition {
+    KeyMustExistPrecondition keyMustExist = 1;
+    KeyMustNotExistPrecondition keyMustNotExist = 2;
+    KeyNotModifiedAfterTXPrecondition keyNotModifiedAfterTX = 3;
+  }
 }
 
 message KeyValue {
-	bytes key = 1;
-	bytes value = 2;
-	KVMetadata metadata = 3;
+  bytes key = 1;
+  bytes value = 2;
+  KVMetadata metadata = 3;
 }
 
 message Entry {
-	uint64 tx = 1;
-	bytes key = 2;
-	bytes value = 3;
-	Reference referencedBy = 4;
-	KVMetadata metadata = 5;
-	bool expired = 6;
-	uint64 revision = 7;
+  // Transaction id at which the target value was set (i.e. not the reference transaction id)
+  uint64 tx = 1;
+
+  // Key of the target value (i.e. not the reference entry)
+  bytes key = 2;
+
+  // Value
+  bytes value = 3;
+
+  // If the request was for a reference, this field will keep information about the reference entry
+  Reference referencedBy = 4;
+
+  // Metadata of the target entry (i.e. not the reference entry)
+  KVMetadata metadata = 5;
+
+  // If set to true, this entry has expired and the value is not retrieved
+  bool expired = 6;
+
+  // Key's revision, in case of GetAt it will be 0
+  uint64 revision = 7;
 }
 
 message Reference {
-	uint64 tx = 1;
-	bytes key = 2;
-	uint64 atTx = 3;
-	KVMetadata metadata = 4;
-	uint64 revision = 5;
+  // Transaction if when the reference key was set
+  uint64 tx = 1;
+
+  // Reference key
+  bytes key = 2;
+
+  // At which transaction the key is bound, 0 if reference is not bound and should read the most recent reference
+  uint64 atTx = 3;
+
+  // Metadata of the reference entry
+  KVMetadata metadata = 4;
+
+  // Revision of the reference entry
+  uint64 revision = 5;
 }
 
 message Op {
-	oneof operation {
-		KeyValue kv = 1;
-		ZAddRequest zAdd = 2;
-		ReferenceRequest ref = 3;
-	}
+  oneof operation {
+    // Modify / add simple KV value
+    KeyValue kv = 1;
+
+    // Modify / add sorted set entry
+    ZAddRequest zAdd = 2;
+
+    // Modify / add reference
+    ReferenceRequest ref = 3;
+  }
 }
 
 message ExecAllRequest {
-	repeated Op Operations = 1;
-	bool  noWait = 2;
-	repeated Precondition preconditions = 3;
+  // List of operations to perform
+  repeated Op Operations = 1;
+
+  // If set to true, do not wait for indexing to process this transaction
+  bool noWait = 2;
+
+  // Preconditions to check
+  repeated Precondition preconditions = 3;
 }
 
 message Entries {
-	repeated Entry entries = 1;
+  // List of entries
+  repeated Entry entries = 1;
 }
 
 message ZEntry {
-	bytes set = 1;
-	bytes key = 2;
-	Entry entry = 3;
-	double score = 4;
-	uint64 atTx = 5;
+  // Name of the sorted set
+  bytes set = 1;
+
+  // Referenced key
+  bytes key = 2;
+
+  // Referenced entry
+  Entry entry = 3;
+
+  // Sorted set element's score
+  double score = 4;
+
+  // At which transaction the key is bound,
+  // 0 if reference is not bound and should read the most recent reference
+  uint64 atTx = 5;
 }
 
 message ZEntries {
-	repeated ZEntry entries = 1;
+  repeated ZEntry entries = 1;
 }
 
 message ScanRequest {
-	bytes seekKey = 1;
-	bytes endKey = 7;
-	bytes prefix = 2;
-	bool desc = 3;
-	uint64 limit = 4;
-	uint64 sinceTx = 5;
-	bool  noWait = 6;
-	bool inclusiveSeek = 8;		// If set to true, results will include seekKey
-	bool inclusiveEnd = 9;		// If set to true, results will include endKey if needed
-	uint64 offset = 10;			// Specify the initial entry to be returned by excluding the initial set of entries
+  // If not empty, continue scan at (when inclusiveSeek == true)
+  // or after (when inclusiveSeek == false) that key
+  bytes seekKey = 1;
+
+  // stop at (when inclusiveEnd == true)
+  // or before (when inclusiveEnd == false) that key
+  bytes endKey = 7;
+
+  // search for entries with this prefix only
+  bytes prefix = 2;
+
+  // If set to true, sort items in descending order
+  bool desc = 3;
+
+  // maximum number of entries to get, if not specified, the default value is used
+  uint64 limit = 4;
+
+  // If non-zero, only require transactions up to this transaction to be
+  // indexed, newer transaction may still be pending
+  uint64 sinceTx = 5;
+
+  // Deprecated: If set to true, do not wait for indexing to be done before finishing this call
+  bool noWait = 6;
+
+  // If set to true, results will include seekKey
+  bool inclusiveSeek = 8;
+
+  // If set to true, results will include endKey if needed
+  bool inclusiveEnd = 9;
+
+  // Specify the initial entry to be returned by excluding the initial set of entries
+  uint64 offset = 10;
 }
 
 message KeyPrefix {
-	bytes prefix = 1;
+  bytes prefix = 1;
 }
 
 message EntryCount {
-	uint64 count = 1;
+  uint64 count = 1;
 }
 
 ///////////////
 
 message Signature {
-	bytes publicKey = 1;
-	bytes signature = 2;
+  bytes publicKey = 1;
+  bytes signature = 2;
 }
 
 message TxHeader {
-	uint64 id = 1;
-	bytes prevAlh = 2;
-	int64 ts = 3;
-	int32 nentries = 4;
-	bytes eH = 5;
-	uint64 blTxId = 6;
-	bytes blRoot = 7;
-	int32 version = 8;
-	TxMetadata metadata = 9;
+  // Transaction ID
+  uint64 id = 1;
+
+  // State value (Accumulative Hash - Alh) of the previous transaction
+  bytes prevAlh = 2;
+
+  // Unix timestamp of the transaction (in seconds)
+  int64 ts = 3;
+
+  // Number of entries in a transaction
+  int32 nentries = 4;
+
+  // Entries Hash - cumulative hash of all entries in the transaction
+  bytes eH = 5;
+
+  // Binary linking tree transaction ID
+  // (ID of last transaction already in the main Merkle Tree)
+  uint64 blTxId = 6;
+
+  // Binary linking tree root (Root hash of the Merkle Tree)
+  bytes blRoot = 7;
+
+  // Header version
+  int32 version = 8;
+
+  // Transaction metadata
+  TxMetadata metadata = 9;
 }
 
+// TxMetadata contains metadata set to whole transaction
 message TxMetadata {
+  // Entry expiration information
+  uint64 truncatedTxID = 1;
+  // Extra data
+  bytes extra = 2;
 }
 
+// LinearProof contains the linear part of the proof (outside the main Merkle Tree)
 message LinearProof {
-	uint64 sourceTxId = 1;
-	uint64 TargetTxId = 2;
-	repeated bytes terms = 3;
+  // Starting transaction of the proof
+  uint64 sourceTxId = 1;
+
+  // End transaction of the proof
+  uint64 TargetTxId = 2;
+
+  // List of terms (inner hashes of transaction entries)
+  repeated bytes terms = 3;
 }
 
+// LinearAdvanceProof contains the proof of consistency between the consumed part of the older linear chain
+// and the new Merkle Tree
+message LinearAdvanceProof {
+  // terms for the linear chain
+  repeated bytes linearProofTerms = 1;
+
+  // inclusion proofs for steps on the linear chain
+  repeated InclusionProof inclusionProofs = 2;
+}
+
+// DualProof contains inclusion and consistency proofs for dual Merkle-Tree + Linear proofs
 message DualProof {
-	TxHeader sourceTxHeader = 1;
-	TxHeader targetTxHeader = 2;
+  // Header of the source (earlier) transaction
+  TxHeader sourceTxHeader = 1;
 
-	repeated bytes inclusionProof = 3;
-	repeated bytes consistencyProof = 4;
+  // Header of the target (latter) transaction
+  TxHeader targetTxHeader = 2;
 
-	bytes targetBlTxAlh = 5;
-	repeated bytes lastInclusionProof = 6;
+  // Inclusion proof of the source transaction hash in the main Merkle Tree
+  repeated bytes inclusionProof = 3;
 
-	LinearProof linearProof = 7;
+  // Consistency proof between Merkle Trees in the source and target transactions
+  repeated bytes consistencyProof = 4;
+
+  // Accumulative hash (Alh) of the last transaction that's part of the target Merkle Tree
+  bytes targetBlTxAlh = 5;
+
+  // Inclusion proof of the targetBlTxAlh in the target Merkle Tree
+  repeated bytes lastInclusionProof = 6;
+
+  // Linear proof starting from targetBlTxAlh to the final state value
+  LinearProof linearProof = 7;
+
+  // Proof of consistency between some part of older linear chain and newer Merkle Tree
+  LinearAdvanceProof LinearAdvanceProof = 8;
+}
+
+// DualProofV2 contains inclusion and consistency proofs
+message DualProofV2 {
+  // Header of the source (earlier) transaction
+  TxHeader sourceTxHeader = 1;
+
+  // Header of the target (latter) transaction
+  TxHeader targetTxHeader = 2;
+
+  // Inclusion proof of the source transaction hash in the main Merkle Tree
+  repeated bytes inclusionProof = 3;
+
+  // Consistency proof between Merkle Trees in the source and target transactions
+  repeated bytes consistencyProof = 4;
 }
 
 message Tx {
-	TxHeader header = 1;
-	repeated TxEntry entries = 2;
-	repeated Entry  kvEntries = 3;
-	repeated ZEntry zEntries = 4;
+  // Transaction header
+  TxHeader header = 1;
+
+  // Raw entry values
+  repeated TxEntry entries = 2;
+
+  // KV entries in the transaction (parsed)
+  repeated Entry kvEntries = 3;
+
+  // Sorted Set entries in the transaction (parsed)
+  repeated ZEntry zEntries = 4;
 }
 
 message TxEntry {
-	bytes key = 1;
-	bytes hValue = 2;
-	int32 vLen = 3;
-	KVMetadata metadata = 4;
-	bytes value = 5; // value must be ignored when len(value) == 0 and vLen > 0. Otherwise, sha256(value) must be equal to hValue
+  // Raw key value (contains 1-byte prefix for kind of the key)
+  bytes key = 1;
+
+  // Value hash
+  bytes hValue = 2;
+
+  // Value length
+  int32 vLen = 3;
+
+  // Entry metadata
+  KVMetadata metadata = 4;
+
+  // value, must be ignored when len(value) == 0 and vLen > 0.
+  // Otherwise sha256(value) must be equal to hValue.
+  bytes value = 5;
 }
 
 message KVMetadata {
-	bool deleted = 1;
-	Expiration expiration = 2;
-	bool nonIndexable = 3;
+  // True if this entry denotes a logical deletion
+  bool deleted = 1;
+
+  // Entry expiration information
+  Expiration expiration = 2;
+
+  // If set to true, this entry will not be indexed and will only be accessed through GetAt calls
+  bool nonIndexable = 3;
 }
 
 message Expiration {
-	int64 expiresAt = 1;
+  // Entry expiration time (unix timestamp in seconds)
+  int64 expiresAt = 1;
 }
 
 message VerifiableTx {
-	Tx tx = 1;
-	DualProof dualProof = 2;
-	Signature signature = 3;
+  // Transaction to verify
+  Tx tx = 1;
+
+  // Proof for the transaction
+  DualProof dualProof = 2;
+
+  // Signature for the new state value
+  Signature signature = 3;
+}
+
+message VerifiableTxV2 {
+  // Transaction to verify
+  Tx tx = 1;
+
+  // Proof for the transaction
+  DualProofV2 dualProof = 2;
+
+  // Signature for the new state value
+  Signature signature = 3;
 }
 
 //////////////////
 
 message VerifiableEntry {
-	Entry entry = 1;
-	VerifiableTx verifiableTx = 2;
-	InclusionProof inclusionProof = 3;
+  // Entry to verify
+  Entry entry = 1;
+
+  // Transaction to verify
+  VerifiableTx verifiableTx = 2;
+
+  // Proof for inclusion of the entry within the transaction
+  InclusionProof inclusionProof = 3;
 }
 
 message InclusionProof {
-	int32 leaf = 1;
-	int32 width = 2;
-	repeated bytes terms = 3;
+  // Index of the leaf for which the proof is generated
+  int32 leaf = 1;
+
+  // Width of the tree at the leaf level
+  int32 width = 2;
+
+  // Proof terms (selected hashes from the tree)
+  repeated bytes terms = 3;
 }
 
 message SetRequest {
-	repeated KeyValue KVs = 1;
-	bool  noWait = 2;
-	repeated Precondition preconditions = 3;
+  // List of KV entries to set
+  repeated KeyValue KVs = 1;
+
+  // If set to true, do not wait for indexer to index ne entries
+  bool noWait = 2;
+
+  // Preconditions to be met to perform the write
+  repeated Precondition preconditions = 3;
 }
 
 message KeyRequest {
-	bytes key = 1;
-	uint64 atTx = 2; // if > 0, query for the value exactly at given transaction
+  // Key to query for
+  bytes key = 1;
 
+  // If > 0, query for the value exactly at given transaction
+  uint64 atTx = 2;
 
-	// if 0 (and nowait=false), wait for the index to be up=to-date
-	uint64 sinceTx = 3;
+  // If 0 (and noWait=false), wait for the index to be up-to-date,
+  // If > 0 (and noWait=false), wait for at lest the sinceTx transaction to be indexed
+  uint64 sinceTx = 3;
 
-	// if set to true - do not wait for any indexing update considering only the currently indexed state
-	bool  noWait = 4;
+  // If set to true - do not wait for any indexing update considering only the currently indexed state
+  bool noWait = 4;
 
-	// if > 0, get the nth version of the value, 1 being the first version, 2 being the second and so on
-	// if < 0, get the historical nth value of the key, -1 being the previous version, -2 being the one before and so on
-	int64 atRevision = 5;
-
+  // If > 0, get the nth version of the value, 1 being the first version, 2 being the second and so on
+  // If < 0, get the historical nth value of the key, -1 being the previous version, -2 being the one before and so on
+  int64 atRevision = 5;
 }
 
 message KeyListRequest {
-	repeated bytes keys = 1;
-	uint64 sinceTx = 2;
+  // List of keys to query for
+  repeated bytes keys = 1;
+
+  // If 0, wait for index to be up-to-date,
+  // If > 0, wait for at least sinceTx transaction to be indexed
+  uint64 sinceTx = 2;
 }
 
 message DeleteKeysRequest {
-	repeated bytes keys = 1;
-	uint64 sinceTx = 2;
-	bool  noWait = 3;
+  // List of keys to delete logically
+  repeated bytes keys = 1;
+
+  // If 0, wait for index to be up-to-date,
+  // If > 0, wait for at least sinceTx transaction to be indexed
+  uint64 sinceTx = 2;
+
+  // If set to true, do not wait for the indexer to index this operation
+  bool noWait = 3;
 }
 
 message VerifiableSetRequest {
-	SetRequest setRequest = 1;
-	uint64 proveSinceTx = 2;
+  // Keys to set
+  SetRequest setRequest = 1;
+
+  // When generating the proof, generate consistency proof with state from this transaction
+  uint64 proveSinceTx = 2;
 }
 
 message VerifiableGetRequest {
-	KeyRequest keyRequest = 1;
-	uint64 proveSinceTx = 2;
+  // Key to read
+  KeyRequest keyRequest = 1;
+
+  // When generating the proof, generate consistency proof with state from this transaction
+  uint64 proveSinceTx = 2;
 }
 
 // ServerInfoRequest exists to provide extensibility for rpc ServerInfo.
@@ -325,860 +579,1358 @@ message ServerInfoRequest {}
 
 // ServerInfoResponse contains information about the server instance.
 message ServerInfoResponse {
-	// The version of the server instance.
-	string version = 1;
+  // The version of the server instance.
+  string version = 1;
+
+  // Unix timestamp (seconds) indicating when the server process has been started.
+  int64 startedAt = 2;
+
+  // Total number of transactions across all databases.
+  int64 numTransactions = 3;
+
+  // Total number of databases present.
+  int32 numDatabases = 4;
+
+  // Total disk size used by all databases.
+  int64 databasesDiskSize = 5;
 }
 
 message HealthResponse {
-	bool status = 1;
-	string version = 2;
+  // If true, server considers itself to be healthy
+  bool status = 1;
+
+  // The version of the server instance
+  string version = 2;
 }
 
 message DatabaseHealthResponse {
-	uint32 pendingRequests = 1;
-	int64 lastRequestCompletedAt = 2;
+  // Number of requests currently being executed
+  uint32 pendingRequests = 1;
+
+  // Timestamp at which the last request was completed
+  int64 lastRequestCompletedAt = 2;
 }
 
 message ImmutableState {
-	string db = 1;
-	uint64 txId = 2;
-	bytes txHash = 3;
-	Signature signature = 4;
+  // The db name
+  string db = 1;
+
+  // Id of the most recent transaction
+  uint64 txId = 2;
+
+  // State of the most recent transaction
+  bytes txHash = 3;
+
+  // Signature of the hash
+  Signature signature = 4;
+
+  // following fields are not part of the signature
+
+  // Id of the most recent precommitted transaction
+  uint64 precommittedTxId = 5;
+
+  // State of the most recent precommitted transaction
+  bytes precommittedTxHash = 6;
 }
 
 message ReferenceRequest {
-	bytes key = 1;
-	bytes referencedKey = 2;
-	uint64 atTx = 3;
-	bool boundRef = 4;
-	bool  noWait = 5;
-	repeated Precondition preconditions = 6;
+  // Key for the reference
+  bytes key = 1;
+
+  // Key to be referenced
+  bytes referencedKey = 2;
+
+  // If boundRef == true, id of transaction to bind with the reference
+  uint64 atTx = 3;
+
+  // If true, bind the reference to particular transaction,
+  // if false, use the most recent value of the key
+  bool boundRef = 4;
+
+  // If true, do not wait for the indexer to index this write operation
+  bool noWait = 5;
+
+  // Preconditions to be met to perform the write
+  repeated Precondition preconditions = 6;
 }
 
 message VerifiableReferenceRequest {
-	ReferenceRequest referenceRequest = 1;
-	uint64 proveSinceTx = 2;
+  // Reference data
+  ReferenceRequest referenceRequest = 1;
+
+  // When generating the proof, generate consistency proof with state from this
+  // transaction
+  uint64 proveSinceTx = 2;
 }
 
 message ZAddRequest {
-	bytes set = 1;
-	double score = 2;
-	bytes key = 3;
-	uint64 atTx = 4;
-	bool boundRef = 5;
-	bool  noWait = 6;
+  // Name of the sorted set
+  bytes set = 1;
+
+  // Score of the new entry
+  double score = 2;
+
+  // Referenced key
+  bytes key = 3;
+
+  // If boundRef == true, id of the transaction to bind with the reference
+  uint64 atTx = 4;
+
+  // If true, bind the reference to particular transaction, if false, use the
+  // most recent value of the key
+  bool boundRef = 5;
+
+  // If true, do not wait for the indexer to index this write operation
+  bool noWait = 6;
 }
 
 message Score {
-	double score = 1;
+  // Entry's score value
+  double score = 1;
 }
 
 message ZScanRequest {
-	bytes set = 1;
-	bytes seekKey = 2;
-	double seekScore = 3;
-	uint64 seekAtTx = 4;
-	bool inclusiveSeek = 5;
-	uint64 limit = 6;
-	bool desc = 7;
-	Score minScore = 8;
-	Score maxScore = 9;
-	uint64 sinceTx = 10;
-	bool  noWait = 11;
-	uint64 offset = 12; // Specify the initial entry to be returned by excluding the initial set of entries
+  // Name of the sorted set
+  bytes set = 1;
+
+  // Key to continue the search at
+  bytes seekKey = 2;
+
+  // Score of the entry to continue the search at
+  double seekScore = 3;
+
+  // AtTx of the entry to continue the search at
+  uint64 seekAtTx = 4;
+
+  // If true, include the entry given with the `seekXXX` attributes, if false,
+  // skip the entry and start after that one
+  bool inclusiveSeek = 5;
+
+  // Maximum number of entries to return, if 0, the default limit will be used
+  uint64 limit = 6;
+
+  // If true, scan entries in descending order
+  bool desc = 7;
+
+  // Minimum score of entries to scan
+  Score minScore = 8;
+
+  // Maximum score of entries to scan
+  Score maxScore = 9;
+
+  // If > 0, do not wait for the indexer to index all entries, only require
+  // entries up to sinceTx to be indexed
+  uint64 sinceTx = 10;
+
+  // Deprecated: If set to true, do not wait for the indexer to be up to date
+  bool noWait = 11;
+
+  // Specify the index of initial entry to be returned by excluding the initial
+  // set of entries (alternative to seekXXX attributes)
+  uint64 offset = 12;
 }
 
 message HistoryRequest {
-	bytes key = 1;
-	uint64 offset = 2; // Specify the initial entry to be returned by excluding the initial set of entries
-	int32 limit = 3;
-	bool desc = 4;
-	uint64 sinceTx = 5;
+  // Name of the key to query for the history
+  bytes key = 1;
+  // Specify the initial entry to be returned by excluding the initial set of
+  // entries
+  uint64 offset = 2;
+
+  // Maximum number of entries to return
+  int32 limit = 3;
+
+  // If true, search in descending order
+  bool desc = 4;
+
+  // If > 0, do not wait for the indexer to index all entries, only require
+  // entries up to sinceTx to be indexed
+  uint64 sinceTx = 5;
 }
 
 message VerifiableZAddRequest {
-	ZAddRequest zAddRequest = 1;
-	uint64 proveSinceTx = 2;
+  // Data for new sorted set entry
+  ZAddRequest zAddRequest = 1;
+
+  // When generating the proof, generate consistency proof with state from this transaction
+  uint64 proveSinceTx = 2;
 }
 
 message TxRequest {
-	uint64      tx                = 1;
-	EntriesSpec entriesSpec       = 2;
-	uint64      sinceTx           = 3;
-	bool        noWait            = 4;
-	bool        keepReferencesUnresolved = 5;
+  // Transaction id to query for
+  uint64 tx = 1;
+
+  // Specification for parsing entries, if empty, entries are returned in raw form
+  EntriesSpec entriesSpec = 2;
+
+  // If > 0, do not wait for the indexer to index all entries, only require
+  // entries up to sinceTx to be indexed, will affect resolving references
+  uint64 sinceTx = 3;
+
+  // Deprecated: If set to true, do not wait for the indexer to be up to date
+  bool noWait = 4;
+
+  // If set to true, do not resolve references (avoid looking up final values if not needed)
+  bool keepReferencesUnresolved = 5;
 }
 
 message EntriesSpec {
-	EntryTypeSpec kvEntriesSpec  = 1;
-	EntryTypeSpec zEntriesSpec   = 2;
-	EntryTypeSpec sqlEntriesSpec = 3;
+  // Specification for parsing KV entries
+  EntryTypeSpec kvEntriesSpec = 1;
+
+  // Specification for parsing sorted set entries
+  EntryTypeSpec zEntriesSpec = 2;
+
+  // Specification for parsing SQL entries
+  EntryTypeSpec sqlEntriesSpec = 3;
 }
 
 message EntryTypeSpec {
-	EntryTypeAction action = 1;
+  // Action to perform on entries
+  EntryTypeAction action = 1;
 }
 
 enum EntryTypeAction {
-	EXCLUDE     = 0;
-	ONLY_DIGEST = 1;
-	RAW_VALUE   = 2;
-	RESOLVE     = 3;
+  // Exclude entries from the result
+  EXCLUDE = 0;
+
+  // Provide keys in raw (unparsed) form and only the digest of the value
+  ONLY_DIGEST = 1;
+
+  // Provide keys and values in raw form
+  RAW_VALUE = 2;
+
+  // Provide parsed keys and values and resolve values if needed
+  RESOLVE = 3;
 }
 
 message VerifiableTxRequest {
-	uint64 tx = 1;
-	uint64 proveSinceTx = 2;
-	EntriesSpec entriesSpec = 3;
-	uint64 sinceTx  = 4;
-	bool   noWait   = 5;
-	bool   keepReferencesUnresolved = 6;
+  // Transaction ID
+  uint64 tx = 1;
+
+  // When generating the proof, generate consistency proof with state from this
+  // transaction
+  uint64 proveSinceTx = 2;
+
+  // Specification of how to parse entries
+  EntriesSpec entriesSpec = 3;
+
+  // If > 0, do not wait for the indexer to index all entries, only require
+  // entries up to sinceTx to be indexed, will affect resolving references
+  uint64 sinceTx = 4;
+
+  // Deprecated: If set to true, do not wait for the indexer to be up to date
+  bool noWait = 5;
+
+  // If set to true, do not resolve references (avoid looking up final values if not needed)
+  bool keepReferencesUnresolved = 6;
 }
 
 message TxScanRequest {
-	uint64 initialTx = 1;
-	uint32 limit = 2;
-    bool   desc = 3;
-	EntriesSpec entriesSpec = 4;
-	uint64 sinceTx  = 5;
-	bool   noWait   = 6;
+  // ID of the transaction where scanning should start
+  uint64 initialTx = 1;
+
+  // Maximum number of transactions to scan, when not specified the default limit is used
+  uint32 limit = 2;
+
+  // If set to true, scan transactions in descending order
+  bool desc = 3;
+
+  // Specification of how to parse entries
+  EntriesSpec entriesSpec = 4;
+
+  // If > 0, do not wait for the indexer to index all entries, only require
+  // entries up to sinceTx to be indexed, will affect resolving references
+  uint64 sinceTx = 5;
+
+  // Deprecated: If set to true, do not wait for the indexer to be up to date
+  bool noWait = 6;
 }
 
 message TxList {
-	repeated Tx txs = 1;
+  // List of transactions
+  repeated Tx txs = 1;
 }
 
 message ExportTxRequest {
-	uint64 tx = 1;
+  // Id of transaction to export
+  uint64 tx = 1;
+  // If set to true, non-committed transactions can be exported
+  bool allowPreCommitted = 2;
+  // Used on synchronous replication to notify the primary about replica state
+  ReplicaState replicaState = 3;
+  // If set to true, integrity checks are skipped when reading data
+  bool skipIntegrityCheck = 4;
+}
+
+message ReplicaState {
+  string UUID = 1;
+  uint64 committedTxID = 2;
+  bytes committedAlh = 3;
+  uint64 precommittedTxID = 4;
+  bytes precommittedAlh = 5;
 }
 
 message Database {
-	string databaseName = 1;
+  // Name of the database
+  string databaseName = 1;
 }
 
 message DatabaseSettings {
-	string databaseName = 1;
+  // Name of the database
+  string databaseName = 1;
 
-	bool   replica = 2;
-	string masterDatabase = 3;
-	string masterAddress = 4;
-	uint32 masterPort = 5;
-	string followerUsername = 6;
-	string followerPassword = 7;
+  // If set to true, this database is replicating another database
+  bool replica = 2;
 
-	uint32 fileSize = 8;
-	uint32 maxKeyLen = 9;
-	uint32 maxValueLen = 10;
-	uint32 maxTxEntries = 11;
+  // Name of the database to replicate
+  string primaryDatabase = 3;
 
-	bool   excludeCommitTime = 12;
+  // Hostname of the immudb instance with database to replicate
+  string primaryHost = 4;
+
+  // Port of the immudb instance with database to replicate
+  uint32 primaryPort = 5;
+
+  // Username of the user with read access of the database to replicate
+  string primaryUsername = 6;
+
+  // Password of the user with read access of the database to replicate
+  string primaryPassword = 7;
+
+  // Size of files stored on disk
+  uint32 fileSize = 8;
+
+  // Maximum length of keys
+  uint32 maxKeyLen = 9;
+
+  // Maximum length of values
+  uint32 maxValueLen = 10;
+
+  // Maximum number of entries in a single transaction
+  uint32 maxTxEntries = 11;
+
+  // If set to true, do not include commit timestamp in transaction headers
+  bool excludeCommitTime = 12;
 }
 
 message CreateDatabaseRequest {
-	string name = 1;
-	DatabaseNullableSettings settings = 2;
-	bool ifNotExists = 3;
+  // Database name
+  string name = 1;
+
+  // Database settings
+  DatabaseNullableSettings settings = 2;
+
+  // If set to true, do not fail if the database already exists
+  bool ifNotExists = 3;
 }
 
 message CreateDatabaseResponse {
-	string name = 1;
-	DatabaseNullableSettings settings = 2;
-	bool alreadyExisted = 3;
+  // Database name
+  string name = 1;
+
+  // Current database settings
+  DatabaseNullableSettings settings = 2;
+
+  // Set to true if given database already existed
+  bool alreadyExisted = 3;
 }
 
 message UpdateDatabaseRequest {
-	string database = 1;
-	DatabaseNullableSettings settings = 2;
+  // Database name
+  string database = 1;
+
+  // Updated settings
+  DatabaseNullableSettings settings = 2;
 }
 
-message UpdateDatabaseResponse {	// Reserved to reply with more advanced response later
-	string database = 1;
-	DatabaseNullableSettings settings = 2;
+// Reserved to reply with more advanced response later
+message UpdateDatabaseResponse {
+  // Database name
+  string database = 1;
+
+  // Current database settings
+  DatabaseNullableSettings settings = 2;
 }
 
-message DatabaseSettingsRequest {
-
-}
+message DatabaseSettingsRequest {}
 
 message DatabaseSettingsResponse {
-	string database = 1;
-	DatabaseNullableSettings settings = 2;
+  // Database name
+  string database = 1;
+
+  // Database settings
+  DatabaseNullableSettings settings = 2;
 }
 
 message NullableUint32 {
-	uint32 value = 1;
+  uint32 value = 1;
 }
 
 message NullableUint64 {
-	uint64 value = 1;
+  uint64 value = 1;
 }
 
 message NullableFloat {
-	float value = 1;
+  float value = 1;
 }
 
 message NullableBool {
-	bool value = 1;
+  bool value = 1;
 }
 
 message NullableString {
-	string value = 1;
+  string value = 1;
 }
 
 message NullableMilliseconds {
-	int64 value = 1;
+  int64 value = 1;
 }
 
 message DatabaseNullableSettings {
-	ReplicationNullableSettings replicationSettings = 2;
+  // Replication settings
+  ReplicationNullableSettings replicationSettings = 2;
 
-	NullableUint32 fileSize = 8;
-	NullableUint32 maxKeyLen = 9;
-	NullableUint32 maxValueLen = 10;
-	NullableUint32 maxTxEntries = 11;
+  // Max filesize on disk
+  NullableUint32 fileSize = 8;
 
-	NullableBool excludeCommitTime = 12;
+  // Maximum length of keys
+  NullableUint32 maxKeyLen = 9;
 
-	NullableUint32 maxConcurrency = 13;
-	NullableUint32 maxIOConcurrency = 14;
+  // Maximum length of values
+  NullableUint32 maxValueLen = 10;
 
-	NullableUint32 txLogCacheSize = 15;
-	NullableUint32 vLogMaxOpenedFiles = 16;
-	NullableUint32 txLogMaxOpenedFiles = 17;
-	NullableUint32 commitLogMaxOpenedFiles = 18;
+  // Maximum number of entries in a single transaction
+  NullableUint32 maxTxEntries = 11;
 
-	IndexNullableSettings indexSettings = 19;
+  // If set to true, do not include commit timestamp in transaction headers
+  NullableBool excludeCommitTime = 12;
 
-	NullableUint32 writeTxHeaderVersion = 20;
+  // Maximum number of simultaneous commits prepared for write
+  NullableUint32 maxConcurrency = 13;
 
-	NullableBool autoload = 21;
+  // Maximum number of simultaneous IO writes
+  NullableUint32 maxIOConcurrency = 14;
 
-	NullableUint32 readTxPoolSize = 22;
-	
-	NullableMilliseconds syncFrequency = 23;
-	
-	NullableUint32 writeBufferSize = 24;
+  // Size of the cache for transaction logs
+  NullableUint32 txLogCacheSize = 15;
 
-	AHTNullableSettings ahtSettings = 25;
+  // Maximum number of simultaneous value files opened
+  NullableUint32 vLogMaxOpenedFiles = 16;
+
+  // Maximum number of simultaneous transaction log files opened
+  NullableUint32 txLogMaxOpenedFiles = 17;
+
+  // Maximum number of simultaneous commit log files opened
+  NullableUint32 commitLogMaxOpenedFiles = 18;
+
+  // Index settings
+  IndexNullableSettings indexSettings = 19;
+
+  // Version of transaction header to use (limits available features)
+  NullableUint32 writeTxHeaderVersion = 20;
+
+  // If set to true, automatically load the database when starting immudb (true by default)
+  NullableBool autoload = 21;
+
+  // Size of the pool of read buffers
+  NullableUint32 readTxPoolSize = 22;
+
+  // Fsync frequency during commit process
+  NullableMilliseconds syncFrequency = 23;
+
+  // Size of the in-memory buffer for write operations
+  NullableUint32 writeBufferSize = 24;
+
+  // Settings of Appendable Hash Tree
+  AHTNullableSettings ahtSettings = 25;
+
+  // Maximum number of pre-committed transactions
+  NullableUint32 maxActiveTransactions = 26;
+
+  // Limit the number of read entries per transaction
+  NullableUint32 mvccReadSetLimit = 27;
+
+  // Size of the cache for value logs
+  NullableUint32 vLogCacheSize = 28;
+
+  // Truncation settings
+  TruncationNullableSettings truncationSettings = 29;
+
+  // If set to true, values are stored together with the transaction header (true by default)
+  NullableBool embeddedValues = 30;
+
+  // Enable file preallocation
+  NullableBool preallocFiles = 31;
 }
 
 message ReplicationNullableSettings {
-	NullableBool   replica = 1;
-	NullableString masterDatabase = 2;
-	NullableString masterAddress = 3;
-	NullableUint32 masterPort = 4;
-	NullableString followerUsername = 5;
-	NullableString followerPassword = 6;
+  // If set to true, this database is replicating another database
+  NullableBool replica = 1;
+
+  // Name of the database to replicate
+  NullableString primaryDatabase = 2;
+
+  // Hostname of the immudb instance with database to replicate
+  NullableString primaryHost = 3;
+
+  // Port of the immudb instance with database to replicate
+  NullableUint32 primaryPort = 4;
+
+  // Username of the user with read access of the database to replicate
+  NullableString primaryUsername = 5;
+
+  // Password of the user with read access of the database to replicate
+  NullableString primaryPassword = 6;
+
+  // Enable synchronous replication
+  NullableBool syncReplication = 7;
+
+  // Number of confirmations from synchronous replicas required to commit a transaction
+  NullableUint32 syncAcks = 8;
+
+  // Maximum number of prefetched transactions
+  NullableUint32 prefetchTxBufferSize = 9;
+
+  // Number of concurrent replications
+  NullableUint32 replicationCommitConcurrency = 10;
+
+  // Allow precommitted transactions to be discarded if the replica diverges from the primary
+  NullableBool allowTxDiscarding = 11;
+
+  // Disable integrity check when reading data during replication
+  NullableBool skipIntegrityCheck = 12;
+
+  // Wait for indexing to be up to date during replication
+  NullableBool waitForIndexing = 13;
+}
+
+message TruncationNullableSettings {
+  // Retention Period for data in the database
+  NullableMilliseconds retentionPeriod = 1;
+
+  // Truncation Frequency for the database
+  NullableMilliseconds truncationFrequency = 2;
 }
 
 message IndexNullableSettings {
-	NullableUint32  flushThreshold = 1;
-	NullableUint32  syncThreshold = 2;
-	NullableUint32  cacheSize = 3;
-	NullableUint32  maxNodeSize = 4;
-	NullableUint32  maxActiveSnapshots = 5;
-	NullableUint64  renewSnapRootAfter = 6;
-	NullableUint32  compactionThld = 7;
-	NullableUint32  delayDuringCompaction = 8;
-	NullableUint32  nodesLogMaxOpenedFiles = 9;
-	NullableUint32  historyLogMaxOpenedFiles = 10;
-	NullableUint32  commitLogMaxOpenedFiles = 11;
-	NullableUint32  flushBufferSize = 12;
-	NullableFloat   cleanupPercentage = 13;
+  // Number of new index entries between disk flushes
+  NullableUint32 flushThreshold = 1;
+
+  // Number of new index entries between disk flushes with file sync
+  NullableUint32 syncThreshold = 2;
+
+  // Size of the Btree node cache
+  NullableUint32 cacheSize = 3;
+
+  // Max size of a single Btree node in bytes
+  NullableUint32 maxNodeSize = 4;
+
+  // Maximum number of active btree snapshots
+  NullableUint32 maxActiveSnapshots = 5;
+
+  // Time in milliseconds between the most recent DB snapshot is automatically renewed
+  NullableUint64 renewSnapRootAfter = 6;
+
+  // Minimum number of updates entries in the btree to allow for full compaction
+  NullableUint32 compactionThld = 7;
+
+  // Additional delay added during indexing when full compaction is in progress
+  NullableUint32 delayDuringCompaction = 8;
+
+  // Maximum number of simultaneously opened nodes files
+  NullableUint32 nodesLogMaxOpenedFiles = 9;
+
+  // Maximum number of simultaneously opened node history files
+  NullableUint32 historyLogMaxOpenedFiles = 10;
+
+  // Maximum number of simultaneously opened commit log files
+  NullableUint32 commitLogMaxOpenedFiles = 11;
+
+  // Size of the in-memory flush buffer (in bytes)
+  NullableUint32 flushBufferSize = 12;
+
+  // Percentage of node files cleaned up during each flush
+  NullableFloat cleanupPercentage = 13;
+
+  // Maximum number of transactions indexed together
+  NullableUint32 maxBulkSize = 14;
+
+  // Maximum time waiting for more transactions to be committed and included into the same bulk
+  NullableMilliseconds bulkPreparationTimeout = 15;
 }
 
 message AHTNullableSettings {
-	NullableUint32 syncThreshold = 1;
-	NullableUint32 writeBufferSize = 2;
+  // Number of new leaves in the tree between synchronous flush to disk
+  NullableUint32 syncThreshold = 1;
+
+  // Size of the in-memory write buffer
+  NullableUint32 writeBufferSize = 2;
 }
 
 message LoadDatabaseRequest {
-	string database = 1;
-	// may add createIfNotExist
+  // Database name
+
+  string database = 1;
+  //  may add createIfNotExist
 }
 
 message LoadDatabaseResponse {
-	string database = 1;
-	// may add setttings
+  // Database name
+  string database = 1;
+  // may add settings
 }
 
 message UnloadDatabaseRequest {
-	string database = 1;
+  // Database name
+  string database = 1;
 }
 
 message UnloadDatabaseResponse {
-	string database = 1;
+  // Database name
+  string database = 1;
 }
 
 message DeleteDatabaseRequest {
-	string database = 1;
+  // Database name
+  string database = 1;
 }
 
 message DeleteDatabaseResponse {
-	string database = 1;
+  // Database name
+  string database = 1;
 }
 
 message FlushIndexRequest {
-	float  cleanupPercentage = 1;
-	bool   synced = 2;
+  // Percentage of nodes file to cleanup during flush
+  float cleanupPercentage = 1;
+
+  // If true, do a full disk sync after the flush
+  bool synced = 2;
 }
 
 message FlushIndexResponse {
-	string database = 1;
+  // Database name
+  string database = 1;
 }
 
 message Table {
-	string tableName = 1;
+  // Table name
+  string tableName = 1;
 }
 
 message SQLGetRequest {
-	string table = 1;
-	repeated SQLValue pkValues = 2;
-    uint64 atTx = 3;
-	uint64 sinceTx = 4;
+  // Table name
+  string table = 1;
+
+  // Values of the primary key
+  repeated SQLValue pkValues = 2;
+
+  // Id of the transaction at which the row was added / modified
+  uint64 atTx = 3;
+
+  // If > 0, do not wait for the indexer to index all entries, only require entries up to sinceTx to be indexed
+  uint64 sinceTx = 4;
 }
 
 message VerifiableSQLGetRequest {
-	SQLGetRequest sqlGetRequest = 1;
-	uint64        proveSinceTx = 2;
+  // Data of row to query
+  SQLGetRequest sqlGetRequest = 1;
+
+  // When generating the proof, generate consistency proof with state from this transaction
+  uint64 proveSinceTx = 2;
 }
 
 message SQLEntry {
-	uint64 tx = 1;
-	bytes  key = 2;
-	bytes  value = 3;
-	KVMetadata metadata = 4;
+  // Id of the transaction when the row was added / modified
+  uint64 tx = 1;
+
+  // Raw key of the row
+  bytes key = 2;
+
+  // Raw value of the row
+  bytes value = 3;
+
+  // Metadata of the raw value
+  KVMetadata metadata = 4;
 }
 
 message VerifiableSQLEntry {
-	reserved 6;
-	SQLEntry sqlEntry = 1;
-	VerifiableTx verifiableTx = 2;
-	InclusionProof inclusionProof = 3;
-	uint32 DatabaseId = 4;
-	uint32 TableId = 5;
-	repeated uint32 PKIDs = 16;
-	map<uint32, string> ColNamesById = 8;
-	map<string, uint32> ColIdsByName = 9;
-	map<uint32, string> ColTypesById = 10;
-	map<uint32, int32> ColLenById = 11;
+  reserved 6;
+
+  // Raw row entry data
+  SQLEntry sqlEntry = 1;
+
+  // Verifiable transaction of the row
+  VerifiableTx verifiableTx = 2;
+
+  // Inclusion proof of the row in the transaction
+  InclusionProof inclusionProof = 3;
+
+  // Internal ID of the database (used to validate raw entry values)
+  uint32 DatabaseId = 4;
+
+  // Internal ID of the table (used to validate raw entry values)
+  uint32 TableId = 5;
+
+  // Internal IDs of columns for the primary key (used to validate raw entry values)
+  repeated uint32 PKIDs = 16;
+
+  // Mapping of used column IDs to their names
+  map<uint32, string> ColNamesById = 8;
+
+  // Mapping of column names to their IDS
+  map<string, uint32> ColIdsByName = 9;
+
+  // Mapping of column IDs to their types
+  map<uint32, string> ColTypesById = 10;
+
+  // Mapping of column IDs to their length constraints
+  map<uint32, int32> ColLenById = 11;
+
+  // Variable is used to assign unique ids to new columns as they are created
+  uint32 MaxColId = 12;
 }
 
-message UseDatabaseReply{
-	string token = 1;
+message UseDatabaseReply {
+  // Deprecated: database access token
+  string token = 1;
 }
 
 enum PermissionAction {
-	GRANT = 0;
-	REVOKE = 1;
+  // Grant permission
+  GRANT = 0;
+
+  // Revoke permission
+  REVOKE = 1;
 }
 
 message ChangePermissionRequest {
-	PermissionAction action = 1;
-	string username = 2;
-	string database = 3;
-	uint32 permission = 4;
+  // Action to perform
+  PermissionAction action = 1;
+
+  // Name of the user to update
+  string username = 2;
+
+  // Name of the database
+  string database = 3;
+
+  // Permission to grant / revoke: 1 - read only, 2 - read/write, 254 - admin
+  uint32 permission = 4;
 }
 
 message SetActiveUserRequest {
-	bool active = 1;
-	string username = 2;
+  // If true, the user is active
+  bool active = 1;
+
+  // Name of the user to activate / deactivate
+  string username = 2;
 }
 
 message DatabaseListResponse {
-	repeated Database databases = 1;
+  // Database list
+  repeated Database databases = 1;
 }
 
-message DatabaseListRequestV2 {
-}
+message DatabaseListRequestV2 {}
 
 message DatabaseListResponseV2 {
-	repeated DatabaseWithSettings databases = 1;
+  // Database list with current database settings
+  repeated DatabaseInfo databases = 1;
 }
 
-message DatabaseWithSettings {
-	string name = 1;
-	DatabaseNullableSettings settings = 2;
-	bool loaded = 3;
+message DatabaseInfo {
+  // Database name
+  string name = 1;
+
+  // Current database settings
+  DatabaseNullableSettings settings = 2;
+
+  // If true, this database is currently loaded into memory
+  bool loaded = 3;
+
+  // database disk size
+  uint64 diskSize = 4;
+
+  // total number of transactions
+  uint64 numTransactions = 5;
 }
 
 message Chunk {
-	bytes content = 1;
+  bytes content = 1;
+  map<string, bytes> metadata = 2;
 }
 
 message UseSnapshotRequest {
-	uint64 sinceTx = 1;
-	uint64 asBeforeTx = 2;
+  uint64 sinceTx = 1;
+  uint64 asBeforeTx = 2;
 }
 
 message SQLExecRequest {
-	string sql = 1;
-	repeated NamedParam params = 2;
-	bool  noWait = 3;
+  // SQL query
+  string sql = 1;
+
+  // Named query parameters
+  repeated NamedParam params = 2;
+
+  // If true, do not wait for the indexer to index written changes
+  bool noWait = 3;
 }
 
 message SQLQueryRequest {
-	string sql = 1;
-	repeated NamedParam params = 2;
-	bool reuseSnapshot = 3;
+  // SQL query
+  string sql = 1;
+
+  // Named query parameters
+  repeated NamedParam params = 2;
+
+  // If true, reuse previously opened snapshot
+  bool reuseSnapshot = 3 [deprecated = true];
+
+  // Wheter the client accepts a streaming response
+  bool acceptStream = 4;
 }
 
 message NamedParam {
-	string name = 1;
-	SQLValue value = 2;
+  // Parameter name
+  string name = 1;
+
+  // Parameter value
+  SQLValue value = 2;
 }
 
 message SQLExecResult {
-	repeated CommittedSQLTx txs = 5;
-	bool ongoingTx = 6;
+  // List of committed transactions as a result of the exec operation
+  repeated CommittedSQLTx txs = 5;
+
+  // If true, there's an ongoing transaction after exec completes
+  bool ongoingTx = 6;
 }
 
 message CommittedSQLTx {
-	TxHeader header = 1;
-	uint32 updatedRows = 2;
-	map<string, SQLValue> lastInsertedPKs = 3;
-	map<string, SQLValue> firstInsertedPKs = 4;
+  // Transaction header
+  TxHeader header = 1;
+
+  // Number of updated rows
+  uint32 updatedRows = 2;
+
+  // The value of last inserted auto_increment primary key (mapped by table name)
+  map<string, SQLValue> lastInsertedPKs = 3;
+
+  // The value of first inserted auto_increment primary key (mapped by table name)
+  map<string, SQLValue> firstInsertedPKs = 4;
 }
 
 message SQLQueryResult {
-	repeated Column columns = 2;
-	repeated Row rows = 1;
+  // Result columns description
+  repeated Column columns = 2;
+
+  // Result rows
+  repeated Row rows = 1;
 }
 
 message Column {
-	string name = 1;
-	string type = 2;
+  // Column name
+  string name = 1;
+
+  // Column type
+  string type = 2;
 }
 
 message Row {
-	repeated string columns = 1;
-	repeated SQLValue values = 2;
+  // Column names
+  repeated string columns = 1;
+
+  // Column values
+  repeated SQLValue values = 2;
 }
 
 message SQLValue {
-	oneof value {
-		google.protobuf.NullValue null = 1;
-		int64 n = 2;
-		string s = 3;
-		bool b = 4;
-		bytes bs = 5;
-		int64 ts = 6;
-	}
+  oneof value {
+    google.protobuf.NullValue null = 1;
+    int64 n = 2;
+    string s = 3;
+    bool b = 4;
+    bytes bs = 5;
+    int64 ts = 6;
+    double f = 7;
+  }
 }
 
 enum TxMode {
-	ReadOnly = 0;
-	WriteOnly = 1;
-	ReadWrite = 2;
+  // Read-only transaction
+  ReadOnly = 0;
+
+  // Write-only transaction
+  WriteOnly = 1;
+
+  // Read-write transaction
+  ReadWrite = 2;
 }
 
 message NewTxRequest {
-	TxMode mode = 1;
+  // Transaction mode
+  TxMode mode = 1;
+  // An existing snapshot may be reused as long as it includes the specified transaction
+  // If not specified it will include up to the latest precommitted transaction
+  NullableUint64 snapshotMustIncludeTxID = 2;
+  // An existing snapshot may be reused as long as it is not older than the specified timeframe
+  NullableMilliseconds snapshotRenewalPeriod = 3;
+  // Indexing may not be up to date when doing MVCC
+  bool unsafeMVCC = 4;
 }
 
 message NewTxResponse {
-	string transactionID = 1;
+  // Internal transaction ID
+  string transactionID = 1;
 }
 
-
-
 message ErrorInfo {
-	string code = 1;
-	string cause = 2;
+  // Error code
+  string code = 1;
+
+  // Error Description
+  string cause = 2;
 }
 
 message DebugInfo {
-	string stack = 1;
+  // Stack trace when the error was noticed
+  string stack = 1;
 }
 
 message RetryInfo {
-	int32 retry_delay = 1;
+  // Number of milliseconds after which the request can be retried
+  int32 retry_delay = 1;
+}
+
+message TruncateDatabaseRequest {
+  // Database name
+  string database = 1;
+
+  // Retention Period of data
+  int64 retentionPeriod = 2;
+}
+
+message TruncateDatabaseResponse {
+  // Database name
+  string database = 1;
 }
 
 // immudb gRPC & REST service
 service ImmuService {
-	rpc ListUsers (google.protobuf.Empty) returns (UserList){
-		option (google.api.http) = {
-			get: "/user/list"
-		};
-	};
+  rpc ListUsers(google.protobuf.Empty) returns (UserList) {
+    option (google.api.http) = {
+      get: "/user/list"
+    };
+  }
 
-	rpc CreateUser (CreateUserRequest) returns (google.protobuf.Empty){
-		option (google.api.http) = {
-			post: "/user"
-			body: "*"
-		};
-	};
+  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/user"
+      body: "*"
+    };
+  }
 
-	rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty){
-		option (google.api.http) = {
-			post: "/user/password/change"
-			body: "*"
-		};
-	};
+  rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/user/password/change"
+      body: "*"
+    };
+  }
 
-	rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty) {
-		option (google.api.http) = {
-			post: "/user/changepermission"
-			body: "*"
-		};
-	}
+  rpc ChangePermission(ChangePermissionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/user/changepermission"
+      body: "*"
+    };
+  }
 
-	rpc SetActiveUser (SetActiveUserRequest) returns (google.protobuf.Empty){
-		option (google.api.http) = {
-			post: "/user/setactiveUser"
-			body: "*"
-		};
-	};
+  rpc SetActiveUser(SetActiveUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/user/setactiveUser"
+      body: "*"
+    };
+  }
 
-	rpc UpdateAuthConfig (AuthConfig) returns (google.protobuf.Empty){
-		option deprecated = true;
-	} // DEPRECATED
-	rpc UpdateMTLSConfig (MTLSConfig) returns (google.protobuf.Empty){
-		option deprecated = true;
-	} // DEPRECATED
+  rpc UpdateAuthConfig(AuthConfig) returns (google.protobuf.Empty) {
+    option deprecated = true;
+  } // DEPRECATED
 
-	rpc OpenSession (OpenSessionRequest) returns (OpenSessionResponse){};
-	rpc CloseSession (google.protobuf.Empty) returns (google.protobuf.Empty){};
-	rpc KeepAlive (google.protobuf.Empty) returns (google.protobuf.Empty){};
+  rpc UpdateMTLSConfig(MTLSConfig) returns (google.protobuf.Empty) {
+    option deprecated = true;
+  } // DEPRECATED
 
-	rpc NewTx (NewTxRequest) returns (NewTxResponse){};
-	rpc Commit (google.protobuf.Empty) returns (CommittedSQLTx){};
-	rpc Rollback (google.protobuf.Empty) returns (google.protobuf.Empty){};
+  rpc OpenSession(OpenSessionRequest) returns (OpenSessionResponse) {}
 
-	rpc TxSQLExec(SQLExecRequest) returns (google.protobuf.Empty) {};
-	rpc TxSQLQuery(SQLQueryRequest) returns (SQLQueryResult) {};
+  rpc CloseSession(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
-	rpc Login (LoginRequest) returns (LoginResponse){
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/login"
-			body: "*"
-		};
-	};
+  rpc KeepAlive(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
-	rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/logout"
-			body: "*"
-		};
-	};
+  rpc NewTx(NewTxRequest) returns (NewTxResponse) {}
 
-	rpc Set (SetRequest) returns (TxHeader){
-		option (google.api.http) = {
-			post: "/db/set"
-			body: "*"
-		};
-	};
+  rpc Commit(google.protobuf.Empty) returns (CommittedSQLTx) {}
 
-	rpc VerifiableSet (VerifiableSetRequest) returns (VerifiableTx){
-		option (google.api.http) = {
-			post: "/db/verifiable/set"
-			body: "*"
-		};
-	};
+  rpc Rollback(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
-	rpc Get (KeyRequest) returns (Entry){
-		option (google.api.http) = {
-			get: "/db/get/{key}"
-		};
-	};
+  rpc TxSQLExec(SQLExecRequest) returns (google.protobuf.Empty) {}
 
-	rpc VerifiableGet (VerifiableGetRequest) returns (VerifiableEntry){
-		option (google.api.http) = {
-			post: "/db/verifiable/get"
-			body: "*"
-		};
-	};
+  rpc TxSQLQuery(SQLQueryRequest) returns (stream SQLQueryResult) {}
 
-	rpc Delete(DeleteKeysRequest) returns (TxHeader) {
-		option (google.api.http) = {
-			post: "/db/delete"
-			body: "*"
-		};
-	}
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/login"
+      body: "*"
+    };
+  }
 
-	rpc GetAll (KeyListRequest) returns (Entries){
-		option (google.api.http) = {
-			post: "/db/getall"
-			body: "*"
-		};
-	};
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/logout"
+      body: "*"
+    };
+  }
 
-	rpc ExecAll (ExecAllRequest) returns (TxHeader) {
-		option (google.api.http) = {
-			post: "/db/execall"
-			body: "*"
-		};
-	};
+  rpc Set(SetRequest) returns (TxHeader) {
+    option (google.api.http) = {
+      post: "/db/set"
+      body: "*"
+    };
+  }
 
-	rpc Scan(ScanRequest) returns (Entries){
-		option (google.api.http) = {
-			post: "/db/scan"
-			body: "*"
-		};
-	};
+  rpc VerifiableSet(VerifiableSetRequest) returns (VerifiableTx) {
+    option (google.api.http) = {
+      post: "/db/verifiable/set"
+      body: "*"
+    };
+  }
 
-	// NOT YET SUPPORTED
-	rpc Count(KeyPrefix) returns (EntryCount){
-		option (google.api.http) = {
-			get: "/db/count/{prefix}"
-		};
-	};
+  rpc Get(KeyRequest) returns (Entry) {
+    option (google.api.http) = {
+      get: "/db/get/{key}"
+    };
+  }
 
-	// NOT YET SUPPORTED
-	rpc CountAll(google.protobuf.Empty) returns (EntryCount){
-		option (google.api.http) = {
-			get: "/db/countall"
-		};
-	};
+  rpc VerifiableGet(VerifiableGetRequest) returns (VerifiableEntry) {
+    option (google.api.http) = {
+      post: "/db/verifiable/get"
+      body: "*"
+    };
+  }
 
-	rpc TxById(TxRequest) returns (Tx){
-		option (google.api.http) = {
-			get: "/db/tx/{tx}"
-		};
-	};
+  rpc Delete(DeleteKeysRequest) returns (TxHeader) {
+    option (google.api.http) = {
+      post: "/db/deletekey"
+      body: "*"
+    };
+  }
 
-	rpc VerifiableTxById(VerifiableTxRequest) returns (VerifiableTx){
-		option (google.api.http) = {
-			get: "/db/verifiable/tx/{tx}"
-		};
-	};
+  rpc GetAll(KeyListRequest) returns (Entries) {
+    option (google.api.http) = {
+      post: "/db/getall"
+      body: "*"
+    };
+  }
 
-	rpc TxScan(TxScanRequest) returns (TxList) {
-		option (google.api.http) = {
-			post: "/db/tx"
-			body: "*"
-		};
-	}
+  rpc ExecAll(ExecAllRequest) returns (TxHeader) {
+    option (google.api.http) = {
+      post: "/db/execall"
+      body: "*"
+    };
+  }
 
-	rpc History(HistoryRequest) returns (Entries){
-		option (google.api.http) = {
-			post: "/db/history"
-			body: "*"
-		};
-	};
+  rpc Scan(ScanRequest) returns (Entries) {
+    option (google.api.http) = {
+      post: "/db/scan"
+      body: "*"
+    };
+  }
 
-	// ServerInfo returns information about the server instance.
-	// ServerInfoRequest is defined for future extensions.
-	rpc ServerInfo (ServerInfoRequest) returns (ServerInfoResponse){
-		option (google.api.http) = {
-			get: "/serverinfo"
-		};
-	};
+  // NOT YET SUPPORTED
+  rpc Count(KeyPrefix) returns (EntryCount) {
+    option (google.api.http) = {
+      get: "/db/count/{prefix}"
+    };
+  }
 
-	// DEPRECATED: Use ServerInfo
-	rpc Health (google.protobuf.Empty) returns (HealthResponse){
-		option (google.api.http) = {
-			get: "/health"
-		};
-	};
+  // NOT YET SUPPORTED
+  rpc CountAll(google.protobuf.Empty) returns (EntryCount) {
+    option (google.api.http) = {
+      get: "/db/countall"
+    };
+  }
 
-	rpc DatabaseHealth (google.protobuf.Empty) returns (DatabaseHealthResponse){
-		option (google.api.http) = {
-			get: "/db/health"
-		};
-	};
+  rpc TxById(TxRequest) returns (Tx) {
+    option (google.api.http) = {
+      get: "/db/tx/{tx}"
+    };
+  }
 
-	rpc CurrentState (google.protobuf.Empty) returns (ImmutableState){
-		option (google.api.http) = {
-			get: "/db/state"
-		};
-	};
+  rpc VerifiableTxById(VerifiableTxRequest) returns (VerifiableTx) {
+    option (google.api.http) = {
+      get: "/db/verifiable/tx/{tx}"
+    };
+  }
 
-	rpc SetReference (ReferenceRequest) returns (TxHeader){
-		option (google.api.http) = {
-			post: "/db/setreference"
-			body: "*"
-		};
-	};
+  rpc TxScan(TxScanRequest) returns (TxList) {
+    option (google.api.http) = {
+      post: "/db/tx"
+      body: "*"
+    };
+  }
 
-	rpc VerifiableSetReference (VerifiableReferenceRequest) returns (VerifiableTx){
-		option (google.api.http) = {
-			post: "/db/verifiable/setreference"
-			body: "*"
-		};
-	};
+  rpc History(HistoryRequest) returns (Entries) {
+    option (google.api.http) = {
+      post: "/db/history"
+      body: "*"
+    };
+  }
 
-	rpc ZAdd (ZAddRequest) returns (TxHeader){
-		option (google.api.http) = {
-			post: "/db/zadd"
-			body: "*"
-		};
-	};
+  // ServerInfo returns information about the server instance.
+  // ServerInfoRequest is defined for future extensions.
+  rpc ServerInfo(ServerInfoRequest) returns (ServerInfoResponse) {
+    option (google.api.http) = {
+      get: "/serverinfo"
+    };
+  }
 
-	rpc VerifiableZAdd (VerifiableZAddRequest) returns (VerifiableTx){
-		option (google.api.http) = {
-			post: "/db/verifiable/zadd"
-			body: "*"
-		};
-	};
+  // DEPRECATED: Use ServerInfo
+  rpc Health(google.protobuf.Empty) returns (HealthResponse) {
+    option (google.api.http) = {
+      get: "/health"
+    };
+  }
 
-	rpc ZScan (ZScanRequest) returns (ZEntries){
-		option (google.api.http) = {
-			post: "/db/zscan"
-			body: "*"
-		};
-	};
+  rpc DatabaseHealth(google.protobuf.Empty) returns (DatabaseHealthResponse) {
+    option (google.api.http) = {
+      get: "/db/health"
+    };
+  }
 
-	// DEPRECATED: Use CreateDatabaseV2
-	rpc CreateDatabase(Database) returns (google.protobuf.Empty) {
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/db/create"
-			body: "*"
-		};
-	}
+  rpc CurrentState(google.protobuf.Empty) returns (ImmutableState) {
+    option (google.api.http) = {
+      get: "/db/state"
+    };
+  }
 
-	// DEPRECATED: Use CreateDatabaseV2
-	rpc CreateDatabaseWith(DatabaseSettings) returns (google.protobuf.Empty) {
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/db/createwith"
-			body: "*"
-		};
-	}
+  rpc SetReference(ReferenceRequest) returns (TxHeader) {
+    option (google.api.http) = {
+      post: "/db/setreference"
+      body: "*"
+    };
+  }
 
-	rpc CreateDatabaseV2(CreateDatabaseRequest) returns (CreateDatabaseResponse) {
-		option (google.api.http) = {
-			post: "/db/create/v2"
-			body: "*"
-		};
-	}
+  rpc VerifiableSetReference(VerifiableReferenceRequest) returns (VerifiableTx) {
+    option (google.api.http) = {
+      post: "/db/verifiable/setreference"
+      body: "*"
+    };
+  }
 
-	rpc LoadDatabase(LoadDatabaseRequest) returns (LoadDatabaseResponse) {
-		option (google.api.http) = {
-			post: "/db/load"
-			body: "*"
-		};
-	}
+  rpc ZAdd(ZAddRequest) returns (TxHeader) {
+    option (google.api.http) = {
+      post: "/db/zadd"
+      body: "*"
+    };
+  }
 
-	rpc UnloadDatabase(UnloadDatabaseRequest) returns (UnloadDatabaseResponse) {
-		option (google.api.http) = {
-			post: "/db/unload"
-			body: "*"
-		};
-	}
+  rpc VerifiableZAdd(VerifiableZAddRequest) returns (VerifiableTx) {
+    option (google.api.http) = {
+      post: "/db/verifiable/zadd"
+      body: "*"
+    };
+  }
 
-	rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {
-		option (google.api.http) = {
-			post: "/db/delete"
-			body: "*"
-		};
-	}
+  rpc ZScan(ZScanRequest) returns (ZEntries) {
+    option (google.api.http) = {
+      post: "/db/zscan"
+      body: "*"
+    };
+  }
 
-	// DEPRECATED: Use DatabaseListV2
-	rpc DatabaseList (google.protobuf.Empty) returns (DatabaseListResponse){
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/db/list"
-			body: "*"
-		};
-	};
+  // DEPRECATED: Use CreateDatabaseV2
+  rpc CreateDatabase(Database) returns (google.protobuf.Empty) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/db/create"
+      body: "*"
+    };
+  }
 
-	rpc DatabaseListV2 (DatabaseListRequestV2) returns (DatabaseListResponseV2){
-		option (google.api.http) = {
-			post: "/db/list/v2"
-			body: "*"
-		};
-	};
+  // DEPRECATED: Use CreateDatabaseV2
+  rpc CreateDatabaseWith(DatabaseSettings) returns (google.protobuf.Empty) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/db/createwith"
+      body: "*"
+    };
+  }
 
-	rpc UseDatabase(Database) returns (UseDatabaseReply) {
-		option (google.api.http) = {
-			get: "/db/use/{databaseName}"
-		};
-	}
+  rpc CreateDatabaseV2(CreateDatabaseRequest) returns (CreateDatabaseResponse) {
+    option (google.api.http) = {
+      post: "/db/create/v2"
+      body: "*"
+    };
+  }
 
-	// DEPRECATED: Use UpdateDatabaseV2
-	rpc UpdateDatabase(DatabaseSettings) returns (google.protobuf.Empty) {
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/db/update"
-			body: "*"
-		};
-	}
+  rpc LoadDatabase(LoadDatabaseRequest) returns (LoadDatabaseResponse) {
+    option (google.api.http) = {
+      post: "/db/load"
+      body: "*"
+    };
+  }
 
-	rpc UpdateDatabaseV2(UpdateDatabaseRequest) returns (UpdateDatabaseResponse) {
-		option (google.api.http) = {
-			post: "/db/update/v2"
-			body: "*"
-		};
-	}
+  rpc UnloadDatabase(UnloadDatabaseRequest) returns (UnloadDatabaseResponse) {
+    option (google.api.http) = {
+      post: "/db/unload"
+      body: "*"
+    };
+  }
 
-	// DEPRECATED: Use GetDatabaseSettingsV2
-	rpc GetDatabaseSettings(google.protobuf.Empty) returns (DatabaseSettings) {
-		option deprecated = true;
-		option (google.api.http) = {
-			post: "/db/settings"
-			body: "*"
-		};
-	}
+  rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {
+    option (google.api.http) = {
+      post: "/db/delete"
+      body: "*"
+    };
+  }
 
-	rpc GetDatabaseSettingsV2(DatabaseSettingsRequest) returns (DatabaseSettingsResponse) {
-		option (google.api.http) = {
-			post: "/db/settings/v2"
-			body: "*"
-		};
-	}
+  // DEPRECATED: Use DatabaseListV2
+  rpc DatabaseList(google.protobuf.Empty) returns (DatabaseListResponse) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/db/list"
+      body: "*"
+    };
+  }
 
-	rpc FlushIndex(FlushIndexRequest) returns (FlushIndexResponse) {
-		option (google.api.http) = {
-			get: "/db/flushindex"
-		};
-	}
+  rpc DatabaseListV2(DatabaseListRequestV2) returns (DatabaseListResponseV2) {
+    option (google.api.http) = {
+      post: "/db/list/v2"
+      body: "*"
+    };
+  }
 
-	rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty) {
-		option (google.api.http) = {
-			get: "/db/compactindex"
-		};
-	}
+  rpc UseDatabase(Database) returns (UseDatabaseReply) {
+    option (google.api.http) = {
+      get: "/db/use/{databaseName}"
+    };
+  }
 
-	// Streams
-	rpc streamGet(KeyRequest) returns (stream Chunk) {};
-	rpc streamSet(stream Chunk) returns (TxHeader) {};
-	rpc streamVerifiableGet(VerifiableGetRequest) returns (stream Chunk) {};
-	rpc streamVerifiableSet(stream Chunk) returns (VerifiableTx) {};
-	rpc streamScan(ScanRequest) returns (stream Chunk) {};
-	rpc streamZScan(ZScanRequest) returns (stream Chunk) {};
-	rpc streamHistory(HistoryRequest) returns (stream Chunk) {};
-	rpc streamExecAll(stream Chunk) returns (TxHeader) {};
+  // DEPRECATED: Use UpdateDatabaseV2
+  rpc UpdateDatabase(DatabaseSettings) returns (google.protobuf.Empty) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/db/update"
+      body: "*"
+    };
+  }
 
-	// Replication
-	rpc exportTx(ExportTxRequest) returns (stream Chunk) {};
-	rpc replicateTx(stream Chunk) returns (TxHeader) {};
+  rpc UpdateDatabaseV2(UpdateDatabaseRequest) returns (UpdateDatabaseResponse) {
+    option (google.api.http) = {
+      post: "/db/update/v2"
+      body: "*"
+    };
+  }
 
-	rpc SQLExec(SQLExecRequest) returns (SQLExecResult) {
-		option (google.api.http) = {
-			post: "/db/sqlexec"
-			body: "*"
-		};
-	};
+  // DEPRECATED: Use GetDatabaseSettingsV2
+  rpc GetDatabaseSettings(google.protobuf.Empty) returns (DatabaseSettings) {
+    option deprecated = true;
+    option (google.api.http) = {
+      post: "/db/settings"
+      body: "*"
+    };
+  }
 
-	rpc SQLQuery(SQLQueryRequest) returns (SQLQueryResult) {
-		option (google.api.http) = {
-			post: "/db/sqlquery"
-			body: "*"
-		};
-	};
+  rpc GetDatabaseSettingsV2(DatabaseSettingsRequest) returns (DatabaseSettingsResponse) {
+    option (google.api.http) = {
+      post: "/db/settings/v2"
+      body: "*"
+    };
+  }
 
-	rpc ListTables(google.protobuf.Empty) returns (SQLQueryResult) {
-		option (google.api.http) = {
-			get: "/db/table/list"
-		};
-	};
+  rpc FlushIndex(FlushIndexRequest) returns (FlushIndexResponse) {
+    option (google.api.http) = {
+      get: "/db/flushindex"
+    };
+  }
 
-	rpc DescribeTable(Table) returns (SQLQueryResult) {
-		option (google.api.http) = {
-			post: "/db/tables"
-			body: "*"
-		};
-	};
+  rpc CompactIndex(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get: "/db/compactindex"
+    };
+  }
 
-	rpc VerifiableSQLGet (VerifiableSQLGetRequest) returns (VerifiableSQLEntry){
-		option (google.api.http) = {
-			post: "/db/verifiable/sqlget"
-			body: "*"
-		};
-	};
+  // Streams
+  rpc streamGet(KeyRequest) returns (stream Chunk) {}
+
+  rpc streamSet(stream Chunk) returns (TxHeader) {}
+
+  rpc streamVerifiableGet(VerifiableGetRequest) returns (stream Chunk) {}
+
+  rpc streamVerifiableSet(stream Chunk) returns (VerifiableTx) {}
+
+  rpc streamScan(ScanRequest) returns (stream Chunk) {}
+
+  rpc streamZScan(ZScanRequest) returns (stream Chunk) {}
+
+  rpc streamHistory(HistoryRequest) returns (stream Chunk) {}
+
+  rpc streamExecAll(stream Chunk) returns (TxHeader) {}
+
+  // Replication
+  rpc exportTx(ExportTxRequest) returns (stream Chunk) {}
+
+  rpc replicateTx(stream Chunk) returns (TxHeader) {}
+
+  rpc streamExportTx(stream ExportTxRequest) returns (stream Chunk) {}
+
+  rpc SQLExec(SQLExecRequest) returns (SQLExecResult) {
+    option (google.api.http) = {
+      post: "/db/sqlexec"
+      body: "*"
+    };
+  }
+
+  // For backward compatibility with the grpc-gateway API
+  rpc UnarySQLQuery(SQLQueryRequest) returns (SQLQueryResult) {
+    option (google.api.http) = {
+      post: "/db/sqlquery"
+      body: "*"
+    };
+  }
+
+  rpc SQLQuery(SQLQueryRequest) returns (stream SQLQueryResult) {
+    option (google.api.http) = {
+      post: "/db/sqlquery"
+      body: "*"
+    };
+  }
+
+  rpc ListTables(google.protobuf.Empty) returns (SQLQueryResult) {
+    option (google.api.http) = {
+      get: "/db/table/list"
+    };
+  }
+
+  rpc DescribeTable(Table) returns (SQLQueryResult) {
+    option (google.api.http) = {
+      post: "/db/tables"
+      body: "*"
+    };
+  }
+
+  rpc VerifiableSQLGet(VerifiableSQLGetRequest) returns (VerifiableSQLEntry) {
+    option (google.api.http) = {
+      post: "/db/verifiable/sqlget"
+      body: "*"
+    };
+  }
+
+  rpc TruncateDatabase(TruncateDatabaseRequest) returns (TruncateDatabaseResponse) {
+    option (google.api.http) = {
+      post: "/db/truncate"
+      body: "*"
+    };
+  }
 }

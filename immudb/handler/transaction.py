@@ -21,8 +21,9 @@ from immudb.handler.sqlexec import _call_with_executor as executeSQLExec
 
 
 class Tx:
-    def __init__(self, stub, session, channel):
+    def __init__(self, stub, dbname, session, channel):
         self.stub = stub
+        self.dbname = dbname
         self.session = session
         self.channel = channel
         self.txStub = None
@@ -52,8 +53,12 @@ class Tx:
         self.txStub = None
         return resp
 
-    def sqlQuery(self, query, params=dict(), columnNameMode=constants.COLUMN_NAME_MODE_NONE):
-        return executeSQLQuery(query, params, columnNameMode, self.txStub.TxSQLQuery)
+    def sqlQuery(self, query, params=dict(), columnNameMode=constants.COLUMN_NAME_MODE_NONE, acceptStream=False):
+        it = executeSQLQuery(query, params, columnNameMode,
+                             self.dbname, self.txStub.TxSQLQuery)
+        if acceptStream:
+            return it
+        return list(it)
 
     def sqlExec(self, stmt, params=dict(), noWait=False):
         return executeSQLExec(stmt, params, noWait, self.txStub.TxSQLExec)
