@@ -62,7 +62,7 @@ def test_update_database_v2(wrappedClient: ImmuTestClient):
     foundDb = False
     
     for database in resp.databases:
-        if database.settings.maxKeyLen == 32 and database.name == name and not database.settings.autoload:
+        if database.settings.maxKeyLen.value == 32 and database.name == name and not database.settings.autoload.value:
             foundDb = True
 
     assert foundDb == True
@@ -76,7 +76,7 @@ def test_update_database_v2(wrappedClient: ImmuTestClient):
     resp = client.databaseListV2()
     foundDb = False
     for database in resp.databases:
-        if database.settings.maxKeyLen == 32 and database.name == name and database.settings.autoload:
+        if database.settings.maxKeyLen.value == 32 and database.name == name and database.settings.autoload.value:
             foundDb = True
 
     assert foundDb == True
@@ -93,7 +93,7 @@ def test_list_databases_v2(wrappedClient: ImmuTestClient):
     resp = client.databaseListV2()
     foundDb = False
     for database in resp.databases:
-        if database.settings.maxKeyLen == 32 and database.name == name:
+        if database.settings.maxKeyLen.value == 32 and database.name == name:
             foundDb = True
 
     assert foundDb == True
@@ -106,7 +106,7 @@ def test_list_databases_v2(wrappedClient: ImmuTestClient):
     resp = client.databaseListV2()
     foundDb = False
     for database in resp.databases:
-        if database.settings.maxKeyLen == 32 and database.name == name:
+        if database.settings.maxKeyLen.value == 32 and database.name == name:
             foundDb = True
 
     assert foundDb == True

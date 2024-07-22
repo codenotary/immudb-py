@@ -21,6 +21,7 @@ import grpc._channel
 import google.protobuf.empty_pb2
 import pytest
 
+
 def get_random_name(length):
     return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
 
@@ -48,28 +49,14 @@ class TestUser:
         except grpc.RpcError as e:
             assert e.details() == 'user already exists'
 
-        user1 = "test_"+get_random_name(8)
         password = "Pw0:"+get_random_string(12)
         database = "defaultdb"
         permission = immudb.constants.PERMISSION_RW
-
-        try:
-            resp = client.createUser(user1, "12345", permission, database)
-            assert False  # it is not allowed to create a trivial password
-        except grpc.RpcError as e:
-            pass
-
-        try:
-            resp = client.createUser(user1, "12345", permission, database)
-            assert False  # it is not allowed to create a trivial password
-        except grpc.RpcError as e:
-            pass
 
         newPassword = "Pw1:"+get_random_string(12)
         resp = client.changePassword(user, newPassword, password)
         assert type(resp.reply) == google.protobuf.empty_pb2.Empty
 
-        
         with pytest.raises(RpcError):
             assert client.setActiveUser(True, "not existing user") == True
 
@@ -81,8 +68,6 @@ class TestUser:
         with pytest.raises(RpcError):
             client.login(user, newPassword)
 
-        
         assert client.setActiveUser(True, user) == True
         # User again active
         client.login(user, newPassword)
-

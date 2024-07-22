@@ -19,33 +19,41 @@ import time
 class TestSessionTransaction:
 
     def test_simple_unmanaged_session(self, wrappedClient: ImmuTestClient):
-        if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        if (not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
             pytest.skip("Version too low")
-        txInterface = wrappedClient.client.openSession("immudb", "immudb", b"defaultdb")
+        txInterface = wrappedClient.client.openSession(
+            "immudb", "immudb", b"defaultdb")
         try:
             newTx = txInterface.newTx()
             table = wrappedClient._generateTableName()
-            newTx.sqlExec(f"CREATE TABLE {table} (id INTEGER AUTO_INCREMENT, tester VARCHAR[10], PRIMARY KEY id)")
+            newTx.sqlExec(
+                f"CREATE TABLE {table} (id INTEGER AUTO_INCREMENT, tester VARCHAR[10], PRIMARY KEY id)")
             commit = newTx.commit()
             assert commit.header.id != None
 
             newTx = txInterface.newTx()
-            newTx.sqlExec(f"INSERT INTO {table} (tester) VALUES(@testParam)", params = {"testParam": "123"})
-            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
-            if wrappedClient.serverVersionEqual("1.9DOM.0") and what==[]:
+            newTx.sqlExec(
+                f"INSERT INTO {table} (tester) VALUES(@testParam)", params={"testParam": "123"})
+            what = newTx.sqlQuery(
+                f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
+            if wrappedClient.serverVersionEqual("1.9DOM.0") and what == []:
                 pytest.xfail("Known bug #1854")
             assert what == [{"id": 1, "tester": '123'}]
             commit = newTx.commit()
             assert commit.header.id != None
 
             newTx = txInterface.newTx()
-            newTx.sqlExec(f"INSERT INTO {table} (tester) VALUES(@testParam)", params = {"testParam": "321"})
-            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
-            assert what == [{"id": 1, "tester": '123'}, {"id": 2, "tester": '321'}]
+            newTx.sqlExec(
+                f"INSERT INTO {table} (tester) VALUES(@testParam)", params={"testParam": "321"})
+            what = newTx.sqlQuery(
+                f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
+            assert what == [{"id": 1, "tester": '123'},
+                            {"id": 2, "tester": '321'}]
             commit = newTx.rollback()
 
             newTx = txInterface.newTx()
-            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
+            what = newTx.sqlQuery(
+                f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
             assert what == [{"id": 1, "tester": '123'}]
             commit = newTx.commit()
             wrappedClient.closeSession()
@@ -56,40 +64,48 @@ class TestSessionTransaction:
                 pass
 
     def test_simple_managed_session(self, wrappedClient: ImmuTestClient):
-        if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        if (not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
             pytest.skip("Version too low")
         with wrappedClient.client.openManagedSession("immudb", "immudb", b"defaultdb") as session:
             newTx = session.newTx()
             table = wrappedClient._generateTableName()
-            newTx.sqlExec(f"CREATE TABLE {table} (id INTEGER AUTO_INCREMENT, tester VARCHAR[10], PRIMARY KEY id)")
+            newTx.sqlExec(
+                f"CREATE TABLE {table} (id INTEGER AUTO_INCREMENT, tester VARCHAR[10], PRIMARY KEY id)")
             commit = newTx.commit()
             assert commit.header.id != None
 
             newTx = session.newTx()
-            newTx.sqlExec(f"INSERT INTO {table} (tester) VALUES(@testParam)", params = {"testParam": "123"})
-            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
-            if wrappedClient.serverVersionEqual("1.9DOM.0") and what==[]:
+            newTx.sqlExec(
+                f"INSERT INTO {table} (tester) VALUES(@testParam)", params={"testParam": "123"})
+            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(
+            ), columnNameMode=constants.COLUMN_NAME_MODE_FIELD, acceptStream=True)
+            if wrappedClient.serverVersionEqual("1.9DOM.0") and what == []:
                 pytest.xfail("Known bug #1854")
-            assert what == [{"id": 1, "tester": '123'}]
+            assert list(what) == [{"id": 1, "tester": '123'}]
             commit = newTx.commit()
             assert commit.header.id != None
 
         with wrappedClient.client.openManagedSession("immudb", "immudb", b"defaultdb") as session:
             newTx = session.newTx()
-            newTx.sqlExec(f"INSERT INTO {table} (tester) VALUES(@testParam)", params = {"testParam": "321"})
-            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
-            assert what == [{"id": 1, "tester": '123'}, {"id": 2, "tester": '321'}]
+            newTx.sqlExec(
+                f"INSERT INTO {table} (tester) VALUES(@testParam)", params={"testParam": "321"})
+            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(
+            ), columnNameMode=constants.COLUMN_NAME_MODE_FIELD, acceptStream=True)
+            assert list(what) == [{"id": 1, "tester": '123'},
+                                  {"id": 2, "tester": '321'}]
             commit = newTx.rollback()
 
             newTx = session.newTx()
-            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(), columnNameMode=constants.COLUMN_NAME_MODE_FIELD)
-            assert what == [{"id": 1, "tester": '123'}]
+            what = newTx.sqlQuery(f"SELECT * FROM {table}", dict(
+            ), columnNameMode=constants.COLUMN_NAME_MODE_FIELD, acceptStream=True)
+            assert list(what) == [{"id": 1, "tester": '123'}]
             commit = newTx.commit()
 
     def test_unmanaged_session(self, wrappedClient: ImmuTestClient):
-        if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        if (not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
             pytest.skip("Version too low")
-        currentTxInterface = wrappedClient.openSession("immudb", "immudb", b"defaultdb")
+        currentTxInterface = wrappedClient.openSession(
+            "immudb", "immudb", b"defaultdb")
         try:
             wrappedClient.currentTx = currentTxInterface
             key = wrappedClient.generateKeyName().encode("utf-8")
@@ -101,13 +117,18 @@ class TestSessionTransaction:
             a = wrappedClient.get(key)
             assert a.value == b'1'
             interface = wrappedClient.newTx()
-            table = wrappedClient.createTestTable("id INTEGER AUTO_INCREMENT", "tester VARCHAR[10]", "PRIMARY KEY id")
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "3"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "4"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "5"})
+            table = wrappedClient.createTestTable(
+                "id INTEGER AUTO_INCREMENT", "tester VARCHAR[10]", "PRIMARY KEY id")
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "3"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "4"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "5"})
             interface.commit()
             wrappedClient.closeSession()
-            currentTxInterface = wrappedClient.openSession("immudb", "immudb", b"defaultdb")
+            currentTxInterface = wrappedClient.openSession(
+                "immudb", "immudb", b"defaultdb")
             wrappedClient.currentTx = currentTxInterface
             interface = wrappedClient.newTx()
 
@@ -117,16 +138,20 @@ class TestSessionTransaction:
 
             interface.commit()
             interface = wrappedClient.newTx()
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "6"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "7"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "8"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "6"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "7"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "8"})
             interface.rollback()
         finally:
             try:
                 wrappedClient.closeSession()
             except:
                 pass
-        wrappedClient.currentTx = wrappedClient.openSession("immudb", "immudb", b"defaultdb")
+        wrappedClient.currentTx = wrappedClient.openSession(
+            "immudb", "immudb", b"defaultdb")
         interface = wrappedClient.newTx()
         what = wrappedClient.simpleSelect(table, ["tester"], dict())
         concatenated = [item[0] for item in what]
@@ -141,7 +166,7 @@ class TestSessionTransaction:
             assert a.value == b'1'
 
     def test_managed_session(self, wrappedClient: ImmuTestClient):
-        if(not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
+        if (not wrappedClient.serverHigherOrEqualsToVersion("1.2.0")):
             pytest.skip("Version too low")
 
         with wrappedClient.openManagedSession("immudb", "immudb", b"defaultdb") as session:
@@ -156,10 +181,14 @@ class TestSessionTransaction:
         with wrappedClient.openManagedSession("immudb", "immudb", b"defaultdb") as session:
             wrappedClient.currentTx = session
             interface = wrappedClient.newTx()
-            table = wrappedClient.createTestTable("id INTEGER AUTO_INCREMENT", "tester VARCHAR[10]", "PRIMARY KEY id")
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "3"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "4"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "5"})
+            table = wrappedClient.createTestTable(
+                "id INTEGER AUTO_INCREMENT", "tester VARCHAR[10]", "PRIMARY KEY id")
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "3"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "4"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "5"})
             interface.commit()
 
         with wrappedClient.openManagedSession("immudb", "immudb", b"defaultdb") as session:
@@ -172,9 +201,12 @@ class TestSessionTransaction:
         with wrappedClient.openManagedSession("immudb", "immudb", b"defaultdb") as session:
             wrappedClient.currentTx = session
             interface = wrappedClient.newTx()
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "6"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "7"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "8"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "6"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "7"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "8"})
             interface.rollback()
 
         with wrappedClient.openManagedSession("immudb", "immudb", b"defaultdb") as session:
@@ -187,14 +219,20 @@ class TestSessionTransaction:
         with wrappedClient.openManagedSession("immudb", "immudb", b"defaultdb") as session:
             wrappedClient.currentTx = session
             interface = wrappedClient.newTx()
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "6"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "7"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "8"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "6"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "7"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "8"})
             rollbackAs = interface.rollback()
             interface = wrappedClient.newTx()
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "6"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "7"})
-            wrappedClient.insertToTable(table, ["tester"], ["@blabla"], {"blabla": "8"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "6"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "7"})
+            wrappedClient.insertToTable(
+                table, ["tester"], ["@blabla"], {"blabla": "8"})
             commitAs = interface.commit()
             assert commitAs.header.id != None
             interface = wrappedClient.newTx()
@@ -206,5 +244,3 @@ class TestSessionTransaction:
             concatenated = [item[0] for item in what]
             assert concatenated == ["3", "4", "5", "6", "7", "8"]
             what = wrappedClient.commit()
-
-            

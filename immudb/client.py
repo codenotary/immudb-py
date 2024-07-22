@@ -326,7 +326,7 @@ class ImmudbClient:
         session_response = self._stub.OpenSession(
             req)
         self._stub = self._set_session_id_interceptor(session_response)
-        return transaction.Tx(self._stub, session_response, self.channel)
+        return transaction.Tx(self._stub, database, session_response, self.channel)
 
     def closeSession(self):
         """Closes unmanaged session
@@ -1613,7 +1613,7 @@ class ImmudbClient:
 
         return sqlexec.call(self._stub, self._rs, stmt, params, noWait)
 
-    def sqlQuery(self, query, params={}, columnNameMode=constants.COLUMN_NAME_MODE_NONE):
+    def sqlQuery(self, query, params={}, columnNameMode=constants.COLUMN_NAME_MODE_NONE, acceptStream=False):
         """Queries the database using SQL
         Args:
             query: a query in immudb SQL dialect.
@@ -1624,17 +1624,12 @@ class ImmudbClient:
 
             ['table1', 'table2']
         """
-        ret = sqlquery.call(self._stub, self._rs, query,
-                            params, columnNameMode)
-        if columnNameMode in [constants.COLUMN_NAME_MODE_DATABASE, constants.COLUMN_NAME_MODE_FULL]:
-            # newer DB version don't insert database name anymore, we need to
-            # process it manually
-            for i, t in enumerate(ret):
-                newkeys = [
-                    x.replace("[@DB]", self._currentdb.decode("utf-8")) for x in t.keys()]
-                k = dict(zip(newkeys, list(t.values())))
-                ret[i] = k
-        return ret
+        it = sqlquery.call(self._stub, self._rs, query,
+                           params, columnNameMode, self._currentdb)
+        if acceptStream:
+            return it
+
+        return list(it)
 
     def listTables(self):
         """List all tables in the current database
@@ -1709,6 +1704,7 @@ class ImmudbClient:
 
 
 # immudb-py only
+
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)
