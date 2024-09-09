@@ -434,8 +434,19 @@ class ImmudbClient:
         Returns:
             datatypesv2.CreateDatabaseResponseV2: Response contains information about new database
         """
+        rsettings=datatypesv2.ReplicationNullableSettings(
+            replica=schema_pb2.NullableBool(value=settings.replica),
+            masterDatabase=schema_pb2.NullableString(value=name),
+            masterAddress=schema_pb2.NullableString(value=settings.masterAddress),
+            masterPort=schema_pb2.NullableUint32(value=settings.masterPort),
+            followerUsername=schema_pb2.NullableString(value=settings.followerUsername),
+            followerPassword=schema_pb2.NullableString(value=settings.followerPassword),
+        )
+        nsettings=datatypesv2.DatabaseNullableSettings(
+            replicationSettings=rsettings
+            )
         request = datatypesv2.CreateDatabaseRequest(
-            name=name, settings=settings, ifNotExists=ifNotExists)
+            name=name, settings=nsettings, ifNotExists=ifNotExists)
         resp = self._stub.CreateDatabaseV2(request._getGRPC())
         return dataconverter.convertResponse(resp)
 
