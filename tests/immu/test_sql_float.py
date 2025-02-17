@@ -18,6 +18,9 @@ class TestSQLFloat:
 
     def test_sql_float_query(self, wrappedClient: ImmuTestClient):
         # Testing the FLOAT type inserting and querying
+        if (not wrappedClient.serverHigherOrEqualsToVersion("1.5.0")):
+            return
+
         value_to_test = 1.1
 
         tabname = wrappedClient.createTestTable(
@@ -36,6 +39,9 @@ class TestSQLFloat:
 
     def test_sql_float_aggreg_and_filter(self, wrappedClient: ImmuTestClient):
         # Testing the FLOAT type with aggregation and filtering
+        if (not wrappedClient.serverHigherOrEqualsToVersion("1.5.0")):
+            return
+
         values_to_test = [1.1, 2.2, 3.3, 4.4]
 
         tabname = wrappedClient.createTestTable(
