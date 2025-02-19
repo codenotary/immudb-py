@@ -45,7 +45,7 @@ from immudb.streamsutils import AtTXHeader, KeyHeader, ProvenSinceHeader, ScoreH
 
 class ImmudbClient:
 
-    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length=None):
+    def __init__(self, immudUrl=None, rs: RootService = None, publicKeyFile: str = None, timeout=None, max_grpc_message_length=None, ssl_credentials=None):
         """immudb Client
 
         Args:
@@ -61,6 +61,9 @@ class ImmudbClient:
                 will hang until the server responds if no timeout is set.
             max_grpc_message_length (int, optional): maximum size of message the
                 server should send. The default (4Mb) is used is no value is set.
+            ssl_credentials (grpc.ChannelCredentials, optional): SSL credentials
+                for secure channel. If provided, will override the secure
+                parameter.
         """
         if immudUrl is None:
             immudUrl = "localhost:3322"
@@ -69,9 +72,10 @@ class ImmudbClient:
         if max_grpc_message_length:
             options = [('grpc.max_receive_message_length',
                         max_grpc_message_length)]
-            self.channel = grpc.insecure_channel(immudUrl, options=options)
+        if ssl_credentials is not None:
+            self.channel = grpc.secure_channel(immudUrl, ssl_credentials, options=options)
         else:
-            self.channel = grpc.insecure_channel(immudUrl)
+            self.channel = grpc.insecure_channel(immudUrl, options=options)
         self._resetStub()
         if rs is None:
             self._rs = RootService()
