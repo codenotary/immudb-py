@@ -1226,7 +1226,7 @@ class PrimaryKey:
 @dataclass
 class PrimaryKeyNullValue(GRPCTransformable, PrimaryKey):
     def _getGRPC(self):
-        return schema.SQLValue(null=None)
+        return schema.SQLValue(null=0)
 
 
 @dataclass

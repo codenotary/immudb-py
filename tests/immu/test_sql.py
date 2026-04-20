@@ -40,6 +40,12 @@ class TestSql:
         assert(len(result) > 0)
         assert(result == [(1, "Joe")])
 
+    def test_exec_query_with_null_param(self, wrappedClient: ImmuTestClient):
+        tabname = wrappedClient.createTestTable("id INTEGER", "name VARCHAR", "PRIMARY KEY id")
+        wrappedClient.insertToTable(tabname, ["id", "name"], ["@id", "@name"], {'id': 1, 'name': None})
+        result = wrappedClient.simpleSelect(tabname, ["id", "name"], {'id': 1}, "id=@id")
+        assert(result == [(1, None)])
+
     def test_describe(self, wrappedClient: ImmuTestClient):
         if wrappedClient.serverHigherOrEqualsToVersion("1.9.0"):
             varchar100 = "VARCHAR(100)"

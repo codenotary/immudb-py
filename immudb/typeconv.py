@@ -9,7 +9,7 @@ def py_to_sqlvalue(value):
     sqlValue = None
     typ = type(value)
     if value is None:
-        sqlValue = schema_pb2.SQLValue(null=True)
+        sqlValue = schema_pb2.SQLValue(null=0)
     elif typ is int:
         sqlValue = schema_pb2.SQLValue(n=value)
     elif typ is bool:

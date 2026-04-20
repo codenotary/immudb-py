@@ -33,6 +33,7 @@ import warnings
 import ecdsa
 from immudb.datatypes import DeleteKeysRequest
 from immudb.embedded.store import KVMetadata
+import logging
 import threading
 import queue
 import immudb.datatypesv2 as datatypesv2
@@ -105,9 +106,16 @@ class ImmudbClient:
         """
         self.channel.close()
         self.channel = None
-        self.intercept_channel.close
+        self.intercept_channel.close()
         self.intercept_channel = None
         self._rs = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.shutdown()
+        return False
 
     def _set_session_id_interceptor(self, openSessionResponse):
         """Helper function to set session id interceptor
@@ -280,7 +288,10 @@ class ImmudbClient:
                     try:
                         what = this.queue.get(True, this.keepAliveInterval)
                     except queue.Empty:
-                        self.keepAlive()
+                        try:
+                            self.keepAlive()
+                        except Exception:
+                            logging.exception("keepAlive failed in managed session")
 
             def __enter__(this):
                 interface = self.openSession(username, password, database)
@@ -292,6 +303,9 @@ class ImmudbClient:
             def __exit__(this, type, value, traceback):
                 this.keepAliveStarted = False
                 this.queue.put(b'0')
+                if this.keepAliveProcess is not None:
+                    this.keepAliveProcess.join()
+                    this.keepAliveProcess = None
                 self.closeSession()
 
         return ManagedSession(keepAliveInterval)
