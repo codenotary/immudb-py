@@ -291,7 +291,8 @@ class ImmudbClient:
                         try:
                             self.keepAlive()
                         except Exception:
-                            logging.exception("keepAlive failed in managed session")
+                            logging.exception(
+                                "keepAlive failed in managed session")
 
             def __enter__(this):
                 interface = self.openSession(username, password, database)
@@ -1718,7 +1719,6 @@ class ImmudbClient:
 
 
 # immudb-py only
-
 
     def getAllValues(self, keys: list):  # immudb-py only
         resp = batchGet.call(self._stub, self._rs, keys)

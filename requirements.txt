@@ -17,7 +17,7 @@ protobuf==6.33.6
 pyasn1==0.6.3
 pyasn1_modules==0.4.0
 pyparsing==3.1.2
-requests==2.33.0
+requests==2.32.5
 rsa==4.9
 six==1.16.0
 uritemplate==4.1.1
