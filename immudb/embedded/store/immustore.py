@@ -24,6 +24,7 @@ class DualProof(printable):
         self.targetBlTxAlh = None
         self.lastInclusionProof = None
         self.linearProof = store.LinearProof()
+        self.linearAdvanceProof = None
 
 
 class LinearProof(printable):
@@ -31,3 +32,9 @@ class LinearProof(printable):
         self.sourceTxID = None
         self.targetTxID = None
         self.terms = None
+
+
+class LinearAdvanceProof(printable):
+    def __init__(self):
+        self.linearProofTerms = None
+        self.inclusionProofs = None

@@ -253,3 +253,37 @@ def test_KVMetadataFromProto():
 
 def test_TxMetadataFromProto():
     assert schema.TxMetadataFromProto(None) == None
+
+
+def test_VerifyLinearAdvanceProof_no_gap_returns_true():
+    # When endTxID <= startTxID+1 the server omits the advance proof and
+    # the verifier must accept that as the no-op case (matches Go).
+    assert store.VerifyLinearAdvanceProof(None, 5, 5, b'', b'', 5)
+    assert store.VerifyLinearAdvanceProof(None, 5, 6, b'', b'', 6)
+
+
+def test_VerifyLinearAdvanceProof_inverted_range_rejected():
+    assert not store.VerifyLinearAdvanceProof(None, 10, 5, b'', b'', 10)
+
+
+def test_VerifyLinearAdvanceProof_required_but_missing_rejected():
+    # A real gap (endTxID > startTxID+1) requires a non-nil advance proof.
+    assert not store.VerifyLinearAdvanceProof(None, 1, 5, b'', b'', 5)
+
+
+def test_VerifyLinearAdvanceProof_wrong_term_count_rejected():
+    proof = store.LinearAdvanceProof()
+    proof.linearProofTerms = [b'\x00' * 32]  # 1 term, but gap=4 needs 4
+    proof.inclusionProofs = []
+    assert not store.VerifyLinearAdvanceProof(proof, 1, 5, b'', b'', 5)
+
+
+def test_LinearAdvanceProofFromProto_default_empty_message():
+    # An unpopulated LinearAdvanceProof field on the wire (older server, or
+    # proof with no real gap) must round-trip to an empty-but-non-None object
+    # so VerifyLinearAdvanceProof's "no gap" short-circuit applies.
+    msg = schema_pb2.LinearAdvanceProof()  # proto default
+    lap = schema.LinearAdvanceProofFromProto(msg)
+    assert lap is not None
+    assert lap.linearProofTerms == []
+    assert lap.inclusionProofs == []
