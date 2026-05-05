@@ -56,6 +56,48 @@ def VerifyLinearProof(proof, sourceTxID: int, targetTxID: int, sourceAlh: bytes,
     return targetAlh == calculatedAlh
 
 
+def advanceLinearHash(alh: bytes, txID: int, term: bytes) -> bytes:
+    # hash(txID || prevAlh || innerHash) — matches advanceLinearHash in
+    # embedded/store/verification.go.
+    return hashlib.sha256(struct.pack(">Q", txID) + alh + term).digest()
+
+
+def VerifyLinearAdvanceProof(proof, startTxID: int, endTxID: int,
+                             endAlh: bytes, treeRoot: bytes,
+                             treeSize: int) -> bool:
+    """Verify the linear chain on the slice [startTxID..endTxID] is consistent
+    with `treeRoot` (a Merkle root of size `treeSize`) and ends at `endAlh`.
+
+    Mirrors VerifyLinearAdvanceProof in embedded/store/verification.go: each
+    intermediate Alh on the chain must be included in the new Merkle Tree, and
+    the final advance must reach `endAlh`. Returns True when no advance proof
+    is needed (gap of <=1).
+    """
+    if endTxID < startTxID:
+        return False
+    # No advance proof required for adjacent / equal txIDs.
+    if endTxID <= startTxID + 1:
+        return True
+    if (proof is None
+            or proof.linearProofTerms is None
+            or proof.inclusionProofs is None
+            or len(proof.linearProofTerms) != endTxID - startTxID
+            or len(proof.inclusionProofs) != endTxID - startTxID - 1):
+        return False
+    calculatedAlh = proof.linearProofTerms[0]  # alh at startTx+1
+    for txID in range(startTxID + 1, endTxID):
+        if not ahtree.VerifyInclusion(
+                proof.inclusionProofs[txID - startTxID - 1],
+                txID,
+                treeSize,
+                leafFor(calculatedAlh),
+                treeRoot):
+            return False
+        calculatedAlh = advanceLinearHash(
+            calculatedAlh, txID + 1, proof.linearProofTerms[txID - startTxID])
+    return calculatedAlh == endAlh
+
+
 def VerifyDualProof(proof, sourceTxID, targetTxID, sourceAlh, targetAlh):
     if (proof == None or
         proof.sourceTxHeader == None or
@@ -90,12 +132,32 @@ def VerifyDualProof(proof, sourceTxID, targetTxID, sourceAlh, targetAlh):
             proof.targetTxHeader.blRoot) == False:
         return False
     if sourceTxID < proof.targetTxHeader.blTxID:
-        ret = VerifyLinearProof(
-            proof.linearProof, proof.targetTxHeader.blTxID, targetTxID, proof.targetBlTxAlh, targetAlh)
-    else:
-        ret = VerifyLinearProof(
-            proof.linearProof, sourceTxID, targetTxID, sourceAlh, targetAlh)
-    return ret
+        if not VerifyLinearProof(
+                proof.linearProof, proof.targetTxHeader.blTxID,
+                targetTxID, proof.targetBlTxAlh, targetAlh):
+            return False
+        # The slice from sourceTxID..BlTxID is already covered by InclusionProof
+        # above; LinearAdvanceProof seals the linear chain consistency for that
+        # gap inside the new Merkle Tree.
+        return VerifyLinearAdvanceProof(
+            proof.linearAdvanceProof,
+            proof.sourceTxHeader.blTxID,
+            sourceTxID,
+            sourceAlh,
+            proof.targetTxHeader.blRoot,
+            proof.targetTxHeader.blTxID,
+        )
+    if not VerifyLinearProof(
+            proof.linearProof, sourceTxID, targetTxID, sourceAlh, targetAlh):
+        return False
+    return VerifyLinearAdvanceProof(
+        proof.linearAdvanceProof,
+        proof.sourceTxHeader.blTxID,
+        proof.targetTxHeader.blTxID,
+        proof.targetBlTxAlh,
+        proof.targetTxHeader.blRoot,
+        proof.targetTxHeader.blTxID,
+    )
 
 
 def EntrySpecDigestFor(version: int):

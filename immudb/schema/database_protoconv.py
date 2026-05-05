@@ -87,7 +87,24 @@ def DualProofFromProto(dproof: grpc_DualProof) -> store.DualProof:
     dp.targetBlTxAlh = DigestFromProto(dproof.targetBlTxAlh)
     dp.lastInclusionProof = DigestsFromProto(dproof.lastInclusionProof)
     dp.linearProof = LinearProofFromProto(dproof.linearProof)
+    # Note: the proto field uses upper-camel `LinearAdvanceProof`. The server
+    # always populates this for >=v1.2.0 dual proofs; an empty (default)
+    # message means "no advance proof needed for this gap".
+    dp.linearAdvanceProof = LinearAdvanceProofFromProto(dproof.LinearAdvanceProof)
     return dp
+
+
+def LinearAdvanceProofFromProto(p) -> store.LinearAdvanceProof:
+    if p is None:
+        return None
+    lap = store.LinearAdvanceProof()
+    lap.linearProofTerms = DigestsFromProto(p.linearProofTerms)
+    # Each entry on the wire is a full InclusionProof message but the server
+    # only populates the `terms` field for these (see Go's
+    # LinearAdvanceProofToProto). Flatten to a list[list[bytes]] matching
+    # what ahtree.VerifyInclusion expects.
+    lap.inclusionProofs = [DigestsFromProto(ip.terms) for ip in p.inclusionProofs]
+    return lap
 
 
 def TxHeaderFromProto(hdr: grpc_TxHeader) -> store.TxHeader:
