@@ -24,18 +24,17 @@
 
 ## Introduction
 
-immu-py implements a [grpc] immudb client. A minimalist API is exposed for applications while cryptographic
-verifications and state update protocol implementation are fully implemented by this client.
-Latest validated immudb state may be kept in the local filesystem when using default `rootService`,
-please read [immudb research paper] for details of how immutability is ensured by [immudb].
+`immudb-py`, the official Python SDK for [immudb], implements a [gRPC] client for interacting with immudb servers from Python applications. This library exposes a minimal, familiar interface for performing immudb operations, without requiring you to implement the gRPC protocol or handle cryptographic verification of the state of the immutable database.
 
-[grpc]: https://grpc.io/
+For more information about the immudb architecture and how it ensures immutability for the data it stores, please see the [immudb research paper].
+
+[gRPC]: https://grpc.io/
 [immudb research paper]: https://immudb.io/
 [immudb]: https://immudb.io/
 
 ## Prerequisites
 
-immu-py assumes there is an existing instance of the immudb server up and running. 
+immu-py assumes there is an existing instance of the immudb server up and running.
 Running `immudb` is quite simple, please refer to the
 following link for downloading and running it: https://immudb.io/docs/quickstart.html
 
@@ -232,8 +231,8 @@ Note: after shutdown, a new client needs to be created to establish a new connec
 
 ## State persistance
 
-An important immudb feature is the ability for a client to check every transaction for tampering. In order to 
-be able to do that, it is necessary to persist client state (i.e., save it to disk) so that if some tampering 
+An important immudb feature is the ability for a client to check every transaction for tampering. In order to
+be able to do that, it is necessary to persist client state (i.e., save it to disk) so that if some tampering
 on the server happens between two runs, it is immediatly detected.
 
 A `RootService` implements just that: it stores immudb client after every transaction, in order to be able to
@@ -261,7 +260,7 @@ easy to use. Just create and use the PersistentRootService object in the client 
 ### Process and threads
 
 Please keep in mind that the implementation is not thread/process safe. If you are using a multi-process application,
-it is advisable to use a different state file for every instance: just pass the filename as argument to the 
+it is advisable to use a different state file for every instance: just pass the filename as argument to the
 PersistentRootService constructor:
 
 ```python
