@@ -90,7 +90,8 @@ def DualProofFromProto(dproof: grpc_DualProof) -> store.DualProof:
     # Note: the proto field uses upper-camel `LinearAdvanceProof`. The server
     # always populates this for >=v1.2.0 dual proofs; an empty (default)
     # message means "no advance proof needed for this gap".
-    dp.linearAdvanceProof = LinearAdvanceProofFromProto(dproof.LinearAdvanceProof)
+    dp.linearAdvanceProof = LinearAdvanceProofFromProto(
+        dproof.LinearAdvanceProof)
     return dp
 
 
@@ -103,7 +104,8 @@ def LinearAdvanceProofFromProto(p) -> store.LinearAdvanceProof:
     # only populates the `terms` field for these (see Go's
     # LinearAdvanceProofToProto). Flatten to a list[list[bytes]] matching
     # what ahtree.VerifyInclusion expects.
-    lap.inclusionProofs = [DigestsFromProto(ip.terms) for ip in p.inclusionProofs]
+    lap.inclusionProofs = [DigestsFromProto(
+        ip.terms) for ip in p.inclusionProofs]
     return lap
 
 

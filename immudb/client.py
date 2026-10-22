@@ -30,7 +30,8 @@ from immudb.handler.verifiedtxbyid import verify as verifyTransaction
 from immudb.rootService import *
 from immudb.grpc import schema_pb2_grpc
 import warnings
-import ecdsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 from immudb.datatypes import DeleteKeysRequest
 from immudb.embedded.store import KVMetadata
 import logging
@@ -42,6 +43,15 @@ import immudb.dataconverter as dataconverter
 import datetime
 
 from immudb.streamsutils import AtTXHeader, KeyHeader, ProvenSinceHeader, ScoreHeader, SetHeader, StreamReader, ValueChunk, ValueChunkHeader, BufferedStreamReader, VerifiedGetStreamReader, ZScanStreamReader
+
+
+def _loadPublicKey(pem):
+    if isinstance(pem, str):
+        pem = pem.encode('ascii')
+    key = serialization.load_pem_public_key(pem)
+    if not isinstance(key, ec.EllipticCurvePublicKey):
+        raise ValueError("public key must be an ECDSA key")
+    return key
 
 
 class ImmudbClient:
@@ -90,8 +100,8 @@ class ImmudbClient:
         Args:
             kfile (str): key file path
         """
-        with open(kfile) as f:
-            self._vk = ecdsa.VerifyingKey.from_pem(f.read())
+        with open(kfile, "rb") as f:
+            self._vk = _loadPublicKey(f.read())
 
     def loadKeyFromString(self, key: str):
         """Loads public key from parameter
@@ -99,7 +109,7 @@ class ImmudbClient:
         Args:
             key (str): key
         """
-        self._vk = ecdsa.VerifyingKey.from_pem(key)
+        self._vk = _loadPublicKey(key)
 
     def shutdown(self):
         """Shutdowns client

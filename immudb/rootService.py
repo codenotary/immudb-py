@@ -15,9 +15,8 @@ from immudb.grpc import schema_pb2, schema_pb2_grpc
 from google.protobuf import empty_pb2 as g_empty
 import pickle
 import os.path
-import hashlib
-import ecdsa
-import ecdsa.util
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import ec
 import struct
 from dataclasses import dataclass
 
@@ -49,8 +48,8 @@ class State(object):
         return b
 
     def Verify(self, verifying_key):
-        verifying_key.verify(self.signature, self.Hash(
-        ), hashlib.sha256, sigdecode=ecdsa.util.sigdecode_der)
+        verifying_key.verify(self.signature, self.Hash(),
+                             ec.ECDSA(hashes.SHA256()))
 
 
 # Sample reference implementation, with no state persistance on disk.
