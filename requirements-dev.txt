@@ -1,7 +1,7 @@
 appier==1.32.0
 cachetools==5.5.2
 certifi==2024.7.4
-cffi==2.0.0
+cffi==2.1.1
 charset-normalizer==3.3.2
 cryptography==50.0.2
 google-api==0.1.12
@@ -21,7 +21,7 @@ proto-plus==1.27.2
 protobuf==6.33.6
 pyasn1==0.6.3
 pyasn1_modules==0.4.0
-pycparser==2.23
+pycparser==3.11
 pyparsing==3.1.2
 pytest==8.4.2
 pytz==2024.1
