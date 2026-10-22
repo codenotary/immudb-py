@@ -294,7 +294,7 @@ On immudb python SDK, just pass the public key filename to the ImmudbClient cons
 ```python
 client=ImmudbClient(publicKeyFile="/certs/public_signing_key.pem")
 ```
-Every transaction will be then automatically checked. An exception is thrown if the cryptographic check fails.
+Every transaction will be then automatically checked. An exception (`cryptography.exceptions.InvalidSignature`) is thrown if the cryptographic check fails.
 
 ## Contributing
 
