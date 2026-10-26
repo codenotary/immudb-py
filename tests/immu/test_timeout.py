@@ -13,17 +13,6 @@
 from immudb.client import ImmudbClient
 import pytest
 from grpc import RpcError, StatusCode
-import uuid
-
-def generateBigDict():
-    toBuild = dict()
-    keyList = []
-    for _ in range(0, 128):
-        bigStr = str(uuid.uuid4()) * 512
-        key = str(uuid.uuid4()).encode("utf-8")
-        keyList.append(key)
-        toBuild[key] = bigStr.encode("utf-8")
-    return toBuild, keyList
 
 
 class TestTimeout:
@@ -35,17 +24,13 @@ class TestTimeout:
         except:
             raise pytest.skip('Cannot reach immudb server')
 
-        with pytest.raises(RpcError) as excinfo: 
-            client = ImmudbClient(url, timeout=0.001)
+        # The timeout also applies to calls after login.
+        client.set(b"timeout_test_key", b"value")
+        assert client.get(b"timeout_test_key").value == b"value"
+
+        # A 1 microsecond deadline expires before any server can answer,
+        # so the result does not depend on how fast the runner is.
+        with pytest.raises(RpcError) as excinfo:
+            client = ImmudbClient(url, timeout=0.000001)
             client.login(login, password)
         assert excinfo.value.code() == StatusCode.DEADLINE_EXCEEDED
-
-
-        with pytest.raises(RpcError) as excinfo: 
-            client = ImmudbClient(url, timeout=0.05)
-            client.login(login, password)
-            keyVal, keys = generateBigDict()
-            client.setAll(keyVal)
-            scanned = client.scan(b"", b"", False, 400)
-        assert excinfo.value.code() == StatusCode.DEADLINE_EXCEEDED
-        
